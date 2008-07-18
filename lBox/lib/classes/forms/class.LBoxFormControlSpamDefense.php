@@ -33,5 +33,16 @@ class LBoxFormControlSpamDefense extends LBoxFormControlFillHidden
 		$out	.= "};";
 		return $out;
 	}
+
+	/**
+	 * vraci kompletni javascript code pro inicializaci antispamu
+	 * @return string
+	 */
+	public function getJSInit() {
+		$name	= $this->getForm()->getName();
+		$out	  = "";
+		$out	 .= "sD(document.getElementById('frm-$name'), '$name');";
+		return $out;
+	}
 }
 ?>

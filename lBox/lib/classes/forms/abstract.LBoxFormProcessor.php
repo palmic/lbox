@@ -10,13 +10,6 @@ abstract class LBoxFormProcessor
 	protected $form;
 	
 	/**
-	 * @param LBoxForm $form
-	 */
-	public function __construct(LBoxForm $form) {
-		$this->form	= $form;
-	}
-	
-	/**
 	 * form setter
 	 * @param LBoxForm $form
 	 */

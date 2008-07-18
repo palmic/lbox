@@ -1,24 +1,12 @@
 @media screen,projection {
 
 	/* zakladni definice */
-	html, body {
-		font-family: Trebuchet MS;
-		font-size: 11px;
-	}
-	h1, h2, h3, h4, input {
-	font-style: italic;
-	}
-	h1 {
-		font-size: 32px;
-	}
-	h2 {
-		font-size: 18px;
-	}
-	a img {
-		border: none;
-	}
-	p { margin: 11px 0; }
-
+	html, body 			{ font-family: Trebuchet MS; /*font-size: 11px;*/ }
+	h1, h2, h3, h4, h5 	{ }
+	h1 					{ font-size: 32px; }
+	h2 					{ font-size: 18px; }
+	a img 				{ border: none; }
+	p 					{ margin: 11px 0; }
 
 	/* tools */
 	#menumain h2 	{ display: none; }

@@ -46,6 +46,16 @@
 			<path>$project/templates/layouts</path>
 		</templates>
 	</layouts>
+	<forms>
+		<templates>
+			<forms>
+				<path>$project/templates/forms</path>
+			</forms>
+			<controls>
+				<path>$project/templates/forms/controls</path>
+			</controls>
+		</templates>
+	</forms>
 	<output>
 		<tal>
 			<PHPTAL_FORCE_REPARSE>0</PHPTAL_FORCE_REPARSE>

@@ -5,6 +5,12 @@
 class LBoxForm
 {
 	/**
+	 * pole veskerych vytvorenych formularu pro kontroly mezi nimi (hlavne co se tyce unikatnosti nazvu)
+	 * @var array
+	 */
+	protected static $forms	= array();
+	 
+	/**
 	 * @var array
 	 */
 	protected $controls = array();
@@ -60,6 +66,12 @@ class LBoxForm
 			if (strlen($method) < 1) {
 				throw new LBoxExceptionForm("\$method: ". LBoxExceptionForm::MSG_PARAM_STRING_NOTNULL, LBoxExceptionForm::CODE_BAD_PARAM);
 			}
+			$this->name		= $name;
+			$this->method	= $method;
+			if (array_key_exists($name, self::$forms)) {
+				throw new LBoxExceptionForm(LBoxExceptionForm::MSG_FORM_DUPLICATE_FORMNAME, LBoxExceptionForm::CODE_FORM_DUPLICATE_FORMNAME);
+			}
+			self::$forms[$name]	= $this;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -90,10 +102,10 @@ class LBoxForm
 	 */
 	public function addProcessor(LBoxFormProcessor $processor = NULL) {
 		try {
-			if (array_key_exists($processor->getName(), $this->processors)) {
+			if (array_key_exists(get_class($processor), $this->processors)) {
 				throw new LBoxExceptionForm($processor->getName() .": ", LBoxExceptionForm::MSG_FORM_PROCESSOR_DOES_EXISTS, LBoxExceptionForm::CODE_FORM_PROCESSOR_DOES_EXISTS);
 			}
-			$this->processors[$processor->getName()]	= $processor;
+			$this->processors[get_class($processor)]	= $processor;
 			$processor->setForm($this);
 		}
 		catch (Exception $e) {
@@ -159,9 +171,35 @@ class LBoxForm
 	 *
 	 * @return string
 	 */
+	public function getMethod() {
+		try {
+			return strtolower($this->method);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 *
+	 * @return string
+	 */
 	public function getName() {
 		try {
 			return $this->name;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 *
+	 * @return array
+	 */
+	public function getControls() {
+		try {
+			return $this->controls;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -188,14 +226,26 @@ class LBoxForm
 	 */
 	public function __toString() {
 		try {
-			$this->process();
+			// pridat antispam, pokud je zapnut
+			if ($this->isAntiSpamSet()) {
+				$this->controls[$this->getSpamDefenseControl()->getName()]	= $this->getSpamDefenseControl();
+			}
+			if ($this->wasSent()) {
+				
+			}
 			try {
 				$out 	 = "";
+				$this->process();
 				$out	.= $this->getTAL()->execute();
 			}
 			catch (Exception $e) {
 				// var_dump($e);
-
+				switch (get_class($e)) {
+					case "LBoxFormProcessor":
+						//TODO
+						NULL;
+						break;
+				}
 				$out 	 = "";
 				$out	.= "PHPTAL Exception thrown";
 				$out	.= "\n";
@@ -224,7 +274,6 @@ class LBoxForm
 
 	/**
 	 * prepina antispam kontrolu
-	 *
 	 * @param bool $antiSpamSet
 	 */
 	public function setAntiSpam($antiSpamSet	= false) {
@@ -254,10 +303,7 @@ class LBoxForm
 	 */
 	protected function process() {
 		try {
-			// pridat antispam, pokud je zapnut
-			if ($this->isAntiSpamSet()) {
-				$this->controls[$this->getSpamDefenseControl()->getName()]	= $this->getSpamDefenseControl();
-			}
+			if (!$this->wasSent()) return;
 			// zkontrolovat, jestli mame nastaven procesor
 			if (count($this->processors) < 1) {
 				throw new LBoxExceptionForm(LBoxExceptionForm::MSG_FORM_PROCESSOR_DOESNOT_EXISTS, LBoxExceptionForm::CODE_FORM_PROCESSOR_DOESNOT_EXISTS);
@@ -302,7 +348,9 @@ class LBoxForm
 			if ($this->spamDefenseControl instanceof LBoxFormControl) {
 				return $this->spamDefenseControl;
 			}
-			return $this->spamDefenseControl	= new LBoxFormControlSpamDefense();
+			$this->spamDefenseControl	= new LBoxFormControlSpamDefense();
+			$this->spamDefenseControl->setForm($this);
+			return $this->spamDefenseControl;
 		}
 		catch (Exception $e) {
 			throw $e;

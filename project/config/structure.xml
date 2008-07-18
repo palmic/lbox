@@ -4,5 +4,5 @@
 	<page id="600" url="/rss/" template="page_rss_articles.xml" class="PageRSSArticlesNews" title="RSS novinek" heading="RSS novinek" in_menu="0" rss="600" />
 	<page id="404" url="/404/" template="page_404.html" title="Stránka nebyla nalezena" heading="Stránka nebyla nalezena" in_menu="0" />
 	<page id="899" url="/sitemap.xml" class="PageSitemap09" template="sitemap09.xml" in_menu="0" />
-	<page id="999" url="/dev/" template="_page_dev.html" in_menu="0" />
+	<page id="999" url="/dev/" class="PageDev" heading="Development page" title="Development page" template="_page_dev.html" in_menu="0" />
 </pages>

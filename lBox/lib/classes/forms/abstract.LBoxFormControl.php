@@ -158,6 +158,19 @@ abstract class LBoxFormControl
 	}
 
 	/**
+	 * getter na form
+	 * @return LBoxForm form 
+	 */
+	public function getForm() {
+		try {
+			return $this->form;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * @return string
 	 *
 	 */
@@ -230,13 +243,29 @@ abstract class LBoxFormControl
 	public function getValue() {
 		try {
 			if ($this->value !== NULL) {
-				return $value;
+				return $this->value;
 			}
 			return $this->value	= $this->form->getSentDataByControlName($this->name);
 		}
 		catch (Exception $e) {
 			throw $e;
 		}
+	}
+
+	/**
+	 * getter na label
+	 * @return string
+	 */
+	public function getLabel() {
+		return $this->label;
+	}
+
+	/**
+	 * vraci svou defaultni hodnotu
+	 * @return string
+	 */
+	public function getDefault() {
+		return $this->default;
 	}
 
 	/**

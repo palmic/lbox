@@ -1,0 +1,4 @@
+<div tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
+	<label for="${id}">${SELF/getLabel} <input 	type="text" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]"
+			tal:attributes="value SELF/getValue | SELF/getDefault" /></label>
+</div>
