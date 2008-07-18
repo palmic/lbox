@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Config of DbControl php application -->
+<!--
+*** template of task config in prior syntax: ***
+
+<tasks>
+    <taskname>
+		<logon>0 or 1</logon> - Set writing of logs on. Not needed. Absence is like 0
+        <platform>platformname - in v1.3 you can select between mysql, mssql, odbc</platform>
+        <login>
+            <name>login name</name>
+            <password>login password</password>
+        </login>
+        <host>hostname</host>
+        <dsn>data source name ID exclusive for ODBC</dsn>
+		<schema>default database schema</schema>
+        <port>connection port - recomended for PostgreSQL</port>
+    </taskname>
+</tasks>
+-->
+<tasks>
+	<project>
+					<logon>0</logon>
+					<platform>mysql</platform>
+					<login>
+						<name>name</name>
+						<password></password>
+					</login>
+					<host>localhost</host>
+					<dsn>mysql</dsn>
+					<schema>schema</schema>
+					<port/>
+	</project>
+</tasks>

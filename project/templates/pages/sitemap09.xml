@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset tal:define="iterator structureIterator"
+	xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+	http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+   	<tal:block tal:repeat="node iterator">
+	<url tal:condition="node/in_menu"><loc>${host}${node/url}</loc></url>
+	<x tal:condition="node/hasChildrenInMenu" metal:USE-MACRO="pages_list"/>
+	</tal:block>  
+</urlset>
+<tal:block
+	metal:DEFINE-MACRO="pages_list"
+   	tal:DEFINE="iterator node/getChildren">
+   	<tal:block tal:repeat="node iterator">
+	<url tal:condition="node/in_menu"><loc>${host}${node/url}</loc></url>
+	<x tal:condition="node/hasChildrenInMenu" metal:USE-MACRO="pages_list"/>
+	</tal:block>  
+</tal:block>

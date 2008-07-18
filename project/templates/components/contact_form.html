@@ -1,0 +1,38 @@
+<div class="${SELF/getFormGroupName}">
+	<fieldset>
+		<legend>Napište nám</legend>
+		<form class="${SELF/getFormGroupName}" method="post" action="${form/target}"><table class="form">
+			<caption tal:condition="exists: sendReload">Formulář úspěšně odeslán, děkujeme.</caption>
+			<tbody>
+			<tr tal:define="control form/controls/name">
+				<td><label for="${control/id}"><strong tal:condition="control/required">*</strong>jméno<span class="description"> (max <tal:block tal:content="control/maxLength" /> znaků)</span>:</label></td>
+				<td><input type="text" id="${control/id}" name="${control/name}" value="${control/value}" tal:attributes="disabled control/disabled | default; class control/disabled | default; maxlength control/maxLength | default" /></td>
+				<td><tal:block tal:condition="exists:control/error">
+					<span class="error" tal:condition="exists:control/error/empty">Zadejte prosím jméno.</span>
+					<span class="error" tal:condition="exists:control/error/tooLong">zvolené jméno je moc dlouhé.</span>
+				</tal:block></td>
+			</tr>
+			<tr tal:define="control form/controls/email">
+				<td><label for="${control/id}"><strong tal:condition="control/required">*</strong>e-mail<span class="description"> (max <tal:block tal:content="control/maxLength" /> znaků)</span>:</label></td>
+				<td><input type="text" id="${control/id}" name="${control/name}" value="${control/value}" tal:attributes="disabled control/disabled | default; class control/disabled | default; maxlength control/maxLength | default" /></td>
+				<td><tal:block tal:condition="exists:control/error">
+					<span class="error" tal:condition="exists:control/error/invalid">Špatně vyplněný e-mail.</span>
+					<span class="error" tal:condition="exists:control/error/empty">Zadejte prosím e-mail.</span>
+					<span class="error" tal:condition="exists:control/error/tooLong">zvolený e-mail je moc dlouhý.</span>
+				</tal:block></td>
+			</tr>
+			<tr tal:define="control form/controls/text">
+				<td><label for="${control/id}"><strong tal:condition="control/required">*</strong>text:</label></td>
+				<td><textarea id="${control/id}" name="${control/name}" tal:content="control/value | default" cols="30" rows="5" /></td>
+				<td><tal:block tal:condition="exists:control/error">
+					<span class="error" tal:condition="exists:control/error/empty">zadej prosím alespoň nějaký text</span>
+					<span class="error" tal:condition="exists:control/error/tooLong">zvolený text je moc dlouhý</span>
+				</tal:block></td>
+			</tr>
+			<tr>
+				<td colspan="3"><input type="submit" name="${SELF/getFormGroupName}[submit]" value="uložit" /></td>
+			</tr>
+			</tbody></table>
+		</form>
+	</fieldset>
+</div>

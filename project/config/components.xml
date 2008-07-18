@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components>
+	<!-- layouts -->
+	<component id="layout_default" 						template="default.html" 							class="LayoutDefault" />
+
+	<!-- components -->
+	<component id="menu_main" 				template="menu_main.html" 				class="MenuMain" />
+	<component id="menu_main_one_level" 	template="menu_main_one_level.html" 	class="MenuMain" />
+	<component id="menu_sub" 				template="menu_sub.html" 				class="MenuSub" />
+	<component id="breadcrumb" 				template="breadcrumb.html" 				class="Breadcrumb" />
+	<component id="news_list" 				template="news_list.html" 				class="NewsList" />
+	<component id="discussion" 				template="discussion.html" 				class="Discussion" 			rss="32" />
+	<component id="login_form" 				template="login_form.html" 				class="LoginForm" />
+	<component id="box_last_news" 			template="box_last_news.html" 			class="BoxLastNews" />
+	<component id="xt_tray" 				template="xt_tray.html" 				class="XTTray" />
+	<component id="counter_acces" 			template="counter_acces.html" 			class="CounterAcces" />
+	<component id="sitemap" 				template="sitemap.html" 				class="Sitemap" />
+	<component id="contact_form"			template="contact_form.html" 			class="ContactForm" />
+</components>

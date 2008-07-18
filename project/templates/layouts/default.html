@@ -1,0 +1,19 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="cs" lang="cs">
+    <head>
+    <meta http-equiv="Content-type" content="application/xhtml+xml; charset=utf-8"/>
+    <title tal:content="SELF/page/title" />
+    <link rel="stylesheet" href="/css/css.css" type="text/css"/>
+    <!--[if lte IE 6]>
+        <link rel="stylesheet" href="/css/css-ie6.css" type="text/css" media="screen" />
+    <![endif]-->
+    <!--[if IE 7]>
+        <link rel="stylesheet" href="/css/css-ie7.css" type="text/css" media="screen" />
+    <![endif]-->
+	<link tal:condition="exists: SELF/page/rssPage" rel="alternate" type="application/rss+xml" href="${SELF/page/rssPage/url}" title="${SELF/page/rssPage/title}" />
+	</head>
+    <body>
+		<x tal:replace="structure lbox:component.menu_main" />
+		<x tal:replace="structure lbox:slot.content" />
+    </body>
+</html>

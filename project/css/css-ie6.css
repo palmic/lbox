@@ -1,0 +1,4 @@
+@media screen,projection {
+	body 			{ behavior: url(/css/iepngfix.htc); }
+	#menumain li 	{ behavior: url(/css/csshover.htc); }
+}

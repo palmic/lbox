@@ -1,0 +1,11 @@
+<div id="xt-tray" tal:condition="isLogged">
+	<div class="left">
+	</div>
+	<div class="right">
+		<tal:block tal:repeat="pageCFG pagesCFG">
+		<a href="${pageCFG/url}" title="${pageCFG/title}" tal:content="pageCFG/name_menu">name_menu</a>
+		<tal:block tal:condition="not: repeat/pageCFG/end"> | </tal:block>
+		</tal:block>
+		| <a class="logout" href="${urls/logout}" title="Odlogovat">Logout</a>
+	</div>
+</div>

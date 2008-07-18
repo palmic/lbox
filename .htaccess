@@ -1,0 +1,66 @@
+RewriteEngine On
+
+RewriteRule ^(.*).sql /
+RewriteRule ^(.*).gz /
+#RewriteRule ^(.*).xml /
+
+
+# download file - pri zmene upravit nastaveni system.xml
+RewriteCond %{REQUEST_URI} ^/nwod/le(.*)
+RewriteRule ^(.*) download.php%{QUERY_STRING} [L]
+
+# RewriteRule ^(.*)import/photogallery(.*) /
+RewriteRule ^gallery_import_images/(.*) project/import/photogallery/$1
+
+# pri zmene upravit nastaveni system.xml
+RewriteRule ^fotogalerie/(.*) project/filespace/photo/galleries/$1
+
+RewriteRule ^css/(.*) project/css/$1
+RewriteRule ^img/(.*) project/img/$1
+RewriteRule ^js/(.*) project/js/$1
+RewriteRule ^flash/(.*) project/flash/$1
+RewriteRule ^wsw/(.*) project/wsw/$1
+RewriteRule ^wsw_filespace/(.*) project/filespace/wsw_files/$1
+RewriteRule ^api/(.*) project/api/$1
+RewriteRule ^ajaxfilemanager/(.*) project/wsw/ajaxfilemanager/$1
+RewriteRule ^crypt/(.*) project/crypt/$1
+RewriteRule ^filespace/(.*) project/filespace/$1
+
+RewriteRule ^data_test/(.*) project/data/test/$1
+
+
+
+RewriteRule ^doc/(.*) project/documents/doc/html/$1
+RewriteRule ^phpunit/(.*) project/documents/tests/PHPUnit/reports/$1
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*) index.php?%{QUERY_STRING} [L]
+
+
+
+# lighttpd equivalent configuration:
+# 
+# $HTTP["host"] == "lbox.localhost.cz" {
+#             server.document-root = "/windows/E/www/LBox"
+# 	    url.rewrite-once = (
+#        	"^(.*).sql$" => "/",
+#        	"^(.*).gz$" => "/",
+#         	# "^(.*).xml$" => "/",
+#         	"^/css/(.*)$" => "/project/css/$1",
+#         	"^/img/(.*)$" => "/project/img/$1",
+#         	"^/js/(.*)$" => "/project/js/$1",
+#         	"^/flash/(.*)$" => "/project/flash/$1",
+#         	"^/wsw/(.*)$" => "/project/wsw/$1",
+#         	"^/wsw_filespace/(.*)$" => "/project/filespace/wsw_files/$1",
+#         	"^/api/(.*)$" => "/project/api/$1",
+#         	"^/ajaxfilemanager/(.*)$" => "/project/wsw/ajaxfilemanager/$1",
+#         	"^/crypt/(.*)$" => "/project/crypt/$1",
+#         	"^/filespace/(.*)$" => "/project/filespace/$1",
+#         	"^/data_test/(.*)$" => "/project/data/test/$1",
+#         	"^/doc/(.*)$" => "/project/documents/doc/html/$1",
+#         	"^/phpunit/(.*)$" => "/project/documents/tests/PHPUnit/reports/$1",
+# 
+#         	"^(.*)$" => "/index.php?$1",
+# 		)
+# }

@@ -1,0 +1,554 @@
+<?php
+
+/**
+ * abstract class - parent of classes to handling with database records collection
+ * need DbControl class!
+ * @author Michal Palma <palmic at email dot cz>
+ * @date 2006-02-07
+ */
+abstract class AbstractRecords implements Iterator
+{
+
+	//== Attributes ======================================================================
+
+	/**
+	 * Filter for load records in form $filter["columnname"] = "value"
+	 * @var array
+	 */
+	protected $filter;
+
+	/**
+	 * order for load records in form $order["colname"] = >0 for asc, <1 for desc
+	 * @var array
+	 */
+	protected $order;
+
+	/**
+	 * limit rulle spec in array form: $limit = array(min, length). For example $limit = array(1, 10)
+	 * @var array
+	 */
+	protected $limit;
+
+	/**
+	 * direct where parameters in string to add. Prior form is whithout where keyword
+	 * @var string
+	 */
+	protected $whereAdd;
+
+	/**
+	 * Loaded records array
+	 * @var array
+	 */
+	protected $records = array();
+
+	/**
+	 * Do not automatic load flag used by static records collection created thrue addRecord() method
+	 * @var boolean
+	 */
+	protected $doNotLoad = false;
+
+	/**
+	 * Current Loaded records array position
+	 * @var integer
+	 */
+	protected $key = 0;
+
+	/**
+	 * database result resource for loading records
+	 * @var resource
+	 */
+	protected $dbResult;
+
+	/**
+	 * database connection class instance
+	 * @var db
+	 */
+	protected $db;
+
+	/**
+	 * count of records
+	 * @var integer
+	 */
+	protected $count = false;
+
+	/**
+	 * Name of class to create collection items - need to be specified in child class as PUBLIC STATIC!!!
+	 * @var string
+	 */
+	public static $itemType;
+
+	/**
+	 * isTree table flag - do not define it its only cache of isTree() method
+	 * @var bool
+	 */
+	protected $isTree;
+
+	/**
+	 * cache array of class vars
+	 * @var array
+	 */
+	private $cacheClassVars = array();
+
+	//== constructors ====================================================================
+
+	/**
+	 * constructor
+	 * @param string $mode         - tree or list mode
+	 * @param array  $filter         - associated array with filter parameters in form $filter[$colname] = $colvalue
+	 * @param array  $order 			- for load records in form $order["colname"] = >0 for asc, <1 for desc
+	 * @param array  $limit 			- for limit rule  in form $limit = array(min, max). For example $limit = array(1, 10)
+	 * @param string $whereAdd		- direct where parameters in string to add. Prior form is whithout where keyword
+	 */
+	public function __construct($filter = false, $order = false, $limit = false, $whereAdd = "") {
+		if (is_array($filter)) {
+			foreach($filter as $f_key => $f_value) {
+				if (empty($f_value) && (!is_string($f_value))) {
+					throw new LBoxException("You inserted empty filter parameter '$f_key'! ");
+				}
+			}
+		}
+		$this->mode					= $mode;
+		$this->filter           	= $filter;
+		$this->order           		= $order;
+		$this->limit           		= $limit;
+		$this->whereAdd				= $whereAdd;
+	}
+
+	//== destructors ====================================================================
+	//== public functions ===============================================================
+
+	/**
+	 * array iterator acces interface part
+	 */
+	public function rewind() {
+		@reset($this->records);
+	}
+
+	/**
+	 * array iterator acces interface part
+	 */
+	public function valid() {
+		try {
+			$itemType = $this->getClassVar("itemType");
+			if (!is_a(@current($this->records), $itemType)) {
+				$this->loadNext();
+			}
+			if (!is_a(@current($this->records), $itemType)) {
+				return false;
+			}
+			return true;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * array iterator acces interface part
+	 */
+	public function key() {
+		try {
+			// we want use database primary key of record like key
+			$itemType = $this->getClassVar("itemType");
+			$idColName  = eval("return $itemType::\$idColName;");
+			return $this->records[$this->key]->$idColName;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * array iterator acces interface part
+	 * @return AbstractRecord
+	 */
+	public function current() {
+		$itemType = $this->getClassVar("itemType");
+		if (!is_a(@current($this->records), $itemType)) {
+			try {
+				$this->loadNext();
+			}
+			catch (Exception $e) {
+				throw $e;
+			}
+		}
+		return current($this->records);
+	}
+
+	/**
+	 * array iterator acces interface part
+	 */
+	public function next() {
+		next($this->records);
+	}
+
+	/**
+	 * return collection items count
+	 */
+	public function count() {
+		try {
+			if (!is_resource($this->dbResult)) {
+				$this->getDbResult();
+			}
+			return (int)$this->count;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * sort records by parameter. Try to use constructor parameter order if posible. This method cause BIG degrade of performance!
+	 * @param $by to specify which record parameter to use in sort
+	 */
+	public function sort($by) {
+		try {
+			$this->loadAll();
+
+			foreach($this->records as $record_id => $record) {
+				$record_ids[$record_id] = $record->$by;
+			}
+			natcasesort($record_ids);
+			reset($record_ids);
+			foreach($record_ids as $record_id => $sv) {
+				$sorted_records[] = $this->records[$record_id];
+			}
+			$this->records = $sorted_records;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * add record
+	 * @param AbstractRecord $record - record to add to collection
+	 */
+	public function addRecord($record) {
+		try {
+			if (!is_a($record, $this->getClassVar("itemType"))) {
+				throw new LBoxException("Object of ". get_class($this) ." class accept only object of ". $this->getClassVar("itemType") ." class");
+			}
+			array_push($this->records, $record);
+			$this->doNotLoad = true;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * return current child class idColName
+	 * @return string
+	 */
+	public function getIdColName() {
+		try {
+			$itemType = $this->getClassVar("itemType");
+			return eval("return $itemType::\$idColName;");
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * empty loaded data - trigger to load table data again
+	 */
+	public function reset() {
+		$this->records	= array();
+		$this->dbResult = NULL;
+	}
+
+	//== protected functions ===============================================================
+
+	/**
+	 * load next record from database into array
+	 */
+	protected function loadNext() {
+		try {
+			if ($this->doNotLoad) {
+				return false;
+			}
+			if (!$this->getDbResult()->next()) {
+				return false;
+			}
+			// fill record for NO MORE ADDITIONAL DB QUERY IN EVERY RECORD posibility - optimalization
+			$itemType 		= $this->getClassVar("itemType");
+			$record 		= $this->getDbResult()->get();
+			$recordRef 		= new $itemType();
+			foreach ($record as $colName => $colValue) {
+				if (in_array($colName, $recordRef->getClassVar("passwordColNames", $force = true))) {
+					continue;
+				}
+				if (!$this->isTreeKey($colName)) {
+					$recordRef->$colName = $colValue;
+				}
+				else {
+					$recordRef->setTreeKey($colName, $colValue);
+				}
+			}
+			array_push($this->records, $recordRef);
+
+			// set synchronized-with-db = true to optimize performance (Record shall load data again otherwise)
+			$recordRef->setSynchronized(true);
+			return true;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * load all remaining records into array
+	 */
+	protected function loadAll() {
+		try {
+			while($this->loadNext()) {
+				null;
+			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+
+	/**
+	 * getter for database result resource with list of items limited by $filter and ordered by $order
+	 */
+	protected function getDbResult() {
+		if (!is_a($this->dbResult, "DbResultInterface")) {
+			try {
+				// get essential values from used classes. Must flexible accept possibility of using any AbstractRecord-child class
+				$itemType 	= $this->getClassVar("itemType");
+				$treeColNames = eval("return $itemType::\$treeColNames;");
+				$idColName 	= eval("return $itemType::\$idColName;");
+				$pidColName	= $treeColNames[2];
+				$tableName 	= eval("return $itemType::\$tableName;");
+				if (empty($idColName)) {
+					throw new LBoxException("Static variable $itemType::idColName is empty or not exists!");
+				}
+				if (empty($tableName)) {
+					throw new LBoxException("Static variable $itemType::tableName is empty or not exists!");
+				}
+
+				$sql 		= "SELECT * FROM `". $tableName ."`";
+				$countSql	= "SELECT count($idColName) count FROM `". $tableName ."`";
+
+				// set where clause by $filter items
+				$passwordColNames	= eval("return $itemType::\$passwordColNames;");
+				@reset($this->filter);
+				$fcur = @current($this->filter);
+				if ((!empty($fcur)) || ((int)$fcur === 0)) {
+					$where = "";
+					if ($this->filter !== false) {
+						foreach ((array)$this->filter as $fName => $fValue) {
+							// for numeric values
+							if (is_numeric($fValue)) {
+								$value = $fValue;
+							}
+							// for other values
+							else {
+								$value = "'".mysql_escape_string($fValue)."'";
+							}
+	
+							if (strlen($where) > 0) {
+								$where .= " AND ";
+							}
+							// password columns
+							if (in_array($fName, $passwordColNames)) {
+								$where .= " UCASE($fName)=UCASE(PASSWORD($value))";
+							}
+							// other columns
+							else {
+								if (is_numeric($value)) {
+									$where .= " $fName=$value";
+								}
+								else {
+									$where .= " $fName=$value";
+								}
+							}
+						}						
+					}
+
+				}
+				// add whereAdd addition
+				if (strlen($this->whereAdd) > 0) {
+					// try to reach posibility of redundant WHERE keyword
+					if (is_numeric($pos = stripos($this->whereAdd, "WHERE")) ) {
+						$this->whereAdd = trim(substr($this->whereAdd, $pos + 6));
+					}
+					if (strlen($where) < 1) {
+						$where = $this->whereAdd;
+					}
+					else {
+						$where  = "(". $where .")";
+						$where .= " AND ";
+						$where .= "(". $this->whereAdd .")";
+					}
+				}
+				if (strlen($where) > 0) {
+					$sql 		.= " WHERE ". $where;
+					$countSql 	.= " WHERE ". $where;
+				}
+
+				// set order rulle by $order values
+				if (is_array($this->order)) {
+					$order = "";
+					foreach($this->order as $orderColName => $orderType) {
+						if (strlen($order) > 0) {
+							$order .= ", ";
+						}
+						if (strlen($orderColName) < 1) {
+							continue;
+						}
+						$order .= " ". $orderColName;
+						if ($orderType < 1) {
+							$order .= " DESC";
+						}
+					}
+					$sql .= " ORDER BY ". $order;
+				}
+
+				// set limit
+				if ($this->limit) {
+					if (count($this->limit) != 2) {
+						throw new LBoxException("Constructor parameter \$limit of class ". get_class($this) ." accept only array with two numeric values!");
+					}
+					$limit = "";
+					foreach ($this->limit as $value) {
+						if (!is_numeric($value)) {
+							throw new LBoxException("Constructor parameter \$limit of class ". get_class($this) ." accept only array with two numeric values!");
+						}
+						if (strlen($limit) > 0) {
+							$limit .= ", ";
+						}
+						$limit .= $value;
+					}
+					$sql 		.= " LIMIT ". $limit;
+				}
+
+				// call created SQL query for get count on db
+				$this->getDb()->setQuery($countSql, true);
+				$countResult = $this->getDb()->initiate();
+				$this->count = is_numeric($countResult->count) ? $countResult->count : 0;
+				// mysql cannot get select count(*) from table limit 1, 10!!! hack:
+				if (($this->count > 0) && (is_array($this->limit) && count($this->limit) > 0)) {
+					$this->count -= $this->limit[0];
+					$this->count = ($this->count > $this->limit[1]) ? $this->limit[1] : $this->count;
+					if ($this->count < 0) {
+						$this->count = 0;
+					}
+				}
+
+				// call created SQL query on db
+				$this->getDb()->setQuery($sql, true);
+				$this->dbResult = $this->getDb()->initiate();
+				if (!is_a($this->dbResult, "DbResultInterface")) {
+					throw new LBoxException("Cannot get result of database query");
+				}
+			}
+			catch(Exception $e) {
+				throw $e;
+			}
+		}
+		return $this->dbResult;
+	}
+
+	/**
+	 * checks if given column name is tree key
+	 * @param string $name - column name
+	 * @return bool
+	 */
+	protected function isTreeKey($name = "") {
+		if (strlen($name) < 1) return false;
+		try {
+			$itemType 		= $this->getClassVar("itemType");
+			$treeColNames  	= eval("return $itemType::\$treeColNames;");
+			foreach ($treeColNames as $treeColName) {
+				if ($treeColName == $name) return true;
+			}
+			return false;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * getter of db class instance
+	 * @return DbControlInterface
+	 */
+	protected function getDb() {
+		try {
+			if (!is_a($this->db, "DbControlInterface")) {
+				$itemType = $this->getClassVar("itemType");
+				$dbName 	= eval("return $itemType::\$dbName;");
+				$this->db 	= new DbControl(AbstractRecord::$task, AbstractRecord::$charset);
+				if (strlen($dbName) > 0) {
+					$this->db->selectDb($dbName);
+				}
+			}
+			return $this->db;
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * getter of static variable from child class
+	 * @param string $varname - Name of child class static variable
+	 * @param boolean $force - set to true for no-exception in case of missing value
+	 */
+	protected function getClassVar($varName, $force = false) {
+		if (!is_string($varName)) {
+			throw new LBoxException("Bad parameter varName, must be string!");
+		}
+		if ($this->cacheClassVars[$varName]) {
+			return $this->cacheClassVars[$varName];
+		}
+		$className = get_class($this);
+		$value = eval("return $className::\$$varName;");
+		if ( (!$force) && ($value === NULL) ) {
+			throw new LBoxException("Static variable $className::$varName is empty or not exists!");
+		}
+		return $this->cacheClassVars[$varName] = $value;
+	}
+
+	/**
+	 * Check if table has tree structure
+	 * @return bool
+	 * @throws Exception
+	 */
+	protected function isTree() {
+		try {
+			if (is_bool($this->isTree)) {
+				return $this->isTree;
+			}
+			$className 		= get_class($this);
+			$itemType		= $this->getClassVar("itemType");
+			$tableName		= eval("return $itemType::\$tableName;");
+			$columns 		= eval("return $itemType::\$treeColNames;");
+			$this->getDb()->setQuery("SELECT `<1>` FROM  `$tableName` LIMIT 1");
+			foreach ($columns as $column) {
+				try {
+					$this->getDb()->initiate($column);
+				}
+				catch (DbControlException $e) {
+					// throw $e;
+					// column does not found - table is not tree
+					$this->isTree = false;
+					return $this->isTree;
+					break;
+				}
+			}
+			$this->isTree = true;
+			return $this->isTree;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+}
+?>

@@ -1,0 +1,23 @@
+<div id="sitemap" tal:define="iterator structureIterator">
+	<h3>Struktura stránek webu</h3>
+	<ul>
+	   	<tal:block tal:repeat="node iterator">
+		<li tal:condition="node/in_menu">
+			<a title="${node/title}" href="${node/url}">${node/heading}</a>
+			<x tal:condition="node/hasChildrenInMenu" metal:USE-MACRO="pages_list"/>
+		</li>
+		</tal:block>
+	</ul>  
+</div>
+<tal:block
+	metal:DEFINE-MACRO="pages_list"
+   	tal:DEFINE="iterator node/getChildren">
+	<ul>
+	   	<tal:block tal:repeat="node iterator">
+		<li tal:condition="node/in_menu">
+			<a title="${node/title}" href="${node/url}">${node/heading}</a>
+		</li>
+		<x tal:condition="node/hasChildrenInMenu" metal:USE-MACRO="pages_list"/>
+		</tal:block>
+	</ul>  
+</tal:block>

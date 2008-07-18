@@ -1,0 +1,10 @@
+.cache*
+.settings*
+.project
+*.log
+lBox/cache*
+lBox/documents*
+project/documents*
+project/filespace*
+project/import*
+project/tal_compiled*

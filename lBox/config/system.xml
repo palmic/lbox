@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<system>
+	<photogallery>
+		<import>
+			<path_virtual>/gallery_import_images</path_virtual>
+			<path>$project/import/photogallery</path>
+		</import>
+		<!-- pri zmene pozor na .htacces -->
+		<filespace>$project/filespace/photo/galleries</filespace>
+		<output>
+			<!-- Virtualni cesta k fotogaleriim - musi byt namapovana v .htacces na fyzicke umisteni <filespace> fotogalerii -->
+			<path_virtual>/fotogalerie</path_virtual>
+		</output>
+	</photogallery>
+	<download>
+		<!-- pri zmene pozor na .htacces -->
+		<filespace>$project/filespace/files</filespace>
+		<output>
+			<!-- Virtualni cesta k souborum - musi byt namapovana v .htacces na fyzicke umisteni download filu -->
+			<path_virtual>/nwod/le</path_virtual>
+		</output>
+	</download>
+	<pages>
+		<classes>
+			<default>PageDefault</default>
+		</classes>
+		<templates>
+			<path>$project/templates/pages</path>
+			<default>default.html</default>
+		</templates>
+		<page404>404</page404>
+	</pages>
+	<components>
+		<classes>
+			<default>ComponentDefault</default>
+		</classes>
+		<templates>
+			<path>$project/templates/components</path>
+		</templates>
+	</components>
+	<layouts>
+		<classes>
+			<default>LayoutDefault</default>
+		</classes>
+		<templates>
+			<path>$project/templates/layouts</path>
+		</templates>
+	</layouts>
+	<output>
+		<tal>
+			<PHPTAL_FORCE_REPARSE>0</PHPTAL_FORCE_REPARSE>
+		</tal>
+		<paging>
+			<paging_by_default>10</paging_by_default>
+			<!-- Je treba davat vsechny casti do zavorek kuli spravnemu parserovani pri sestavovani dynamickych odkazu strankovani, jinak se to podela -->
+			<paging_url_param_pattern>^(stranka-)([0-9]+)$</paging_url_param_pattern>
+			<!-- nutne kuli generovani dynamickych linku - preparserovanim teto hodnoty patternem vyse ziskame pole hodnot k sestavovani odkazu -->
+			<paging_url_param_example>stranka-32</paging_url_param_example>
+		</paging>
+		<remove_coments>0</remove_coments>
+	</output>
+	<xt>
+		<remember_cookie_days>30</remember_cookie_days><!-- kolik dni ma vydrzet cookie s persistenci XT loginu -->
+	</xt>
+	<debug>
+		<components>0</components>
+	</debug>
+</system>

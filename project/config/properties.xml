@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+	
+	<!--property name="contact_form_addresses">info@$domain_email</property--><!-- cilove mailove adresy kontaktnich formularu (oddelovat carkou) -->
+	<property name="contact_form_addresses">info@lbox.cz</property><!-- cilove mailove adresy kontaktnich formularu (oddelovat carkou) -->
+	
+	<property name="web_title">lbox.cz</property><!-- title webu pouzivany na homepage a v ostatnich strankach dynamicky ve vzorech -->
+	<property name="page_title_pattern">$page_title &lt; $properties_web_title</property><!-- vzor titlu stranky -->
+	<property name="page_home_title_pattern">$properties_web_title</property><!-- vzor titlu homepage -->
+	<property name="page_title_pattern_article">$article_name &lt; $properties_web_title</property><!-- vzor titlu stranky zobrazujici clanek -->
+	<property name="page_title_pattern_party">$properties_web_title | party: $party_name</property><!-- vzor titlu stranky zobrazujici detail party -->
+	<property name="page_title_pattern_photogallery">$properties_web_title | fotogalerie: $photogallery_name</property><!-- vzor titlu stranky zobrazujici clanek -->
+	<property name="page_rss_title_pattern">$page_title na lbox.cz</property><!-- vzor titlu RSS stranky -->
+	<property name="page_rss_discussion_article_title_pattern">$page_title článku $article_heading na lbox.cz</property><!-- vzor titlu RSS stranky komentaru clanku -->
+	<property name="page_rss_discussion_party_title_pattern">$page_title party $article_heading na $properties_web_title</property><!-- vzor titlu RSS stranky komentaru party -->
+	<property name="page_rss_discussion_guestbook_title_pattern">$page_title guestbooku na lbox.cz</property><!-- vzor titlu RSS stranky komentaru guestbooku -->
+
+	<property name="photogallery_thumbnail_size_longer">200</property>
+	<property name="photogallery_image_size_limit_longer">640</property><!-- 0 bez limitu -->
+	<property name="photogallery_thumbnails_rows">3</property><!-- 0 bez limitu -->
+	<property name="photogallery_thumbnails_cols">4</property><!-- 0 bez limitu -->
+	<property name="photogallery_ref_page">6</property><!-- id stranky zobrazujici galerii -->
+
+	<!-- jednotlive clanky musi zobrazovat pouze jedna stranka at uz jde o jakykoli typ -->
+	<!-- RSS diskuzi selectuje prispevky podle ID, ktere obsahuje - prispevky zobrazene na jinych strankach by byly ignorovane -->
+	<property name="ref_page_guestbook">99</property><!-- id stranky zobrazujici guestbook -->
+	<property name="ref_page_article">45</property><!-- id stranky zobrazujici clanek -->
+	<property name="ref_page_party"></property><!-- id stranky zobrazujici detail party -->
+	<property name="ref_page_articles">44</property><!-- id stranky zobrazujici strankovany seznam clanku -->
+	<property name="ref_page_articles_news">44</property><!-- id stranky zobrazujici strankovany seznam clanku - novinek -->
+	
+	<property name="ref_page_downloads">5</property><!-- id stranky zobrazujici downloady -->
+
+	<property name="ref_page_xt_admin">700</property><!-- id stranky, pro extranet admin -->
+	<property name="ref_page_xt_login">701</property><!-- id stranky, pro xt login, pokud je na to nejaka specialni -->
+
+	<property name="ref_page_xt_registration">20</property><!-- id stranky s registraci usera -->
+	<property name="ref_page_xt_admin_articles">710</property><!-- id stranky s editaci clanku -->
+	<property name="ref_page_xt_admin_parties"></property><!-- id stranky s editaci parties -->
+	<property name="ref_page_xt_admin_djcharts"></property><!-- id stranky s editaci DJ charts -->
+	<property name="ref_page_xt_admin_clubs"></property><!-- id stranky s editaci clubu -->
+	<property name="ref_page_xt_admin_cities"></property><!-- id stranky s editaci mesta -->
+	<property name="ref_page_xt_admin_download"></property><!-- id stranky s editaci downloadu -->
+	<property name="ref_page_rss_download"></property><!-- id stranky s RSS downloadu -->
+	<property name="ref_page_rss_parties"></property><!-- id stranky s RSS parties -->
+	<property name="ref_page_rss_photogalleries"></property><!-- id stranky s RSS fotogalerii -->
+	<property name="ref_page_registration_confirm"></property><!-- id stranky, ktera potvrzuje confirm registrace -->
+	
+	<!-- javascriptova spamdefense ve formu diskuze - neprustrelna ochrana, ktera ale vyzaduje od regulerniho uzivatele zapnuty javascript 1/0 -->
+	<property name="form_spamdefense_js_discussion">1</property>
+	
+	<!-- 0 bez limitu, ponechat prazdne pro prebrani globalni default hodnoty strankovani ze system configu -->
+	<property name="news_list_limit">4</property><!-- komponenta news_list -->
+	<property name="box_last_news_limit">3</property><!-- komponenta box_last_news -->
+	<property name="articles_list_paging">10</property><!-- stranka PageArticles -->
+	<property name="articles_news_list_paging">5</property><!-- stranka PageArticlesNews -->
+	<property name="downloads_paging">5</property>
+	<property name="photogalleries_paging">10</property>
+	<property name="admin_partylist_paging">10</property>
+
+	<!-- tyto hodnoty se davaji natvrdo, to znamena, ze kdyz zde bude 0, pouzije se jako maxlength formularoveho pole opravdu 0 -->
+	<property name="form_max_length_discussion_title">50</property>
+	<property name="form_max_length_discussion_text">250</property>
+	<property name="form_max_length_nick">15</property>
+	<property name="form_max_length_email">20</property>
+	<property name="form_max_length_www">20</property>
+	<property name="form_max_length_name">20</property>
+	<property name="form_max_length_surname">20</property>
+
+	<!-- required polozky verejnych formularu 1/0 ano/ne -->
+	<!-- registrace/uprava profilu -->
+	<property name="form_required_registration_name">0</property>
+	<property name="form_required_registration_surname">0</property>
+	<property name="form_required_registration_email">1</property>
+	<property name="form_required_registration_www">0</property>
+	<!-- diskuze -->
+	<property name="form_required_discussion_email">0</property>
+	<property name="form_required_discussion_www">0</property>
+
+	<property name="djs_charts_tracks_num">5</property>
+
+	<!-- pocty RSS items -->
+	<property name="rss_articles_num">20</property>
+	<property name="rss_downloads_num">20</property>
+	<property name="rss_parties_num">20</property>
+	<property name="rss_photogalleries_num">20</property>
+	<property name="rss_discussions_posts_num">40</property>
+
+	<!-- odesilatel confirm mailu registrace -->
+	<property name="registration_confirm_mail_from">info@project</property>
+	<!-- subject confirm mailu registrace -->
+	<property name="registration_confirm_mail_subject">Potvrzeni registrace na webu</property>
+	<!-- sablona tela confirm mailu registrace -->
+	<property name="registration_confirm_mail_body">
+		Pro potvrzeni sve registrace na webu vyuzij tento link: $link .
+	</property>
+
+</properties>
