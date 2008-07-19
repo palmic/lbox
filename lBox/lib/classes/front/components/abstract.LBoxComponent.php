@@ -485,7 +485,7 @@ abstract class LBoxComponent
 			$pageLimit 				= $pageLimit 	> 0 ? $pageLimit 	: 99999;
 			$pagesCount 			= ceil($itemsCount/$pageLimit);
 			$out["info"][]			= ($this->getPagingCurrent()-1) * $pageLimit + 1;
-			$out["info"][]			= $this->getPagingCurrent() + $pageLimit > $itemsCount ? $itemsCount : $this->getPagingCurrent() + $pageLimit-1;
+			$out["info"][]			= $this->getPagingCurrent() * $pageLimit > $itemsCount ? $itemsCount : $this->getPagingCurrent() * $pageLimit;
 			$out["prevous"]			= $this->getPagingCurrent() > 1 ? $this->getPageURLByIndex($this->getPagingCurrent()-1) : "";
 			$out["next"]			= $this->getPagingCurrent()*$pageLimit < $itemsCount ? $this->getPageURLByIndex($this->getPagingCurrent()+1) : "";
 			return $out;
