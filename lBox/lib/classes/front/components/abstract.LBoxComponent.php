@@ -433,8 +433,8 @@ abstract class LBoxComponent
 		if (!is_numeric($pageLimit)) {
 			throw new LBoxExceptionPage("\$pageLimit ". LBoxExceptionPage::MSG_PARAM_INT, LBoxExceptionPage::CODE_BAD_PARAM);
 		}
-		if (!is_numeric($pageLimit)) {
-			throw new LBoxExceptionPage("\$pagesCount ". LBoxExceptionPage::MSG_PARAM_INT, LBoxExceptionPage::CODE_BAD_PARAM);
+		if (!is_numeric($pagesRange)) {
+			throw new LBoxExceptionPage("\$pagesRange ". LBoxExceptionPage::MSG_PARAM_INT, LBoxExceptionPage::CODE_BAD_PARAM);
 		}
 		
 		$pageLimit 				= $pageLimit 	> 0 ? $pageLimit 	: 99999;
@@ -461,10 +461,40 @@ abstract class LBoxComponent
 		if ($this->getPagingCurrent() + $pagesRange < $pagesCount) {
 			$out[">>"]	= $this->getPageURLByIndex($pagesCount);
 		}
-
 		return $out;
 	}
 	
+	/**
+	 * Vraci jednoduche strankovani (previous/next)
+	 * @param int $itemsCount
+	 * @param int $pageLimit
+	 * @return array
+	 * @throws LBoxExceptionPage
+	 */
+	protected function getPagingSimple($itemsCount = 0, $pageLimit = 0) {
+		try {
+			if (!is_numeric($itemsCount) || $itemsCount < 1) {
+				throw new LBoxExceptionPage("\$itemsCount ". LBoxExceptionPage::MSG_PARAM_INT_NOTNULL, LBoxExceptionPage::CODE_BAD_PARAM);
+			}
+			if (!is_numeric($pageLimit)) {
+				throw new LBoxExceptionPage("\$pageLimit ". LBoxExceptionPage::MSG_PARAM_INT, LBoxExceptionPage::CODE_BAD_PARAM);
+			}
+			if (!is_numeric($pageLimit)) {
+				throw new LBoxExceptionPage("\$pagesCount ". LBoxExceptionPage::MSG_PARAM_INT, LBoxExceptionPage::CODE_BAD_PARAM);
+			}
+			$pageLimit 				= $pageLimit 	> 0 ? $pageLimit 	: 99999;
+			$pagesCount 			= ceil($itemsCount/$pageLimit);
+			$out["info"][]			= ($this->getPagingCurrent()-1) * $pageLimit + 1;
+			$out["info"][]			= $this->getPagingCurrent() + $pageLimit > $itemsCount ? $itemsCount : $this->getPagingCurrent() + $pageLimit-1;
+			$out["prevous"]			= $this->getPagingCurrent() > 1 ? $this->getPageURLByIndex($this->getPagingCurrent()-1) : "";
+			$out["next"]			= $this->getPagingCurrent()*$pageLimit < $itemsCount ? $this->getPageURLByIndex($this->getPagingCurrent()+1) : "";
+			return $out;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
 	/**
 	 * vrati URL stranky podle predaneho poradi
 	 * @param int $index
