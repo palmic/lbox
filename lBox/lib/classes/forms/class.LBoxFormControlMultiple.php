@@ -51,22 +51,38 @@ class LBoxFormControlMultiple extends LBoxFormControl
 	}
 
 	/**
-	 *
 	 * @param LBoxFormControl control 
 	 */
 	public function addControl(LBoxFormControl $control = NULL ) {
 		try {
-			// kontrola unikatnosti mezi sebou
-			if (array_key_exists($control->getName(), $this->controls)) {
-				throw new LBoxExceptionForm($control->getName() .": ". LBoxExceptionForm::MSG_FORM_CONTROL_DOES_EXISTS, LBoxExceptionForm::CODE_FORM_CONTROL_DOES_EXISTS);
+			// multiple rozdelime a prekontrolujeme zvlast
+			if ($control instanceof LBoxFormControlMultiple) {
+				foreach ($control->getControls() as $subControl) {
+					if (array_key_exists($subControl->getName(), $this->controls)) {
+						throw new LBoxExceptionForm($control->getName() .": ". LBoxExceptionForm::MSG_FORM_CONTROL_DOES_EXISTS, LBoxExceptionForm::CODE_FORM_CONTROL_DOES_EXISTS);
+					}
+					$this->controls[$subControl->getName()]	= $subControl;
+					if ($this->form) {
+						$control->setForm($this->form);
+						$this->form->addControl($control);
+					}
+				}
 			}
-			$this->controls[$control->getName()]	= $control;
-			/* pokud uz je nastaven form, musime provest kontrolu sub-controls na unikatnost apod - podle toho co Form vyzaduje
-			 * toto si sama zaridi metoda LBoxForm::addControl(LBoxFormControlMultiple)
-			 */
-			if ($this->form) {
-				$control->setForm($this->form);
-				$this->form->addControl($this);
+			else {
+				// kontrola unikatnosti sub controls mezi sebou
+				if (array_key_exists($control->getName(), $this->controls)) {
+					throw new LBoxExceptionForm($control->getName() .": ". LBoxExceptionForm::MSG_FORM_CONTROL_DOES_EXISTS, LBoxExceptionForm::CODE_FORM_CONTROL_DOES_EXISTS);
+				}
+				$this->controls[$control->getName()]	= $control;
+				$control->setIsSubControl();
+				
+				/* pokud uz je nastaven form, musime provest kontrolu sub-controls na unikatnost apod - podle toho co Form vyzaduje
+				 * toto si sama zaridi metoda LBoxForm::addControl(LBoxFormControlMultiple)
+				 */
+				if ($this->form) {
+					$control->setForm($this->form);
+					$this->form->addControl($this);
+				}
 			}
 		}
 		catch (Exception $e) {
@@ -90,21 +106,40 @@ class LBoxFormControlMultiple extends LBoxFormControl
 	/**
 	 * prepsano o processing controls, ktere obsahuje
 	 * jeste pred tim, samozrejme spousti sve multiple validatory
+	 * v pripade chyby nektereho z validatoru, vrati false, jinak true
+	 * @return bool
 	 */
 	public function process() {
 		try {
 			if ($this->processed) {
 				return;
 			}
+			$controlInvalid	= false;
 			// nejdriv validace jednnotlivych controls
 			foreach ($this->controls as $control) {
-				$control->process();
+				if (!$control->process()) {
+					$controlInvalid	= true;
+				}
 			}
 			// potom multiple validace
 			foreach ($this->validators as $validator) {
-				$validator->validate($this);
+				try {
+					$validator->validate($this);
+				}
+				catch (Exception $e) {
+					switch (true) {
+						// chyba ve validaci
+						case ($e instanceof LBoxExceptionFormValidator):
+								$this->exceptionsValidations[$e->getCode()]	= $e;
+							break;
+						default:
+							throw $e;
+					}
+				}
 			}
 			$this->processed	= true;
+			if 		($controlInvalid) 	return false;
+			else						return (count($this->exceptionsValidations) < 1);
 		}
 		catch (Exception $e) {
 			throw $e;

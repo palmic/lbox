@@ -1,5 +1,8 @@
 <?php
-class ProcessorRegistration extends LBoxFormProcessor
+/**
+ * processor loguje uzivatele pomoci email pole (email je pouzit jako nick)
+ */
+class ProcessorLoginEmail extends LBoxFormProcessor
 {
 	public function process() {
 		try {
@@ -9,7 +12,8 @@ class ProcessorRegistration extends LBoxFormProcessor
 													"password" => $this->form->getSentDataByControlName("password"),
 			));
 			if ($records->count() < 1) {
-				throw new LBoxExceptionFormProcessor();
+				throw new LBoxExceptionFormProcessorLogin(	LBoxExceptionFormProcessorLogin::MSG_FORM_PROCESSOR_LOGIN_UNCORRECT,
+															LBoxExceptionFormProcessorLogin::CODE_FORM_PROCESSOR_LOGIN_UNCORRECT);
 			}
 		}
 		catch (Exception $e) {

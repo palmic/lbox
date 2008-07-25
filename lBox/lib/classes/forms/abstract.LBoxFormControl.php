@@ -56,6 +56,24 @@ abstract class LBoxFormControl
 	protected $value;
 	
 	/**
+	 * pole vyjimek validaci ve forme array(array($this->getName() => Exception))
+	 * @var array
+	 */
+	protected $exceptionsValidations	= array();
+	
+	/**
+	 * is or not under LBoxControlMultiple (subcontrols are not displaying directly via form, but via their LBoxControlMultiple)
+	 * @var bool
+	 */
+	protected $isSubControl	= false;
+	
+	/**
+	 * template filename
+	 * @var string
+	 */
+	protected $filenameTemplate = "lbox_form_control.html";
+	
+	/**
 	 *
 	 * @param string name 
 	 * @param string label 
@@ -118,7 +136,33 @@ abstract class LBoxFormControl
 	}
 
 	/**
+	 * nastavuje control jako subcontrol - viz dokumentace member parametru
+	 */
+	public function setIsSubControl() {
+		try {
+			$this->isSubControl	= true;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * vraci jestli jde o subControl pod LBoxFormControlMultiple
+	 */
+	public function IsSubControl() {
+		try {
+			return $this->isSubControl;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * spousti validace a filtering
+	 * v pripade chyby nektereho z validatoru, vrati false, jinak true
+	 * @return bool
 	 * @throws LBoxExceptionForm
 	 */
 	public function process() {
@@ -135,9 +179,24 @@ abstract class LBoxFormControl
 				$this->value	= $filteredValue;
 			}
 			foreach ($this->validators as $validator) {
-				$validator->validate($this);
+				try {
+					$validator->validate($this);
+				}
+				catch (Exception $e) {
+					switch (true) {
+						// chyba ve validaci
+						case ($e instanceof LBoxExceptionFormValidator):
+								$this->exceptionsValidations[$e->getCode()]	= $e;
+							break;
+						default:
+							throw $e;
+					}
+				}
 			}
 			$this->processed	= true;
+			
+			// pokud nejaky validator vyhodil chybu, vratime false, jinak true
+			return (count($this->exceptionsValidations) < 1);
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -164,6 +223,22 @@ abstract class LBoxFormControl
 	public function getForm() {
 		try {
 			return $this->form;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * k nastaveni zvlastni sablony
+	 * @param string $filename
+	 */
+	public function setTemplateFileName($filename = "") {
+		try {
+			if (strlen($filename) < 1) {
+				throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
+			}
+			$this->filenameTemplate	= $filename;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -266,6 +341,14 @@ abstract class LBoxFormControl
 	 */
 	public function getDefault() {
 		return $this->default;
+	}
+
+	/**
+	 * vraci pole vyjimek validaci
+	 * @return array
+	 */
+	public function getExceptionsValidations() {
+		return $this->exceptionsValidations;
 	}
 
 	/**

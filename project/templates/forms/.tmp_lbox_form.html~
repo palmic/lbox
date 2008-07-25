@@ -1,6 +1,0 @@
-<form name="SELF/getName" method="SELF/getMethod" enctype="multipart/form-data">
-	<tal:block tal:repeat="control SELF/getControls">
-		${control}
-	</tal:block>
-	<input type="submit" name="sent" value="odeslat" />
-</form>

@@ -84,6 +84,9 @@ class LBoxForm
 	 */
 	public function addControl(LBoxFormControl $control = NULL) {
 		try {
+			if (array_key_exists($control->getName(), $this->controls)) {
+				throw new LBoxExceptionForm($control->getName() .": ". LBoxExceptionForm::MSG_FORM_CONTROL_DOES_EXISTS, LBoxExceptionForm::CODE_FORM_CONTROL_DOES_EXISTS);
+			}
 			// z multiple control prebereme jeho subcontrols
 			if ($control instanceof LBoxFormControlMultiple) {
 				foreach ($control->getControls() as $subControl) {
@@ -92,13 +95,7 @@ class LBoxForm
 					}
 				}
 			}
-			// bezne controls
-			else {
-				if (array_key_exists($control->getName(), $this->controls)) {
-					throw new LBoxExceptionForm($control->getName() .": ". LBoxExceptionForm::MSG_FORM_CONTROL_DOES_EXISTS, LBoxExceptionForm::CODE_FORM_CONTROL_DOES_EXISTS);
-				}
-				$this->controls[$control->getName()]	= $control;
-			}
+			$this->controls[$control->getName()]	= $control;
 			$control->setForm($this);
 		}
 		catch (Exception $e) {
@@ -317,9 +314,14 @@ class LBoxForm
 				throw new LBoxExceptionForm(LBoxExceptionForm::MSG_FORM_PROCESSOR_DOESNOT_EXISTS, LBoxExceptionForm::CODE_FORM_PROCESSOR_DOESNOT_EXISTS);
 			}
 			// spustit checking controls
+			$controlInvalid	= false;
 			foreach ($this->controls as $control) {
-				$control->process();
+				if (!$control->process()) {
+					$controlInvalid	= true;
+				}
 			}
+			if ($controlInvalid) return;
+			
 			// spustit processory
 			foreach ($this->processors as $processor) {
 				$processor->process();
