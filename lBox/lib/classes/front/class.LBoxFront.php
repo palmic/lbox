@@ -66,8 +66,8 @@ class LBoxFront extends LBox
 	 */
 	public static function run() {
 		try {
-			/*$acces = AccesRecord::getInstance();
-			 $acces->store();*/
+			$acces = AccesRecord::getInstance();
+			$acces->store();
 			$pageCfg = self::getPageCfg();
 
 			// xt
@@ -329,6 +329,14 @@ class LBoxFront extends LBox
 	 */
 	public static function getDataPost() {
 		return $_POST;
+	}
+
+	/**
+	 * returns currently displaying language key
+	 * @return string
+	 */
+	public static function getDisplayLanguage() {
+		return "cs";
 	}
 
 	/**
