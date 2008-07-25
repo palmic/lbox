@@ -24,8 +24,26 @@ class LBoxFormControlMultiple extends LBoxFormControl
 	 */
 	public function __construct( $name = "",  $label = "" ) {
 		try {
+			if (strlen($name) < 1) {
+				throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
+			}
 			$this->name		= $name;
 			$this->label	= $label;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * Prepsano o delegaci i na sub control 
+	 */
+	public function setForm(LBoxForm $form = NULL) {
+		try {
+			foreach ($this->controls as $control) {
+				$control->setForm($form);
+			}
+			parent::setForm($form);
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -36,9 +54,20 @@ class LBoxFormControlMultiple extends LBoxFormControl
 	 *
 	 * @param LBoxFormControl control 
 	 */
-	public function addControl( $control = NULL ) {
+	public function addControl(LBoxFormControl $control = NULL ) {
 		try {
-			$this->controls[]	= $control;
+			// kontrola unikatnosti mezi sebou
+			if (array_key_exists($control->getName(), $this->controls)) {
+				throw new LBoxExceptionForm($control->getName() .": ". LBoxExceptionForm::MSG_FORM_CONTROL_DOES_EXISTS, LBoxExceptionForm::CODE_FORM_CONTROL_DOES_EXISTS);
+			}
+			$this->controls[$control->getName()]	= $control;
+			/* pokud uz je nastaven form, musime provest kontrolu sub-controls na unikatnost apod - podle toho co Form vyzaduje
+			 * toto si sama zaridi metoda LBoxForm::addControl(LBoxFormControlMultiple)
+			 */
+			if ($this->form) {
+				$control->setForm($this->form);
+				$this->form->addControl($this);
+			}
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -60,12 +89,22 @@ class LBoxFormControlMultiple extends LBoxFormControl
 
 	/**
 	 * prepsano o processing controls, ktere obsahuje
+	 * jeste pred tim, samozrejme spousti sve multiple validatory
 	 */
 	public function process() {
 		try {
+			if ($this->processed) {
+				return;
+			}
+			// nejdriv validace jednnotlivych controls
 			foreach ($this->controls as $control) {
 				$control->process();
 			}
+			// potom multiple validace
+			foreach ($this->validators as $validator) {
+				$validator->validate($this);
+			}
+			$this->processed	= true;
 		}
 		catch (Exception $e) {
 			throw $e;

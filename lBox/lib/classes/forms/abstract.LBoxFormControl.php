@@ -148,7 +148,7 @@ abstract class LBoxFormControl
 	 * Jen pro pouziti z instance LBoxForm, nepouzivat zvenku!
 	 * @param LBoxForm form 
 	 */
-	public function setForm($form = NULL) {
+	public function setForm(LBoxForm $form = NULL) {
 		try {
 			$this->form	= $form;
 		}

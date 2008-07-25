@@ -84,10 +84,21 @@ class LBoxForm
 	 */
 	public function addControl(LBoxFormControl $control = NULL) {
 		try {
-			if (array_key_exists($control->getName(), $this->controls)) {
-				throw new LBoxExceptionForm($control->getName() .": ", LBoxExceptionForm::MSG_FORM_CONTROL_DOES_EXISTS, LBoxExceptionForm::CODE_FORM_CONTROL_DOES_EXISTS);
+			// z multiple control prebereme jeho subcontrols
+			if ($control instanceof LBoxFormControlMultiple) {
+				foreach ($control->getControls() as $subControl) {
+					if (!array_key_exists($subControl->getName(), $this->controls)) {
+						$this->controls[$subControl->getName()]	= $subControl;
+					}
+				}
 			}
-			$this->controls[$control->getName()]	= $control;
+			// bezne controls
+			else {
+				if (array_key_exists($control->getName(), $this->controls)) {
+					throw new LBoxExceptionForm($control->getName() .": ". LBoxExceptionForm::MSG_FORM_CONTROL_DOES_EXISTS, LBoxExceptionForm::CODE_FORM_CONTROL_DOES_EXISTS);
+				}
+				$this->controls[$control->getName()]	= $control;
+			}
 			$control->setForm($this);
 		}
 		catch (Exception $e) {
@@ -96,14 +107,13 @@ class LBoxForm
 	}
 
 	/**
-	 *
 	 * @param LBoxFormProcessor processor 
 	 * @throws LBoxExceptionForm
 	 */
 	public function addProcessor(LBoxFormProcessor $processor = NULL) {
 		try {
 			if (array_key_exists(get_class($processor), $this->processors)) {
-				throw new LBoxExceptionForm($processor->getName() .": ", LBoxExceptionForm::MSG_FORM_PROCESSOR_DOES_EXISTS, LBoxExceptionForm::CODE_FORM_PROCESSOR_DOES_EXISTS);
+				throw new LBoxExceptionForm($processor->getName() .": ". LBoxExceptionForm::MSG_FORM_PROCESSOR_DOES_EXISTS, LBoxExceptionForm::CODE_FORM_PROCESSOR_DOES_EXISTS);
 			}
 			$this->processors[get_class($processor)]	= $processor;
 			$processor->setForm($this);
@@ -123,8 +133,9 @@ class LBoxForm
 			if (strlen($name) < 1) {
 				throw new LBoxExceptionForm(LBoxExceptionForm::MSG_PARAM_STRING_NOTNULL, LBoxExceptionForm::CODE_BAD_PARAM);
 			}
+			// prohledat controls
 			if (!array_key_exists($name, $this->controls)) {
-				throw new LBoxExceptionForm(LBoxExceptionForm::MSG_FORM_CONTROL_DOESNOT_EXISTS, LBoxExceptionForm::CODE_FORM_CONTROL_DOESNOT_EXISTS);
+				throw new LBoxExceptionForm("\$name: ". LBoxExceptionForm::MSG_FORM_CONTROL_DOESNOT_EXISTS, LBoxExceptionForm::CODE_FORM_CONTROL_DOESNOT_EXISTS);
 			}
 			$sentData	= $this->getSentData();
 			return $sentData["$name"];
@@ -229,9 +240,6 @@ class LBoxForm
 			// pridat antispam, pokud je zapnut
 			if ($this->isAntiSpamSet()) {
 				$this->controls[$this->getSpamDefenseControl()->getName()]	= $this->getSpamDefenseControl();
-			}
-			if ($this->wasSent()) {
-				
 			}
 			try {
 				$out 	 = "";
