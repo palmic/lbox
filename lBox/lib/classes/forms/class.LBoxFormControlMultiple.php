@@ -91,6 +91,24 @@ class LBoxFormControlMultiple extends LBoxFormControl
 	}
 
 	/**
+	 * vraci control podle jmena
+	 * @param string $name
+	 * @return LBoxFormControl
+	 */
+	public function getControlByName($name = "") {
+		try {
+			if (!array_key_exists($name, $this->controls)) {
+				throw new LBoxExceptionFormControl(	"\$name: ". LBoxExceptionFormControl::MSG_FORM_CONTROL_DOESNOT_EXISTS,
+													LBoxExceptionFormControl::CODE_FORM_CONTROL_DOESNOT_EXISTS);
+			}
+			return $this->controls[$name];
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * vraci sve controls v poli - pro sablonu
 	 * @return array
 	 */

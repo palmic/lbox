@@ -6,14 +6,25 @@ class ProcessorRegistrationEmail extends LBoxFormProcessor
 {
 	public function process() {
 		try {
-			$records	= new XTUsersRecords(array(
-													"email" 	=> $this->form->getSentDataByControlName("email"),
-													"password" => $this->form->getSentDataByControlName("password"),
-			));
-			if ($records->count() < 1) {
-				throw new LBoxExceptionFormProcessorRegistration(	LBoxExceptionFormProcessorRegistration::MSG_FORM_PROCESSOR_REGISTRATION_FAILED,
-																	LBoxExceptionFormProcessorRegistration::CODE_FORM_PROCESSOR_LOGIN_UNCORRECT);
+			$records	= new XTUsersRecords(array(	"email" 	=> $this->form->getControlByName("email")->getValue()));
+			// pokud uz mame takoveho nepotvrzeneho uzivatele, prepiseme heslo na aktualni a email preposleme znovu na tu samou adresu
+			if ($records->current() && $records->current()->confirmed < 1) {
+				$record = $records->current();
+				$record->password	= $this->form->getControlByName("password")->getValue();
+				$record->store();
 			}
+			// jinak uzivatele vytvarime
+			else {
+				$record		= new XTUsersRecord();
+				$record		->nick		= $this->form->getControlByName("email")->getValue();
+				$record		->email		= $this->form->getControlByName("email")->getValue();
+				$record		->password	= $this->form->getControlByName("password")->getValue();
+				$record->store();
+			}
+			
+			// confirm mail
+			$mail	= new MailRegistrationConfirm($record);
+			$mail->init();
 		}
 		catch (Exception $e) {
 			throw $e;

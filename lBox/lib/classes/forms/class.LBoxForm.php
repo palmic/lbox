@@ -51,6 +51,12 @@ class LBoxForm
 	 * @var LBoxFormControlFillHidden
 	 */
 	protected $spamDefenseControl;
+	
+	/**
+	 * sent succes flag - po odeslani formulare a reloadu stranky by tato promena by mela byt true 
+	 * @var bool
+	 */
+	protected $sentSucces	= false;
 
 	/**
 	 *
@@ -72,6 +78,10 @@ class LBoxForm
 				throw new LBoxExceptionForm(LBoxExceptionForm::MSG_FORM_DUPLICATE_FORMNAME, LBoxExceptionForm::CODE_FORM_DUPLICATE_FORMNAME);
 			}
 			self::$forms[$name]	= $this;
+			if ($_SESSION["LBox"]["Forms"]["succes"]) {
+				unset($_SESSION["LBox"]["Forms"]["succes"]);
+				$this->sentSucces	= true;
+			}
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -136,6 +146,23 @@ class LBoxForm
 			}
 			$sentData	= $this->getSentData();
 			return $sentData["$name"];
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * vraci control podle jmena
+	 * @param string $name
+	 * @return LBoxFormControl
+	 */
+	public function getControlByName($name = "") {
+		try {
+			if (!array_key_exists($name, $this->controls)) {
+				throw new LBoxExceptionForm("\$name: ". LBoxExceptionForm::MSG_FORM_CONTROL_DOESNOT_EXISTS, LBoxExceptionForm::CODE_FORM_CONTROL_DOESNOT_EXISTS);
+			}
+			return $this->controls[$name];
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -229,6 +256,22 @@ class LBoxForm
 	}
 
 	/**
+	 * k nastaveni zvlastni sablony
+	 * @param string $filename
+	 */
+	public function setTemplateFileName($filename = "") {
+		try {
+			if (strlen($filename) < 1) {
+				throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
+			}
+			$this->filenameTemplate	= $filename;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 *
 	 * @return string
 	 */
@@ -281,7 +324,7 @@ class LBoxForm
 	 * prepina antispam kontrolu
 	 * @param bool $antiSpamSet
 	 */
-	public function setAntiSpam($antiSpamSet	= false) {
+	public function setAntiSpam($antiSpamSet	= true) {
 		try {
 			$this->antiSpamSet	= $antiSpamSet;
 		}
@@ -304,6 +347,19 @@ class LBoxForm
 	}
 
 	/**
+	 * Vraci, jestli byl formular vporadku odeslan
+	 * @return bool
+	 */
+	public function wasSentSucces() {
+		try {
+			return $this->sentSucces;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * @throws LBoxExceptionForm
 	 */
 	protected function process() {
@@ -313,19 +369,29 @@ class LBoxForm
 			if (count($this->processors) < 1) {
 				throw new LBoxExceptionForm(LBoxExceptionForm::MSG_FORM_PROCESSOR_DOESNOT_EXISTS, LBoxExceptionForm::CODE_FORM_PROCESSOR_DOESNOT_EXISTS);
 			}
+			if ($this->isAntiSpamSet()) {
+				if (!$this->getSpamDefenseControl()->process()) {
+					return;
+				}
+			}
 			// spustit checking controls
 			$controlInvalid	= false;
 			foreach ($this->controls as $control) {
+				if ($control->getName() == $this->getSpamDefenseControl()->getName()) {
+					continue;
+				}
 				if (!$control->process()) {
 					$controlInvalid	= true;
 				}
 			}
 			if ($controlInvalid) return;
-			
 			// spustit processory
 			foreach ($this->processors as $processor) {
 				$processor->process();
 			}
+			// nastavit do session uspesne odeslani a reloadovat stranku
+			$_SESSION["LBox"]["Forms"]["succes"]	= true;
+			LBoxFront::reload();
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -351,7 +417,7 @@ class LBoxForm
 	
 	/**
 	 * vraci control pro spamdefense
-	 * @return LBoxFormControlFillHidden
+	 * @return LBoxFormControlSpamDefense
 	 */
 	protected function getSpamDefenseControl() {
 		try {

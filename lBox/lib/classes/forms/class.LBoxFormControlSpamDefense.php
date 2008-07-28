@@ -17,6 +17,23 @@ class LBoxFormControlSpamDefense extends LBoxFormControlFillHidden
 	}
 
 	/**
+	 * pridana validace natvrdo - bez js neni mozne, aby form prosel
+	 */
+	public function process() {
+		try {
+			if ($this->getValue() != $this->default) {
+				$this->exceptionsValidations[LBoxExceptionFormValidator::CODE_FORM_VALIDATION_SPAMDEFENSEJS_NOT_PASS]
+					= new LBoxExceptionFormValidator(	LBoxExceptionFormValidator::MSG_FORM_VALIDATION_SPAMDEFENSEJS_NOT_PASS,
+														LBoxExceptionFormValidator::CODE_FORM_VALIDATION_SPAMDEFENSEJS_NOT_PASS);
+			}
+			return parent::process();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
 	 * vraci kompletni javascript code pro aktivaci antispamu
 	 * @return string
 	 */

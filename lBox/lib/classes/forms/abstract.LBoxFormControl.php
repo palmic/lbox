@@ -168,7 +168,7 @@ abstract class LBoxFormControl
 	public function process() {
 		try {
 			if ($this->processed) {
-				return;
+				return (count($this->exceptionsValidations) < 1);
 			}
 			// zajistit nastaveni hodnoty
 			$this->getValue();
@@ -187,6 +187,7 @@ abstract class LBoxFormControl
 						// chyba ve validaci
 						case ($e instanceof LBoxExceptionFormValidator):
 								$this->exceptionsValidations[$e->getCode()]	= $e;
+								return false;
 							break;
 						default:
 							throw $e;
@@ -194,7 +195,6 @@ abstract class LBoxFormControl
 				}
 			}
 			$this->processed	= true;
-			
 			// pokud nejaky validator vyhodil chybu, vratime false, jinak true
 			return (count($this->exceptionsValidations) < 1);
 		}
