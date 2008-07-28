@@ -16,6 +16,8 @@ class XTUsersRecord extends AbstractRecordLBox
 	public static $boundedM1 = array("XTRolesRecords" => "ref_xtRole");
 	public static $bounded1M = array("RegistrationConfirmsRecords" => "ref_xtUser");
 	
+	protected	$hashString	= "sdfsdf";
+	
 	/**
 	 * OutputItem interface method
 	 * @throws LBoxException
@@ -39,6 +41,9 @@ class XTUsersRecord extends AbstractRecordLBox
 			}
 			if (!$this->params["ref_xtRole"]) {
 				$this->params["ref_xtRole"] = LBoxXT::getRoleRecordByName(LBoxXT::XT_ROLE_NAME_USER)->id;
+			}
+			if (!$this->isInDatabase()) {
+				$this->params["hash"]	= md5($this->get("nick") . $this->hashString . $this->get("password"));
 			}
 			parent::store();
 		}
