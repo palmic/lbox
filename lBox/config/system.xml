@@ -56,6 +56,11 @@
 			</controls>
 		</templates>
 	</forms>
+	<emails>
+		<templates>
+			<path>$project/templates/mails</path>
+		</templates>
+	</emails>
 	<output>
 		<tal>
 			<PHPTAL_FORCE_REPARSE>0</PHPTAL_FORCE_REPARSE>
