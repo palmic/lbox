@@ -114,7 +114,7 @@ abstract class LBoxFormControl
 	 *
 	 * @param LBoxFormFilter filter 
 	 */
-	public function addFilter(LBoxFormFilter $filter = NULL) {
+	public function addFilter(LBoxFormFilter $filter) {
 		try {
 			$this->filters[]	= $filter;
 		}
