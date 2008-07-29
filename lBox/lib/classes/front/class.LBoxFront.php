@@ -355,6 +355,14 @@ class LBoxFront extends LBox
 	}
 
 	/**
+	 * returns FILE post data
+	 * @return array
+	 */
+	public static function getDataFile() {
+		return $_FILES;
+	}
+
+	/**
 	 * returns currently displaying language key
 	 * @return string
 	 */
