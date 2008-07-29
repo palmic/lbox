@@ -18,6 +18,7 @@ class LBoxFormValidatorFileImage extends LBoxFormValidator
 	public function validate(LBoxFormControl $control = NULL) {
 		try {
 			$valueFiles	= $control->getValueFiles();
+			if (strlen($control->getValue()) > 0)
 			if (!$this->isFileNameImage($valueFiles["name"])) {
 				throw new LBoxExceptionFormValidator(	LBoxExceptionFormValidator::MSG_FORM_VALIDATION_FILE_NOT_IMAGE,
 														LBoxExceptionFormValidator::CODE_FORM_VALIDATION_FILE_NOT_IMAGE);

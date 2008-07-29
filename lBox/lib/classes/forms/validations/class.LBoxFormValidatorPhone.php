@@ -12,6 +12,7 @@ class LBoxFormValidatorPhone extends LBoxFormValidator
 	
 	public function validate(LBoxFormControl $control = NULL) {
 		try {
+			if (strlen($control->getValue()) > 0)
 			if (!ereg($this->regPhone, $control->getValue())) {
 				throw new LBoxExceptionFormValidator(	LBoxExceptionFormValidator::MSG_FORM_VALIDATION_PHONE_NOTVALID,
 														LBoxExceptionFormValidator::CODE_FORM_VALIDATION_PHONE_NOTVALID);

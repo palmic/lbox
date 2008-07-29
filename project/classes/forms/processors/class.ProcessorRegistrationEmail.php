@@ -18,6 +18,7 @@ class ProcessorRegistrationEmail extends LBoxFormProcessor
 				$record		= new XTUsersRecord();
 				$record		->nick		= $this->form->getControlByName("email")->getValue();
 				$record		->email		= $this->form->getControlByName("email")->getValue();
+				$record		->phone		= $this->form->getControlByName("phone")->getValue();
 				$record		->password	= $this->form->getControlByName("password")->getValue();
 				$record->store();
 			}

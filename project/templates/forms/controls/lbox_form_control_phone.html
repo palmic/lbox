@@ -1,0 +1,8 @@
+<div tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
+	<label for="${id}">${SELF/getLabel} <input 	type="text" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]"
+			tal:attributes="value SELF/getValue | SELF/getDefault" /></label>
+	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
+		<div tal:condition="exists: exceptions/17001">Prosím vyplňte telefon</div>
+		<div tal:condition="exists: exceptions/17006">Telefon není správně vyplněn</div>
+	</div>
+</div>
