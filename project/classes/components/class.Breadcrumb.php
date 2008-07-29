@@ -12,6 +12,7 @@ class Breadcrumb extends LBoxComponent
 	protected function executePrepend(PHPTAL $TAL) {
 		try {
 			$pageCfg	= $this->page->config;
+			$pageCfg->setOutputFilter(new OutputFilterPage($pageCfg));
 			$iterator	= array();
 			while ($pageCfg->hasParent()) {
 				$iterator[]	= $pageCfg;
