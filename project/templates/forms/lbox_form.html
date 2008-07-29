@@ -7,3 +7,4 @@
 		<input type="submit" name="${SELF/getName}[sent]" value="odeslat" />
 	</fieldset>
 </form>
+<p tal:condition="SELF/wasSentSucces">Formulář byl úspěšně odeslán. Děkujeme.</p>

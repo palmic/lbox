@@ -320,7 +320,7 @@ abstract class LBoxFormControl
 			if ($this->value !== NULL) {
 				return $this->value;
 			}
-			return $this->value	= $this->form->getSentDataByControlName($this->name);
+			return $this->value	= $this->form->getSentDataByControlName($this->getName());
 		}
 		catch (Exception $e) {
 			throw $e;

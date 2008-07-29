@@ -9,7 +9,7 @@ class LBoxForm
 	 * @var array
 	 */
 	protected static $forms	= array();
-	 
+
 	/**
 	 * @var array
 	 */
@@ -39,7 +39,7 @@ class LBoxForm
 	 * @var string
 	 */
 	protected $method;
-	
+
 	/**
 	 * antispam set flag
 	 * @var bool
@@ -51,16 +51,22 @@ class LBoxForm
 	 * @var LBoxFormControlFillHidden
 	 */
 	protected $spamDefenseControl;
-	
+
 	/**
-	 * sent succes flag - po odeslani formulare a reloadu stranky by tato promena by mela byt true 
+	 * sent succes flag - po odeslani formulare a reloadu stranky by tato promena by mela byt true
 	 * @var bool
 	 */
 	protected $sentSucces	= false;
 
 	/**
+	 * cache metody getFilesData
+	 * @var array
+	 */
+	protected $filesData	= array();
+
+	/**
 	 *
-	 * @param string name 
+	 * @param string name
 	 * @param string method
 	 * @throws LBoxExceptionForm
 	 */
@@ -114,7 +120,7 @@ class LBoxForm
 	}
 
 	/**
-	 * @param LBoxFormProcessor processor 
+	 * @param LBoxFormProcessor processor
 	 * @throws LBoxExceptionForm
 	 */
 	public function addProcessor(LBoxFormProcessor $processor = NULL) {
@@ -144,20 +150,14 @@ class LBoxForm
 			if (!array_key_exists($name, $this->controls)) {
 				throw new LBoxExceptionForm("\$name: ". LBoxExceptionForm::MSG_FORM_CONTROL_DOESNOT_EXISTS, LBoxExceptionForm::CODE_FORM_CONTROL_DOESNOT_EXISTS);
 			}
-			// prekryti rozdilu variant LBoxFormControlFile a ostatnich controls
-			if ($this->controls[$name] instanceof LBoxFormControlFile) {
-				
-			}
-			else {
-				$sentData	= $this->getSentData();
-				return $sentData["$name"];
-			}
+			$sentData	= $this->getSentData();
+			return $sentData["$name"];
 		}
 		catch (Exception $e) {
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * vraci control podle jmena
 	 * @param string $name
@@ -183,11 +183,16 @@ class LBoxForm
 			$data	= array();
 			switch (strtolower($this->method)) {
 				case "get":
-						$data	= LBoxFront::getDataGet();
+					$data	= LBoxFront::getDataGet();
 					break;
 				case "post":
-						$data	= LBoxFront::getDataPost();
+					$data	= LBoxFront::getDataPost();
 					break;
+			}
+			// pridame filesdata, pokud nejaka jsou
+			if (count($this->getFilesData()) > 0) {
+				$filesData	= $this->getFilesData();
+				$data[$this->getName()]	= array_merge($data[$this->getName()], $filesData[$this->getName()]);
 			}
 			return $data[$this->name];
 		}
@@ -195,16 +200,25 @@ class LBoxForm
 			throw $e;
 		}
 	}
-	
+
 	/**
-	 * Vraci odeslana FILE data
+	 * Tridi a vraci odeslana FILES data
 	 * @return array
 	 */
-	public function getFileData() {
+	protected function getFilesData() {
 		try {
-			$data	= LBoxFront::getDataPost();
-var_dump(__FILE__ .": ". __LINE__);die;
-			return $data;
+			if (count($this->filesData) > 0) {
+				return $this->filesData;
+			}
+			$data	= LBoxFront::getDataFiles();
+			$out	= array();
+			// pretridime data podle files controls
+			foreach ($data[$this->getName()]["name"] as $controlName	=> $fileName) {
+				foreach ($data[$this->getName()] as $paramName	=> $params) {
+					$out[$this->getName()][$controlName][$paramName]	= $params[$controlName];
+				}
+			}
+			return $this->filesData	= $out;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -222,7 +236,7 @@ var_dump(__FILE__ .": ". __LINE__);die;
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 *
 	 * @return string
@@ -435,7 +449,7 @@ var_dump(__FILE__ .": ". __LINE__);die;
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * vraci control pro spamdefense
 	 * @return LBoxFormControlSpamDefense
