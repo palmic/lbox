@@ -144,8 +144,14 @@ class LBoxForm
 			if (!array_key_exists($name, $this->controls)) {
 				throw new LBoxExceptionForm("\$name: ". LBoxExceptionForm::MSG_FORM_CONTROL_DOESNOT_EXISTS, LBoxExceptionForm::CODE_FORM_CONTROL_DOESNOT_EXISTS);
 			}
-			$sentData	= $this->getSentData();
-			return $sentData["$name"];
+			// prekryti rozdilu variant LBoxFormControlFile a ostatnich controls
+			if ($this->controls[$name] instanceof LBoxFormControlFile) {
+				
+			}
+			else {
+				$sentData	= $this->getSentData();
+				return $sentData["$name"];
+			}
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -190,6 +196,21 @@ class LBoxForm
 		}
 	}
 	
+	/**
+	 * Vraci odeslana FILE data
+	 * @return array
+	 */
+	public function getFileData() {
+		try {
+			$data	= LBoxFront::getDataPost();
+var_dump(__FILE__ .": ". __LINE__);die;
+			return $data;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
 	/**
 	 * @return bool
 	 */
