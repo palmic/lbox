@@ -65,8 +65,8 @@ class LBoxFormControlFile extends LBoxFormControlFill
 			if ($this->uploadChecked) {
 				return;
 			}
-			if (count($this->getForm()->getSentData()) > 0) {
-				$dataFile	= $this->form->getSentDataByControlName($this->getName());
+			$dataFile	= $this->form->getSentDataByControlName($this->getName());
+			if (strlen($dataFile["name"]) > 0) {
 				if ($dataFile["error"]	!= UPLOAD_ERR_OK) {
 					throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_FORM_CONTROL_FILE_UPLOAD_ERROR, LBoxExceptionFormControl::CODE_FORM_CONTROL_FILE_UPLOAD_ERROR);
 				}

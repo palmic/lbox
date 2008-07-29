@@ -1,11 +1,11 @@
 <?php
-class FilterEraseSpaces extends LBoxFormFilter
+class LBoxFormFilterEraseSpaces extends LBoxFormFilter
 {
 	/**
 	 * regularni vyraz pro smazani mezer
 	 * @var string
 	 */
-	protected $regEraseSpace	= "[:space:]";
+	protected $regEraseSpaces	= "[:space:]";
 	
 	public function filter(LBoxFormControl $control = NULL) {
 		try {
