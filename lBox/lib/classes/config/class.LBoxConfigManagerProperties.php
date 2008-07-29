@@ -51,6 +51,21 @@ class LBoxConfigManagerProperties extends LBoxConfigManager
 		catch (Exception $e) {
 			throw $e;
 		}
-	}	
+	}
+	
+	/**
+	 * shortcut na obsah property
+	 * @param string $name
+	 * @return string
+	 * @throws LBoxException
+	 */
+	public static function getPropertyContentByName($name = "") {
+		try {
+			return self::getInstance()->getPropertyByName($name)->getContent();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
 }
 ?>
