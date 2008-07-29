@@ -355,10 +355,10 @@ class LBoxFront extends LBox
 	}
 
 	/**
-	 * returns FILE post data
+	 * returns FILES post data
 	 * @return array
 	 */
-	public static function getDataFile() {
+	public static function getDataFiles() {
 		return $_FILES;
 	}
 
