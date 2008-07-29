@@ -73,7 +73,7 @@ class LBoxFront extends LBox
 			// xt
 			if ($pageCfg->xt == 1) {
 				if (!LBoxXT::isLogged()) {
-					self::reloadHomePage();
+					self::reloadXTLogin();
 				}
 				if (!LBoxXT::isLoggedAdmin()) {
 					self::reloadHomePage();
@@ -82,7 +82,7 @@ class LBoxFront extends LBox
 			// super xt
 			if ($pageCfg->superxt == 1) {
 				if (!LBoxXT::isLogged()) {
-					self::reloadHomePage();
+					self::reloadXTLogin();
 				}
 				if (!LBoxXT::isLoggedSuperAdmin()) {
 					self::reloadHomePage();
@@ -185,6 +185,29 @@ class LBoxFront extends LBox
 	public static function reloadHomePage() {
 		try {
 			self::reload(LBoxConfigManagerStructure::getInstance()->getHomePage()->url);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * reloaduje na homepage
+	 * @throws Exception
+	 */
+	public static function reloadXTLogin() {
+		try {
+			if (strlen($pageAdminXTID	= LBoxConfigManagerProperties::getInstance()->getPropertyByName("ref_page_xt_login")->getContent()) < 1) {
+				self::reloadHomePage();
+			}
+			// pokusime se ziskat stranku ze struktury
+			try {
+				$pageAdminXT	= LBoxConfigManagerStructure::getInstance()->getPageById($pageAdminXTID);
+			}
+			catch (LBoxExceptionConfigComponent $e) {
+				throw $e;
+			}
+			self::reload($pageAdminXT->url);
 		}
 		catch (Exception $e) {
 			throw $e;
