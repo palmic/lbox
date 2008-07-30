@@ -136,6 +136,24 @@ abstract class LBoxFormControl
 	}
 
 	/**
+	 * vraci, jestli byl control nastaven jako povinny
+	 * @return bool
+	 */
+	public function isRequired() {
+		try {
+			foreach ($this->validators as $validator) {
+				if ($validator instanceof LBoxFormValidatorRequired) {
+					return true;
+				}
+			}
+			return false;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * nastavuje control jako subcontrol - viz dokumentace member parametru
 	 */
 	public function setIsSubControl() {

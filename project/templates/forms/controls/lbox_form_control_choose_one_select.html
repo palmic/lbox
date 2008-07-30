@@ -1,6 +1,6 @@
 <div tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
 	<label for="${id}">${SELF/getLabel}
-		<x metal:use-macro="control_select" />
+		<tal:block tal:condition="SELF/isRequired">* </tal:block><x metal:use-macro="control_select" />
 	</label>
 	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
 		<tal:block tal:repeat="exception exceptions">
