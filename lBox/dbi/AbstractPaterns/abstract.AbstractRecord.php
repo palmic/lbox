@@ -890,6 +890,26 @@ abstract class AbstractRecord implements Iterator
 	}
 
 	/**
+	 * Returns if the record has parent in tree structure
+	 * @return bool
+	 * @throws Exception
+	 */
+	public function hasParent() {
+		try {
+			if (!$isTree = $this->isTree()) {
+				throw new LBoxException("Table '$tableName' seems not to be tree!");
+			}
+			$this->load();
+			$treeColNames	= $this->getClassVar("treeColNames");
+			$pidColName		= $treeColNames[2];
+			return ($this->get($pidColName) > 0);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * getter of record's tree table children
 	 * @return AbstractRecords
 	 * @throws Exception
@@ -1271,14 +1291,17 @@ abstract class AbstractRecord implements Iterator
 	 */
 	public function getParent() {
 		try {
+			if (!$this->hasParent()) {
+				return NULL;
+			}
+			if (!$isTree = $this->isTree()) {
+				throw new LBoxException("Table '$tableName' seems not to be tree!");
+			}
 			$this->load();
 			$tableName		= $this->getClassVar("tableName");
 			$className 		= get_class($this);
 			$treeColNames	= $this->getClassVar("treeColNames");
 			$pidColName		= $treeColNames[2];
-			if (!$isTree = $this->isTree()) {
-				throw new LBoxException("Table '$tableName' seems not to be tree!");
-			}
 			return new $className($this->get($pidColName));
 		}
 		catch (Exception $e) {
