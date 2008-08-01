@@ -132,7 +132,6 @@ abstract class LBoxComponent
 
 	public function setOutputFilter(LBoxOutputFilter $outputFilter) {
 		$this->outputFilter = $outputFilter;
-		$this->config->setOutputFilter($outputFilter);
 	}
 
 	/**
