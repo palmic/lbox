@@ -97,11 +97,9 @@ abstract class LBoxComponent
 				case "config":
 					return $this->config;
 					break;
-					// vraci parametr z configu
 				default:
-					// navic kryje sablonu v pripade, ze parametr neni nadefinovan
-					// $value = ($this->config->$name) ? $this->config->$name : "";
-					return $this->config->$name;
+					// vraci parametr z configu
+						return $this->config->$name;
 					break;
 			}
 		}

@@ -213,7 +213,7 @@ class LBoxForm
 			$data	= LBoxFront::getDataFiles();
 			$out	= array();
 			// pretridime data podle files controls
-			foreach ($data[$this->getName()]["name"] as $controlName	=> $fileName) {
+			foreach ((array)$data[$this->getName()]["name"] as $controlName	=> $fileName) {
 				foreach ($data[$this->getName()] as $paramName	=> $params) {
 					$out[$this->getName()][$controlName][$paramName]	= $params[$controlName];
 				}
