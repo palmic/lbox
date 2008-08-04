@@ -340,7 +340,7 @@ abstract class LBoxComponent
 	}
 
 	/**
-	 * vraci hodnotu aktualni stranky strankovani - pozor za hodnotu strankovani povazuje posledni numericky URL param!
+	 * vraci hodnotu aktualni stranky strankovani - pozor, atribut strankovani musi mit tvar vyhovujici vzoru nastavenem v konfiguraci system.xml
 	 * @return int
 	 */
 	protected function getPagingCurrent() {
@@ -388,19 +388,23 @@ abstract class LBoxComponent
 
 	/**
 	 * vraci pole stranek strankovani podle predanych parametru
-	 * @param int $itemsCount
-	 * @param int $pageLimit
+	 * @param int $itemsCount - celkovy pocet strankovanych jednotek
+	 * @param int $pageLimit -pocet jednotek na stranku
+	 * @param int $pagesRange	-maximalni rozsah stranek v strankovani na obe strany
 	 * @return array
 	 * @throws LBoxExceptionPage
 	 */
-	protected function getPaging($itemsCount = 0, $pageLimit = 0) {
+	protected function getPaging($itemsCount = 0, $pageLimit = 0, $pagesRange = 0) {
 		if (!is_numeric($itemsCount) || $itemsCount < 1) {
 			throw new LBoxExceptionPage("\$itemsCount ". LBoxExceptionPage::MSG_PARAM_INT_NOTNULL, LBoxExceptionPage::CODE_BAD_PARAM);
 		}
 		if (!is_numeric($pageLimit)) {
 			throw new LBoxExceptionPage("\$pageLimit ". LBoxExceptionPage::MSG_PARAM_INT, LBoxExceptionPage::CODE_BAD_PARAM);
 		}
-
+		if (!is_numeric($pagesRange)) {
+			throw new LBoxExceptionPage("\$pagesRange ". LBoxExceptionPage::MSG_PARAM_INT, LBoxExceptionPage::CODE_BAD_PARAM);
+		}
+				
 		$pageLimit 				= $pageLimit 	> 0 ? $pageLimit 	: 99999;
 
 		// sestaveni pole pages
@@ -410,7 +414,16 @@ abstract class LBoxComponent
 			return NULL;
 		}
 		// sestaveni pole paging
-		for ($i = 1; $i <= $pagesCount; $i++) {
+		if ($pagesRange > 0) {
+			$start	= ($this->getPagingCurrent() - $pagesRange < 1) ? 1 : $this->getPagingCurrent()-$pagesRange;
+			$end	= $this->getPagingCurrent() + $pagesRange;
+		}
+		else {
+			$start	= 1;
+			$end	= 9999999;
+		}
+		for ($i = $start; $i <= $pagesCount; $i++) {
+			if ($i > $end) break;
 			$out[$i]	= $this->getPageURLByIndex($i);
 		}
 		return $out;
@@ -452,12 +465,18 @@ abstract class LBoxComponent
 		// sestaveni pole paging
 		if ($this->getPagingCurrent() - $pagesRange > 1) {
 			$out["<<"]	= $this->getPageURLByIndex(1);
+			$out["<<"]["first"]	= true;
+			$out["<<"]["last"]	= false;
 		}
 		for ($i = $pagesStart; $i <= $pagesEnd; $i++) {
 			$out[$i]	= $this->getPageURLByIndex($i);
+			$out[$i]["first"]	= false;
+			$out[$i]["last"]	= false;
 		}
 		if ($this->getPagingCurrent() + $pagesRange < $pagesCount) {
 			$out[">>"]	= $this->getPageURLByIndex($pagesCount);
+			$out[">>"]["first"]	= false;
+			$out[">>"]["last"]	= true;
 		}
 		return $out;
 	}
