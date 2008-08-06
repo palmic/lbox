@@ -2,9 +2,8 @@
 .settings*
 .project
 *.log
-lBox/cache/*
-lBox/documents/*
-project/documents/*
-project/filespace/*
-project/import/*
-project/tal_compiled/*
+lBox/cache*
+lBox/documents*
+project/filespace*
+project/import*
+project/tal_compiled*

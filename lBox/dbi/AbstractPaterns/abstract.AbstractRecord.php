@@ -341,7 +341,6 @@ abstract class AbstractRecord implements Iterator
 		if ($this->synchronized) {
 			return;
 		}
-
 		try {
 			$tableName 	= $this->getClassVar("tableName");
 			$idColName 	= $this->getClassVar("idColName");

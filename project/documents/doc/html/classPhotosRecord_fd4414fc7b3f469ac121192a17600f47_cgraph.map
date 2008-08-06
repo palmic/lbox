@@ -1,0 +1,17 @@
+<area shape="rect" href="$classPhotosRecord.html#af29098f83f264b642803a03b8d6e4c4" title="PhotosRecord::getImgLonger" alt="" coords="705,94,895,120">
+<area shape="rect" href="$classPhotosRecord.html#3eb17782e005e484da04d25ce3828e5d" title="PhotosRecord::resize" alt="" coords="216,107,363,134">
+<area shape="rect" href="$classPhotosRecord.html#3e23de5b743e5c69d3df956cb5beae07" title="PhotosRecord::getImgX" alt="" coords="989,132,1147,159">
+<area shape="rect" href="$classPhotosRecord.html#84d7c355ba8533076828e7be8bd13dc7" title="PhotosRecord::getImgY" alt="" coords="988,183,1148,210">
+<area shape="rect" href="$classPhotosRecord.html#2040619f80f6bc9c2c57af85965bda2a" title="PhotosRecord::getImgResource" alt="" coords="1216,158,1421,184">
+<area shape="rect" href="$classPhotosRecord.html#d7e1a530eb8c0465cda282ec0ab3ded1" title="PhotosRecord::getFilePath" alt="" coords="1471,107,1647,134">
+<area shape="rect" href="$classPhotosRecord.html#0f80fc2cc69a16551a98cd44d361045c" title="PhotosRecord::getDirName" alt="" coords="1699,347,1877,374">
+<area shape="rect" href="$classPhotosRecord.html#69d4b2347b57226cfc9dfdf6144f7f7c" title="PhotosRecord::getFileName" alt="" coords="1696,107,1880,134">
+<area shape="rect" href="$classPhotosRecord.html#0b7a508bd2f556a9c55d98749e8b0d4f" title="PhotosRecord::createDirByPath" alt="" coords="1961,296,2167,323">
+<area shape="rect" href="$classLBoxConfigManagerProperties.html#d7e2ed30839cbda48896fbb1eb3053e6" title="LBoxConfigManagerProperties::getInstance" alt="" coords="1928,347,2200,374">
+<area shape="rect" href="$classPhotosRecord.html#f79c40c05adda93db3756f002ed1a536" title="PhotosRecord::getModel" alt="" coords="1983,398,2145,424">
+<area shape="rect" href="$classPhotosRecord.html#f6aa17d3b0264b1cd2b020ae4790192d" title="PhotosRecord::getCreateDuplicate" alt="" coords="411,296,632,323">
+<area shape="rect" href="$classPhotosRecord.html#e7d01b215d15e63278c4ce26e347bf9a" title="PhotosRecord::store" alt="" coords="731,43,869,70">
+<area shape="rect" href="$classPhotosRecord.html#a1078a00b3ded3c96c98d12ede14f8ef" title="PhotosRecord::__get" alt="" coords="728,246,872,272">
+<area shape="rect" href="$classPhotosRecord.html#70f7d9e12b10b3c5c2e5588eb453ff37" title="PhotosRecord::getFreeFileNameFrom" alt="" coords="680,423,920,450">
+<area shape="rect" href="$classPhotosRecord.html#7da3fda22a1c2360e5a7ba60436a01fc" title="PhotosRecord::getFileExt" alt="" coords="983,448,1153,475">
+<area shape="rect" href="$classPhotosRecord.html#7e052083be7e82e0b9cd71aa25f7b9ee" title="PhotosRecord::removeDiacritic" alt="" coords="968,499,1168,526">

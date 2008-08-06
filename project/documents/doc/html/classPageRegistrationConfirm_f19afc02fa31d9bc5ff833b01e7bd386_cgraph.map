@@ -1,0 +1,8 @@
+<area shape="rect" href="$classPageRegistrationConfirm.html#e82c16508c3f51cb8d40dc2d1957bba8" title="PageRegistrationConfirm::confirmUser" alt="" coords="336,30,576,57">
+<area shape="rect" href="$classLBoxConfigManagerProperties.html#d7e2ed30839cbda48896fbb1eb3053e6" title="LBoxConfigManagerProperties::getInstance" alt="" coords="320,81,592,108">
+<area shape="rect" href="$classPageRegistrationConfirm.html#54a0ebec6eaee5edc578c47a2a5e92d9" title="PageRegistrationConfirm::getUserByURL" alt="" coords="640,30,899,57">
+<area shape="rect" href="$classLBoxComponent.html#e6b529f9eee468eae75ebf8f3d554f23" title="LBoxComponent::getUrlParamsArray" alt="" coords="948,5,1183,32">
+<area shape="rect" href="$classLBoxComponent.html#f5efcddbc4dc20c08351fdc9ecb21ab4" title="LBoxComponent::isUrlParamPaging" alt="" coords="951,56,1180,82">
+<area shape="rect" href="$classLBoxFront.html#8e15c1d15ac03f8e18c570de0e41e71d" title="LBoxFront::getUrlParamsArray" alt="" coords="1232,5,1432,32">
+<area shape="rect" href="$classLBoxFront.html#8c0996ec1cd5809f2ffa40e013570802" title="LBoxFront::isUrlParamPaging" alt="" coords="1236,56,1428,82">
+<area shape="rect" href="$classLBoxConfigSystem.html#ec8ddab32ac3c7122e3cfcb33864e716" title="LBoxConfigSystem::getInstance" alt="" coords="1480,56,1688,82">

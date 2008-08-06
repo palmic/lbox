@@ -1,0 +1,8 @@
+<div tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
+	<label for="${id}">${SELF/getLabel} <tal:block tal:condition="SELF/isRequired">* </tal:block><input 	type="file" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]" /></label>
+	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
+		<div tal:condition="exists: exceptions/17001">Prosím vložte foto soutěžící</div>
+		<div tal:condition="exists: exceptions/16101">Upload fotky se nezdařil, prosíme kontaktujte zprávce webu</div>
+		<div tal:condition="exists: exceptions/17005">Uploadovaný soubor není foto</div>
+	</div>
+</div>

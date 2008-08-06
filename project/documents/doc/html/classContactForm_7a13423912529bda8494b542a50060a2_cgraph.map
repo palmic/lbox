@@ -1,0 +1,9 @@
+<area shape="rect" href="$classContactForm.html#62299b23d836437792320095838392b0" title="ContactForm::getFormArray" alt="" coords="675,56,859,82">
+<area shape="rect" href="$classLBoxComponent.html#0654e1603e330f4453be9a85d5252d53" title="LBoxComponent::getFormGroupName" alt="" coords="921,157,1164,184">
+<area shape="rect" href="$classContactForm.html#8cd11827dd286aea1015c53a6388d70d" title="ContactForm::saveData" alt="" coords="253,157,411,184">
+<area shape="rect" href="$classLBoxConfigManagerProperties.html#d7e2ed30839cbda48896fbb1eb3053e6" title="LBoxConfigManagerProperties::getInstance" alt="" coords="907,56,1179,82">
+<area shape="rect" href="$classLBoxXT.html#cd796d1797eec29993959d7175299915" title="LBoxXT::getUserXTRecord" alt="" coords="957,106,1128,133">
+<area shape="rect" href="$classLBoxXT.html#2f22e7203932b0ac311291fd8a410d92" title="LBoxXT::isLogged" alt="" coords="981,5,1104,32">
+<area shape="rect" href="$classContactForm.html#28dc879189b4fb4d95918669e3f31f25" title="ContactForm::checkData" alt="" coords="460,106,625,133">
+<area shape="rect" href="$classLBoxComponent.html#caf00baf6bc5305d7f6fe7ab031807c0" title="LBoxComponent::reload" alt="" coords="463,208,623,234">
+<area shape="rect" href="$classLBoxFront.html#10351c03d3737e598355d5c775bd3953" title="LBoxFront::reload" alt="" coords="705,208,828,234">

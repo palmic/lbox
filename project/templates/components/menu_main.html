@@ -1,4 +1,4 @@
-<div id="menumain" tal:DEFINE="iterator pages" tal:condition="exists: pages/current/getParent/hasChildrenInMenu">
+<div id="menumain" tal:DEFINE="iterator pages">
    <h2>Navigace</h2>
    <ul>
       <tal:block tal:REPEAT="node iterator">

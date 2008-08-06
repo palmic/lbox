@@ -75,8 +75,8 @@ abstract class LBoxFormControl
 	
 	/**
 	 *
-	 * @param string name 
-	 * @param string label 
+	 * @param string name
+	 * @param string label
 	 * @param string default defaultni hodnota ovladaciho prvku
 	 * @throws LBoxExceptionFormControl
 	 */
@@ -112,7 +112,7 @@ abstract class LBoxFormControl
 
 	/**
 	 *
-	 * @param LBoxFormFilter filter 
+	 * @param LBoxFormFilter filter
 	 */
 	public function addFilter(LBoxFormFilter $filter) {
 		try {
@@ -223,7 +223,7 @@ abstract class LBoxFormControl
 
 	/**
 	 * Jen pro pouziti z instance LBoxForm, nepouzivat zvenku!
-	 * @param LBoxForm form 
+	 * @param LBoxForm form
 	 */
 	public function setForm(LBoxForm $form = NULL) {
 		try {
@@ -236,7 +236,7 @@ abstract class LBoxFormControl
 
 	/**
 	 * getter na form
-	 * @return LBoxForm form 
+	 * @return LBoxForm form
 	 */
 	public function getForm() {
 		try {

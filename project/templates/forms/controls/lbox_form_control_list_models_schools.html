@@ -1,0 +1,12 @@
+<div tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
+	<h2>${SELF/getLabel}</h2>
+	<x metal:use-macro="control_select" />
+	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
+		<div tal:condition="exists: exceptions/99004">Školu se nepodařilo nalézt v systému</div>
+	</div>
+</div>
+<tal:block metal:define-macro="control_select">
+  <select tal:define="options SELF/getOptions" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]">
+      <option tal:repeat="option options" tal:attributes="value option/getValue; selected option/isSelected | default" tal:content="structure option/getLabel" />
+  </select>
+</tal:block>

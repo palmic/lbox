@@ -11,13 +11,9 @@ class MenuSub extends LBoxComponent
 {
 	protected function executePrepend(PHPTAL $TAL) {
 		try {
-			$TAL->empty	= false;
 			if ($pagesIterator	= $this->page->config->getChildNodesIterator()) {				
 				$pagesIterator->setOutputFilterItemsClass("OutputFilterPage");
 				$TAL->pages 	= $pagesIterator;
-			}
-			else {
-				$TAL->empty	= true;
 			}
 		}
 		catch (Exception $e) {

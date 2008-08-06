@@ -1,8 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pages>
-	<page id="1" url="/" class="PageTitle" template="page_title.html" title="lbox.cz" heading="lbox.cz" name_menu="home" in_menu="0" class_name_body="layout-title" />
-	<page id="600" url="/rss/" template="page_rss_articles.xml" class="PageRSSArticlesNews" title="RSS novinek" heading="RSS novinek" in_menu="0" rss="600" />
-	<page id="404" url="/404/" template="page_404.html" title="Stránka nebyla nalezena" heading="Stránka nebyla nalezena" in_menu="0" />
+	<page id="1" url="/" class="PageTitle" template="title.html" title="Maybelline roadshow" heading="Maybelline roadshow" name_menu="homepage" in_menu="1" />
+	<page id="2" url="/skoly/" class="ListSchools" template="list_schools.html" title="Seznam škol" heading="Seznam škol" name_menu="Seznam škol" in_menu="1">
+		<page id="21" url="/skoly/soutezici/" class="ListModels" template="list_models.html" title="Seznam soutěžících" heading="Seznam soutěžících" name_menu="Seznam soutěžících" in_menu="0" />
+	</page>
+	<page id="3" url="/pravidla-souteze/" template="rules.html" title="Pravidla soutěže" heading="Pravidla soutěže" name_menu="Pravidla soutěže" in_menu="1" />
+	<page id="4" url="/vyherkyne-souteze/" class="ListWinners" template="list_winners.html" title="Výherkyně soutěže" heading="Výherkyně soutěže" name_menu="Výherkyně soutěže" in_menu="1" />
+
+<!-- prepnout na not in menu -->
+	<page id="5" url="/e-zine/" template="ezine.html" title="Maybelline E-zine" heading="Maybelline E-zine" name_menu="Maybelline E-zine" in_menu="1" />
+	<page id="6" url="/kontakt/" template="contacts.html" title="Kontakt" heading="Kontakt" name_menu="Kontakt" in_menu="1" />
+
+	<page id="300" url="/registrace/" template="registration.html" class="PageRegistration" title="Registrace nového uživatele" heading="Registrace nového uživatele" in_menu="1">
+		<page id="301" url="/registrace/potvrzeni/" template="registration_confirm.html" class="PageRegistrationConfirm" title="Potvrzení registrace" heading="Potvrzení registrace" in_menu="0" />
+	</page>
+
+	<page id="600" url="/rss/" template="page_rss_articles.xml" class="PageRSSArticlesNews" title="RSS novinek" heading="RSS novinek" in_menu="0" />
+	<page id="404" url="/404/" template="404.html" title="Stránka nebyla nalezena" heading="Stránka nebyla nalezena" in_menu="0" />
 	<page id="899" url="/sitemap.xml" class="PageSitemap09" template="sitemap09.xml" in_menu="0" />
 	<page id="999" url="/dev/" class="PageDev" heading="Development page" title="Development page" template="_page_dev.html" in_menu="0" />
+
+	<page id="700" url="/admin/" class="Admin" heading="Admin" title="Admin" template="admin.html" in_menu="0" xt="1">
+		<page id="701" url="/admin/login/" class="AdminLogin" heading="Admin login" title="Admin login" template="admin_login.html" in_menu="0" />
+		<page id="710" url="/admin/pridat-foto/" class="AdminModel" heading="Přidat foto" title="Přidat foto" template="admin_model.html" in_menu="1" xt="1" />
+	</page>
 </pages>

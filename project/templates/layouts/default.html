@@ -10,10 +10,17 @@
     <!--[if IE 7]>
         <link rel="stylesheet" href="/css/css-ie7.css" type="text/css" media="screen" />
     <![endif]-->
+	<script type="text/javascript" src="/js/mootools/1.2/mootools.js"></script>
+	<script type="text/javascript" src="/js/noobslide/19-06-08/_class.noobSlideMaybelline.packed.js"></script>
+	<script type="text/javascript" src="/js/noobslide-init.js"></script>
+	<script type="text/javascript" src="/js/tips-init.js"></script>
+	<script type="text/javascript" src="/js/highslide/3.3.22/highslide.packed.js"></script>
+	<script type="text/javascript" src="/js/highslide-init.js"></script>
 	<link tal:condition="exists: SELF/page/rssPage" rel="alternate" type="application/rss+xml" href="${SELF/page/rssPage/url}" title="${SELF/page/rssPage/title}" />
 	</head>
     <body>
 		<x tal:replace="structure lbox:component.menu_main" />
+		<x tal:replace="structure lbox:component.login_form_email" />
 		<x tal:replace="structure lbox:slot.content" />
     </body>
 </html>

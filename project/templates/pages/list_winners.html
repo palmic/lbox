@@ -1,0 +1,19 @@
+<x tal:replace="lbox:slot_start" />
+	<h1 tal:content="SELF/page/heading" />
+
+	<tal:block tal:content="structure form" />
+	<ul tal:condition="exists: winners">
+		<li tal:repeat="winner winners">
+			<a href="${winner/getPhoto/url}" class="highslide" title="foto soutěžící ${winner/model_name} ${winner/model_surname}">
+				<img src="${winner/getPhoto/thumbnail/url}" alt="foto soutěžící ${winner/model_name} ${winner/model_surname}" />
+			</a>
+			<div class="info">
+				<span class="model">${winner/model_name} ${winner/model_surname}</span>,
+				<span class="city">${winner/getCity/name}</span>
+				<span class="school">${winner/getSchool/name}</span>
+				<span class="rating">${winner/rating_count} hlasů</span>
+			</div>
+		</li>
+	</ul>
+<x tal:replace="lbox:slot_end.content" />
+<x tal:replace="structure lbox:component.layout_default" />

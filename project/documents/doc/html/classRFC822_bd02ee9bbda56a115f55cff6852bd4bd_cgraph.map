@@ -1,0 +1,7 @@
+<area shape="rect" href="$classRFC822.html#4c386b90f44238d7f3882b525b470249" title="RFC822::_splitCheck" alt="" coords="475,31,619,57">
+<area shape="rect" href="$classRFC822.html#1404df83aee70eba44062b22afb90640" title="RFC822::_validatePhrase" alt="" coords="229,81,397,108">
+<area shape="rect" href="$classRFC822.html#374e4085bb9bd3fdd423ea064baca2a0" title="RFC822::_hasUnclosedBrackets" alt="" coords="696,5,907,32">
+<area shape="rect" href="$classRFC822.html#6cc1fff81e53298ab43bb353d3fd8b4d" title="RFC822::_hasUnclosedQuotes" alt="" coords="1237,31,1437,57">
+<area shape="rect" href="$classRFC822.html#1074127502b6d2f6296fb958772af172" title="RFC822::_hasUnclosedBracketsSub" alt="" coords="956,5,1188,32">
+<area shape="rect" href="$classRFC822.html#96451001a8e6a53ea8db52361fa4330f" title="RFC822::_validateAtom" alt="" coords="468,81,625,108">
+<area shape="rect" href="$classRFC822.html#176885301154404c476c10b3f4799bf2" title="RFC822::_validateQuotedString" alt="" coords="445,132,648,159">

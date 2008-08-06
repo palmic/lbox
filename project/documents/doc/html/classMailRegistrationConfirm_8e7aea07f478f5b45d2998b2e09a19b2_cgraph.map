@@ -1,0 +1,9 @@
+<area shape="rect" href="$classMailRegistrationConfirm.html#b32658d05788963c3eaa90b375bc74e7" title="MailRegistrationConfirm::getFrom" alt="" coords="245,107,459,133">
+<area shape="rect" href="$classMailRegistrationConfirm.html#e16d5b50cf141c4bcdb9e2bad4688c26" title="MailRegistrationConfirm::getHTML" alt="" coords="243,56,461,83">
+<area shape="rect" href="$classMailRegistrationConfirm.html#6edacb73f8075d54ff2c246b475e7871" title="MailRegistrationConfirm::getSubject" alt="" coords="239,157,465,184">
+<area shape="rect" href="$classMailRegistrationConfirm.html#85e490eee16931b6b00b580dee344f4a" title="MailRegistrationConfirm::getUserXT" alt="" coords="240,208,464,235">
+<area shape="rect" href="$classLBoxConfigManagerProperties.html#d7e2ed30839cbda48896fbb1eb3053e6" title="LBoxConfigManagerProperties::getInstance" alt="" coords="515,107,787,133">
+<area shape="rect" href="$classMailRegistrationConfirm.html#d45c909ebde6a4bd6d3e06253cdc52b8" title="MailRegistrationConfirm::getTAL" alt="" coords="548,56,753,83">
+<area shape="rect" href="$classMailRegistrationConfirm.html#2f0bed7cec2e982238727cdb6adacea9" title="MailRegistrationConfirm::getTemplatesPath" alt="" coords="516,5,785,32">
+<area shape="rect" href="$classLBoxConfigSystem.html#ec8ddab32ac3c7122e3cfcb33864e716" title="LBoxConfigSystem::getInstance" alt="" coords="835,5,1043,32">
+<area shape="rect" href="$classMailRegistrationConfirm.html#cd73b8771d168f008b3efe3daecb8667" title="MailRegistrationConfirm::getHost" alt="" coords="545,157,756,184">

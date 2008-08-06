@@ -1,0 +1,14 @@
+<area shape="rect" href="$classLBoxForm.html#f0e757d39f0df8bed102f93820e9d79b" title="LBoxForm::getSpamDefenseControl" alt="" coords="387,56,616,82">
+<area shape="rect" href="$classLBoxForm.html#7eaf891ebd651b4861072746b117f478" title="LBoxForm::getTAL" alt="" coords="207,258,335,285">
+<area shape="rect" href="$classLBoxForm.html#2e2e79ac38c791944e93e8f5daef3c1c" title="LBoxForm::isAntiSpamSet" alt="" coords="413,106,589,133">
+<area shape="rect" href="$classLBoxForm.html#38c1c0db866e86290720e2ad07ff0ac2" title="LBoxForm::process" alt="" coords="203,157,339,184">
+<area shape="rect" href="$classLBoxForm.html#5a120fc5e8009babbf34acdb919809d8" title="LBoxForm::getPathTemplate" alt="" coords="408,309,595,336">
+<area shape="rect" href="$classLBoxConfigSystem.html#ec8ddab32ac3c7122e3cfcb33864e716" title="LBoxConfigSystem::getInstance" alt="" coords="664,309,872,336">
+<area shape="rect" href="$classLBoxForm.html#1a99674145cdb773c630341d4d97b1fa" title="LBoxForm::getName" alt="" coords="1141,106,1283,133">
+<area shape="rect" href="$classLBoxFront.html#10351c03d3737e598355d5c775bd3953" title="LBoxFront::reload" alt="" coords="440,258,563,285">
+<area shape="rect" href="$classLBoxForm.html#d2d65d4da1048a9a0907c3f2a896109a" title="LBoxForm::wasSent" alt="" coords="432,157,571,184">
+<area shape="rect" href="$classLBoxForm.html#011743587c176c995df6e413956a20df" title="LBoxForm::getSentData" alt="" coords="688,106,848,133">
+<area shape="rect" href="$classLBoxFront.html#c82e8347a138389c95e81eaf26cf252e" title="LBoxFront::getDataGet" alt="" coords="924,56,1079,82">
+<area shape="rect" href="$classLBoxFront.html#a5ab0242d7dd47143829e2cf57a865f6" title="LBoxFront::getDataPost" alt="" coords="921,157,1081,184">
+<area shape="rect" href="$classLBoxForm.html#93b2e836b6f4dec182dd68a70f50efd0" title="LBoxForm::getFilesData" alt="" coords="920,5,1083,32">
+<area shape="rect" href="$classLBoxFront.html#ee3b5e8af9b4946a46123e91c4a47eb5" title="LBoxFront::getDataFiles" alt="" coords="1131,5,1293,32">

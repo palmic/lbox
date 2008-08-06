@@ -1,0 +1,20 @@
+<x tal:replace="lbox:slot_start" />
+	<h1 tal:content="SELF/page/heading" />
+	<p tal:condition="exists: reasons/alreadyconfirmed">
+		Vaše registrace je již potvrzena.<br />
+		Přejít na <a href="http://${domain}/" title="${domain}">${domain}</a>
+	</p>
+	<tal:block tal:condition="not: exists: reasons/alreadyconfirmed">
+		<p tal:condition="succes">
+			Vaše registrace byla potvrzena. Děkujeme.<br />
+			Přejít na <a href="http://${domain}/" title="${domain}">${domain}</a>
+		</p>
+		<tal:block tal:condition="not: succes">
+			<p tal:condition="exists: reasons/badhash">
+				Registrace uživatele nenalezena.<br />
+				Pokud se domníváte, že jde o chybu, kontaktujte prosím <a href="mailto:${contactemail}" title="odeslat mail na ${contactemail}">${contactemail}</a>.
+				</p>
+		</tal:block>
+	</tal:block>
+<x tal:replace="lbox:slot_end.content" />
+<x tal:replace="structure lbox:component.layout_default" />

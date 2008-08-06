@@ -1,0 +1,15 @@
+<div id="carousel-top-model">
+	<span class="data">
+		<span class="width-item">200</span>
+		<span class="height-item">100</span>
+	</span>
+	<span id="carousel-previous"><<</span>
+	<div class="container">
+		<ul id="carousel-top-model-box" tal:condition="photos/count">
+			<li tal:repeat="photo photos" class="item-${repeat/photo/index}">
+				<img src="${photo/getPhoto/thumbnail/url}" alt="${photo/name} ${photo/surname}" />
+			</li>
+		</ul>
+	</div>
+	<span class="control" id="carousel-next">>></span>
+</div>

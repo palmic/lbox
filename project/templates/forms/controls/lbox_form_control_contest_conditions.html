@@ -1,0 +1,7 @@
+<div tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
+	<label for="${id}">${SELF/getLabel} <tal:block tal:condition="SELF/isRequired">* </tal:block><input 	type="checkbox" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]"
+			tal:attributes="value SELF/getValue | SELF/getDefault; checked SELF/isSelected | default" /></label>
+	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
+		<div tal:condition="exists: exceptions/17001">Pro registraci musíte souhlasit s podmínkami soutěže</div>
+	</div>
+</div>
