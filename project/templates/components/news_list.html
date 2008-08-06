@@ -1,0 +1,33 @@
+<div class="news" tal:condition="news">
+	<h3>Seznam novinek</h3>
+	<ul class="articles">
+		<li tal:repeat="item news">
+			<div id="article-${item/id}" class="article">
+				<h4 class="article-heading"><a href="${item/url}" tal:content="item/heading" /></h4>
+				<div class="perex" tal:content="structure item/perex" />
+				<!-- <div class="body" tal:content="structure item/body" /> -->
+				<div class="description">
+					<span class="date" 		tal:content="item/published" />
+					<span class="author" />
+				</div>
+				<div class="gui-data">
+					<div class="permalink-text">permalink na článek s diskuzí</div>
+					<div class="link-close"><a href="#close-article-${item/id}">zavřít obsah článku</a></div>
+				</div>
+				<div class="xt-admin" tal:condition="xtAdmin">
+					<form method="post">
+						<input type="hidden" name="${SELF/getFormGroupName}[xt][id]" value="${item/id}" />
+						<input type="hidden" name="${SELF/getFormGroupName}[xt][action]" value="edit" />
+						<input type="submit" name="${SELF/getFormGroupName}[xt][submit]" value="edit" />
+					</form>
+					<form method="post" onsubmit="return (confirm('Skutečně chceš smazat článek -${item/heading}- ?') ? true : false)">
+						<input type="hidden" name="${SELF/getFormGroupName}[xt][id]" value="${item/id}" />
+						<input type="hidden" name="${SELF/getFormGroupName}[xt][action]" value="delete" />
+						<input type="submit" name="${SELF/getFormGroupName}[xt][submit]" value="delete" />
+					</form>
+				</div>
+			</div>
+		</li>
+	</ul>
+	<a href="${urlMore}" class="more">více novinek</a>
+</div>

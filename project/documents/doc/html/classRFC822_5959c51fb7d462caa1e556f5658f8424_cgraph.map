@@ -1,8 +1,0 @@
-<area shape="rect" href="$classRFC822.html#e2b42c1c9293eb9f8563d8be2e7060b9" title="RFC822::_validateDomain" alt="" coords="213,81,384,108">
-<area shape="rect" href="$classRFC822.html#4c386b90f44238d7f3882b525b470249" title="RFC822::_splitCheck" alt="" coords="456,56,600,82">
-<area shape="rect" href="$classRFC822.html#feccd53f1530ced13ccebc652178196d" title="RFC822::_validateSubdomain" alt="" coords="432,106,624,133">
-<area shape="rect" href="$classRFC822.html#374e4085bb9bd3fdd423ea064baca2a0" title="RFC822::_hasUnclosedBrackets" alt="" coords="672,5,883,32">
-<area shape="rect" href="$classRFC822.html#6cc1fff81e53298ab43bb353d3fd8b4d" title="RFC822::_hasUnclosedQuotes" alt="" coords="1213,30,1413,57">
-<area shape="rect" href="$classRFC822.html#1074127502b6d2f6296fb958772af172" title="RFC822::_hasUnclosedBracketsSub" alt="" coords="932,5,1164,32">
-<area shape="rect" href="$classRFC822.html#96451001a8e6a53ea8db52361fa4330f" title="RFC822::_validateAtom" alt="" coords="699,106,856,133">
-<area shape="rect" href="$classRFC822.html#39b40343532da8182a5f6ac9b95b8860" title="RFC822::_validateDliteral" alt="" coords="695,157,860,184">

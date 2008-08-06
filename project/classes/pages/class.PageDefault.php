@@ -6,16 +6,15 @@
  * @version 1.0
  * @since 2007-12-08
  */
-class PageDefault extends PageMaybelline
+class PageDefault extends LBoxPage
 {
 	protected function executeStart() {
 		try {
-			$this->config->setOutputFilter(new OutputFilterPage($this->config));
 		}
 		catch (Exception $e) {
 			throw $e;
 		}
-	}
+	}	
 
 	protected function executePrepend(PHPTAL $TAL) {
 		//DbControl::$debug = true;

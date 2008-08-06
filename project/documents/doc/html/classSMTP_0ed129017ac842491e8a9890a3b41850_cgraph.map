@@ -1,7 +1,0 @@
-<area shape="rect" href="$classSMTP.html#7a039190cea09eda860ea461a17659bf" title="SMTP::auth" alt="" coords="147,49,237,76">
-<area shape="rect" href="$classSMTP.html#47ee66fd33602cbb1d6cdd7c704aa8b9" title="SMTP::get_data" alt="" coords="300,150,415,177">
-<area shape="rect" href="$classSMTP.html#9fe33dbad76e480f92ecdd7aca545755" title="SMTP::send_data" alt="" coords="295,100,420,126">
-<area shape="rect" href="$classSMTP.html#76c53832f38581b878ad23b985f9d745" title="SMTP::data" alt="" coords="147,252,237,278">
-<area shape="rect" href="$classSMTP.html#0198d270c060b9ea359d1bc1bcf376b4" title="SMTP::is_connected" alt="" coords="287,226,428,253">
-<area shape="rect" href="$classSMTP.html#16a15ec2e5bf36519815f7a0160b7ec1" title="SMTP::mail" alt="" coords="148,100,236,126">
-<area shape="rect" href="$classSMTP.html#f7c46ce2bb876eab7b2fe39c2a90616b" title="SMTP::rcpt" alt="" coords="148,150,236,177">

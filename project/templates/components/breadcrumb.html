@@ -1,4 +1,4 @@
-<div id="breadcrumb">
+<div id="breadcrumb" tal:condition="not: rootLocation">
      <tal:block tal:REPEAT="node iterator">
         <a tal:ATTRIBUTES="href node/url | default; title node/titleMenu"
            tal:CONTENT="node/name_menu"

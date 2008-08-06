@@ -1,4 +1,0 @@
-<area shape="rect" href="$classSMTP.html#7a039190cea09eda860ea461a17659bf" title="SMTP::auth" alt="" coords="187,5,277,32">
-<area shape="rect" href="$classSMTP.html#1e0b73c925b08abdf15c4b6742de82da" title="SMTP::helo" alt="" coords="188,56,276,83">
-<area shape="rect" href="$classSMTP.html#47ee66fd33602cbb1d6cdd7c704aa8b9" title="SMTP::get_data" alt="" coords="331,5,445,32">
-<area shape="rect" href="$classSMTP.html#9fe33dbad76e480f92ecdd7aca545755" title="SMTP::send_data" alt="" coords="325,56,451,83">

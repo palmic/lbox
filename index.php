@@ -1,4 +1,11 @@
 <?php
+/**
+ * @todo
+ *  - do videi pridat pod drobecky vypis subkategorii
+ *  - pridat dalsi subkategorie podle Radka
+ *  - doplnit maintainance o predcitani subkategorii
+ *  - otestovat a vyresit proc se obcas XML stahne neuplne
+ */
 require("lBox/lib/loader.php");
 
 /*var_dump(LBOX_REQUEST_URL);

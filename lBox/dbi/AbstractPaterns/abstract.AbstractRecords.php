@@ -368,7 +368,7 @@ abstract class AbstractRecords implements Iterator
 									$where .= " $fName=$value";
 								}
 							}
-						}
+						}						
 					}
 
 				}
@@ -413,7 +413,6 @@ abstract class AbstractRecords implements Iterator
 				// set limit
 				if ($this->limit) {
 					if (count($this->limit) != 2) {
-var_dump($this->limit);
 						throw new LBoxException("Constructor parameter \$limit of class ". get_class($this) ." accept only array with two numeric values!");
 					}
 					$limit = "";

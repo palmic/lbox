@@ -1,8 +1,0 @@
-<div id="login">
-	<p tal:condition="exists: userNotConfirmed" class="error">Tvá registrace zatím není potvrzena. Postupuj podle registračního e-mailu.</p>
-	<div tal:condition="not: xt/isLogged" tal:content="structure form" />
-	<tal:block tal:condition="xt/isLogged">
-		<p>Jste zaregistrován(a) jako <tal:block tal:content="xt/getUserXTRecord/nick" /></p>
-		<a href="${logoutUrl}">logout</a>
-	</tal:block>
-</div>

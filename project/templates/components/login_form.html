@@ -1,49 +1,32 @@
-<div tal:condition="not:xt/isLogged" id="login" class="box">
-	<h2>Login: <a href="${registrationUrl}" class="registrate">registrace</a></h2>
-	<div class="box-body">
-			<p tal:condition="exists: userNotConfirmed" class="error">Tvá registrace zatím není potvrzena. Postupuj podle registračního e-mailu.</p>
-			<form id="login-form" method="post" action="${form/target}">
-				<div tal:define="control form/controls/nick">
-					<label for="${control/id}"><span class="label"><tal:block tal:condition="control/required">*</tal:block>nick:</span>
-						<input class="text" type="text" id="${control/id}" name="${control/name}" value="${control/value}" /></label>
-				</div>
-				<div tal:define="control form/controls/password">
-					<label for="${control/id}"><span class="label"><tal:block tal:condition="control/required">*</tal:block>heslo:</span>
-						<input class="text" type="password" id="${control/id}" name="${control/name}" value="${control/value}" /></label>
-				</div>
-				<div tal:define="control form/controls/remember" class="remember">
-					<label for="${control/id}"><input type="checkbox" id="${control/id}" name="${control/name}" value="${control/value}" tal:attributes="checked control/checked | default" />
-					<tal:block tal:condition="control/required">*</tal:block>pamatovat si přihlášení</label>
-					<div class="submit">
-						<input type="submit" name="${SELF/getFormGroupName}[submit]" value="ok" />
-					</div>
-				</div>
-			</form>
-			<script tal:condition="spamDefenseJS" type="text/javascript" tal:content="structure string:Page.sDefense(document.getElementById('login-form'), '${SELF/getFormGroupName}');"></script>
-	</div>
-	<div class="messages">
-		<noscript tal:condition="spamDefenseJS"><p class="error">Pro správnou funkci formuláře je nutné mít zapnutý javaScript</p></noscript>
-		<tal:block tal:condition="exists: form/error">
-			<p tal:condition="exists: form/error/spamDefenseJS" class="cooltip error" title="Naše formuláře v obraně proti spamu využívají skutečnosti, že spam roboti neumí interpretovat javascript. Kvůli tomu bohužel není možné odeslání formuláře bez javascriptu">Pro odeslání formuláře je nutné mít zapnutý javaScript!</p>
-		</tal:block>
-		<div class="error" tal:condition="exists:form/controls/nick/error">Nezadal(a) jsi nick</div>
-		<tal:block tal:define="control form/controls/password">
-			<tal:block tal:condition="exists:control/error">
-				<div class="error" tal:condition="exists:control/error/loginInvalid">Nick, nebo heslo není správně.</div>
-				<div class="error" tal:condition="exists:control/error/empty">Nezadal(a) jsi heslo</div>
-			</tal:block>
-		</tal:block>
-	</div>
-	<div class="box-footer" />
-</div>
-<div tal:condition="xt/isLogged" class="box">
-	<h2>Login:</h2>
-	<div class="box-body">
-		<p class="t-center">Jsi zalogován jako <tal:block tal:content="xt/getUserXTRecord/nick" /></p>
-		<p class="t-center">
-			<a href="${logoutUrl}">logout</a> |
-			<a href="${registrationUrl}">změnit profil</a>
-		</p>
-	</div>
-	<div class="box-footer" />
+<div id="login">
+	<fieldset tal:condition="not:xt/isLogged">
+		<legend>Login</legend>
+		<p tal:condition="exists: userNotConfirmed" class="error">Tvá registrace zatím není potvrzena. Postupuj podle registračního e-mailu.</p>
+		<form id="login-form" method="post" action="${form/target}">
+			<div tal:define="control form/controls/nick">
+				<label for="${control/id}"><tal:block tal:condition="control/required">*</tal:block>nick:
+					<input type="text" id="${control/id}" name="${control/name}" value="${control/value}" /></label>
+					<span class="error" tal:condition="exists:control/error">Nezadal(a) jste nick</span>
+			</div>
+			<div tal:define="control form/controls/password">
+				<label for="${control/id}"><tal:block tal:condition="control/required">*</tal:block>heslo:
+					<input type="password" id="${control/id}" name="${control/name}" value="${control/value}" /></label>
+					<tal:block tal:condition="exists:control/error">
+						<span class="error" tal:condition="exists:control/error/loginInvalid">Nick, nebo heslo není správně.</span>
+						<span class="error" tal:condition="exists:control/error/empty">Nezadal(a) jste heslo</span>
+					</tal:block>
+			</div>
+			<div tal:define="control form/controls/remember">
+				<label for="${control/id}"><tal:block tal:condition="control/required">*</tal:block>pamatovat si přihlášení:
+					<input type="checkbox" id="${control/id}" name="${control/name}" value="${control/value}" tal:attributes="checked control/checked | default" /></label>
+			</div>
+			<div>
+				<input type="submit" name="${SELF/getFormGroupName}[submit]" value="uložit" />
+			</div>
+		</form>
+	</fieldset>
+	<tal:block tal:condition="xt/isLogged">
+		<p>Jste zaregistrován(a) jako <tal:block tal:content="xt/getUserXTRecord/nick" /></p>
+		<a href="${logoutUrl}">logout</a>
+	</tal:block>
 </div>

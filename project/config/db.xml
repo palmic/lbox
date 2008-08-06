@@ -23,12 +23,12 @@
 					<logon>0</logon>
 					<platform>mysql</platform>
 					<login>
-						<name>maybelline</name>
-						<password>1road3</password>
+						<name>name</name>
+						<password></password>
 					</login>
 					<host>localhost</host>
 					<dsn>mysql</dsn>
-					<schema>maybelline</schema>
+					<schema>schema</schema>
 					<port/>
 	</project>
 </tasks>
