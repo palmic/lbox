@@ -1,5 +1,5 @@
 <?php
-abstract class LBoxFormControlOptionItem extends LBoxFormControlChoose
+abstract class LBoxFormControlOptionItem
 {
 	/**
 	 * hodnota option, ktera bude odeslana formularem v pripade, ze tato option bude zvolena
@@ -20,8 +20,8 @@ abstract class LBoxFormControlOptionItem extends LBoxFormControlChoose
 	protected $control	= "";
 	
 	/**
-	 * @param string value 
-	 * @param string label 
+	 * @param string value
+	 * @param string label
 	 */
 	public function __construct( $value = "",  $label = "" ) {
 		try {
@@ -79,7 +79,7 @@ abstract class LBoxFormControlOptionItem extends LBoxFormControlChoose
 
 	/**
 	 * nastavuje se vnitrne v LBoxFormControlChoose, nepouzivat z venci!
-	 * @param LBoxFormControlChoose control 
+	 * @param LBoxFormControlChoose control
 	 */
 	public function setControl(LBoxFormControlChoose $control) {
 		try {
