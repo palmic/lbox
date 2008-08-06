@@ -280,7 +280,10 @@ abstract class LBoxComponent
 				return $code;
 			}
 			if (LBoxConfigSystem::getInstance()->getParamByPath("output/remove_coments")) {
-				$code = $this->removeComents($code);
+				$code 	= $this->removeComents($code);
+			}
+			if (LBoxConfigSystem::getInstance()->getParamByPath("output/compression")) {
+				$code	= $this->compress($code);
 			}
 			return $code;
 		}
@@ -295,8 +298,28 @@ abstract class LBoxComponent
 	 * @return string
 	 */
 	protected function removeComents($input = "") {
-		$pattern = "'<!--.*-->'";
-		return preg_replace($pattern, "", $input);
+		$patterns["<!--[^\[].*-->"] = "";
+		$out		= $input;
+		foreach ((array)$patterns as $pattern => $replacement) {
+			$out	= ereg_replace($pattern, $replacement, $out);
+		}
+		return $out;
+	}
+
+	/**
+	 * odstrani na vystupu zbytecne znaky
+	 * @param string $input
+	 * @return string
+	 */
+	protected function compress($input = "") {
+		$patterns[">([[:space:]])+<"] 	= ">\\1<";
+		$patterns["([[:space:]])+"] 	= "\\1";
+		$patterns["[\r\n\v\f]"] 		= "";
+		$out							= $input;
+		foreach ((array)$patterns as $pattern => $replacement) {
+			$out	= ereg_replace($pattern, $replacement, $out);
+		}
+		return $out;
 	}
 
 	/**
