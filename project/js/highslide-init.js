@@ -8,7 +8,7 @@ hs.fullExpandTitle = 'Expanduji na aktuální velikost.';
 hs.fullExpandPosition = 'bottom right';
 window.addEvent('domready', function() {
 	$$('a.highslide').each(function(item, index) {
-		item.addEvent('mouseover', function() {
+		item.addEvent('click', function() {
 			return hs.expand(this);
 		})
 	});

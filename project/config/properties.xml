@@ -46,7 +46,7 @@
 	<property name="model_thumbnail_size_longer">400</property>	
 	
 	<!-- pocet hlasu uzivatele v ramci skoly -->
-	<property name="max_user_votes_per_school">3</property>
+	<property name="max_user_votes_per_school">30</property>
 
 	<!-- pocet dni, po ktere bude mozno hlasovat pro soutezici (brano jako pocet dni od vlozeni posledniho souteziciho skoly ) -->
 	<property name="voting_range_school_days">14</property>	

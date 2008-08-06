@@ -24,7 +24,7 @@
 					<span class="info-voted-times" tal:condition="not: model/getSchool/getXTUserVotedCount">V rámci této školy jste ještě nehlasoval</span>
 					<span tal:condition="model/getSchool/hasUserReachedVotedLimit">V rámci této školy už jste dosáhl limitu počtu hlasů</span>
 					<tal:block tal:condition="not: model/getSchool/hasUserReachedVotedLimit">
-						<form tal:condition="not: model/didUserXTVotedFor" method="post" action="" onsubmit="return (confirm('Hlasovat můžeme max. pro 3 soutěžící v rámci jedné školy. Opravdu hlasovat?') ? true : false)">
+						<form tal:condition="not: model/didUserXTVotedFor" method="post" action="" onsubmit="return (confirm('Hlasovat můžeme max. pro soutěžící v rámci jedné školy. Opravdu hlasovat?') ? true : false)">
 							<div>
 								<input type="hidden" name="${voteGroupName}[votefor]" 	value="${model/getPhoto/id}" />
 								<input type="submit" name="${voteGroupName}[vote]"		value="hlasuj pro mě" />
