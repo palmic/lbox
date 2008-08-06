@@ -16,50 +16,21 @@
 	<property name="ref_page_xt_login">701</property><!-- id stranky, pro xt login, pokud je na to nejaka specialni -->
 
 	<property name="ref_page_xt_registration">300</property><!-- id stranky s registraci usera -->
-	<property name="ref_page_xt_admin_models">710</property><!-- id stranky s uploadem fotky -->
-	<property name="ref_page_rss_model">600</property><!-- id stranky s RSS uploadovanych fotek oci -->
 	<property name="ref_page_registration_confirm">301</property><!-- id stranky, ktera potvrzuje confirm registrace -->
 	
-	<!-- javascriptova spamdefense ve formu - neprustrelna ochrana, ktera ale vyzaduje od regulerniho uzivatele zapnuty javascript 1/0 -->
-	<property name="form_spamdefense_js">1</property>
-	
-	<!-- 0 bez limitu, ponechat prazdne pro prebrani globalni default hodnoty strankovani ze system configu -->
-	<property name="admin_partylist_paging">10</property>
-
 	<!-- tyto hodnoty se davaji natvrdo, to znamena, ze kdyz zde bude 0, pouzije se jako maxlength formularoveho pole opravdu 0 -->
 	<property name="form_max_length_discussion_title">50</property>
 	<property name="form_max_length_discussion_text">250</property>
 	<property name="form_max_length_nick">15</property>
-	<property name="form_max_length_email">20</property>
+	<property name="form_max_length_email">35</property>
+	<property name="form_max_length_phone">20</property>
+	<property name="form_max_length_password">20</property>
 	<property name="form_max_length_www">20</property>
-	<property name="form_max_length_name">20</property>
-	<property name="form_max_length_surname">20</property>
+	<property name="form_max_length_name">50</property>
+	<property name="form_max_length_surname">50</property>
 
-	<!-- cesta k rootu fotek modelek -->
-	<property name="path_photos_models"><![CDATA[$project/filespace/photos/<region>/<city>/<school>]]></property>
-<<<<<<< HEAD:project/config/properties.xml
-
-	<!-- strankovani -->
-	<property name="paging_list_models">10</property>
 	<property name="paging_range">5</property>
 	
-	<!-- pocet nejlepe hodnocenych fotek v carouselu -->
-	<property name="models_top_carousel_length">10</property>	
-
-	<!-- nastaveni fotek -->
-	<property name="model_photo_max_size_longer">1000</property>	
-	<property name="model_thumbnail_size_longer">400</property>	
-	
-	<!-- pocet hlasu uzivatele v ramci skoly -->
-	<property name="max_user_votes_per_school">30</property>
-
-	<!-- pocet dni, po ktere bude mozno hlasovat pro soutezici (brano jako pocet dni od vlozeni posledniho souteziciho skoly ) -->
-	<property name="voting_range_school_days">14</property>	
-=======
-	
-	<!-- pocty RSS items -->
-	<property name="rss_models_num">20</property>
->>>>>>> 4f30ba4... doxy doc:project/config/properties.xml
 
 	<!-- odesilatel confirm mailu registrace -->
 	<property name="registration_confirm_mail_from">info@lbox.cz</property>
