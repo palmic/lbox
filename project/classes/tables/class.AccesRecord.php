@@ -68,6 +68,10 @@ class AccesRecord extends AbstractRecordLBox
 
 	public function store() {
 		try {
+			// v pripade, ze nepouzivame databazi, access se neuklada
+			if (LBoxConfigManagerProperties::getPropertyContentByName("use_db") < 1) {
+				return;
+			}
 			$this->params["time"] 				= date("Y-m-d H:i:s");
 			$this->params["ip"] 				= LBOX_REQUEST_IP;
 			$this->params["url"] 				= LBOX_REQUEST_URL;
@@ -76,7 +80,7 @@ class AccesRecord extends AbstractRecordLBox
 			if (!$this->params["request_time"]) {
 				$this->params["request_time"]	= LBOX_REQUEST_REQUEST_TIME;
 			}
-			if (LBoxXT::isLogged()) {				
+			if (LBoxXT::isLogged()) {
 				$this->params["ref_xtUser"]		= LBoxXT::getUserXTRecord()->id;
 			}
 			parent::store();
