@@ -279,12 +279,8 @@ abstract class LBoxComponent
 			if ($this->isDebugOn()) {
 				return $code;
 			}
-			if (LBoxConfigSystem::getInstance()->getParamByPath("output/remove_coments")) {
-				$code 	= $this->removeComents($code);
-			}
-			if (LBoxConfigSystem::getInstance()->getParamByPath("output/compression")) {
-				$code	= $this->compress($code);
-			}
+			$code 	= $this->removeComents($code);
+			$code	= $this->compress($code);
 			return $code;
 		}
 		catch (Exception $e) {
@@ -293,33 +289,69 @@ abstract class LBoxComponent
 	}
 
 	/**
-	 * odstrani na vystupu HTML komentare
+	 * odstrani na vystupu HTML komentare (kontroluje prepinac funkce v system.xml)
 	 * @param string $input
 	 * @return string
 	 */
 	protected function removeComents($input = "") {
-		$patterns["<!--[^\[].*-->"] = "";
-		$out		= $input;
-		foreach ((array)$patterns as $pattern => $replacement) {
-			$out	= ereg_replace($pattern, $replacement, $out);
+		try {
+			$patterns["<!--[^\[].*-->"] = "";
+			$out		= $input;
+			switch (LBoxConfigSystem::getInstance()->getParamByPath("output/remove_coments")) {
+				case -1:
+						if (strlen(stristr(LBOX_REQUEST_URL_HOST, "localhost")) < 1) {
+							foreach ((array)$patterns as $pattern => $replacement) {
+								$out	= ereg_replace($pattern, $replacement, $out);
+							}
+						}
+					break;
+				case 0:
+					break;
+				case 1:
+						foreach ((array)$patterns as $pattern => $replacement) {
+							$out	= ereg_replace($pattern, $replacement, $out);
+						}
+					break;
+			}
+			return $out;
 		}
-		return $out;
+		catch (Exception $e) {
+			throw $e;
+		}
 	}
 
 	/**
-	 * odstrani na vystupu zbytecne znaky
+	 * odstrani na vystupu zbytecne znaky (kontroluje prepinac funkce v system.xml)
 	 * @param string $input
 	 * @return string
 	 */
 	protected function compress($input = "") {
-		$patterns[">([[:space:]])+<"] 	= ">\\1<";
-		$patterns["([[:space:]])+"] 	= "\\1";
-		$patterns["[\r\n\v\f]"] 		= "";
-		$out							= $input;
-		foreach ((array)$patterns as $pattern => $replacement) {
-			$out	= ereg_replace($pattern, $replacement, $out);
+		try {
+			$patterns[">([[:space:]])+<"] 	= ">\\1<";
+			$patterns["([[:space:]])+"] 	= "\\1";
+			$patterns["[\r\n\v\f]"] 		= "";
+			$out							= $input;
+			switch (LBoxConfigSystem::getInstance()->getParamByPath("output/compression")) {
+				case -1:
+						if (strlen(stristr(LBOX_REQUEST_URL_HOST, "localhost")) < 1) {
+							foreach ((array)$patterns as $pattern => $replacement) {
+								$out	= ereg_replace($pattern, $replacement, $out);
+							}
+						}
+					break;
+				case 0:
+					break;
+				case 1:
+						foreach ((array)$patterns as $pattern => $replacement) {
+							$out	= ereg_replace($pattern, $replacement, $out);
+						}
+					break;
+			}
+			return $out;
 		}
-		return $out;
+		catch (Exception $e) {
+			throw $e;
+		}
 	}
 
 	/**

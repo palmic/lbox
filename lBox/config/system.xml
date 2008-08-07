@@ -72,8 +72,8 @@
 			<!-- nutne kuli generovani dynamickych linku - preparserovanim teto hodnoty patternem vyse ziskame pole hodnot k sestavovani odkazu -->
 			<paging_url_param_example>stranka-32</paging_url_param_example>
 		</paging>
-		<remove_coments>0</remove_coments>
-		<compression>0</compression>
+		<remove_coments>-1</remove_coments>
+		<compression>-1</compression>
 	</output>
 	<xt>
 		<remember_cookie_days>30</remember_cookie_days><!-- kolik dni ma vydrzet cookie s persistenci XT loginu -->
