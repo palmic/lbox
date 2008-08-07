@@ -79,6 +79,6 @@
 		<remember_cookie_days>30</remember_cookie_days><!-- kolik dni ma vydrzet cookie s persistenci XT loginu -->
 	</xt>
 	<debug>
-		<components>0</components>
+		<components>-1</components>
 	</debug>
 </system>

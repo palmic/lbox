@@ -226,7 +226,6 @@ abstract class LBoxComponent
 			try {
 				$out 	 = "";
 				$out	.= $this->getTAL()->execute();
-				$out 	 = $this->parseOut($out);
 				if ($this->isDebugOn()) {
 					$config 			= $this->config;
 					$templatePathShort	= "";
@@ -236,7 +235,7 @@ abstract class LBoxComponent
 						$templatePathShort .= strlen($templatePathShort) > 0 ? "/" : "";
 						$templatePathShort .= $templatePathArr[$i];
 					}
-					$out = "<!-- start of $className, with template: $templatePathShort/$templateFileName, config: $config -->\n$out\n<!-- end of $className -->";
+					$out = "\n<!-- start of $className, with template: $templatePathShort/$templateFileName, config: $config -->\n$out\n<!-- end of $className -->\n";
 				}
 			}
 			catch (Exception $e) {
@@ -262,26 +261,6 @@ abstract class LBoxComponent
 				$out 	= "<!--$out-->";
 			}
 			return $out;
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-
-	/**
-	 * parsuje vysledek podle configu
-	 * @param string $out
-	 * @return string
-	 * @throws Exception
-	 */
-	protected function parseOut($code = "") {
-		try {
-			if ($this->isDebugOn()) {
-				return $code;
-			}
-			$code 	= $this->removeComents($code);
-			$code	= $this->compress($code);
-			return $code;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -715,7 +694,17 @@ abstract class LBoxComponent
 	 */
 	protected function isDebugOn() {
 		try {
-			return (LBoxConfigSystem::getInstance()->getParamByPath("debug/components"));
+			switch (LBoxConfigSystem::getInstance()->getParamByPath("debug/components")) {
+				case -1:
+						return (strlen(stristr(LBOX_REQUEST_URL_HOST, "localhost")) > 0);
+					break;
+				case 0:
+						return false;
+					break;
+				case 1:
+						return true;
+					break;
+			}
 		}
 		catch (Exception $e) {
 			throw $e;

@@ -114,11 +114,11 @@ abstract class LBoxConfigItem implements OutputItem
 	}
 
 	public function __toString() {
-		$msg = "Object of type ". get_class($this) .", tagName: ". $this->node->tagName ."\n";
+		$msg = "Object of type ". get_class($this) ."\ntagName:\n	". $this->node->tagName ."\n";
 		$msg .= "attributes:\n";
 		foreach ($this->node->attributes as $attribute) {
-			$attributesString .= strlen($items) > 0 ? ", " : "";
-			$attributesString .= $attribute->name ." => ". $attribute->value;
+			$attributesString .= strlen($attributesString) > 0 ? "\n" : "";
+			$attributesString .= "	". $attribute->name ." => ". $attribute->value;
 		}
 		return $msg . $attributesString ."\n";
 	}
