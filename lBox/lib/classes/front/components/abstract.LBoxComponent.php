@@ -229,11 +229,14 @@ abstract class LBoxComponent
 				if ($this->isDebugOn()) {
 					$config 			= $this->config;
 					$templatePathShort	= "";
-					$templatePath		= $this->templatePath;
+					$templatePath		= str_replace("\\", "/", $this->templatePath);
 					$templatePathArr	= explode("/", $templatePath);
+					$y 					= 0;
 					for ($i = array_search(LBOX_DIRNAME_PROJECT, $templatePathArr); $i < count($templatePathArr); $i++) {
+						if ($y > 50)break;
 						$templatePathShort .= strlen($templatePathShort) > 0 ? "/" : "";
 						$templatePathShort .= $templatePathArr[$i];
+						$y++;
 					}
 					$out = "\n<!-- start of $className, with template: $templatePathShort/$templateFileName, config: $config -->\n$out\n<!-- end of $className -->\n";
 				}
