@@ -102,7 +102,7 @@ try {
 	// pokud nemame pearovsky PHPTAL pouzivame lokani LBOXovy
 	@include("PHPTAL.php");
 	if (!@constant("PHPTAL_VERSION")) {	
-		require(LBOX_PATH_CORE 			. $slash ."TAL". $slash ."PHPTAL-1.1.12". $slash ."PHPTAL.php");
+		require(LBOX_PATH_CORE 			. $slash ."TAL". $slash ."PHPTAL-1.1.13". $slash ."PHPTAL.php");
 	}
 }
 catch (Exception $e) {
