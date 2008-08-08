@@ -38,6 +38,11 @@ class LBoxForm
 	/**
 	 * @var string
 	 */
+	protected $label;
+
+	/**
+	 * @var string
+	 */
 	protected $method;
 
 	/**
@@ -70,7 +75,7 @@ class LBoxForm
 	 * @param string method
 	 * @throws LBoxExceptionForm
 	 */
-	public function __construct( $name = "",  $method = "post" ) {
+	public function __construct( $name = "",  $method = "post", $label	= "") {
 		try {
 			if (strlen($name) < 1) {
 				throw new LBoxExceptionForm("\$name: ". LBoxExceptionForm::MSG_PARAM_STRING_NOTNULL, LBoxExceptionForm::CODE_BAD_PARAM);
@@ -80,12 +85,13 @@ class LBoxForm
 			}
 			$this->name		= $name;
 			$this->method	= $method;
+			$this->label	= strlen($label) > 0 ? $label : $name;
 			if (array_key_exists($name, self::$forms)) {
 				throw new LBoxExceptionForm(LBoxExceptionForm::MSG_FORM_DUPLICATE_FORMNAME, LBoxExceptionForm::CODE_FORM_DUPLICATE_FORMNAME);
 			}
 			self::$forms[$name]	= $this;
 			if ($_SESSION["LBox"]["Forms"]["succes"]) {
-				unset($_SESSION["LBox"]["Forms"]["succes"]);
+				unset($_SESSION["LBox"]["Forms"][$this->getName()]["succes"]);
 				$this->sentSucces	= true;
 			}
 		}
@@ -265,6 +271,19 @@ class LBoxForm
 
 	/**
 	 *
+	 * @return string
+	 */
+	public function getLabel() {
+		try {
+			return $this->label;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 *
 	 * @return array
 	 */
 	public function getControls() {
@@ -425,7 +444,7 @@ class LBoxForm
 				$processor->process();
 			}
 			// nastavit do session uspesne odeslani a reloadovat stranku
-			$_SESSION["LBox"]["Forms"]["succes"]	= true;
+			$_SESSION["LBox"]["Forms"][$this->getName()]["succes"]	= true;
 			LBoxFront::reload();
 		}
 		catch (Exception $e) {

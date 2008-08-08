@@ -31,9 +31,6 @@ class LBoxSlotManager extends LBox
 			if (strlen($name) < 1) {
 				throw new LBoxExceptionFront("\$name". LBoxExceptionFront::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFront::CODE_BAD_PARAM);
 			}
-			if (strlen($value) < 1) {
-				throw new LBoxExceptionFront("\$value". LBoxExceptionFront::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFront::CODE_BAD_PARAM);
-			}
 			if (array_key_exists($name, $this->slots)) {
 				throw new LBoxExceptionFront("'$name' ". LBoxExceptionFront::MSG_SLOT_DEFINED, LBoxExceptionFront::CODE_SLOT_DEFINED);
 			}			
