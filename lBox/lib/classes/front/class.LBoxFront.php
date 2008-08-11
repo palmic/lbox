@@ -98,7 +98,7 @@ class LBoxFront extends LBox
 
 	/**
 	 * getter parametru
-	 * @return LBoxStructureItem
+	 * @return LBoxConfigItemStructure
 	 * @throws LBoxException
 	 */
 	protected static function getPageCfg() {
@@ -122,6 +122,9 @@ class LBoxFront extends LBox
 					}
 				}
 				return self::$pageCfg	= $pageCfg;
+			}
+			else {
+				return self::$pageCfg;
 			}
 		}
 		catch (Exception $e) {
