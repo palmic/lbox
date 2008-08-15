@@ -11,7 +11,7 @@ class LBoxI18NDataManager extends LBoxConfigManager
 	/**
 	 * @var LBoxConfigManagerComponents
 	 */
-	protected static $instance;
+	protected static $instances	= array();
 	
 	protected $classNameConfig 		= "LBoxI18NData";
 	
@@ -46,10 +46,10 @@ class LBoxI18NDataManager extends LBoxConfigManager
 			if (strlen($filePath) < 1) {
 				throw new LBoxException(LBoxException::MSG_PARAM_STRING_NOTNULL, LBoxException::CODE_BAD_PARAM);
 			}
-			if (!self::$instance instanceof $className) {
-				self::$instance = new $className($filePath);
+			if (!self::$instances[$filePath] instanceof $className) {
+				self::$instances[$filePath] = new $className($filePath);
 			}
-			return self::$instance;
+			return self::$instances[$filePath];
 		}
 		catch (Exception $e) {
 			throw $e;

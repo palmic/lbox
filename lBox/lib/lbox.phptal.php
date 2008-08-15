@@ -71,7 +71,7 @@ class LBoxTranslator extends PHPTAL_GetTextTranslator
     			throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_PARAM_STRING_NOTNULL, LBoxExceptionConfig::CODE_BAD_PARAM);
     		}
     		$out	= "";
-    		foreach ($this->getLanguageFilePaths() as $path) {
+    		foreach ($this->getLanguageFilePaths() as $lngIndex => $path) {
     			if (!file_exists($path)) continue;
     			try {
    		 			return LBoxI18NDataManager::getInstance($path)->getTextById($key)->getContent();
@@ -79,7 +79,11 @@ class LBoxTranslator extends PHPTAL_GetTextTranslator
     			catch (LBoxException $e) {
     				switch ($e->getCode()) {
     					case LBoxExceptionConfigComponent::CODE_NODE_BYID_NOT_FOUND:
-    							throw new LBoxExceptionI18N(LBoxFront::getDisplayLanguage() ."::$key: ". LBoxExceptionI18N::MSG_LNG_ITEM_NOTEXISTS, LBoxExceptionI18N::CODE_LNG_ITEM_NOTEXISTS);
+    							// v pripade, ze jsme nenalezli lang text v konkretni definici, hledame jeste v globalni
+    							if ($lngIndex < 1) {
+    								continue;
+    							}
+    							throw new LBoxExceptionI18N("$path::$key: ". LBoxExceptionI18N::MSG_LNG_ITEM_NOTEXISTS, LBoxExceptionI18N::CODE_LNG_ITEM_NOTEXISTS);
     						break;
     					default:
     						throw $e;

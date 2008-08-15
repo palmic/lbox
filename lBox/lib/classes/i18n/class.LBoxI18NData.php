@@ -55,9 +55,10 @@ class LBoxI18NData extends LBoxConfig
 	public static function getInstance() {
 		$className 	= __CLASS__;
 		try {
-			if (!self::$instance instanceof $className) {
+			// cache vypnuta kvuli opakovanemu prochazeni jinych files
+//			if (!self::$instance instanceof $className) {
 				self::$instance = new $className;
-			}
+//			}
 			return self::$instance;
 		}
 		catch (Exception $e) {
