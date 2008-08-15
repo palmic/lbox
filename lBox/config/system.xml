@@ -46,6 +46,11 @@
 			<path>$project/templates/layouts</path>
 		</templates>
 	</layouts>
+	<i18n>
+		<globalfiles>
+			<path>$project/templates</path>
+		</globalfiles>
+	</i18n>
 	<forms>
 		<templates>
 			<forms>

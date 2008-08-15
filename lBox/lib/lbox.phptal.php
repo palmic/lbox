@@ -42,4 +42,73 @@ function phptal_tales_lbox($src, $nothrow = false) {
 	}
 }
 
+/**
+ * LBox translation service
+ */
+class LBoxTranslator extends PHPTAL_GetTextTranslator
+{
+	/**
+	 * path sablony, ktera ma translator vyuzivat
+	 * @var string
+	 */
+	protected $templatePath	= "";
+	
+    public function __construct($templatePath = "") {
+    	if (strlen($templatePath) < 1) {
+    		throw new LBoxExceptionComponent("\$templatePath: ". LBoxExceptionComponent::MSG_PARAM_STRING_NOTNULL, LBoxExceptionComponent::CODE_BAD_PARAM);
+    	}
+    	$this->templatePath	= $templatePath;
+    }
+	
+	/**
+	 * zjisti, zda je dostupna hodnota key a pripadne ji vraci
+	 * @param string $key
+	 * @return string
+	 */
+    public function translate($key) {
+    	try {
+    		if (strlen($key) < 1) {
+    			throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_PARAM_STRING_NOTNULL, LBoxExceptionConfig::CODE_BAD_PARAM);
+    		}
+    		$out	= "";
+    		foreach ($this->getLanguageFilePaths() as $path) {
+    			if (!file_exists($path)) continue;
+    			try {
+   		 			return LBoxI18NDataManager::getInstance($path)->getTextById($key)->getContent();
+       			}
+    			catch (LBoxException $e) {
+    				switch ($e->getCode()) {
+    					case LBoxExceptionConfigComponent::CODE_NODE_BYID_NOT_FOUND:
+    							throw new LBoxExceptionI18N(LBoxFront::getDisplayLanguage() ."::$key: ". LBoxExceptionI18N::MSG_LNG_ITEM_NOTEXISTS, LBoxExceptionI18N::CODE_LNG_ITEM_NOTEXISTS);
+    						break;
+    					default:
+    						throw $e;
+    				}
+    			}
+    		}
+    		throw new LBoxExceptionI18N(LBoxFront::getDisplayLanguage() .": ". LBoxExceptionI18N::MSG_LNG_NOTEXISTS, LBoxExceptionI18N::CODE_LNG_NOTEXISTS);
+   	   	}
+    	catch (Exception $e) {
+    		throw $e;
+    	}
+    }
+
+    /**
+     * vraci cesty k lang souborum podle jazyka a sablony, ktera instanci obsluhuje
+     * @return array
+     */
+    protected function getLanguageFilePaths() {
+    	try {
+    		$lang					= LBoxFront::getDisplayLanguage();
+    		$out					= array();
+    		$out[]					= $this->templatePath .".$lang.xml";
+    		$out[]					= LBOX_PATH_FILES_I18N ."/project.$lang.xml";
+    		return $out;
+    	}
+    	catch (Exception $e) {
+    		throw $e;
+    	}
+    }
+}
+
 ?>

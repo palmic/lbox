@@ -97,13 +97,15 @@ try {
 	define("PHPTAL_FORCE_REPARSE", 			LBoxConfigSystem::getInstance()->getParamByPath("output/tal/PHPTAL_FORCE_REPARSE"));
 	define("PHPTAL_PHP_CODE_DESTINATION",	LBOX_PATH_PROJECT 			. $slash ."tal_compiled". $slash);
 	//die("'". PHPTAL_PHP_CODE_DESTINATION ."'");
-	require("lbox.phptal.php");
 	
 	// pokud nemame pearovsky PHPTAL pouzivame lokani LBOXovy
 	@include("PHPTAL.php");
-	if (!@constant("PHPTAL_VERSION")) {	
+	if (!@constant("PHPTAL_VERSION")) {
 		require(LBOX_PATH_CORE 			. $slash ."TAL". $slash ."PHPTAL-1.1.13". $slash ."PHPTAL.php");
 	}
+	// standard TAL translator service to extend
+	require (PHPTAL_DIR ."/phptal/GetTextTranslator.php");
+	require("lbox.phptal.php");
 }
 catch (Exception $e) {
 	echo "<hr />";

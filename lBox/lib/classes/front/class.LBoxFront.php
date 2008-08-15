@@ -17,6 +17,12 @@ class LBoxFront extends LBox
 	 * @var LBoxPage
 	 */
 	protected static $page;
+	
+	/**
+	 * default zobrazovaci jazykova mutace
+	 * @var string
+	 */
+	protected static $displayingLanguageDefault	= "cs";
 
 	public static $HTTP = array (
 	100 => "HTTP/1.1 100 Continue",
@@ -370,7 +376,15 @@ class LBoxFront extends LBox
 	 * @return string
 	 */
 	public static function getDisplayLanguage() {
-		return "cs";
+		try {
+			if (strlen(self::getPageCfg()->language) > 0) {
+				return self::getPageCfg()->language;
+			}
+			return self::$displayingLanguageDefault;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
 	}
 
 	/**

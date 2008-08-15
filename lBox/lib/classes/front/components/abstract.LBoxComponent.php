@@ -341,10 +341,12 @@ abstract class LBoxComponent
 	 * @return PHPTAL
 	 */
 	protected function getTAL() {
+		$templatePath	= $this->templatePath ."/". $this->getTemplateFileName();
 		if (!$this->TAL instanceof PHPTAL) {
-			$this->TAL = new PHPTAL($this->templatePath ."/". $this->getTemplateFileName());
+			$this->TAL = new PHPTAL($templatePath);
 		}
 		$this->TAL->SELF = $this;
+		$this->TAL->setTranslator(new LBoxTranslator($templatePath));
 		return $this->TAL;
 	}
 

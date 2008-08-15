@@ -1,11 +1,4 @@
 <?php
-/**
- * @todo
- *  - do videi pridat pod drobecky vypis subkategorii
- *  - pridat dalsi subkategorie podle Radka
- *  - doplnit maintainance o predcitani subkategorii
- *  - otestovat a vyresit proc se obcas XML stahne neuplne
- */
 require("lBox/lib/loader.php");
 
 /*var_dump(LBOX_REQUEST_URL);
@@ -20,6 +13,7 @@ ob_start();
 DEFINE("LBOX_PATH_TEMPLATES_PAGES",			LBoxConfigSystem::getInstance()->getParamByPath("pages/templates/path"));
 DEFINE("LBOX_PATH_TEMPLATES_COMPONENTS",	LBoxConfigSystem::getInstance()->getParamByPath("components/templates/path"));
 DEFINE("LBOX_PATH_TEMPLATES_LAYOUTS",		LBoxConfigSystem::getInstance()->getParamByPath("layouts/templates/path"));
+DEFINE("LBOX_PATH_FILES_I18N",				LBoxConfigSystem::getInstance()->getParamByPath("i18n/globalfiles/path"));
 
 try {
 	LBoxFront::run();
@@ -38,7 +32,7 @@ catch (Exception $e) {
     echo "Stack trace:";
     echo "<br />";
     echo nl2br($e->getTraceAsString());
-    echo "<hr />";	
+    echo "<hr />";
 }
 
 //die("zobrazuju aspon neco in: ". __FILE__ ." at line:  ". __LINE__);
