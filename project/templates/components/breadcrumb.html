@@ -1,10 +1,10 @@
 <div id="breadcrumb" tal:condition="not: rootLocation">
      <tal:block tal:REPEAT="node iterator">
         <a tal:ATTRIBUTES="href node/url | default; title node/titleMenu"
-           tal:CONTENT="node/name_menu"
+           tal:CONTENT="node/headingBreadcrumb"
 		   tal:condition="not: node/isCurrent"
            >Nazev stranky</a>
-        <strong tal:CONTENT="node/name_menu"
+        <strong tal:CONTENT="node/headingBreadcrumb"
 				tal:condition="node/isCurrent">Nazev stranky</strong>
 	    <tal:block tal:condition="not: node/isCurrent">&raquo;</tal:block>
      </tal:block>

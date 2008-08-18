@@ -43,6 +43,11 @@ class LBoxForm
 	/**
 	 * @var string
 	 */
+	protected $labelSubmit;
+
+	/**
+	 * @var string
+	 */
 	protected $method;
 
 	/**
@@ -75,7 +80,7 @@ class LBoxForm
 	 * @param string method
 	 * @throws LBoxExceptionForm
 	 */
-	public function __construct( $name = "",  $method = "post", $label	= "") {
+	public function __construct( $name = "",  $method = "post", $label	= "", $labelSubmit	= "") {
 		try {
 			if (strlen($name) < 1) {
 				throw new LBoxExceptionForm("\$name: ". LBoxExceptionForm::MSG_PARAM_STRING_NOTNULL, LBoxExceptionForm::CODE_BAD_PARAM);
@@ -83,9 +88,10 @@ class LBoxForm
 			if (strlen($method) < 1) {
 				throw new LBoxExceptionForm("\$method: ". LBoxExceptionForm::MSG_PARAM_STRING_NOTNULL, LBoxExceptionForm::CODE_BAD_PARAM);
 			}
-			$this->name		= $name;
-			$this->method	= $method;
-			$this->label	= strlen($label) > 0 ? $label : $name;
+			$this->name			= $name;
+			$this->method		= $method;
+			$this->label		= strlen($label) 		> 0 ? $label 		: $name;
+			$this->labelSubmit	= strlen($labelSubmit) 	> 0 ? $labelSubmit 	: "odeslat";
 			if (array_key_exists($name, self::$forms)) {
 				throw new LBoxExceptionForm(LBoxExceptionForm::MSG_FORM_DUPLICATE_FORMNAME, LBoxExceptionForm::CODE_FORM_DUPLICATE_FORMNAME);
 			}
@@ -270,12 +276,23 @@ class LBoxForm
 	}
 
 	/**
-	 *
 	 * @return string
 	 */
 	public function getLabel() {
 		try {
 			return $this->label;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getLabelSubmit() {
+		try {
+			return $this->labelSubmit;
 		}
 		catch (Exception $e) {
 			throw $e;

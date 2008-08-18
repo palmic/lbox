@@ -52,6 +52,9 @@ class OutputFilterPage extends LBoxOutputFilter
 			case "headingMenu":
 					return strlen($value) > 0 ? $value : $this->instance->heading;
 				break;
+			case "headingBreadcrumb":
+					return strlen($value) > 0 ? $value : $this->instance->headingMenu;
+				break;
 			case "titleWeb":
 					return LBoxConfigManagerProperties::getInstance()->getPropertyByName($this->configParamNameWebTitle)->getContent();
 				break;
