@@ -96,7 +96,7 @@ class LBoxForm
 				throw new LBoxExceptionForm(LBoxExceptionForm::MSG_FORM_DUPLICATE_FORMNAME, LBoxExceptionForm::CODE_FORM_DUPLICATE_FORMNAME);
 			}
 			self::$forms[$name]	= $this;
-			if ($_SESSION["LBox"]["Forms"]["succes"]) {
+			if ($_SESSION["LBox"]["Forms"][$this->getName()]["succes"]) {
 				unset($_SESSION["LBox"]["Forms"][$this->getName()]["succes"]);
 				$this->sentSucces	= true;
 			}
@@ -110,7 +110,7 @@ class LBoxForm
 	 * @param LBoxFormControl $control
 	 * @throws LBoxExceptionForm
 	 */
-	public function addControl(LBoxFormControl $control = NULL) {
+	public function addControl(LBoxFormControl $control) {
 		try {
 			if (array_key_exists($control->getName(), $this->controls)) {
 				throw new LBoxExceptionForm($control->getName() .": ". LBoxExceptionForm::MSG_FORM_CONTROL_DOES_EXISTS, LBoxExceptionForm::CODE_FORM_CONTROL_DOES_EXISTS);
@@ -135,7 +135,7 @@ class LBoxForm
 	 * @param LBoxFormProcessor processor
 	 * @throws LBoxExceptionForm
 	 */
-	public function addProcessor(LBoxFormProcessor $processor = NULL) {
+	public function addProcessor(LBoxFormProcessor $processor) {
 		try {
 			if (array_key_exists(get_class($processor), $this->processors)) {
 				throw new LBoxExceptionForm($processor->getName() .": ". LBoxExceptionForm::MSG_FORM_PROCESSOR_DOES_EXISTS, LBoxExceptionForm::CODE_FORM_PROCESSOR_DOES_EXISTS);
