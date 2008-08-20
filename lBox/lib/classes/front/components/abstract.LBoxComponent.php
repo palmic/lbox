@@ -341,12 +341,10 @@ abstract class LBoxComponent
 	 * @return PHPTAL
 	 */
 	protected function getTAL() {
-		$templatePath	= $this->templatePath ."/". $this->getTemplateFileName();
 		if (!$this->TAL instanceof PHPTAL) {
-			$this->TAL = new PHPTAL($templatePath);
+			$this->TAL = new PHPTAL($this->templatePath ."/". $this->getTemplateFileName());
 		}
 		$this->TAL->SELF = $this;
-		$this->TAL->setTranslator(new LBoxTranslator($templatePath));
 		return $this->TAL;
 	}
 
@@ -502,20 +500,24 @@ abstract class LBoxComponent
 		}
 
 		// sestaveni pole paging
+		$pageCurrent	= $this->getPagingCurrent();
 		if ($this->getPagingCurrent() - $pagesRange > 1) {
 			$out["<<"]	= $this->getPageURLByIndex(1);
 			$out["<<"]["first"]	= true;
 			$out["<<"]["last"]	= false;
+			$out["<<"]["class"]	= "first";
 		}
 		for ($i = $pagesStart; $i <= $pagesEnd; $i++) {
 			$out[$i]	= $this->getPageURLByIndex($i);
 			$out[$i]["first"]	= false;
 			$out[$i]["last"]	= false;
+			$out[$i]["class"]	= "page". ($i-$pageCurrent);
 		}
 		if ($this->getPagingCurrent() + $pagesRange < $pagesCount) {
 			$out[">>"]	= $this->getPageURLByIndex($pagesCount);
 			$out[">>"]["first"]	= false;
 			$out[">>"]["last"]	= true;
+			$out[">>"]["class"]	= "last";
 		}
 		return $out;
 	}
