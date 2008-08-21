@@ -11,17 +11,17 @@ class Breadcrumb extends LBoxComponent
 {
 	protected function executePrepend(PHPTAL $TAL) {
 		try {
-			$pageCfg	= $this->page->config;
+			$pageCfg	= clone $this->page->config;
 			$pageCfg->setOutputFilter(new OutputFilterPage($pageCfg));
 			$iterator	= array();
 			while ($pageCfg->hasParent()) {
 				$iterator[]	= $pageCfg;
-				$pageCfg = $pageCfg->getParent();
+				$pageCfg = clone $pageCfg->getParent();
 			}
 			$iterator[]	= $pageCfg;
 
 			// pridame homepage
-			$hpCfg		= $this->getHomePageCfg();
+			$hpCfg		= clone $this->getHomePageCfg();
 			$hpCfg->setOutputFilter(new OutputFilterPage($hpCfg));
 			$iterator[]	= $hpCfg;
 
