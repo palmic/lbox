@@ -333,7 +333,7 @@ abstract class AbstractRecords implements Iterator
 				}
 
 				$sql 		= "SELECT * FROM `". $tableName ."`";
-				$countSql	= "SELECT count($idColName) count FROM `". $tableName ."`";
+				$countSql	= "SELECT count(`$idColName`) count FROM `". $tableName ."`";
 
 				// set where clause by $filter items
 				$passwordColNames	= eval("return $itemType::\$passwordColNames;");
@@ -357,7 +357,7 @@ abstract class AbstractRecords implements Iterator
 							}
 							// password columns
 							if (in_array($fName, $passwordColNames)) {
-								$where .= " UCASE($fName)=UCASE(PASSWORD($value))";
+								$where .= " UCASE(`$fName`)=UCASE(PASSWORD($value))";
 							}
 							// other columns
 							else {
@@ -368,7 +368,7 @@ abstract class AbstractRecords implements Iterator
 									$where .= " $fName=$value";
 								}
 							}
-						}						
+						}
 					}
 
 				}
@@ -402,7 +402,7 @@ abstract class AbstractRecords implements Iterator
 						if (strlen($orderColName) < 1) {
 							continue;
 						}
-						$order .= " ". $orderColName;
+						$order .= " `$orderColName`";
 						if ($orderType < 1) {
 							$order .= " DESC";
 						}
