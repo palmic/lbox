@@ -2,7 +2,7 @@ RewriteEngine On
 
 RewriteRule ^(.*).sql /
 RewriteRule ^(.*).gz /
-#RewriteRule ^(.*).xml /
+RewriteRule ^(.*).xml /
 
 
 # download file - pri zmene upravit nastaveni system.xml
@@ -46,7 +46,7 @@ RewriteRule ^(.*) index.php?%{QUERY_STRING} [L]
 # 	    url.rewrite-once = (
 #        	"^(.*).sql$" => "/",
 #        	"^(.*).gz$" => "/",
-#         	# "^(.*).xml$" => "/",
+#         	"^(.*).xml$" => "/",
 #         	"^/css/(.*)$" => "/project/css/$1",
 #         	"^/img/(.*)$" => "/project/img/$1",
 #         	"^/js/(.*)$" => "/project/js/$1",
