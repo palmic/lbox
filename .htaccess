@@ -3,6 +3,10 @@ RewriteEngine On
 RewriteRule ^(.*).sql /
 RewriteRule ^(.*).gz /
 RewriteRule ^(.*).xml /
+RewriteRule ^project/classes/(.*) /
+RewriteRule ^project/templates/(.*) /
+RewriteRule ^project/tal_compiled/(.*) /
+RewriteRule ^project/documents/(.*) /
 
 
 # download file - pri zmene upravit nastaveni system.xml
@@ -47,6 +51,10 @@ RewriteRule ^(.*) index.php?%{QUERY_STRING} [L]
 #        	"^(.*).sql$" => "/",
 #        	"^(.*).gz$" => "/",
 #         	"^(.*).xml$" => "/",
+#         	"^project/classes/(.*) "/",
+#         	"^project/templates/(.*) "/",
+#         	"^project/tal_compiled/(.*) "/",
+#         	"^project/documents/(.*) "/",
 #         	"^/css/(.*)$" => "/project/css/$1",
 #         	"^/img/(.*)$" => "/project/img/$1",
 #         	"^/js/(.*)$" => "/project/js/$1",
