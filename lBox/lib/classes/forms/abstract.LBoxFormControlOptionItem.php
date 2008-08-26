@@ -40,6 +40,28 @@ abstract class LBoxFormControlOptionItem
 	}
 
 	/**
+	 * defaultni getter
+	 * @param string $name
+	 * @return mixed
+	 */
+	public function __get($name) {
+		try {
+			switch ($name) {
+				case "getSelected":
+					return $this->isSelected() ? "selected" : "";
+				break;
+				case "getChecked":
+					return $this->isSelected() ? "checked" : "";
+				break;
+			}
+			
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * vraci true v pripade, ze byla tato volba zvolena
 	 * @return bool
 	 * @access public

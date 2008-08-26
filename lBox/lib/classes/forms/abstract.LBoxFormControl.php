@@ -98,6 +98,23 @@ abstract class LBoxFormControl
 	}
 
 	/**
+	 * defaultni getter
+	 * @param string $name
+	 * @return mixed
+	 */
+	public function __get($name = "") {
+		try {
+			if (strlen($name) < 1) {
+				throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
+			}
+			// jen kvuli moznemu pouziti do budoucna - nektery z potomku totiz ma getter a tento je tu kvuli nastaveni dedicnosti getteru (musi tu byt aspon prazdny!!)
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
 	 *
 	 * @param LBoxFormValidator validator
 	 */
