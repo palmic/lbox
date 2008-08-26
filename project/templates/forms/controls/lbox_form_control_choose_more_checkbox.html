@@ -1,0 +1,21 @@
+<div tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
+	<label for="${id}"><span class="label">${SELF/getLabel}
+		<tal:block tal:condition="SELF/isRequired">* </tal:block></span>
+		<tal:block tal:repeat="option SELF/getOptions">
+			<x metal:use-macro="control_checkbox" />
+		</tal:block>
+	</label>
+	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
+		<tal:block tal:repeat="exception exceptions">
+			<div>vyhozena vyjimka validatoru:
+						<font style="background: #0000ff; color: #ffffff">${exception/getFile}</font>
+			cislo: 		<font style="background: #00ff00; color: #ffffff">${exception/getCode}</font>
+			s hlaskou: 	<font style="background: #ff0000; color: #ffffff">${exception/getMessage}</font>
+			</div>
+		</tal:block>
+	</div>
+</div>
+<tal:block metal:define-macro="control_checkbox" tal:define="option option">
+	<input 	id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]" type="checkbox"
+			tal:attributes="value option/getValue | SELF/getDefault; checked option/getChecked | default" />
+</tal:block>
