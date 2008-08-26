@@ -68,7 +68,7 @@ abstract class LBoxFormControlOptionItem
 	 */
 	public function isSelected() {
 		try {
-			return ($this->getValue() == $this->control->getValue());
+			return (is_numeric(array_search($this->getValue(), (array)$this->control->getValue())));
 		}
 		catch (Exception $e) {
 			throw $e;
