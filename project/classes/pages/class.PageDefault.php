@@ -10,11 +10,12 @@ class PageDefault extends LBoxPage
 {
 	protected function executeStart() {
 		try {
+			parent::executeStart();
 		}
 		catch (Exception $e) {
 			throw $e;
 		}
-	}	
+	}
 
 	protected function executePrepend(PHPTAL $TAL) {
 		//DbControl::$debug = true;
