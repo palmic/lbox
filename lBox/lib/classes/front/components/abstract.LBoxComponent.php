@@ -344,10 +344,12 @@ abstract class LBoxComponent
 		if (!$this->TAL instanceof PHPTAL) {
 			$this->TAL = new PHPTAL($this->templatePath ."/". $this->getTemplateFileName());
 		}
+		$translator	= new LBoxTranslator($this->templatePath ."/". $this->getTemplateFileName());
+		$this->TAL->setTranslator($translator);
 		$this->TAL->SELF = $this;
 		return $this->TAL;
 	}
-
+	
 	/**
 	 * getter nazvu souboru se sablonou
 	 * @return string
