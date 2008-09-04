@@ -12,9 +12,15 @@ class PageDev extends PageDefault
 		try {
 			parent::executePrepend($TAL);
 			
-			$control	= new LBoxFormControlFill("test");
+			$control1	= new LBoxFormControlChooseOne	("test", "testovaci kontrol", 22);
+			$control2	= new LBoxFormControlFill		("text");
+			$control2	->setRequired();
+			for ($i = 0; $i < 100; $i++) {
+				$control1->addOption(new LBoxFormControlOption($i, "hodnota $i"));
+			}
 			$form		= new LBoxForm("test");
-			$form		->addControl($control);
+			$form		->addControl($control1);
+			$form		->addControl($control2);
 			$form		->addProcessor(new LBoxFormProcessorDev);
 			$form->setAntiSpam();
 			
