@@ -11,6 +11,14 @@ class PageDev extends PageDefault
 //DbControl::$debug = true;
 		try {
 			parent::executePrepend($TAL);
+			
+			$control	= new LBoxFormControlFill("test");
+			$form		= new LBoxForm("test");
+			$form		->addControl($control);
+			$form		->addProcessor(new LBoxFormProcessorDev);
+			$form->setAntiSpam();
+			
+			$TAL->form	= $form;
 		}
 		catch (Exception $e) {
 			throw $e;

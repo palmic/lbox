@@ -388,9 +388,9 @@ abstract class AbstractRecord implements Iterator
 
 				// secure password handling
 				if ( (in_array($vname, $this->getClassVar("passwordColNames", true))) && ($this->passwordChanged) ) {
-					$vals .= "`$vname`=PASSWORD($value)";
+					$vals .= "$vname=PASSWORD($value)";
 				} else {
-					$vals .= "`$vname`=$value";
+					$vals .= "$vname=$value";
 				}
 			}
 			if (strlen($vals) < 1) {
@@ -508,7 +508,7 @@ abstract class AbstractRecord implements Iterator
 			if ($this->isTree() && $this->hasChildren()) {
 				throw new LBoxException("Cannot delete database record with children!!!");
 			}
-			if ($this->isTree()) {
+			if ($this->isTree()) {				
 				$treeColNames	= $this->getClassVar("treeColNames");
 				$lftColName		= $treeColNames[0];
 				$rgtColName		= $treeColNames[1];
@@ -529,7 +529,7 @@ abstract class AbstractRecord implements Iterator
 				// shift tree
 				$sqlsTree[0]  	 = "UPDATE ". $this->getClassVar("tableName");
 				$sqlsTree[0] 	.= " SET $lftColName = $lftColName-2";
-				$sqlsTree[0] 	.= " WHERE ". $lftColName .">". $myRgt;
+				$sqlsTree[0] 	.= " WHERE ". $lftColName .">". $myRgt;				
 				$sqlsTree[1]  	 = "UPDATE ". $this->getClassVar("tableName");
 				$sqlsTree[1] 	.= " SET $rgtColName = $rgtColName-2";
 				$sqlsTree[1] 	.= " WHERE ". $rgtColName .">". $myRgt;
@@ -1034,7 +1034,7 @@ abstract class AbstractRecord implements Iterator
 				$rgtColName = $rgtColName+$chWeight
 									WHERE 	$rgtColName > ($myRgt-1)
 									AND 	$rgtColName < $chLft
-									";
+									";			
 			}
 			/*
 			 if ($this->params["id"]==9) {
@@ -1139,7 +1139,7 @@ abstract class AbstractRecord implements Iterator
 			$sqlsChildUpd[] = "UPDATE $tableName SET
 									$lftColName = $lftColName + $chDiff,
 									$rgtColName = $rgtColName + $chDiff,
-									$bidColName = $chBidNew
+									$bidColName = $chBidNew			
 										WHERE 	$lftColName > ($chLft-1)
 										AND 	$rgtColName < ($chRgt+1)
 							";

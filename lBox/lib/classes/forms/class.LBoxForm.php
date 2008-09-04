@@ -313,6 +313,23 @@ class LBoxForm
 	}
 
 	/**
+	 * vraci control spam defense
+	 * @return LBoxFormControlSpamDefense
+	 */
+	public function getControlSpamDefense() {
+		try {
+			foreach ($this->controls as $control) {
+				if ($control->isSpamDefense()) {
+					return $control;
+				}
+			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
 	 * vraci celou cestu k sablone control (ovlivnenou atributem filenameTemplate instance control)
 	 * @return string
 	 */

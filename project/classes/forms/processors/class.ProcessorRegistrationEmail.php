@@ -16,12 +16,28 @@ class ProcessorRegistrationEmail extends LBoxFormProcessor
 			// jinak uzivatele vytvarime
 			else {
 				$record		= new XTUsersRecord();
+				$record		->name			= $this->form->getControlByName("name")->getValue();
+				$record		->surname		= $this->form->getControlByName("surname")->getValue();
 				$record		->nick			= $this->form->getControlByName("email")->getValue();
 				$record		->email			= $this->form->getControlByName("email")->getValue();
 				$record		->phone			= $this->form->getControlByName("phone")->getValue();
-				$record		->ref_school	= $this->form->getControlByName("ref_school")->getValue();
+				$record		->city			= $this->form->getControlByName("city")->getValue();
+				try {
+					$record	->ref_school	= $this->form->getControlByName("ref_school")->getValue();
+				}
+				catch (Exception $e) {
+					NULL;
+				}
 				$record		->password		= $this->form->getControlByName("password")->getValue();
 				$record->store();
+
+				// zvolene produkty
+				foreach ($this->form->getControlByName("products")->getValue() as $value) {
+					$recordProduct								= new ProductsRegistrationXXTUsersRecord();
+					$recordProduct->ref_xt_user					= $record->id;
+					$recordProduct->ref_product_registration	= $value;
+					$recordProduct->store();
+				}
 			}
 			
 			// confirm mail

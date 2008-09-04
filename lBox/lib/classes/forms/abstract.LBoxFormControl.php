@@ -387,6 +387,14 @@ abstract class LBoxFormControl
 	}
 
 	/**
+	 * vraci jestli jde o control spam defense
+	 * @return bool
+	 */
+	public function isSpamDefense() {
+		return ($this instanceof LBoxFormControlSpamDefense);
+	}
+
+	/**
 	 *
 	 * @return PHPTAL
 	 */

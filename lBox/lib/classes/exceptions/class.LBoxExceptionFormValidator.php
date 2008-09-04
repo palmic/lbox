@@ -11,6 +11,7 @@ class LBoxExceptionFormValidator extends LBoxExceptionForm
 	const CODE_FORM_VALIDATION_FILE_NOT_IMAGE			= 17005;
 	const CODE_FORM_VALIDATION_PHONE_NOTVALID			= 17006;
 	const CODE_FORM_VALIDATION_FILENAME_INVALID			= 17007;
+	const CODE_FORM_VALIDATION_BIRTHYEAR_NOTVALID		= 17008;
 	
 	const MSG_FORM_VALIDATION_CONTROL_EMPTY				= "required control is empty";
 	const MSG_FORM_VALIDATION_PASSWORDS_NOTSAME			= "passwords do not match";
@@ -19,5 +20,6 @@ class LBoxExceptionFormValidator extends LBoxExceptionForm
 	const MSG_FORM_VALIDATION_FILE_NOT_IMAGE			= "file is not image";
 	const MSG_FORM_VALIDATION_PHONE_NOTVALID			= "phone is not valid";
 	const MSG_FORM_VALIDATION_FILENAME_INVALID			= "filename contents invalid signs";
+	const MSG_FORM_VALIDATION_BIRTHYEAR_NOTVALID		= "birt year not valid";
 }
 ?>

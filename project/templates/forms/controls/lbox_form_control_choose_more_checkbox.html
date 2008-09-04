@@ -16,6 +16,6 @@
 	</div>
 </div>
 <tal:block metal:define-macro="control_checkbox" tal:define="option option">
-	<label class="choose-more" for="${id}-${option/getValue}"><input 	id="${id}-${option/getValue}" name="${SELF/getForm/getName}[${SELF/getName}][${repeat/option/index}]" type="checkbox"
+	<label class="choose-more" for="${id}-${option/getValue}"><input 	class="checkbox" id="${id}-${option/getValue}" name="${SELF/getForm/getName}[${SELF/getName}][${repeat/option/index}]" type="checkbox"
 			tal:attributes="value option/getValue | SELF/getDefault; checked option/getChecked | default" /><span class="option-label">${option/getLabel}</span></label>
 </tal:block>
