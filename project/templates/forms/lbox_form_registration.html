@@ -5,11 +5,13 @@
 			<span class="required">povinná položka</span>
 			<span>nepovinná položka</span>
 		</div>
-		<tal:block tal:repeat="control SELF/getControls">
-			<tal:block tal:condition="not: control/isSpamDefense">
-				<tal:block tal:condition="not: control/isSubControl" tal:content="structure control" />
+		<div class="controls">
+			<tal:block tal:repeat="control SELF/getControls">
+				<tal:block tal:condition="not: control/isSpamDefense">
+					<tal:block tal:condition="not: control/isSubControl" tal:content="structure control" />
+				</tal:block>
 			</tal:block>
-		</tal:block>
+		</div>
 		<input class="submit" type="submit" name="${SELF/getName}[sent]" value="${SELF/getLabelSubmit}" />
 	</fieldset>
 </form>

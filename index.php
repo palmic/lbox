@@ -3,7 +3,6 @@ require("lBox/lib/loader.php");
 
 /*var_dump(LBOX_REQUEST_URL);
 die();*/
-
 session_start();
 ob_start();
 

@@ -367,7 +367,8 @@ abstract class LBoxFormControl
 	 * @return string
 	 */
 	public function getLabel() {
-		return $this->label;
+		if (is_null($this->label)) return "";
+		return strlen($this->label) > 0 ? $this->label : $this->name;
 	}
 
 	/**
