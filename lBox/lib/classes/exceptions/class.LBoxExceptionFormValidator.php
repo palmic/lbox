@@ -11,7 +11,8 @@ class LBoxExceptionFormValidator extends LBoxExceptionForm
 	const CODE_FORM_VALIDATION_FILE_NOT_IMAGE			= 17005;
 	const CODE_FORM_VALIDATION_PHONE_NOTVALID			= 17006;
 	const CODE_FORM_VALIDATION_FILENAME_INVALID			= 17007;
-	const CODE_FORM_VALIDATION_CONTROL_NOT_VALID		= 17008;
+	const CODE_FORM_VALIDATION_FORM_SUBMITED_YET_CLIENT	= 17008;
+	const CODE_FORM_VALIDATION_CONTROL_NOT_VALID		= 17009;
 	
 	const MSG_FORM_VALIDATION_CONTROL_EMPTY				= "required control is empty";
 	const MSG_FORM_VALIDATION_PASSWORDS_NOTSAME			= "passwords do not match";
@@ -20,6 +21,7 @@ class LBoxExceptionFormValidator extends LBoxExceptionForm
 	const MSG_FORM_VALIDATION_FILE_NOT_IMAGE			= "file is not image";
 	const MSG_FORM_VALIDATION_PHONE_NOTVALID			= "phone is not valid";
 	const MSG_FORM_VALIDATION_FILENAME_INVALID			= "filename contents invalid signs";
+	const MSG_FORM_VALIDATION_FORM_SUBMITED_YET_CLIENT	= "Form was submited and succesfully processed by this client yet";
 	const MSG_FORM_VALIDATION_CONTROL_NOT_VALID			= "Invalid value";
 }
 ?>
