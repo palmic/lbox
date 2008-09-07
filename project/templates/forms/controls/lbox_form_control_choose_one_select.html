@@ -13,7 +13,7 @@
 	</div>
 </div>
 <tal:block metal:define-macro="control_select">
-  <select tal:define="options SELF/getOptions" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]">
+  <select tal:define="options SELF/getOptions" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]" tal:attributes="disabled SELF/getDisabled | default">
       <option tal:repeat="option options" tal:attributes="value option/getValue; selected option/getSelected | default" tal:content="structure option/getLabel" />
   </select>
 </tal:block>
