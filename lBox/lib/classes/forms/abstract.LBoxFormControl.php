@@ -42,6 +42,12 @@ abstract class LBoxFormControl
 	 * @var string
 	 */
 	protected $default	= "";
+
+	/**
+	 * disabled ano/ne
+	 * @var bool
+	 */
+	protected $disabled	= false;
 	
 	/**
 	 * form processed flag
@@ -107,7 +113,11 @@ abstract class LBoxFormControl
 			if (strlen($name) < 1) {
 				throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
 			}
-			// jen kvuli moznemu pouziti do budoucna - nektery z potomku totiz ma getter a tento je tu kvuli nastaveni dedicnosti getteru (musi tu byt aspon prazdny!!)
+			switch ($name) {
+				case "getDisabled":
+						return $this->isDisabled() ? "disabled" : "";
+					break;
+			}
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -153,6 +163,22 @@ abstract class LBoxFormControl
 	}
 
 	/**
+	 * sets control disabled
+	 * @param bool $disabled
+	 */
+	public function setDisabled($disabled	= true) {
+		try {
+			if (!is_bool($disabled)) {
+				throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_BOOL, LBoxExceptionFormControl::CODE_BAD_PARAM);
+			}
+			$this->disabled	= $disabled;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * vraci, jestli byl control nastaven jako povinny
 	 * @return bool
 	 */
@@ -170,6 +196,19 @@ abstract class LBoxFormControl
 		}
 	}
 
+	/**
+	 * vraci, jestli je control disabled
+	 * @return bool
+	 */
+	public function isDisabled() {
+		try {
+			return $this->disabled;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
 	/**
 	 * nastavuje control jako subcontrol - viz dokumentace member parametru
 	 */
@@ -355,7 +394,12 @@ abstract class LBoxFormControl
 			if ($this->value !== NULL) {
 				return $this->value;
 			}
-			return $this->value	= $this->form->getSentDataByControlName($this->getName());
+			if ($this->isDisabled()) {
+				return $this->value	= $this->getDefault();
+			}
+			else {
+				return $this->value	= $this->form->getSentDataByControlName($this->getName());
+			}
 		}
 		catch (Exception $e) {
 			throw $e;

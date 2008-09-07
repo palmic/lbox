@@ -31,6 +31,9 @@ class LBoxFormControlFile extends LBoxFormControlFill
 			if ($this->value !== NULL) {
 				return $this->value;
 			}
+			if ($this->isDisabled()) {
+				return $this->value	= "";
+			}
 			$valueFiles			= $this->getValueFiles();
 			return $this->value	= $valueFiles["name"];
 		}
