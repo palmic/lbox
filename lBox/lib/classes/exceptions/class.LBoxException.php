@@ -19,7 +19,8 @@ class LBoxException extends Exception
 	const MSG_PARAM_INT_NOTNULL 				= "must be integer > 0!";
 
 	const MSG_PARAM_INT 						= "must be integer!";
-
+	const MSG_PARAM_BOOL 						= "must be boolean!";
+	
 	const MSG_INSTANCE_VAR_STRING_NOTNULL		= "Bad instance param, must be NOT NULL string!";
 
 	/**
