@@ -7,12 +7,11 @@ class LBoxFormControlBool extends LBoxFormControl
 	protected $filenameTemplate = "lbox_form_control_bool.html";
 	
 	/**
-	 * Pretizeno o default natvrdo
+	 * pridana logika default volby zaskrtavani
 	 */
 	public function __construct($name = "",  $label = "",  $default = "") {
 		try {
-			$default	= "1";
-			parent::__construct($name,  $label,  $default);
+			parent::__construct($name,  $label,  (bool)$default ? "1" : "0");
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -34,7 +33,7 @@ class LBoxFormControlBool extends LBoxFormControl
 					return $this->isSelected() ? "checked" : "";
 				break;
 				default:
-					return parent(__get($name));
+					return parent::__get($name);
 			}
 		}
 		catch (Exception $e) {
@@ -49,7 +48,15 @@ class LBoxFormControlBool extends LBoxFormControl
 	 */
 	public function isSelected() {
 		try {
-			return ($this->getValue() == $this->getDefault());
+			if (!$this->form instanceof LBoxForm) {
+				throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_FORM_CONTROL_FORM_NOT_SET, LBoxExceptionFormControl::CODE_FORM_CONTROL_FORM_NOT_SET);
+			}
+			if ($this->form->wasSent()) {
+				return (bool)$this->form->getSentDataByControlName($this->getName());
+			}
+			else {
+				return (bool)$this->getDefault();
+			}
 		}
 		catch (Exception $e) {
 			throw $e;
