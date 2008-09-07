@@ -12,6 +12,12 @@ class LBoxFormControlSpamDefense extends LBoxFormControlFillHidden
 	protected $name				= "sd1";
 
 	protected $default			= "sdf2sdf";
+	
+	/**
+	 * rendered flag z duvodu neopakovani deklaraci js
+	 * @var bool
+	 */
+	protected static $rendered	= false;
 
 	public function __construct() {
 	}
@@ -38,6 +44,10 @@ class LBoxFormControlSpamDefense extends LBoxFormControlFillHidden
 	 * @return string
 	 */
 	public function getJSLib() {
+		if (self::$rendered) {
+			return "";
+		}
+
 		$name	= $this->name;
 		$value	= $this->default;
 		$out	 = "";
@@ -48,6 +58,9 @@ class LBoxFormControlSpamDefense extends LBoxFormControlFillHidden
 		$out	.= "		fc.value = '$value';\n";
 		$out	.= "		fEl.appendChild(fc);\n";
 		$out	.= "};";
+		
+		self::$rendered	= true;
+		
 		return $out;
 	}
 
