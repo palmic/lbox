@@ -11,8 +11,6 @@
             testovaci odstavec
         </p>
         <p i18n:translate="string:test">translate</p>
-		
-		<tal:block tal:content="structure form" />
-		<tal:block tal:content="structure form2" />
+		<x tal:replace="structure lbox:component.box_inquiries" />
     </body>
 </html>

@@ -1,0 +1,26 @@
+<div class="box inquiries" id="box_inquiries">
+	<h2>Anketa:</h2>
+	<div class="box-body">
+		<div tal:condition="inquiry" class="inquiry">
+			<span class="question" tal:content="inquiry/question" />
+			<ul class="options">
+				<li class="option" tal:repeat="option inquiry/getOptionsResponses">
+					<span class="text" tal:content="option/answer" />
+					<span class="responses_count" 	tal:content="string:${option/count_responses_option}/${option/count_responses_inquiry}" />
+					<!--span class="responses_count" 	tal:content="string:${option/count_responses_option}" / -->
+					<!--span class="responses_percent" tal:content="string:(${option/responses_option_percent}%)" / -->
+					<div class="scale-container">
+						<div class="scale" style="width: ${option/responses_option_percent}%;">
+							<div class="normal" >
+								<div class="lft" ><div class="rgt" ><div class="mdl">&nbsp;</div></div></div>
+							</div>
+						</div>
+						<tal:block tal:condition="not: inquiry/didUserVotedFor" tal:content="structure option/getForm" />
+					</div>
+				</li>
+			</ul>
+		</div>
+		<p tal:condition="not: inquiry">Nenalezena žádná anketa</p>
+	</div>
+	<div class="box-footer" />
+</div>

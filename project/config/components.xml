@@ -16,4 +16,5 @@
 	<component id="counter_acces" 			template="counter_acces.html" 			class="CounterAcces" />
 	<component id="sitemap" 				template="sitemap.html" 				class="Sitemap" />
 	<component id="contact_form"			template="contact_form.html" 			class="ContactForm" />
+	<component id="box_inquiries"			template="box_inquiries.html" 			class="BoxInquiries" />
 </components>

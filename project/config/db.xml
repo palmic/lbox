@@ -23,12 +23,12 @@
 					<logon>0</logon>
 					<platform>mysql</platform>
 					<login>
-						<name>name</name>
-						<password></password>
+						<name>lbox</name>
+						<password>lbox</password>
 					</login>
 					<host>localhost</host>
 					<dsn>mysql</dsn>
-					<schema>schema</schema>
+					<schema>lbox</schema>
 					<port/>
 	</project>
 </tasks>
