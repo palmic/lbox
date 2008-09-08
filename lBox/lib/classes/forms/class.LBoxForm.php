@@ -477,6 +477,10 @@ class LBoxForm
 			foreach ($this->processors as $processor) {
 				$processor->process();
 			}
+			// oznamit controls uspesne dokonceny processing
+			foreach ($this->controls as $control) {
+				$control->commitProcessSuccess();
+			}
 			// nastavit do session uspesne odeslani a reloadovat stranku
 			$_SESSION["LBox"]["Forms"][$this->getName()]["succes"]	= true;
 			LBoxFront::reload();

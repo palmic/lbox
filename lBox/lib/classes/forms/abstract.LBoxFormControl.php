@@ -440,6 +440,21 @@ abstract class LBoxFormControl
 	}
 
 	/**
+	 * oznami vsem svym validatorum uspesne dokonceny processing formulare
+	 * @throws LBoxException
+	 */
+	public function commitProcessSuccess () {
+		try {
+			foreach ($this->validators as $validator) {
+				$validator->commitProcessSuccess();
+			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
 	 *
 	 * @return PHPTAL
 	 */
