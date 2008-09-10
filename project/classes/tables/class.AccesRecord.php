@@ -2,7 +2,7 @@
 /**
  * Pozor! pouziva se jako singleton presto ze ma public constructor - kuli dedicnosti
 * @author Michal Palma <palmic@email.cz>
-* @package LBox ubytovny-v-praze.cz
+* @package LBox
 * @version 1.0
 
 * @since 2007-12-08
@@ -69,7 +69,7 @@ class AccesRecord extends AbstractRecordLBox
 	public function store() {
 		try {
 			// v pripade, ze nepouzivame databazi, access se neuklada
-			if (LBoxConfigManagerProperties::getPropertyContentByName("use_db") < 1) {
+			if (LBoxConfigManagerProperties::getPropertyContentByName("log_access") < 1) {
 				return;
 			}
 			$this->params["time"] 				= date("Y-m-d H:i:s");
