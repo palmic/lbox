@@ -42,12 +42,6 @@ abstract class LBoxFormControl
 	 * @var string
 	 */
 	protected $default	= "";
-
-	/**
-	 * disabled ano/ne
-	 * @var bool
-	 */
-	protected $disabled	= false;
 	
 	/**
 	 * form processed flag
@@ -78,6 +72,12 @@ abstract class LBoxFormControl
 	 * @var string
 	 */
 	protected $filenameTemplate = "lbox_form_control.html";
+	
+	/**
+	 * pole volne definovatelnych parametru
+	 * @var array
+	 */
+	protected $params	= array();
 	
 	/**
 	 *
@@ -113,15 +113,30 @@ abstract class LBoxFormControl
 			if (strlen($name) < 1) {
 				throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
 			}
-			switch ($name) {
-				case "getDisabled":
-						return $this->isDisabled() ? "disabled" : "";
-					break;
+			if (array_key_exists($name, $this->params)) {
+				return $this->params[$name];
 			}
+			// jen kvuli moznemu pouziti do budoucna - nektery z potomku totiz ma getter a tento je tu kvuli nastaveni dedicnosti getteru (musi tu byt aspon prazdny!!)
 		}
 		catch (Exception $e) {
 			throw $e;
 		}
+	}
+	
+	/**
+	 * setter pro params
+	 * @param string $name
+	 * @param mixed $value
+	 * @throws LBoxException
+	 */
+	public function __set($name = "", $value = "") {
+		if (strlen($name) < 1) {
+			throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
+		}
+		if (!$value) {
+			throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
+		}
+		$this->params[$name]	= $value;
 	}
 	
 	/**
@@ -163,22 +178,6 @@ abstract class LBoxFormControl
 	}
 
 	/**
-	 * sets control disabled
-	 * @param bool $disabled
-	 */
-	public function setDisabled($disabled	= true) {
-		try {
-			if (!is_bool($disabled)) {
-				throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_BOOL, LBoxExceptionFormControl::CODE_BAD_PARAM);
-			}
-			$this->disabled	= $disabled;
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-
-	/**
 	 * vraci, jestli byl control nastaven jako povinny
 	 * @return bool
 	 */
@@ -196,19 +195,6 @@ abstract class LBoxFormControl
 		}
 	}
 
-	/**
-	 * vraci, jestli je control disabled
-	 * @return bool
-	 */
-	public function isDisabled() {
-		try {
-			return $this->disabled;
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-	
 	/**
 	 * nastavuje control jako subcontrol - viz dokumentace member parametru
 	 */
@@ -394,12 +380,7 @@ abstract class LBoxFormControl
 			if ($this->value !== NULL) {
 				return $this->value;
 			}
-			if ($this->isDisabled()) {
-				return $this->value	= $this->getDefault();
-			}
-			else {
-				return $this->value	= $this->form->getSentDataByControlName($this->getName());
-			}
+			return $this->value	= $this->form->getSentDataByControlName($this->getName());
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -411,8 +392,7 @@ abstract class LBoxFormControl
 	 * @return string
 	 */
 	public function getLabel() {
-		if (is_null($this->label)) return "";
-		return strlen($this->label) > 0 ? $this->label : $this->name;
+		return $this->label;
 	}
 
 	/**
@@ -439,21 +419,6 @@ abstract class LBoxFormControl
 		return ($this instanceof LBoxFormControlSpamDefense);
 	}
 
-	/**
-	 * oznami vsem svym validatorum uspesne dokonceny processing formulare
-	 * @throws LBoxException
-	 */
-	public function commitProcessSuccess () {
-		try {
-			foreach ($this->validators as $validator) {
-				$validator->commitProcessSuccess();
-			}
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-	
 	/**
 	 *
 	 * @return PHPTAL

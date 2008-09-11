@@ -20,6 +20,12 @@ abstract class LBoxFormControlOptionItem
 	protected $control	= "";
 	
 	/**
+	 * pole volne definovatelnych parametru
+	 * @var array
+	 */
+	protected $params	= array();
+
+	/**
 	 * @param string value
 	 * @param string label
 	 */
@@ -40,12 +46,29 @@ abstract class LBoxFormControlOptionItem
 	}
 
 	/**
+	 * setter pro params
+	 * @param string $name
+	 * @param mixed $value
+	 * @throws LBoxException
+	 */
+	public function __set($name = "", $value = "") {
+		if (strlen($name) < 1) {
+			throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
+		}
+		$this->params[$name]	= $value;
+	}
+
+	/**
 	 * defaultni getter
 	 * @param string $name
 	 * @return mixed
 	 */
 	public function __get($name) {
 		try {
+			if (array_key_exists($name, $this->params)) {
+				return $this->params[$name];
+			}
+			
 			switch ($name) {
 				case "getSelected":
 					return $this->isSelected() ? "selected" : "";
