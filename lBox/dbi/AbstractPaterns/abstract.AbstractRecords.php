@@ -5,6 +5,7 @@
  * need DbControl class!
  * @author Michal Palma <palmic at email dot cz>
  * @date 2006-02-07
+ * @version 0.2 2008-09-16
  */
 abstract class AbstractRecords implements Iterator
 {
@@ -30,8 +31,8 @@ abstract class AbstractRecords implements Iterator
 	protected $limit;
 
 	/**
-	 * direct where parameters in string to add. Prior form is whithout where keyword
-	 * @var string
+	 * additional where "OR conditions"
+	 * @var QueryBuilderWhere
 	 */
 	protected $whereAdd;
 
@@ -66,6 +67,12 @@ abstract class AbstractRecords implements Iterator
 	protected $db;
 
 	/**
+	 * QueryBuilder instance
+	 * @var QueryBuilder
+	 */
+	protected $queryBuilder;
+
+	/**
 	 * count of records
 	 * @var integer
 	 */
@@ -95,11 +102,11 @@ abstract class AbstractRecords implements Iterator
 	 * constructor
 	 * @param string $mode         - tree or list mode
 	 * @param array  $filter         - associated array with filter parameters in form $filter[$colname] = $colvalue
-	 * @param array  $order 			- for load records in form $order["colname"] = >0 for asc, <1 for desc
-	 * @param array  $limit 			- for limit rule  in form $limit = array(min, max). For example $limit = array(1, 10)
-	 * @param string $whereAdd		- direct where parameters in string to add. Prior form is whithout where keyword
+	 * @param array  $order 			- for load records in form $order["colname"] = 1 for asc, 0 for desc
+	 * @param array  $limit 			- for limit rule  in form $limit = array(min, count). For example $limit = array(0, 10) returns rows 1-11
+	 * @param string $whereAdd		- additional where "OR conditions" defined to add.
 	 */
-	public function __construct($filter = false, $order = false, $limit = false, $whereAdd = "") {
+	public function __construct($filter = false, $order = false, $limit = false, QueryBuilderWhere $whereAdd = NULL) {
 		if (is_array($filter)) {
 			foreach($filter as $f_key => $f_value) {
 				if (empty($f_value) && (!is_string($f_value))) {
@@ -201,7 +208,7 @@ abstract class AbstractRecords implements Iterator
 	 * sort records by parameter. Try to use constructor parameter order if posible. This method cause BIG degrade of performance!
 	 * @param $by to specify which record parameter to use in sort
 	 */
-	public function sort($by) {
+	/* DEPRECATED public function sort($by) {
 		try {
 			$this->loadAll();
 
@@ -218,7 +225,7 @@ abstract class AbstractRecords implements Iterator
 		catch (Exception $e) {
 			throw $e;
 		}
-	}
+	}*/
 
 	/**
 	 * add record
@@ -288,7 +295,6 @@ abstract class AbstractRecords implements Iterator
 				}
 			}
 			array_push($this->records, $recordRef);
-
 			// set synchronized-with-db = true to optimize performance (Record shall load data again otherwise)
 			$recordRef->setSynchronized(true);
 			return true;
@@ -332,64 +338,26 @@ abstract class AbstractRecords implements Iterator
 					throw new LBoxException("Static variable $itemType::tableName is empty or not exists!");
 				}
 
-				$sql 		= "SELECT * FROM `". $tableName ."`";
-				$countSql	= "SELECT count(`$idColName`) count FROM `". $tableName ."`";
-
 				// set where clause by $filter items
+				$where				= new QueryBuilderWhere();
 				$passwordColNames	= eval("return $itemType::\$passwordColNames;");
 				@reset($this->filter);
 				$fcur = @current($this->filter);
 				if ((!empty($fcur)) || ((int)$fcur === 0)) {
-					$where = "";
 					if ($this->filter !== false) {
-						foreach ((array)$this->filter as $fName => $fValue) {
-							// for numeric values
-							if (is_numeric($fValue)) {
-								$value = $fValue;
-							}
-							// for other values
-							else {
-								$value = "'".mysql_escape_string($fValue)."'";
-							}
-	
-							if (strlen($where) > 0) {
-								$where .= " AND ";
-							}
+						foreach ((array)$this->filter as $column => $value) {
 							// password columns
-							if (in_array($fName, $passwordColNames)) {
-								$where .= " UCASE(`$fName`)=UCASE(PASSWORD($value))";
+							if (in_array($column, $passwordColNames)) {
+								$value	= md5($value);
 							}
-							// other columns
-							else {
-								if (is_numeric($value)) {
-									$where .= " $fName=$value";
-								}
-								else {
-									$where .= " $fName=$value";
-								}
-							}
+							$where->addConditionColumn($column, $value);
 						}
 					}
 
 				}
 				// add whereAdd addition
-				if (strlen($this->whereAdd) > 0) {
-					// try to reach posibility of redundant WHERE keyword
-					if (is_numeric($pos = stripos($this->whereAdd, "WHERE")) ) {
-						$this->whereAdd = trim(substr($this->whereAdd, $pos + 6));
-					}
-					if (strlen($where) < 1) {
-						$where = $this->whereAdd;
-					}
-					else {
-						$where  = "(". $where .")";
-						$where .= " AND ";
-						$where .= "(". $this->whereAdd .")";
-					}
-				}
-				if (strlen($where) > 0) {
-					$sql 		.= " WHERE ". $where;
-					$countSql 	.= " WHERE ". $where;
+				if ($this->whereAdd instanceof QueryBuilderWhere) {
+					$where->addWhere($this->whereAdd);
 				}
 
 				// set order rulle by $order values
@@ -409,29 +377,13 @@ abstract class AbstractRecords implements Iterator
 					}
 					$sql .= " ORDER BY ". $order;
 				}
-
-				// set limit
-				if ($this->limit) {
-					if (count($this->limit) != 2) {
-						throw new LBoxException("Constructor parameter \$limit of class ". get_class($this) ." accept only array with two numeric values!");
-					}
-					$limit = "";
-					foreach ($this->limit as $value) {
-						if (!is_numeric($value)) {
-							throw new LBoxException("Constructor parameter \$limit of class ". get_class($this) ." accept only array with two numeric values!");
-						}
-						if (strlen($limit) > 0) {
-							$limit .= ", ";
-						}
-						$limit .= $value;
-					}
-					$sql 		.= " LIMIT ". $limit;
-				}
-
+				
+				$sql		= $this->getQueryBuilder()->getSelectColumns($tableName, array(), $where, $this->limit ? (array)$this->limit : array(), array(), $this->order ? (array)$this->order : array());
+				$countSql	= $this->getQueryBuilder()->getSelectCount($tableName, $where);
 				// call created SQL query for get count on db
 				$this->getDb()->setQuery($countSql, true);
 				$countResult = $this->getDb()->initiate();
-				$this->count = is_numeric($countResult->count) ? $countResult->count : 0;
+				$this->count = is_numeric(current($countResult->get("*"))) ? current($countResult->get("*")) : 0;
 				// mysql cannot get select count(*) from table limit 1, 10!!! hack:
 				if (($this->count > 0) && (is_array($this->limit) && count($this->limit) > 0)) {
 					$this->count -= $this->limit[0];
@@ -497,6 +449,22 @@ abstract class AbstractRecords implements Iterator
 	}
 
 	/**
+	 * getter of QueryBuilder instance
+	 * @return QueryBuilder
+	 */
+	protected function getQueryBuilder() {
+		try {
+			if (!is_a($this->queryBuilder, "QueryBuilder")) {
+				$this->queryBuilder = new QueryBuilder(AbstractRecord::$task);
+			}
+			return $this->queryBuilder;
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
 	 * getter of static variable from child class
 	 * @param string $varname - Name of child class static variable
 	 * @param boolean $force - set to true for no-exception in case of missing value
@@ -530,10 +498,10 @@ abstract class AbstractRecords implements Iterator
 			$itemType		= $this->getClassVar("itemType");
 			$tableName		= eval("return $itemType::\$tableName;");
 			$columns 		= eval("return $itemType::\$treeColNames;");
-			$this->getDb()->setQuery("SELECT `<1>` FROM  `$tableName` LIMIT 1");
 			foreach ($columns as $column) {
 				try {
-					$this->getDb()->initiate($column);
+					$sql = $this->getQueryBuilder()->getSelectColumns($tableName, (array)$column, NULL, array(1));
+					$this->getDb()->initiateQuery($sql);
 				}
 				catch (DbControlException $e) {
 					// throw $e;

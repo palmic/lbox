@@ -62,6 +62,34 @@ class DbSelector
         return $platform;
     }
 
+    /**
+    * Getter for object to build SQL dynamicaly according currently used database platform
+    * @return QueryBuilderInterface
+    */
+    public function getQueryBuilderPlatform(/*string*/ $task) {
+        if (!is_string($task)) {
+            throw new DbControlException("Ilegal parameter task. Must be string.");
+        }
+
+        switch ($platformName = strtolower($this->getPlatformName($task))) {
+            case "mysql":
+                $queryBuilder = new QueryBuilderPlatformMysql();
+                break;
+            case "pgsql":
+                $queryBuilder = new QueryBuilderPlatformPgsql();
+                break;
+            case "mssql":
+                $queryBuilder = new QueryBuilderPlatformMssql();
+                break;
+            case "odbc":
+                $queryBuilder = new QueryBuilderPlatformOdbc();
+                break;
+            default:
+                throw new DbControlException("There is no attached platform specific query builder for platformName: '".$platformName."'.");
+        }
+        return $queryBuilder;
+    }
+
     //== protected functions =============================================================
 
     /**

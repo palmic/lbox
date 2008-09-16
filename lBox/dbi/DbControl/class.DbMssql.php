@@ -120,7 +120,7 @@ class DbMssql extends DbPlatform
         }
         if (!$this->activeTransaction) {
             try {
-                $this->query("BEGIN WORK");
+                $this->query("BEGIN TRANSACTION");
             }
             catch (Exception $e) {
                 throw $e;
@@ -176,7 +176,6 @@ class DbMssql extends DbPlatform
 //            else {
 //                $hostString = $this->dbParametersMessenger->loginHost;
 //            }
-            
             $this->connection = @mssql_pconnect($hostString, $this->dbParametersMessenger->loginName, $this->dbParametersMessenger->loginPassword);
             if (!is_resource($this->connection)) {
                 throw new DbControlException("Cant connect to database Mssql.\nhost = ". $this->dbParametersMessenger->loginHost, -1);

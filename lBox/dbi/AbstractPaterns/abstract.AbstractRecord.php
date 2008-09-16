@@ -7,6 +7,7 @@
  * need DbControl class!
  * @author Michal Palma <palmic at email dot cz>
  * @date 2006-02-07
+ * @version 0.2 2008-09-16
  */
 abstract class AbstractRecord implements Iterator
 {
@@ -24,6 +25,12 @@ abstract class AbstractRecord implements Iterator
 	 * @var db
 	 */
 	protected $db;
+
+	/**
+	 * QueryBuilder instance
+	 * @var QueryBuilder
+	 */
+	protected $queryBuilder;
 
 	/**
 	 * password-changed flag
@@ -129,7 +136,7 @@ abstract class AbstractRecord implements Iterator
 
 	/**
 	 * constructor
-	 * @param integer $id - leave it empty to create new record
+	 * @param mixed $id - leave it empty to create new record
 	 */
 	public function __construct($id = 0) {
 		try {
@@ -151,14 +158,19 @@ abstract class AbstractRecord implements Iterator
 	//== public functions ===============================================================
 
 	public function __toString() {
-		$className	 	= get_class($this);
-		$tableName		= $this->getClassVar("tableName");
-		$string  		= "$className from table '$tableName'\n";
-		foreach ($this as $colName => $colValue) {
-			$string .= "$colName => $colValue, ";
+		try {
+			$className	 	= get_class($this);
+			$tableName		= $this->getClassVar("tableName");
+			$string  		= "$className from table '$tableName'\n";
+			foreach ($this as $colName => $colValue) {
+				$string .= "$colName => $colValue, ";
+			}
+			$string .= "\n";
+			return $string;
 		}
-		$string .= "\n";
-		return $string;
+		catch (Exception $e) {
+			throw $e;
+		}
 	}
 
 	/**
@@ -252,45 +264,6 @@ abstract class AbstractRecord implements Iterator
 	}
 
 	/**
-	 * getter for types, their are bounded thrue M:1, or 1:M relation
-	 * @param string $type - bounded type definition - must be child of AbstractRecords class
-	 * @param $filter - Is specified by AbstractRecords class
-	 * @param $order  - Is specified by AbstractRecords class
-	 * @return AbstractRecords
-	 */
-	public function getBounded($type, $filter = false, $order = false, $limit = false, $whereAdd = "") {
-		try {
-			// try to find in child static $boundedM1 array
-			if (@array_key_exists($type, $this->getClassVar("boundedM1", true))) {
-				$instance = $this->getBoundedM1Instance($type, $filter, $order, $whereAdd);
-			}
-			// try to find in child static $bounded1M array
-			else if (@array_key_exists($type, $this->getClassVar("bounded1M", true))) {
-				$instance = $this->getBounded1MInstance($type, $filter, $order, $limit, $whereAdd);
-			}
-			// try to find in child static $boundedMN array
-			else if (@array_key_exists($type, $this->getClassVar("boundedMN", true))) {
-				// for getBoundedMNInstance() we does not support additional parameters like $order or $filter
-				$instance = $this->getBoundedMNInstance($type);
-			}
-			else {
-				throw new LBoxException("Type '$type' is not defined in bounded types maping in ". get_class($this) ." class!");
-			}
-			// empty foreign key column value - return false
-			if (!$instance) {
-				return false;
-			}
-			if (!is_subclass_of($instance, "AbstractRecords")) {
-				throw new LBoxException("Bad bounded type definition! Must be child of AbstractRecords class!");
-			}
-			return $instance;
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-
-	/**
 	 * array iterator acces interface part
 	 */
 	public function rewind() {
@@ -349,7 +322,6 @@ abstract class AbstractRecord implements Iterator
 				$this->params[$idColName] = $this->getMaxId()+1;
 			}
 			foreach($this->params as $vname => $vvalue) {
-
 				// ignore empty items
 				if ($vvalue === false) {
 					continue;
@@ -366,34 +338,14 @@ abstract class AbstractRecord implements Iterator
 					continue;
 				}
 
-				// separate values by ,
-				if (strlen($vals) > 0) {
-					$vals .= ", ";
-				}
-
-				// numeric values whithout apostrophes
-				if (is_int(trim($vvalue))) {
-					$value = $vvalue;
-				}
-				else if ($vvalue == "NULL") {
-					$value = $vvalue;
-				}
-				// other values
-				else {
-					// escape strings
-					$vvalue = stripslashes($vvalue);
-					$vvalue = addslashes($vvalue);
-					$value = "'$vvalue'";
-				}
-
 				// secure password handling
 				if ( (in_array($vname, $this->getClassVar("passwordColNames", true))) && ($this->passwordChanged) ) {
-					$vals .= "$vname=PASSWORD($value)";
+					$vals[$vname] = md5($vvalue);
 				} else {
-					$vals .= "$vname=$value";
+					$vals[$vname] = "$vvalue";
 				}
 			}
-			if (strlen($vals) < 1) {
+			if (count($vals) < 1) {
 				return;
 			}
 
@@ -406,10 +358,13 @@ abstract class AbstractRecord implements Iterator
 				$bidColname		= $treeColNames[3];
 				if (	!is_numeric($this->params[$lftColname])
 					|| 	!is_numeric($this->params[$rgtColname])) {
-					$bid			= $this->getMaxTreeBid() + 1;
-					$lft			= $this->getMaxTreeRgt() + 1;
-					$rgt			= $lft + 1;
-					$vals 			.= ", $lftColname=$lft, $rgtColname=$rgt, $bidColname=$bid";
+					$bid				= $this->getMaxTreeBid() + 1;
+					$lft				= $this->getMaxTreeRgt() + 1;
+					$rgt				= $lft + 1;
+					$vals[$lftColname]	= $lft;
+					$vals[$rgtColname]	= $rgt;
+					$vals[$bidColname]	= $bid;
+					$vals[$pidColname]	= is_numeric($this->params[$pidColname]) ? $this->params[$pidColname] : 0;
 				}
 			}
 
@@ -419,25 +374,19 @@ abstract class AbstractRecord implements Iterator
 				if (empty($this->params[$idColName])) {
 					throw new LBoxException("Cannot UPDATE record whithout primary key value known!");
 				}
-
-				// numeric ID value
-				if (is_numeric($this->params[$idColName])) {
-					$where = " WHERE ". $idColName ."=". $this->params[$idColName];
+				if (strtoupper($this->params[$idColName]) == "NULL") {
+					throw new LBoxException("Primary key value is !NULL!");
 				}
-				// other ID value
-				else {
-					$where = " WHERE ". $idColName ."='". $this->params[$idColName] ."'";
-				}
-
-				$sql  = "UPDATE ". $tableName ." SET ";
-				$sql .= $vals;
-				$sql .= $where;
+				
+				$whereUpdate	= new QueryBuilderWhere();
+				$whereUpdate	->addConditionColumn($idColName, $this->params[$idColName], 0);
+				$sql			= $this->getQueryBuilder()->getUpdate($tableName, $vals, $whereUpdate);
 			}
 			// insert query
 			else {
-				$sql  = "INSERT INTO ". $tableName ." SET ";
-				$sql .= $vals;
+				$sql	= $this->getQueryBuilder()->getInsert($tableName, $vals);
 			}
+// var_dump(__CLASS__ ."::". __LINE__ .": ". $sql);
 			$this->getDb()->initiateQuery($sql);
 		}
 		catch(Exception $e) {
@@ -459,7 +408,6 @@ abstract class AbstractRecord implements Iterator
 				return;
 			}
 			$idColName = $this->getIdColName();
-			$where = $this->getWhere();
 
 			// cannot load without idColName value
 			if (strlen((string)$this->params[$idColName]) < 1) {
@@ -468,11 +416,13 @@ abstract class AbstractRecord implements Iterator
 			}
 
 			// do not pass query whithout WHERE
-			if (strlen($where) < 1) {
+			if (count($this->getWhere()->getConditions()) < 1) {
 				throw new LBoxException("Cannot load record by ". get_class($this) ." whithout where specification! Set id or other parameters for get ONE record from db.");
 			}
-			$sql = "SELECT * FROM `". $this->getClassVar("tableName") ."` ". $where;
+			
+			$sql	= $this->getQueryBuilder()->getSelectColumns($this->getClassVar("tableName"), array(), $this->getWhere());
 			$this->getDb()->setQuery($sql, true);
+// var_dump(__CLASS__ ."::". __LINE__ .": ". $sql);
 			$result = $this->getDb()->initiate();
 			if ($result->getNumRows() < 1) {
 				// $dbName = $this->getClassVar("dbName");
@@ -508,32 +458,46 @@ abstract class AbstractRecord implements Iterator
 			if ($this->isTree() && $this->hasChildren()) {
 				throw new LBoxException("Cannot delete database record with children!!!");
 			}
-			if ($this->isTree()) {				
+			if ($this->isTree()) {
 				$treeColNames	= $this->getClassVar("treeColNames");
 				$lftColName		= $treeColNames[0];
 				$rgtColName		= $treeColNames[1];
 				$myLft			= $this->get($lftColName);
 				$myRgt			= $this->get($rgtColName);
+				
+				$quotesColumnName		= $this->getQueryBuilder()->getQuotesColumnName();
+				$lftColNameSlashed		= reset($quotesColumnName) . $lftColName . end($quotesColumnName);
+				$rgtColNameSlashed		= reset($quotesColumnName) . $rgtColName . end($quotesColumnName);
+				$pidColNameSlashed		= reset($quotesColumnName) . $pidColName . end($quotesColumnName);
+				$bidColNameSlashed		= reset($quotesColumnName) . $bidColName . end($quotesColumnName);
 			}
 
+			$where	= new QueryBuilderWhere();
 			$this->getDb()->transactionStart();
 
-			$value	 = is_numeric($this->params[$idColName]) ? $this->params[$idColName] : "'". $this->params[$idColName] ."'";
-			$sql  	 = "DELETE FROM ". $this->getClassVar("tableName");
-			$sql 	.= " WHERE ". $idColName ."=". $value;
+			$where	->addConditionColumn($idColName, $this->params[$idColName]);
+			$sql	= $this->getQueryBuilder()->getDelete($this->getClassVar("tableName"), $where);
 			$this->getDb()->setQuery($sql, true);
 			if (!$this->getDb()->initiate()) {
 				throw new LBoxException("Cannot delete database record with ". $idColName ."=". $this->params[$idColName]);
 			}
 			if ($this->isTree()) {
 				// shift tree
-				$sqlsTree[0]  	 = "UPDATE ". $this->getClassVar("tableName");
+				/*$sqlsTree[0]  	 = "UPDATE ". $this->getClassVar("tableName");
 				$sqlsTree[0] 	.= " SET $lftColName = $lftColName-2";
-				$sqlsTree[0] 	.= " WHERE ". $lftColName .">". $myRgt;				
+				$sqlsTree[0] 	.= " WHERE ". $lftColName .">". $myRgt;
 				$sqlsTree[1]  	 = "UPDATE ". $this->getClassVar("tableName");
 				$sqlsTree[1] 	.= " SET $rgtColName = $rgtColName-2";
-				$sqlsTree[1] 	.= " WHERE ". $rgtColName .">". $myRgt;
-				foreach ($sqlsTree as $sqlTree) {
+				$sqlsTree[1] 	.= " WHERE ". $rgtColName .">". $myRgt;*/
+				$treeUpdates[0]["set"]		= array($lftColName => "<<$lftColNameSlashed-2>>");
+				$treeUpdates[0]["where"]	= new QueryBuilderWhere();
+				$treeUpdates[0]["where"]	-> addConditionColumn($lftColName, $myRgt, 1);
+				$treeUpdates[1]["set"]		= array($rgtColName => "<<$rgtColNameSlashed-2>>");
+				$treeUpdates[1]["where"]	= new QueryBuilderWhere();
+				$treeUpdates[1]["where"]	-> addConditionColumn($rgtColName, $myRgt, 1);
+				foreach ($treeUpdates as $treeUpdate) {
+					$sqlTree	= $this->getQueryBuilder()->getUpdate($this->getClassVar("tableName"), $treeUpdate["set"], $treeUpdate["where"]);
+// var_dump(__CLASS__ .": ". $sqlTree);
 					if (!$this->getDb()->initiateQuery($sqlTree)) {
 						throw new LBoxException("Cannot shift tree after deleting record with ". $idColName ."=". $this->params[$idColName]);
 					}
@@ -566,14 +530,12 @@ abstract class AbstractRecord implements Iterator
 	 */
 	public function isDuplicit() {
 		try {
-			$where  = $this->getWhere();
-			$sql    = "SELECT * FROM `". $this->getClassVar("tableName") ."` ". $where;
+			$sql	= $this->getQueryBuilder()->getSelectColumns($this->getClassVar("tableName"), array(), $this->getWhere());
+// var_dump(__CLASS__ ."::". __LINE__ .": ". $sql);
 			$this->getDb()->setQuery($sql, true);
 			$result = $this->getDb()->initiate();
-			if ($result->getNumRows() < 1) {
-				return false;
-			}
-			return true;
+
+			return ($result->getNumRows() > 0);
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -606,17 +568,12 @@ abstract class AbstractRecord implements Iterator
 				return false;
 			}
 
-			// numeric ID value
-			if (is_numeric($this->params[$idColName])) {
-				$where = " WHERE ". $idColName ."=". $this->params[$idColName];
-			}
-			// other ID value
-			else {
-				$where = " WHERE ". $idColName ."='". $this->params[$idColName] ."'";
-			}
-			$sql = "SELECT ". $idColName ." FROM `". $this->getClassVar("tableName") ."` ". $where;
+			$where	= new QueryBuilderWhere();
+			$where	->addConditionColumn($idColName, $this->params[$idColName]);
+			$sql	= $this->getQueryBuilder()->getSelectColumns($this->getClassVar("tableName"), array("$idColName"), $where);
 
 			$this->getDb()->setQuery($sql, true);
+// var_dump(__CLASS__ ."::". __LINE__ .": ". $sql);
 			$result = $this->getDb()->initiate();
 			if ($result->getNumRows() < 1) {
 				return false;
@@ -632,13 +589,45 @@ abstract class AbstractRecord implements Iterator
 	}
 
 	/**
+	 * alias for getBoundedM1Instance and getBounded1MInstance - dynamicaly chooose prior type, or throws Exception
+	 * @param $type - is defined by $this->getBounded()
+	 * @param $filter - Is specified by AbstractRecords class
+	 * @param $order  - Is specified by AbstractRecords class
+	 * @return AbstractRecords
+	 * @throws LBoxException
+	 */
+	public function getBoundedInstance($type = false, $filter = false, $order = false, QueryBuilderWhere $whereAdd = NULL) {
+		try {
+			$boundedM1  = $this->getClassVar("boundedM1", true);
+			$bounded1M = $this->getClassVar("bounded1M", true);
+			switch (true) {
+				case (array_key_exists($type, $boundedM1) && array_key_exists($type, $bounded1M)):
+						throw new LBoxException("Type $type is defined in both bounded types definitions (1:M and M:1), cannot choose one automaticaly!");
+					break;
+				case (array_key_exists($type, $boundedM1)):
+						$instance = $this->getBoundedM1Instance($type, $filter, $order, $whereAdd);
+					break;
+				case (array_key_exists($type, $bounded1M)):
+						$instance = $this->getBounded1MInstance($type, $filter, $order, $whereAdd);
+					break;
+				default:
+					throw new LBoxException("Type $type has no bounded types definition!");
+			}
+			return $instance;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
 	 * getter for instance of class maping bounded table for relation M:1
 	 * @param $type - is defined by $this->getBounded()
 	 * @param $filter - Is specified by AbstractRecords class
 	 * @param $order  - Is specified by AbstractRecords class
 	 * @return AbstractRecords
 	 */
-	protected function getBoundedM1Instance($type = false, $filter = false, $order = false, $whereAdd = "") {
+	protected function getBoundedM1Instance($type = false, $filter = false, $order = false, QueryBuilderWhere $whereAdd = NULL) {
 		if (!class_exists($type)) {
 			throw new LBoxException("Type $type has no defined Class!");
 		}
@@ -653,7 +642,7 @@ abstract class AbstractRecord implements Iterator
 			// first we need to get type of one record from bounded type (static var in bounded type class)									 //
 			$OneRecordType = eval("return $type::\$itemType;");																			 //
 			// then we can get column name to add it into filter rulle (primarykey in bounded type = foreignkey column in this type)		 //
-			if (!$this->params[$boundedM1[$type]]) {                                                                                     //
+			if (!array_key_exists($type, $boundedM1)) {
 				throw new LBoxException("Cannot find bounded column '". $boundedM1[$type] ."' in my columns!");                                                                                                                //
 			}                                                                                                                                //
 			$boundedIdColName  			 = eval("return $OneRecordType::\$idColName;");														 //
@@ -663,6 +652,9 @@ abstract class AbstractRecord implements Iterator
 			$filter   = is_array($filter) ? array_merge($fKFilter, $filter) : $fKFilter;
 			// create instance
 			$instance = new $type($filter, $order, $whereAdd);
+			if (!$instance instanceof AbstractRecords) {
+				throw new LBoxException("Type $type is not AbstractRecords's descendant!");
+			}
 			return $instance;
 		}
 		catch (Exception $e) {
@@ -677,18 +669,24 @@ abstract class AbstractRecord implements Iterator
 	 * @param $order  - Is specified by AbstractRecords class
 	 * @return AbstractRecords
 	 */
-	protected function getBounded1MInstance($type = false, $filter = false, $order = false, $limit = false, $whereAdd = "") {
+	protected function getBounded1MInstance($type = false, $filter = false, $order = false, $limit = false, QueryBuilderWhere $whereAdd = NULL) {
 		if (!class_exists($type)) {
 			throw new LBoxException("Type $type has not defined Class!");
 		}
 		try {
 			$bounded1M = $this->getClassVar("bounded1M", true);
+			if (!array_key_exists($type, $bounded1M)) {
+				throw new LBoxException("Cannot find bounded column '". $boundedM1[$type] ."' in my columns!");                                                                                                                //
+			}                                                                                                                                //
 			// must add foreign key rulle into filter (Records to find in bounded type must have foreignkey value of primarykey of this type)
 			$fKFilter[$bounded1M[$type]] = $this->params[$this->getClassVar("idColName")];
 			// add custom filter to foreignkey rulle
 			$filter   = is_array($filter) ? array_merge($fKFilter, $filter) : $fKFilter;
 			// create instance
 			$instance = new $type($filter, $order, $limit, $whereAdd);
+			if (!$instance instanceof AbstractRecords) {
+				throw new LBoxException("Type $type is not AbstractRecords's descendant!");
+			}
 			// return false if foreignkey column value is empty
 			/* disabled because filtered records problems
 			if (!$instance->valid()) {
@@ -706,8 +704,9 @@ abstract class AbstractRecord implements Iterator
 	 * getter for types, their are bounded thrue M:N relation
 	 * @param $type - is defined by $this->getBounded()
 	 * @return AbstractRecords
-	 */
+	 *
 	protected function getBoundedMNInstance($type = false) {
+NOT TESTED AND TOTALY INEFFICIENT FOR SURE 
 		if (!class_exists($type)) {
 			throw new LBoxException("Type $type has not defined Class!");
 		}
@@ -753,7 +752,7 @@ abstract class AbstractRecord implements Iterator
 		catch (Exception $e) {
 			throw $e;
 		}
-	}
+	}*/
 
 	/**
 	 * getter of db class instance
@@ -774,6 +773,22 @@ abstract class AbstractRecord implements Iterator
 		}
 	}
 
+	/**
+	 * getter of QueryBuilder instance
+	 * @return QueryBuilder
+	 */
+	protected function getQueryBuilder() {
+		try {
+			if (!is_a($this->queryBuilder, "QueryBuilder")) {
+				$this->queryBuilder = new QueryBuilder(self::$task);
+			}
+			return $this->queryBuilder;
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
+	}
+	
 	/**
 	 * getter of static variable from child class
 	 * @param string $varname - Name of child class static variable
@@ -800,60 +815,35 @@ abstract class AbstractRecord implements Iterator
 	}
 
 	/**
-	 * return WHERE SQL clause created from $this->params
-	 * @return string
+	 * returns WHERE instance created from $this->params
+	 * @return QueryBuilderWhere
 	 */
 	protected function getWhere() {
 		try {
 
+			$where = new QueryBuilderWhere();
 			// if we know ID column value, we dont need other params
 			$idColName 	= $this->getIdColName();
 			$idColNameValue = $this->params[$idColName];
 			if (strlen((string)$idColNameValue) > 0) {
-				if(is_string($idColNameValue)) {
-					return "WHERE $idColName = '$idColNameValue'";
-				}
-				return "WHERE $idColName = $idColNameValue";
+				$where->addConditionColumn($idColName, $idColNameValue);
+				return $where;
 			}
 
-			// set WHERE clause
-			$where = "";
+			// set WHERE conditions
 			if (is_array($this->params)) {
 				foreach ($this->params as $colName => $colValue) {
 					// do not pass empty values into the WHERE rulle
 					if ( (empty($colValue)) && (!is_numeric($colValue)) ) {
 						continue;
 					}
-					if (strlen(trim($where)) > 0) {
-						$where .= " AND";
-					}
-					else {
-						$where .= " WHERE";
-					}
-					// numeric values
-					if (is_numeric($colValue)) {
-						$value = $colValue;
-					}
-					// other values
-					else {
-						// escape strings
-						$colValue = stripslashes($colValue);
-						$colValue = addslashes($colValue);
-						$value = "'".mysql_escape_string($colValue)."'";
-					}
 					// password columns
 					if ( (in_array($colName, $this->getClassVar("passwordColNames", true))) && ($this->passwordChanged) ) {
-						$where .= " UCASE($colName)=UCASE(PASSWORD($value))";
+						$where->addConditionColumn($colName, md5($value));
 					}
 					// other columns
 					else {
-						if (is_numeric($value)) {
-							$where .= " $colName=$value";
-						}
-						else {
-							//$where .= " UCASE($colName)=UCASE($value)";
-							$where .= " $colName=" . stripslashes($value);
-						}
+						$where->addConditionColumn($colName, $value);
 					}
 				}
 			}
@@ -865,7 +855,7 @@ abstract class AbstractRecord implements Iterator
 	}
 
 	/**
-	 * Returns if the record has children in tree structure
+	 * Returns true if the record has children in tree structure
 	 * @return bool
 	 * @throws Exception
 	 */
@@ -880,8 +870,11 @@ abstract class AbstractRecord implements Iterator
 			$idColName		= $this->getClassVar("idColName");
 			$id				= $this->get($idColName);
 
-			$pidWhere 		= is_numeric($id) ? "$pidColName=$id" : "$pidColName='$id'";
-			$result			= $this->getDb()->initiateQuery("SELECT $idColName FROM $tableName WHERE $pidWhere LIMIT 1");
+			$where			= new QueryBuilderWhere();
+			$where			->addConditionColumn($pidColName, $id);
+// var_dump(__CLASS__ ."::". __LINE__ .": ". $this->getQueryBuilder()->getSelectColumns($tableName, array($idColName), $where, array(1)));
+			$result			= $this->getDb()->initiateQuery($this->getQueryBuilder()->getSelectColumns($tableName, array($idColName), $where, array(1)));
+			//$result			= $this->getDb()->initiateQuery("SELECT $idColName FROM $tableName WHERE $pidWhere LIMIT 1");
 			return ($result->getNumRows() > 0);
 		}
 		catch (Exception $e) {
@@ -921,7 +914,6 @@ abstract class AbstractRecord implements Iterator
 				throw new LBoxException("Table '$tableName' seems not to be tree!");
 			}
 			$itemsType		= $this->getClassVar("itemsType");
-
 			$treeColNames	= $this->getClassVar("treeColNames");
 			$lftColName		= $treeColNames[0];
 			$pidColName		= $treeColNames[2];
@@ -932,7 +924,6 @@ abstract class AbstractRecord implements Iterator
 
 			$filter 		= array($pidColName => $id, $bidColName => $bId);
 			$order			= array($lftColName => 1);
-
 			return new $itemsType($filter, $order);
 		}
 		catch (Exception $e) {
@@ -976,6 +967,12 @@ abstract class AbstractRecord implements Iterator
 			$chRgt			= (is_numeric($child->$rgtColName) && $child->$rgtColName > 0) ? $child->$rgtColName : $chLft+1;
 			$chWeight		= $chRgt-$chLft+1;
 
+			$quotesColumnName		= $this->getQueryBuilder()->getQuotesColumnName();
+			$lftColNameSlashed		= reset($quotesColumnName) . $lftColName . end($quotesColumnName);
+			$rgtColNameSlashed		= reset($quotesColumnName) . $rgtColName . end($quotesColumnName);
+			$pidColNameSlashed		= reset($quotesColumnName) . $pidColName . end($quotesColumnName);
+			$bidColNameSlashed		= reset($quotesColumnName) . $bidColName . end($quotesColumnName);
+			
 			if ($child->$pidColName == $this->$idColName) {
 				// throw new LBoxException("This already is my child!");
 				return;
@@ -997,13 +994,19 @@ abstract class AbstractRecord implements Iterator
 			$this->getDb()->transactionStart();
 
 			// cut child and descendants from tree
-			$sqlChildTmp = "UPDATE $tableName SET
+			/*$sqlChildTmp = "UPDATE $tableName SET
 								$lftColName = $lftColName + $maxRgt,
 								$rgtColName = $rgtColName + $maxRgt
 									WHERE 	$lftColName > ($chLft-1)
 									AND 	$rgtColName < ($chRgt+1)
-							";
-			$this->getDb()->initiateQuery($sqlChildTmp);
+							";*/
+			$whereChildTmp	= new QueryBuilderWhere();
+			$whereChildTmp	->addConditionColumn($lftColName, $chLft-1, 1);
+			$whereChildTmp	->addConditionColumn($rgtColName, $chRgt+1, -1);
+// var_dump(__CLASS__ ."::". __LINE__ .": ". $this->getQueryBuilder()->getUpdate($tableName, 	array(	$lftColName => "<<$lftColNameSlashed + $maxRgt>>",$rgtColName => "<<$rgtColNameSlashed + $maxRgt>>",),$whereChildTmp));
+			$this->getDb()->initiateQuery($this->getQueryBuilder()->getUpdate($tableName, 	array(	$lftColName => "<<$lftColNameSlashed + $maxRgt>>",
+																									$rgtColName => "<<$rgtColNameSlashed + $maxRgt>>",),
+																							$whereChildTmp));
 			$childTmp 		= clone $child;
 			$childTmp->setSynchronized(false);
 			$childTmp->load();
@@ -1012,71 +1015,90 @@ abstract class AbstractRecord implements Iterator
 
 			// shift tree left
 			if ($chRgt < $myRgt) {
-				$sqls[] = "UPDATE $tableName SET
+				/*$sqls[] = "UPDATE $tableName SET
 				$lftColName = $lftColName-$chWeight
 									WHERE 	$lftColName > $chRgt
 									AND 	$lftColName < $myRgt
-							";
-				$sqls[] = "UPDATE $tableName SET
+							";*/
+				$i			= count((array)$sqls);
+				$wheres[$i]	= new QueryBuilderWhere();
+				$wheres[$i]	->addConditionColumn($lftColName, $chRgt, 1);
+				$wheres[$i]	->addConditionColumn($lftColName, $myRgt, -1);
+				$sqls[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($lftColName => "<<$lftColNameSlashed-$chWeight>>"), $wheres[$i]);
+
+				/*$sqls[] = "UPDATE $tableName SET
 				$rgtColName = $rgtColName-$chWeight
 									WHERE 	$rgtColName > $chRgt
 									AND 	$rgtColName < $myRgt
-									";
+									";*/
+				$i			= count((array)$sqls);
+				$wheres[$i]	= new QueryBuilderWhere();
+				$wheres[$i]	->addConditionColumn($rgtColName, $chRgt, 1);
+				$wheres[$i]	->addConditionColumn($rgtColName, $myRgt, -1);
+				$sqls[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($rgtColName => "<<$rgtColNameSlashed-$chWeight>>"), $wheres[$i]);
 			}
 			// shift tree right
 			else {
-				$sqls[] = "UPDATE $tableName SET
+				/*$sqls[] = "UPDATE $tableName SET
 				$lftColName = $lftColName+$chWeight
 									WHERE 	$lftColName > $myRgt
 									AND 	$lftColName < $chLft
-									";
-				$sqls[] = "UPDATE $tableName SET
+									";*/
+				$i			= count((array)$sqls);
+				$wheres[$i]	= new QueryBuilderWhere();
+				$wheres[$i]	->addConditionColumn($lftColName, $myRgt, 1);
+				$wheres[$i]	->addConditionColumn($lftColName, $chLft, -1);
+				$sqls[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($lftColName => "<<$lftColNameSlashed+$chWeight>>"), $wheres[$i]);
+				
+				/*$sqls[] = "UPDATE $tableName SET
 				$rgtColName = $rgtColName+$chWeight
 									WHERE 	$rgtColName > ($myRgt-1)
 									AND 	$rgtColName < $chLft
-									";			
+									";*/
+				$i			= count((array)$sqls);
+				$wheres[$i]	= new QueryBuilderWhere();
+				$wheres[$i]	->addConditionColumn($rgtColName, $myRgt-1, 1);
+				$wheres[$i]	->addConditionColumn($rgtColName, $chLft, -1);
+				$sqls[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($rgtColName => "<<$rgtColNameSlashed+$chWeight>>"), $wheres[$i]);
 			}
-			/*
-			 if ($this->params["id"]==9) {
-			 $testRecs 	= new TestRecords(NULL, array("lft" => 1));
-			 listTestTree($testRecs);
-			 }
-			 */
 			foreach ($sqls as $sql) {
-				//if ($this->params["id"]==9) DbControl::$debug = true;
+// var_dump(__CLASS__ ."::". __LINE__ .": ". $sql);
 				$this->getDb()->initiateQuery($sql);
-				//if ($this->params["id"]==9) DbControl::$debug = false;
 			}
-			/*
-			 if ($this->params["id"]==9) {
-			 $testRecs 	= new TestRecords(NULL, array("lft" => 1));
-			 listTestTree($testRecs);
-			 }
-			 */
-			//if ($this->params["id"]==9) return;
 
 			$this->setSynchronized(false);
 			$this->load();
 			$chTmpDiff	= $chTmpRgt-($this->rgt-1);
 
-			// shift $child recursive
-			$sqls2[] = "UPDATE $tableName SET
+			// shift $child recursive and updates bid for any children
+			/*$sqls2[] = "UPDATE $tableName SET
 			$lftColName = $lftColName - $chTmpDiff
 								, $rgtColName = $rgtColName - $chTmpDiff
 								, $bidColName = $myBid
 								WHERE 	$lftColName > ($chTmpLft-1)
 								AND 	$rgtColName < ($chTmpRgt+1)
-						";
+						";*/
+			$i				= count((array)$sqls2);
+			$wheres2[$i]	= new QueryBuilderWhere();
+			$wheres2[$i]	->addConditionColumn($lftColName, $chTmpLft-1, 1);
+			$wheres2[$i]	->addConditionColumn($rgtColName, $chTmpRgt+1, -1);
+			$sqls2[$i]		= $this->getQueryBuilder()->getUpdate($tableName, array($lftColName => "<<$lftColNameSlashed - $chTmpDiff>>",
+																					$rgtColName	=> "<<$rgtColNameSlashed - $chTmpDiff>>",
+																					$bidColName => $myBid), $wheres2[$i]);
+
 			// update $child's pid
-			$sqls2[] = "UPDATE $tableName SET
+			/*$sqls2[] = "UPDATE $tableName SET
 			$pidColName = $myId
 								WHERE 	$idColName = $chId
-						";
-
+						";*/
+			$i				= count((array)$sqls2);
+			$wheres2[$i]	= new QueryBuilderWhere();
+			$wheres2[$i]	->addConditionColumn($idColName, $chId);
+			$sqls2[$i]		= $this->getQueryBuilder()->getUpdate($tableName, array($pidColName => $myId), $wheres2[$i]);
+								
 			foreach ($sqls2 as $sql) {
-				//if ($this->params["id"]==9) DbControl::$debug = true;
+// var_dump("hallloooo: ". __CLASS__ ."::". __LINE__ .": ". $sql);
 				$this->getDb()->initiateQuery($sql);
-				//if ($this->params["id"]==9) DbControl::$debug = false;
 			}
 
 			$this->getDb()->transactionCommit();
@@ -1089,7 +1111,7 @@ abstract class AbstractRecord implements Iterator
 	}
 
 	/**
-	 * removes child from Record at end of table
+	 * removes child from Record to the end of table
 	 * @param AbstractRecord $child - child to remove
 	 * @throws Exception
 	 */
@@ -1125,6 +1147,12 @@ abstract class AbstractRecord implements Iterator
 			$chRgt			= $child->$rgtColName;
 			$chWeight		= $chRgt-$chLft+1;
 			$chBidNew		= $this->getMaxTreeBid()+1;
+
+			$quotesColumnName		= $this->getQueryBuilder()->getQuotesColumnName();
+			$lftColNameSlashed		= reset($quotesColumnName) . $lftColName . end($quotesColumnName);
+			$rgtColNameSlashed		= reset($quotesColumnName) . $rgtColName . end($quotesColumnName);
+			$pidColNameSlashed		= reset($quotesColumnName) . $pidColName . end($quotesColumnName);
+			$bidColNameSlashed		= reset($quotesColumnName) . $bidColName . end($quotesColumnName);
 			
 			if ($child->$pidColName !== $this->get($idColName)) {
 				throw new LBoxException("Bad argument - its not my child!");
@@ -1136,31 +1164,56 @@ abstract class AbstractRecord implements Iterator
 			$this->getDb()->transactionStart();
 
 			// cut child and descendants from tree
-			$sqlsChildUpd[] = "UPDATE $tableName SET
+			/*$sqlsChildUpd[] = "UPDATE $tableName SET
 									$lftColName = $lftColName + $chDiff,
 									$rgtColName = $rgtColName + $chDiff,
-									$bidColName = $chBidNew			
+									$bidColName = $chBidNew
 										WHERE 	$lftColName > ($chLft-1)
 										AND 	$rgtColName < ($chRgt+1)
-							";
-			$sqlsChildUpd[] = "UPDATE $tableName SET
+							";*/
+			$i					= count((array)$sqlsChildUpd);
+			$wheresChildUpd[$i]	= new QueryBuilderWhere();
+			$wheresChildUpd[$i]	->addConditionColumn($lftColName, $chLft-1, 1);
+			$wheresChildUpd[$i]	->addConditionColumn($rgtColName, $chRgt+1, -1);
+			$sqlsChildUpd[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($lftColName => "<<$lftColNameSlashed + $chDiff>>",
+																				$rgtColName => "<<$rgtColNameSlashed + $chDiff>>",
+																				$bidColName => $chBidNew), $wheresChildUpd[$i]);
+
+			/*$sqlsChildUpd[] = "UPDATE $tableName SET
 									$pidColName = NULL
 									WHERE 	$idColName = $chId
-							";
+							";*/
+			$i					= count((array)$sqlsChildUpd);
+			$wheresChildUpd[$i]	= new QueryBuilderWhere();
+			$wheresChildUpd[$i]	->addConditionColumn($idColName, $chId);
+			$sqlsChildUpd[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($pidColName => 0), $wheresChildUpd[$i]);
+
 			foreach ($sqlsChildUpd as $sqlChildUpd) {
+// var_dump(__CLASS__ ."::". __LINE__ .": ". $sql);
 				$this->getDb()->initiateQuery($sqlChildUpd);
 			}
 
 			// shift relevant records left
-			$sqls[] = "UPDATE $tableName SET
+			/*$sqls[] = "UPDATE $tableName SET
 			$lftColName = $lftColName-$chWeight
 								WHERE 	$lftColName > $chRgt
-						";
-			$sqls[] = "UPDATE $tableName SET
+						";*/
+			$i			= count((array)$sqls);
+			$wheres[$i]	= new QueryBuilderWhere();
+			$wheres[$i]	->addConditionColumn($lftColName, $chRgt, 1);
+			$sqls[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($lftColName => "<<$lftColNameSlashed-$chWeight>>"), $wheres[$i]);
+			
+			/*$sqls[] = "UPDATE $tableName SET
 			$rgtColName = $rgtColName-$chWeight
 								WHERE 	$rgtColName > $chRgt
-						";
+						";*/
+			$i			= count((array)$sqls);
+			$wheres[$i]	= new QueryBuilderWhere();
+			$wheres[$i]	->addConditionColumn($rgtColName, $chRgt, 1);
+			$sqls[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($rgtColName => "<<$rgtColNameSlashed-$chWeight>>"), $wheres[$i]);
+			
 			foreach ($sqls as $sql) {
+// var_dump(__CLASS__ ."::". __LINE__ .": ". $sql);
 				$this->getDb()->initiateQuery($sql);
 			}
 
@@ -1182,6 +1235,9 @@ abstract class AbstractRecord implements Iterator
 	 */
 	public function removeFromTree() {
 		try {
+			$treeColNames	= $this->getClassVar("treeColNames");
+			$pidColName		= $treeColNames[2];
+			
 			$this->load();
 			if (!$this->params[$pidColName]) {
 				throw new LBoxException("I have no parent!");
@@ -1210,16 +1266,22 @@ abstract class AbstractRecord implements Iterator
 			$pidColName		= $treeColNames[2];
 			$bidColName		= $treeColNames[3];
 			$idColName	= $this->getIdColName();
-			if (!($child instanceof $className)) {
+			if (!$sibling instanceof $className) {
 				throw new LBoxException("Cannot manipulate records relations between records of another types in '$className' type!");
 			}
 			if (!$isTree = $this->isTree()) {
 				throw new LBoxException("Table '$tableName' seems not to be tree!");
 			}
-			if (!$child->$idColName == $this->params[$idColName]) {
+			if (!$sibling->$idColName == $this->params[$idColName]) {
 				throw new LBoxException("You are trying to move me before me!");
 			}
 
+			$quotesColumnName		= $this->getQueryBuilder()->getQuotesColumnName();
+			$lftColNameSlashed		= reset($quotesColumnName) . $lftColName . end($quotesColumnName);
+			$rgtColNameSlashed		= reset($quotesColumnName) . $rgtColName . end($quotesColumnName);
+			$pidColNameSlashed		= reset($quotesColumnName) . $pidColName . end($quotesColumnName);
+			$bidColNameSlashed		= reset($quotesColumnName) . $bidColName . end($quotesColumnName);
+			
 			// set sibling as parent's child if is not
 			if ($sibling->$pidColName != $this->get($pidColName)) {
 				$this->getParent()->addChild($sibling);
@@ -1242,37 +1304,52 @@ abstract class AbstractRecord implements Iterator
 			if ($chRgt == $myLft-1) return;
 
 			// cut sibling from tree
-			$sqls[] = "UPDATE $tableName SET
+			/*$sqls[] = "UPDATE $tableName SET
 			$lftColName = $lftColName + $maxRgt,
 			$rgtColName = $rgtColName + $maxRgt
 							WHERE $lftColName 	> ($chLft-1)
 							AND $rgtColName 	< ($chRgt+1)
-						";
+						";*/
+			$i			= count((array)$sqls);
+			$wheres[$i]	= new QueryBuilderWhere();
+			$wheres[$i]	->addConditionColumn($lftColName, $chLft-1, 1);
+			$wheres[$i]	->addConditionColumn($rgtColName, $chRgt+1, -1);
+			$sqls[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($lftColName => "<<$lftColNameSlashed + $maxRgt>>",
+																				$rgtColName => "<<$rgtColNameSlashed + $maxRgt>>"), $wheres[$i]);
+			
 			// make space for sibling
-			$sqls[] = "UPDATE $tableName SET
+			/*$sqls[] = "UPDATE $tableName SET
 			$lftColName = $lftColName + $chWeight,
 			$rgtColName = $rgtColName + $chWeight
 							WHERE $lftColName 	> ($myLft-1)
 							AND $rgtColName 	< $chLft
-						";
+						";*/
+			$i			= count((array)$sqls);
+			$wheres[$i]	= new QueryBuilderWhere();
+			$wheres[$i]	->addConditionColumn($lftColName, $myLft-1, 1);
+			$wheres[$i]	->addConditionColumn($rgtColName, $chLft, -1);
+			$sqls[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($lftColName => "<<$lftColNameSlashed + $chWeight>>",
+																				$rgtColName => "<<$rgtColNameSlashed + $chWeight>>"), $wheres[$i]);
+
 			// move sibling before
-			$sqls[] = "UPDATE $tableName SET
+			/*$sqls[] = "UPDATE $tableName SET
 			$lftColName = $lftColName - ($diff+$maxRgt),
 			$rgtColName = $rgtColName - ($diff+$maxRgt),
 			$bidColName = $myBid,
 							WHERE $lftColName 	> ($chLft+$maxRgt-1)
 							AND $rgtColName 	< ($chRgt+$maxRgt+1)
-						";
-			/*
-			 if ($myId == 7) {
-			 $testRecs 	= new TestRecords(NULL, array("lft" => 1));
-			 listTestTree($testRecs);
-			 }
-			 */
+						";*/
+			$i			= count((array)$sqls);
+			$wheres[$i]	= new QueryBuilderWhere();
+			$wheres[$i]	->addConditionColumn($lftColName, $chLft+$maxRgt-1, 1);
+			$wheres[$i]	->addConditionColumn($rgtColName, $chRgt+$maxRgt+1, -1);
+			$sqls[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($lftColName => "<<$lftColNameSlashed - ". ($diff+$maxRgt) .">>",
+																				$rgtColName => "<<$rgtColNameSlashed - ". ($diff+$maxRgt) .">>",
+																				$bidColName => $myBid,), $wheres[$i]);
+
 			foreach ($sqls as $sql) {
-				//if ($myId == 7) DbControl::$debug = true;
+// var_dump(__CLASS__ ."::". __LINE__ .": ". $sql);
 				$this->getDb()->initiateQuery($sql);
-				//if ($myId == 7) DbControl::$debug = false;
 			}
 			$this->setSynchronized(false);
 			$sibling->setSynchronized(false);
@@ -1309,33 +1386,48 @@ abstract class AbstractRecord implements Iterator
 		}
 	}
 
+	public function isParentOf(AbstractRecord $descendant) {
+		try {
+			if (!$this->isAncestorOf($descendant)) {
+				return false;
+			}
+			$treeColNames	= $this->getClassVar("treeColNames");
+			$pidColName		= $treeColNames[2];
+			$idColName		= $this->getClassVar("idColName");
+			return ($descendant->$pidColName == $this->params[$idColName]);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
 	/**
-	 * checks if given record is descendant of me
+	 * checks if given record is descendant
 	 * @param AbstractRecord $child
 	 * @return bool
 	 * @throws Exception
 	 */
-	public function isParentOf(AbstractRecord $descendant) {
+	public function isAncestorOf(AbstractRecord $descendant) {
 		try {
 			$className 		= get_class($this);
 			$treeColNames	= $this->getClassVar("treeColNames");
 			$lftColName		= $treeColNames[0];
 			$rgtColName		= $treeColNames[1];
 			$bidColName		= $treeColNames[3];
+			$idColName		= $this->getClassVar("idColName");
+			$this->load();
+
 			if (!($descendant instanceof $className)) {
 				throw new LBoxException("Cannot check parental relations between another types in '$className'");
 			}
 			if (!$isTree = $this->isTree()) {
 				throw new LBoxException("Table '$tableName' seems not to be tree!");
 			}
-			if ($descendant->$idColName != $this->params[$idColName]) {
+			if ($descendant->$idColName == $this->params[$idColName]) {
 				throw new LBoxException("Bad argument - the same record like \$this!");
 			}
-			if ($descendant->$bidColName != $this->params[$bidColName]) {
-				return false;
-			}
-			
-			return ($this->params[$lftColName] < $descendant->$lftColName && $this->params[$rgtColName] > $descendant->$rgtColName);
+			return ((	$this->params[$lftColName] < $descendant->$lftColName) &&
+					(	$this->params[$rgtColName] > $descendant->$rgtColName));
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -1358,8 +1450,14 @@ abstract class AbstractRecord implements Iterator
 			$myLft			= $this->params[$lftColName];
 			$myRgt			= $this->params[$rgtColName];
 			$myBid			= $this->params[$bidColName];
-			$result			= $this->getDb()->initiateQuery("SELECT count($idColName) AS count FROM $tableName
-																WHERE $lftColName > $myLft AND $rgtColName < $myRgt AND $bidColName = $myBid");
+			
+			$where			= new QueryBuilderWhere();
+			$where			->addConditionColumn($lftColName, $myLft, 1);
+			$where			->addConditionColumn($rgtColName, $myRgt, -1);
+			$where			->addConditionColumn($bidColName, $myBid);
+			$sql			= $this->getQueryBuilder()->getSelectCount($tableName, $where);
+// var_dump(__CLASS__ ."::". __LINE__ .": ". $this->getQueryBuilder()->getSelectCount($tableName, $where));
+			$result			= $this->getDb()->initiateQuery($this->getQueryBuilder()->getSelectCount($tableName, $where));
 			return (int)$result->count;
 		}
 		catch (Exception $e) {
@@ -1375,9 +1473,10 @@ abstract class AbstractRecord implements Iterator
 		try {
 			$tableName		= $this->getClassVar("tableName");
 			$idColName		= $this->getIdColName();
-			$result = $this->getDb()->initiateQuery("SELECT MAX(`$idColName`) AS id_max FROM $tableName");
+// var_dump(__CLASS__ ."::". __LINE__ .": ". $this->getQueryBuilder()->getSelectMaxColumns($tableName, (array)$idColName));
+			$result = $this->getDb()->initiateQuery($this->getQueryBuilder()->getSelectMaxColumns($tableName, (array)$idColName));
 			if ($result->getNumRows() < 1) return 0;
-			else return (int)$result->id_max;
+			else return (int)$result->$idColName;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -1396,9 +1495,10 @@ abstract class AbstractRecord implements Iterator
 			$tableName		= $this->getClassVar("tableName");
 			$treeColNames	= $this->getClassVar("treeColNames");
 			$rgtColName		= $treeColNames[1];
-			$result = $this->getDb()->initiateQuery("SELECT MAX(`$rgtColName`) AS rgt_max FROM $tableName");
+// var_dump(__CLASS__ ."::". __LINE__ .": ". $this->getQueryBuilder()->getSelectMaxColumns($tableName, (array)$rgtColName));
+			$result = $this->getDb()->initiateQuery($this->getQueryBuilder()->getSelectMaxColumns($tableName, (array)$rgtColName));
 			if ($result->getNumRows() < 1) return 0;
-			else return (int)$result->rgt_max;
+			else return (int)$result->$rgtColName;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -1417,9 +1517,10 @@ abstract class AbstractRecord implements Iterator
 			$tableName		= $this->getClassVar("tableName");
 			$treeColNames	= $this->getClassVar("treeColNames");
 			$bidColName		= $treeColNames[3];
-			$result = $this->getDb()->initiateQuery("SELECT MAX(`$bidColName`) AS bid_max FROM $tableName");
+// var_dump(__CLASS__ ."::". __LINE__ .": ". $this->getQueryBuilder()->getSelectMaxColumns($tableName, (array)$bidColName));
+			$result = $this->getDb()->initiateQuery($this->getQueryBuilder()->getSelectMaxColumns($tableName, (array)$bidColName));
 			if ($result->getNumRows() < 1) return 0;
-			else return (int)$result->bid_max;
+			else return (int)$result->$bidColName;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -1439,18 +1540,18 @@ abstract class AbstractRecord implements Iterator
 			$className 		= get_class($this);
 			$columns 		= $this->getClassVar("treeColNames");
 			$tableName		= $this->getClassVar("tableName");
-			$this->getDb()->setQuery("SELECT `<1>` FROM  `$tableName` LIMIT 1");
-			foreach ($columns as $column) {
-				try {
-					$this->getDb()->initiate($column);
-				}
-				catch (DbControlException $e) {
-					// throw $e;
-					// column does not found - table is not tree
-					$this->isTree = false;
-					return $this->isTree;
-					break;
-				}
+			
+			try {
+// var_dump(__CLASS__ ."::". __LINE__ .": ". $this->getQueryBuilder()->getSelectColumns($tableName, $columns, new QueryBuilderWhere, array(1)));
+				$this->getDb()->initiateQuery($this->getQueryBuilder()
+				->getSelectColumns($tableName, $columns, new QueryBuilderWhere, array(1)));
+			}
+			catch (DbControlException $e) {
+				// throw $e;
+				// column does not found - table is not tree
+				$this->isTree = false;
+				return $this->isTree;
+				break;
 			}
 			$this->isTree = true;
 			return $this->isTree;

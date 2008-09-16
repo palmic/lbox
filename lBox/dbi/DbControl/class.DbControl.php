@@ -83,7 +83,6 @@ class DbControl implements DbControlInterface
         }
     }
 
-
     //== destructors ====================================================================
     //== public functions ===============================================================
 
