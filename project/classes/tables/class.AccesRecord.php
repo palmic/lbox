@@ -2,7 +2,7 @@
 /**
  * Pozor! pouziva se jako singleton presto ze ma public constructor - kuli dedicnosti
 * @author Michal Palma <palmic@email.cz>
-* @package LBox
+* @package LBox ubytovny-v-praze.cz
 * @version 1.0
 
 * @since 2007-12-08
@@ -24,6 +24,19 @@ class AccesRecord extends AbstractRecordLBox
 	 * @param string $value
 	 */
 	public function __set($name, $value) {
+		try {
+			$idColName	= $this->getClassVar("idColName");
+			// ID param povolujeme kvuli moznosti loadovar referencovane access recordy z ruznych instanci AbstractRecord
+			if (!$this->params[$idColName]) {
+				if ($name == $idColName) {
+					$this->params[$idColName]	= $value;
+					$this->load();
+				}
+			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
 	}
 
 	/**
