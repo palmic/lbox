@@ -12,7 +12,7 @@ class PageDev extends PageDefault
 		try {
 			parent::executePrepend($TAL);
 			
-			$control1	= new LBoxFormControlChooseOne	("test", "testovaci kontrol", 22);
+			/*$control1	= new LBoxFormControlChooseOne	("test", "testovaci kontrol", 22);
 			$control2	= new LBoxFormControlFill		("text");
 			$control2	->setRequired();
 			for ($i = 0; $i < 100; $i++) {
@@ -34,7 +34,7 @@ class PageDev extends PageDefault
 			$form2->setAntiSpam();
 			
 			$TAL->form	= $form;
-			$TAL->form2	= $form2;
+			$TAL->form2	= $form2;*/
 		}
 		catch (Exception $e) {
 			throw $e;

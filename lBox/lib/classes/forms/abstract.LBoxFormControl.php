@@ -420,6 +420,20 @@ abstract class LBoxFormControl
 	}
 
 	/**
+	 * preneseni commit success z formu na validatory
+	 */
+	public function commitProcessSuccess() {
+		try {
+			foreach ($this->validators as $validator) {
+				$validator->commitProcessSuccess();
+			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 *
 	 * @return PHPTAL
 	 */

@@ -24,19 +24,6 @@ class AccesRecord extends AbstractRecordLBox
 	 * @param string $value
 	 */
 	public function __set($name, $value) {
-		try {
-			$idColName	= $this->getClassVar("idColName");
-			// ID param povolujeme kvuli moznosti loadovar referencovane access recordy z ruznych instanci AbstractRecord
-			if (!$this->params[$idColName]) {
-				if ($name == $idColName) {
-					$this->params[$idColName]	= $value;
-					$this->load();
-				}
-			}
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
 	}
 
 	/**
@@ -96,7 +83,20 @@ class AccesRecord extends AbstractRecordLBox
 			if (LBoxXT::isLogged()) {
 				$this->params["ref_xtUser"]		= LBoxXT::getUserXTRecord()->id;
 			}
-			parent::store();
+			// pro jistotu na 2 pokusy
+			try {
+				parent::store();
+			}
+			catch (DbControlException $e) {
+				try {
+					$idColName	= $this->getClassVar("idColName");
+					$this->params[$idColName]	= $this->getMaxId()+1;
+					parent::store();
+				}
+				catch (Exception $e) {
+					throw $e;
+				}
+			}
 		}
 		catch (Exception $e) {
 			throw $e;

@@ -379,7 +379,14 @@ abstract class AbstractRecords implements Iterator
 				}
 				
 				$sql		= $this->getQueryBuilder()->getSelectColumns($tableName, array(), $where, $this->limit ? (array)$this->limit : array(), array(), $this->order ? (array)$this->order : array());
-				$countSql	= $this->getQueryBuilder()->getSelectCount($tableName, $where);
+				$whereCount	= clone $where;
+				if ($this->isTree()) {
+					// we want count of all records (including subrecords in trees)
+					$whereCountAdd	= new QueryBuilderWhere();
+					$whereCountAdd	->addConditionColumn($pidColName, 0, 1);
+					$whereCount		->addWhere($whereCountAdd, 1);
+				}
+				$countSql	= $this->getQueryBuilder()->getSelectCount($tableName, $whereCount);
 				// call created SQL query for get count on db
 				$this->getDb()->setQuery($countSql, true);
 				$countResult = $this->getDb()->initiate();
