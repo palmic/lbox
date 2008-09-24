@@ -126,6 +126,7 @@ class LBoxFront extends LBox
 						self::setHttpHeaderStatus(404);
 						$pageCfg = $page404Cfg;
 					}
+					else throw $e;
 				}
 				return self::$pageCfg	= $pageCfg;
 			}

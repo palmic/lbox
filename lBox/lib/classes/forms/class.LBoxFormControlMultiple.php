@@ -140,6 +140,7 @@ class LBoxFormControlMultiple extends LBoxFormControl
 				}
 			}
 			// potom multiple validace
+			if (!$controlInvalid)
 			foreach ($this->validators as $validator) {
 				try {
 					$validator->validate($this);

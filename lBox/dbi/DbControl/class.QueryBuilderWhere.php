@@ -28,12 +28,9 @@ class QueryBuilderWhere
 	 * @param int $comparison 	- type of comparison (-1 = less, 0 = equaling, 1 = more)
 	 * @param int $glue 		- type of split (0 = AND, 1 = OR)
 	 */
-	public function addConditionColumn(/*string*/ $column, $value, /*int*/ $comparison	= 0, $glue	= 0) {
+	public function addConditionColumn(/*string*/ $column = "", $value = "", /*int*/ $comparison	= 0, $glue	= 0) {
 		if (strlen($column) < 1) {
 			throw new DbControlException("Ilegal parameter column. Must be NOT-NULL string!");
-		}
-		if (strlen($value) < 1) {
-			throw new DbControlException("Ilegal parameter value. Must be NOT-NULL!");
 		}
 		if (!is_numeric($comparison)) {
 			throw new DbControlException("Ilegal parameter comparison. Must be numeric!");
