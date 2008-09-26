@@ -82,6 +82,7 @@ class LBoxFront extends LBox
 					self::reloadXTLogin();
 				}
 				if (!LBoxXT::isLoggedAdmin()) {
+					LBoxXT::logout();
 					self::reloadHomePage();
 				}
 			}
