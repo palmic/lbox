@@ -1,17 +1,15 @@
-<div id="menumain" tal:DEFINE="iterator pages" tal:condition="exists: pages/current/getParent/hasChildrenInMenu">
+<div id="menumain" tal:DEFINE="iterator pages">
    <h2>Navigace</h2>
    <ul>
       <tal:block tal:REPEAT="node iterator">
         <li tal:ATTRIBUTES="class node/getClass | default"
             tal:CONDITION="node/in_menu">
            <a tal:CONDITION="not: node/isCurrent"
-              tal:ATTRIBUTES="href node/url; title node/titleMenu"
-              tal:CONTENT="node/name_menu">
-              Nazev stranky
+              tal:ATTRIBUTES="href node/url; title node/titleMenu">
+              <span class="lft"><span class="rgt"><span class="mdl" tal:CONTENT="node/name_menu">Nazev stranky</span></span></span>
            </a>
-           <strong tal:CONDITION="node/isCurrent"
-                   tal:CONTENT="node/name_menu">
-              Nazev current stranky
+           <strong tal:CONDITION="node/isCurrent">
+              <span class="lft"><span class="rgt"><span class="mdl" tal:CONTENT="node/name_menu">Nazev stranky</span></span></span>
            </strong>
            <x tal:condition="node/hasChildrenInMenu" metal:USE-MACRO="menu_list" />
         </li>
@@ -24,13 +22,11 @@
         <li tal:ATTRIBUTES="class node/getClass | default"
             tal:CONDITION="node/in_menu">
            <a tal:CONDITION="not: node/isCurrent"
-              tal:ATTRIBUTES="href node/url; title node/titleMenu"
-              tal:CONTENT="node/name_menu">
-              Nazev stranky
+              tal:ATTRIBUTES="href node/url; title node/titleMenu">
+              <span class="lft"><span class="rgt"><span class="mdl" tal:CONTENT="node/name_menu">Nazev stranky</span></span></span>
            </a>
-           <strong tal:CONDITION="node/isCurrent"
-                   tal:CONTENT="node/name_menu">
-              Nazev current stranky
+           <strong tal:CONDITION="node/isCurrent">
+              <span class="lft"><span class="rgt"><span class="mdl" tal:CONTENT="node/name_menu">Nazev stranky</span></span></span>
            </strong>
            <x tal:condition="node/hasChildrenInMenu" metal:USE-MACRO="menu_list"/>
         </li>

@@ -8,7 +8,9 @@ class LBoxFormProcessorDev extends LBoxFormProcessor
 		try {
 			echo "<fieldset>";
 			echo "<legend>Form sent data</legend>";
-			var_dump($this->form->getSentData());
+			foreach ($this->form->getControls() as $control) {
+				var_dump($control->getName() ." = ". $control->getValue());
+			}
 			echo "</fieldset>";
 			flush();
 		}
