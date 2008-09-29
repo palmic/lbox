@@ -75,6 +75,12 @@ class LBoxForm
 	protected $filesData	= array();
 
 	/**
+	 * pole volne definovatelnych parametru
+	 * @var array
+	 */
+	protected $params	= array();
+	
+	/**
 	 *
 	 * @param string name
 	 * @param string method
@@ -106,6 +112,41 @@ class LBoxForm
 		}
 	}
 
+	/**
+	 * defaultni getter
+	 * @param string $name
+	 * @return mixed
+	 */
+	public function __get($name = "") {
+		try {
+			if (strlen($name) < 1) {
+				throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
+			}
+			if (array_key_exists($name, $this->params)) {
+				return $this->params[$name];
+			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * setter pro params
+	 * @param string $name
+	 * @param mixed $value
+	 * @throws LBoxException
+	 */
+	public function __set($name = "", $value = "") {
+		if (strlen($name) < 1) {
+			throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
+		}
+		if (!$value) {
+			throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
+		}
+		$this->params[$name]	= $value;
+	}
+	
 	/**
 	 * @param LBoxFormControl $control
 	 * @throws LBoxExceptionForm

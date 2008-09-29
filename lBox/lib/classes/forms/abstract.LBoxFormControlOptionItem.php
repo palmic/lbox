@@ -68,7 +68,6 @@ abstract class LBoxFormControlOptionItem
 			if (array_key_exists($name, $this->params)) {
 				return $this->params[$name];
 			}
-			
 			switch ($name) {
 				case "getSelected":
 					return $this->isSelected() ? "selected" : "";
@@ -77,7 +76,6 @@ abstract class LBoxFormControlOptionItem
 					return $this->isSelected() ? "checked" : "";
 				break;
 			}
-			
 		}
 		catch (Exception $e) {
 			throw $e;

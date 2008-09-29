@@ -116,7 +116,6 @@ abstract class LBoxFormControl
 			if (array_key_exists($name, $this->params)) {
 				return $this->params[$name];
 			}
-			// jen kvuli moznemu pouziti do budoucna - nektery z potomku totiz ma getter a tento je tu kvuli nastaveni dedicnosti getteru (musi tu byt aspon prazdny!!)
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -380,7 +379,13 @@ abstract class LBoxFormControl
 			if ($this->value !== NULL) {
 				return $this->value;
 			}
-			return $this->value	= $this->form->getSentDataByControlName($this->getName());
+			if ($this->getForm()->wasSent()) {
+				$this->value	= $this->form->getSentDataByControlName($this->getName());
+			}
+			else {
+				$this->value	= $this->getDefault();
+			}
+			return $this->value;
 		}
 		catch (Exception $e) {
 			throw $e;
