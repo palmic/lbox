@@ -95,7 +95,7 @@ class LBoxForm
 				throw new LBoxExceptionForm("\$method: ". LBoxExceptionForm::MSG_PARAM_STRING_NOTNULL, LBoxExceptionForm::CODE_BAD_PARAM);
 			}
 			$this->name			= $name;
-			$this->method		= $method;
+			$this->method		= strtolower($method);
 			$this->label		= strlen($label) 		> 0 ? $label 		: $name;
 			$this->labelSubmit	= strlen($labelSubmit) 	> 0 ? $labelSubmit 	: "odeslat";
 			if (array_key_exists($name, self::$forms)) {
@@ -523,8 +523,10 @@ class LBoxForm
 				$control->commitProcessSuccess();
 			}
 			// nastavit do session uspesne odeslani a reloadovat stranku
-			$_SESSION["LBox"]["Forms"][$this->getName()]["succes"]	= true;
-			LBoxFront::reload();
+			if (strtolower($this->method)	== "post") {
+				$_SESSION["LBox"]["Forms"][$this->getName()]["succes"]	= true;
+				LBoxFront::reload();
+			}
 		}
 		catch (Exception $e) {
 			throw $e;

@@ -125,6 +125,20 @@ abstract class AbstractRecords implements Iterator
 	//== public functions ===============================================================
 
 	/**
+	 * isTree flag setter for AbstractRecord(s) loading only!
+	 * (for reason of performace)
+	 * @param bool $isTree
+	 */
+	public function setIsTree($isTree = true) {
+		try {
+			$this->isTree	= (bool)$isTree;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * array iterator acces interface part
 	 */
 	public function rewind() {
@@ -293,6 +307,7 @@ abstract class AbstractRecords implements Iterator
 				else {
 					$recordRef->setTreeKey($colName, $colValue);
 				}
+				$recordRef->setIsTree($this->isTree());
 			}
 			array_push($this->records, $recordRef);
 			// set synchronized-with-db = true to optimize performance (Record shall load data again otherwise)
@@ -383,7 +398,7 @@ abstract class AbstractRecords implements Iterator
 				if ($this->isTree()) {
 					// we want count of all records (including subrecords in trees)
 					$whereCountAdd	= new QueryBuilderWhere();
-					$whereCountAdd	->addConditionColumn($pidColName, 0, 1);
+					$whereCountAdd	->addConditionColumn($pidColName, 0, 2);
 					$whereCount		->addWhere($whereCountAdd, 1);
 				}
 				$countSql	= $this->getQueryBuilder()->getSelectCount($tableName, $whereCount);

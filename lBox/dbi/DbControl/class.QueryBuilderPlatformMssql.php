@@ -187,9 +187,16 @@ class QueryBuilderPlatformMssql extends QueryBuilderPlatform
 				$columnName		= $condition["column"];
 				$glue			= $condition["glue"] > 0 ? "OR" : "AND";
 				$columnValue	= $this->getValueWrapped($condition["value"]);
-				switch (true) { case $condition["comparison"] < 	0	: $comparison	="<"; break;
+				switch ($condition["comparison"]) {
+								case -2	: $comparison	="<"; break;
+								case -1	: $comparison	="<="; break;
+								case  0 : $comparison	= strtoupper($columnValue) == "NULL" ? " IS " : "="; break;
+								case  1	: $comparison	=">="; break;
+								case  2	: $comparison	=">"; break;
+				}
+				/*switch (true) { case $condition["comparison"] < 	0	: $comparison	="<"; break;
 								case $condition["comparison"] == 	0	: $comparison	= strtoupper($columnValue) == "NULL" ? " IS " : "="; break;
-								case $condition["comparison"] > 	0	: $comparison	=">"; break; }
+								case $condition["comparison"] > 	0	: $comparison	=">"; break; }*/
 				$whereString	.= strlen($whereString) > 0 ? " $glue " : "";
 				$whereString	.= reset(self::getQuotesColumnName()) . $columnName . end(self::getQuotesColumnName()) . $comparison .
 				"$columnValue" . "";

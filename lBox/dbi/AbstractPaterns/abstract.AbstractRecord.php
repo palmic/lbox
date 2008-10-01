@@ -232,6 +232,20 @@ abstract class AbstractRecord implements Iterator
 	}
 
 	/**
+	 * isTree flag setter for AbstractRecord(s) loading only!
+	 * (for reason of performace)
+	 * @param bool $isTree
+	 */
+	public function setIsTree($isTree = true) {
+		try {
+			$this->isTree	= (bool)$isTree;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * __get() for gradate environs from "array-implementation" of record params
 	 * @param $varName - variable name
 	 */
@@ -491,10 +505,10 @@ abstract class AbstractRecord implements Iterator
 				$sqlsTree[1] 	.= " WHERE ". $rgtColName .">". $myRgt;*/
 				$treeUpdates[0]["set"]		= array($lftColName => "<<$lftColNameSlashed-2>>");
 				$treeUpdates[0]["where"]	= new QueryBuilderWhere();
-				$treeUpdates[0]["where"]	-> addConditionColumn($lftColName, $myRgt, 1);
+				$treeUpdates[0]["where"]	-> addConditionColumn($lftColName, $myRgt, 2);
 				$treeUpdates[1]["set"]		= array($rgtColName => "<<$rgtColNameSlashed-2>>");
 				$treeUpdates[1]["where"]	= new QueryBuilderWhere();
-				$treeUpdates[1]["where"]	-> addConditionColumn($rgtColName, $myRgt, 1);
+				$treeUpdates[1]["where"]	-> addConditionColumn($rgtColName, $myRgt, 2);
 				foreach ($treeUpdates as $treeUpdate) {
 					$sqlTree	= $this->getQueryBuilder()->getUpdate($this->getClassVar("tableName"), $treeUpdate["set"], $treeUpdate["where"]);
 // var_dump(__CLASS__ .": ". $sqlTree);
@@ -706,7 +720,7 @@ abstract class AbstractRecord implements Iterator
 	 * @return AbstractRecords
 	 *
 	protected function getBoundedMNInstance($type = false) {
-NOT TESTED AND TOTALY INEFFICIENT FOR SURE 
+NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 		if (!class_exists($type)) {
 			throw new LBoxException("Type $type has not defined Class!");
 		}
@@ -924,7 +938,9 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 
 			$filter 		= array($pidColName => $id, $bidColName => $bId);
 			$order			= array($lftColName => 1);
-			return new $itemsType($filter, $order);
+			$children		= new $itemsType($filter, $order);
+			$children		->setIsTree($this->isTree());
+			return $children;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -1001,8 +1017,8 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 									AND 	$rgtColName < ($chRgt+1)
 							";*/
 			$whereChildTmp	= new QueryBuilderWhere();
-			$whereChildTmp	->addConditionColumn($lftColName, $chLft-1, 1);
-			$whereChildTmp	->addConditionColumn($rgtColName, $chRgt+1, -1);
+			$whereChildTmp	->addConditionColumn($lftColName, $chLft-1, 2);
+			$whereChildTmp	->addConditionColumn($rgtColName, $chRgt+1, -2);
 // var_dump(__CLASS__ ."::". __LINE__ .": ". $this->getQueryBuilder()->getUpdate($tableName, 	array(	$lftColName => "<<$lftColNameSlashed + $maxRgt>>",$rgtColName => "<<$rgtColNameSlashed + $maxRgt>>",),$whereChildTmp));
 			$this->getDb()->initiateQuery($this->getQueryBuilder()->getUpdate($tableName, 	array(	$lftColName => "<<$lftColNameSlashed + $maxRgt>>",
 																									$rgtColName => "<<$rgtColNameSlashed + $maxRgt>>",),
@@ -1022,8 +1038,8 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 							";*/
 				$i			= count((array)$sqls);
 				$wheres[$i]	= new QueryBuilderWhere();
-				$wheres[$i]	->addConditionColumn($lftColName, $chRgt, 1);
-				$wheres[$i]	->addConditionColumn($lftColName, $myRgt, -1);
+				$wheres[$i]	->addConditionColumn($lftColName, $chRgt, 2);
+				$wheres[$i]	->addConditionColumn($lftColName, $myRgt, -2);
 				$sqls[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($lftColName => "<<$lftColNameSlashed-$chWeight>>"), $wheres[$i]);
 
 				/*$sqls[] = "UPDATE $tableName SET
@@ -1033,8 +1049,8 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 									";*/
 				$i			= count((array)$sqls);
 				$wheres[$i]	= new QueryBuilderWhere();
-				$wheres[$i]	->addConditionColumn($rgtColName, $chRgt, 1);
-				$wheres[$i]	->addConditionColumn($rgtColName, $myRgt, -1);
+				$wheres[$i]	->addConditionColumn($rgtColName, $chRgt, 2);
+				$wheres[$i]	->addConditionColumn($rgtColName, $myRgt, -2);
 				$sqls[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($rgtColName => "<<$rgtColNameSlashed-$chWeight>>"), $wheres[$i]);
 			}
 			// shift tree right
@@ -1046,8 +1062,8 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 									";*/
 				$i			= count((array)$sqls);
 				$wheres[$i]	= new QueryBuilderWhere();
-				$wheres[$i]	->addConditionColumn($lftColName, $myRgt, 1);
-				$wheres[$i]	->addConditionColumn($lftColName, $chLft, -1);
+				$wheres[$i]	->addConditionColumn($lftColName, $myRgt, 2);
+				$wheres[$i]	->addConditionColumn($lftColName, $chLft, -2);
 				$sqls[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($lftColName => "<<$lftColNameSlashed+$chWeight>>"), $wheres[$i]);
 				
 				/*$sqls[] = "UPDATE $tableName SET
@@ -1057,8 +1073,8 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 									";*/
 				$i			= count((array)$sqls);
 				$wheres[$i]	= new QueryBuilderWhere();
-				$wheres[$i]	->addConditionColumn($rgtColName, $myRgt-1, 1);
-				$wheres[$i]	->addConditionColumn($rgtColName, $chLft, -1);
+				$wheres[$i]	->addConditionColumn($rgtColName, $myRgt-1, 2);
+				$wheres[$i]	->addConditionColumn($rgtColName, $chLft, -2);
 				$sqls[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($rgtColName => "<<$rgtColNameSlashed+$chWeight>>"), $wheres[$i]);
 			}
 			foreach ($sqls as $sql) {
@@ -1080,8 +1096,8 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 						";*/
 			$i				= count((array)$sqls2);
 			$wheres2[$i]	= new QueryBuilderWhere();
-			$wheres2[$i]	->addConditionColumn($lftColName, $chTmpLft-1, 1);
-			$wheres2[$i]	->addConditionColumn($rgtColName, $chTmpRgt+1, -1);
+			$wheres2[$i]	->addConditionColumn($lftColName, $chTmpLft-1, 2);
+			$wheres2[$i]	->addConditionColumn($rgtColName, $chTmpRgt+1, -2);
 			$sqls2[$i]		= $this->getQueryBuilder()->getUpdate($tableName, array($lftColName => "<<$lftColNameSlashed - $chTmpDiff>>",
 																					$rgtColName	=> "<<$rgtColNameSlashed - $chTmpDiff>>",
 																					$bidColName => $myBid), $wheres2[$i]);
@@ -1173,8 +1189,8 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 							";*/
 			$i					= count((array)$sqlsChildUpd);
 			$wheresChildUpd[$i]	= new QueryBuilderWhere();
-			$wheresChildUpd[$i]	->addConditionColumn($lftColName, $chLft-1, 1);
-			$wheresChildUpd[$i]	->addConditionColumn($rgtColName, $chRgt+1, -1);
+			$wheresChildUpd[$i]	->addConditionColumn($lftColName, $chLft-1, 2);
+			$wheresChildUpd[$i]	->addConditionColumn($rgtColName, $chRgt+1, -2);
 			$sqlsChildUpd[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($lftColName => "<<$lftColNameSlashed + $chDiff>>",
 																				$rgtColName => "<<$rgtColNameSlashed + $chDiff>>",
 																				$bidColName => $chBidNew), $wheresChildUpd[$i]);
@@ -1200,7 +1216,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 						";*/
 			$i			= count((array)$sqls);
 			$wheres[$i]	= new QueryBuilderWhere();
-			$wheres[$i]	->addConditionColumn($lftColName, $chRgt, 1);
+			$wheres[$i]	->addConditionColumn($lftColName, $chRgt, 2);
 			$sqls[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($lftColName => "<<$lftColNameSlashed-$chWeight>>"), $wheres[$i]);
 			
 			/*$sqls[] = "UPDATE $tableName SET
@@ -1209,7 +1225,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 						";*/
 			$i			= count((array)$sqls);
 			$wheres[$i]	= new QueryBuilderWhere();
-			$wheres[$i]	->addConditionColumn($rgtColName, $chRgt, 1);
+			$wheres[$i]	->addConditionColumn($rgtColName, $chRgt, 2);
 			$sqls[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($rgtColName => "<<$rgtColNameSlashed-$chWeight>>"), $wheres[$i]);
 			
 			foreach ($sqls as $sql) {
@@ -1312,8 +1328,8 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 						";*/
 			$i			= count((array)$sqls);
 			$wheres[$i]	= new QueryBuilderWhere();
-			$wheres[$i]	->addConditionColumn($lftColName, $chLft-1, 1);
-			$wheres[$i]	->addConditionColumn($rgtColName, $chRgt+1, -1);
+			$wheres[$i]	->addConditionColumn($lftColName, $chLft-1, 2);
+			$wheres[$i]	->addConditionColumn($rgtColName, $chRgt+1, -2);
 			$sqls[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($lftColName => "<<$lftColNameSlashed + $maxRgt>>",
 																				$rgtColName => "<<$rgtColNameSlashed + $maxRgt>>"), $wheres[$i]);
 			
@@ -1326,8 +1342,8 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 						";*/
 			$i			= count((array)$sqls);
 			$wheres[$i]	= new QueryBuilderWhere();
-			$wheres[$i]	->addConditionColumn($lftColName, $myLft-1, 1);
-			$wheres[$i]	->addConditionColumn($rgtColName, $chLft, -1);
+			$wheres[$i]	->addConditionColumn($lftColName, $myLft-1, 2);
+			$wheres[$i]	->addConditionColumn($rgtColName, $chLft, -2);
 			$sqls[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($lftColName => "<<$lftColNameSlashed + $chWeight>>",
 																				$rgtColName => "<<$rgtColNameSlashed + $chWeight>>"), $wheres[$i]);
 
@@ -1341,8 +1357,8 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 						";*/
 			$i			= count((array)$sqls);
 			$wheres[$i]	= new QueryBuilderWhere();
-			$wheres[$i]	->addConditionColumn($lftColName, $chLft+$maxRgt-1, 1);
-			$wheres[$i]	->addConditionColumn($rgtColName, $chRgt+$maxRgt+1, -1);
+			$wheres[$i]	->addConditionColumn($lftColName, $chLft+$maxRgt-1, 2);
+			$wheres[$i]	->addConditionColumn($rgtColName, $chRgt+$maxRgt+1, -2);
 			$sqls[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($lftColName => "<<$lftColNameSlashed - ". ($diff+$maxRgt) .">>",
 																				$rgtColName => "<<$rgtColNameSlashed - ". ($diff+$maxRgt) .">>",
 																				$bidColName => $myBid,), $wheres[$i]);
@@ -1379,7 +1395,9 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			$className 		= get_class($this);
 			$treeColNames	= $this->getClassVar("treeColNames");
 			$pidColName		= $treeColNames[2];
-			return new $className($this->get($pidColName));
+			$parent			= new $className($this->get($pidColName));
+			$parent			->setIsTree($this->isTree());
+			return $parent;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -1452,8 +1470,8 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			$myBid			= $this->params[$bidColName];
 			
 			$where			= new QueryBuilderWhere();
-			$where			->addConditionColumn($lftColName, $myLft, 1);
-			$where			->addConditionColumn($rgtColName, $myRgt, -1);
+			$where			->addConditionColumn($lftColName, $myLft, 2);
+			$where			->addConditionColumn($rgtColName, $myRgt, -2);
 			$where			->addConditionColumn($bidColName, $myBid);
 			$sql			= $this->getQueryBuilder()->getSelectCount($tableName, $where);
 // var_dump(__CLASS__ ."::". __LINE__ .": ". $this->getQueryBuilder()->getSelectCount($tableName, $where));
