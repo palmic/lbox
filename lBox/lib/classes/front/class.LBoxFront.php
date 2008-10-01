@@ -72,8 +72,25 @@ class LBoxFront extends LBox
 	 */
 	public static function run() {
 		try {
-			$acces = AccesRecord::getInstance();
+			// starting timer
+			LBoxTimer::getInstance();
+			$content		= self::getRequestContent();
+			$acces 			= AccesRecord::getInstance();
 			$acces->store();
+			echo $content;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * vraci kompletne vygenerovany obsah requestu
+	 * @return string
+	 * @throws LBoxException
+	 */
+	protected static function getRequestContent() {
+		try {
 			$pageCfg = self::getPageCfg();
 
 			// xt
@@ -82,7 +99,6 @@ class LBoxFront extends LBox
 					self::reloadXTLogin();
 				}
 				if (!LBoxXT::isLoggedAdmin()) {
-					LBoxXT::logout();
 					self::reloadHomePage();
 				}
 			}
@@ -95,8 +111,7 @@ class LBoxFront extends LBox
 					self::reloadHomePage();
 				}
 			}
-
-			echo trim(self::getPage()->getContent());
+			return trim(self::getPage()->getContent());
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -127,7 +142,6 @@ class LBoxFront extends LBox
 						self::setHttpHeaderStatus(404);
 						$pageCfg = $page404Cfg;
 					}
-					else throw $e;
 				}
 				return self::$pageCfg	= $pageCfg;
 			}

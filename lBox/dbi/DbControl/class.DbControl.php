@@ -66,7 +66,7 @@ class DbControl implements DbControlInterface
     * count of initiated queries
     * @var integer
     */
-    protected static $queryCount = 1;
+    protected static $queryCount = 0;
 
     //== constructors ====================================================================
 
@@ -82,6 +82,7 @@ class DbControl implements DbControlInterface
             throw $e;
         }
     }
+
 
     //== destructors ====================================================================
     //== public functions ===============================================================
@@ -262,6 +263,14 @@ class DbControl implements DbControlInterface
 		$this->getDbLogH()->log($log ."\n". $add);
 	}
 	
+	/**
+	* returns number of queries already called
+	* @return integer
+	*/
+	public static function getQueryCount() {
+		return self::$queryCount;
+	}
+
 	protected function debug($sql) {
 		if (!self::$debug) return;
 		$msg 	= "<font style='background-color:grey; color:white;font-weight:bold;'>". self::$queryCount .": $sql</font>\n";

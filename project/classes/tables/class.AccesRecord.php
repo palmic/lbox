@@ -77,6 +77,8 @@ class AccesRecord extends AbstractRecordLBox
 			$this->params["url"] 				= LBOX_REQUEST_URL;
 			$this->params["referer"] 			= LBOX_REQUEST_REFERER;
 			$this->params["agent"] 				= LBOX_REQUEST_AGENT;
+			$this->params["queries"]			= DbControl::getQueryCount()+1;
+			$this->params["time_execution"]		= LBoxTimer::getInstance()->getTimeOfLife();
 			if (!$this->params["request_time"]) {
 				$this->params["request_time"]	= LBOX_REQUEST_REQUEST_TIME;
 			}
