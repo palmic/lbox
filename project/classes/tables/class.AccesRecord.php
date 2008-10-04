@@ -92,6 +92,9 @@ class AccesRecord extends AbstractRecordLBox
 			if ((!array_key_exists("request_time", $this->params)) || (!$this->params["request_time"])) {
 				$this->params["request_time"]	= LBOX_REQUEST_REQUEST_TIME;
 			}
+			if (array_key_exists("ref_xtUser", $this->params) && !is_numeric($this->params["ref_xtUser"])) {
+				$this->params["ref_xtUser"]	= "NULL";
+			}
 			// pro jistotu na 2 pokusy
 			try {
 				parent::store();
