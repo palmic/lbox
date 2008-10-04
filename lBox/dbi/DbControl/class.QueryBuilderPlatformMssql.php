@@ -69,7 +69,7 @@ class QueryBuilderPlatformMssql extends QueryBuilderPlatform
 
 	public function getSelectCount($table, QueryBuilderWhere $where = NULL, $limit	= array(), $groupBy = array(), $orderBy = array()) {
 		try {
-			return $this->getSelect($table, "COUNT(*) AS count", $where, $limit, $groupBy, $orderBy);
+			return $this->getSelect($table, "COUNT(*)", $where, $limit, $groupBy, $orderBy);
 		}
 		catch (Exception $e) {
 			throw $e;

@@ -74,9 +74,9 @@ class LBoxFront extends LBox
 		try {
 			// starting timer
 			LBoxTimer::getInstance();
+			
 			$content		= self::getRequestContent();
-			$acces 			= AccesRecord::getInstance();
-			$acces->store();
+
 			echo $content;
 		}
 		catch (Exception $e) {

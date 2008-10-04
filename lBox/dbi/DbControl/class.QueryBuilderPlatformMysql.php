@@ -29,22 +29,27 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 	}
 	
 	public function getUpdate(/*string*/ $table, /*array*/ $values, QueryBuilderWhere $where = NULL) {
-		if (strlen($table) < 1) {
-			throw new DbControlException("Ilegal parameter table. Must be NOT-NULL string.");
+		try {
+			if (strlen($table) < 1) {
+				throw new DbControlException("Ilegal parameter table. Must be NOT-NULL string.");
+			}
+			if (count($values) < 1) {
+				throw new DbControlException("Ilegal parameter values. Must be NOT-NULL array.");
+			}
+			$updateString	= "";
+			foreach($values as $index => $value) {
+				$value			= $this->getValueWrapped($value);
+				$updateString	.= strlen($updateString) > 0 ? ", " : "";
+				$updateString 	.= reset(self::getQuotesColumnName()) ."$index". end(self::getQuotesColumnName()) . "=$value";
+			}
+			if ($where instanceof QueryBuilderWhere) $whereString	= $this->getWhereStringByObject($where);
+			$table	= reset($this->getQuotesTableName()) . $table . end($this->getQuotesTableName());
+			$out	= "UPDATE $table SET \n$updateString \n$whereString";
+			return $out;
 		}
-		if (count($values) < 1) {
-			throw new DbControlException("Ilegal parameter values. Must be NOT-NULL array.");
+		catch (Exception $e) {
+			throw $e;
 		}
-		$updateString	= "";
-		foreach($values as $index => $value) {
-			$value			= $this->getValueWrapped($value);
-			$updateString	.= strlen($updateString) > 0 ? ", " : "";
-			$updateString 	.= reset(self::getQuotesColumnName()) ."$index". end(self::getQuotesColumnName()) . "=$value";
-		}
-		if ($where instanceof QueryBuilderWhere) $whereString	= $this->getWhereStringByObject($where);
-		$table	= reset($this->getQuotesTableName()) . $table . end($this->getQuotesTableName());
-		$out	= "UPDATE $table SET \n$updateString \n$whereString";
-		return $out;
 	}
 
 	public function getSelectColumns($table, $what = array(), QueryBuilderWhere $where = NULL, $limit	= array(), $groupBy = array(), $orderBy = array()) {
@@ -72,7 +77,7 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 
 	public function getSelectCount($table, QueryBuilderWhere $where = NULL, $limit	= array(), $groupBy = array(), $orderBy = array()) {
 		try {
-			return $this->getSelect($table, "COUNT(*) AS count", $where, $limit, $groupBy, $orderBy);
+			return $this->getSelect($table, "COUNT(*)", $where, $limit, $groupBy, $orderBy);
 		}
 		catch (Exception $e) {
 			throw $e;

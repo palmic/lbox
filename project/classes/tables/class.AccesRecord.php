@@ -34,6 +34,15 @@ class AccesRecord extends AbstractRecordLBox
 		if (AccesRecord::$instance instanceof $className) {
 			//throw new LBoxExceptionFront(LBoxExceptionFront::MSG_ACCES_MULTIPLE_INSTANCES, LBoxExceptionFront::CODE_ACCES_MULTIPLE_INSTANCES);
 		}
+		$this->params["time"] 				= date("Y-m-d H:i:s");
+		$this->params["ip"] 				= LBOX_REQUEST_IP;
+		$this->params["url"] 				= LBOX_REQUEST_URL;
+		$this->params["referer"] 			= LBOX_REQUEST_REFERER;
+		$this->params["agent"] 				= LBOX_REQUEST_AGENT;
+		if (LBoxXT::isLogged()) {
+			$this->params["ref_xtUser"]		= LBoxXT::getUserXTRecord()->id;
+		}
+		
 	}
 
 	/**
@@ -42,21 +51,17 @@ class AccesRecord extends AbstractRecordLBox
 	public function isCacheOn() {return false;}
 	
 	/**
-	 * do not use cache
-	 */
-	protected function resetRelevantCache() {}
-	
-	/**
 	 * @return AccesRecord
 	 * @throws Exception
 	 */
 	public static function getInstance() {
-		$className 	= __CLASS__;
 		try {
-			if (!self::$instance instanceof $className) {
-				self::$instance = new $className;
+			if (!self::$instance instanceof AccesRecord) {
+				self::$instance = new AccesRecord;
+var_dump("init store");
+				self::$instance	->store();
+var_dump("init store done");
 			}
-			self::$instance->store();
 			return self::$instance;
 		}
 		catch (Exception $e) {
@@ -70,6 +75,9 @@ class AccesRecord extends AbstractRecordLBox
 	 */
 	public function __destruct() {
 		try {
+			$this->params["queries"]			= DbControl::getQueryCount()+1;
+			$this->params["time_execution"]		= LBoxTimer::getInstance()->getTimeOfLife();
+			$this->synchronized	= false;
 			$this->store();
 		}
 		catch (Exception $e) {
@@ -83,18 +91,8 @@ class AccesRecord extends AbstractRecordLBox
 			if (LBoxConfigManagerProperties::getPropertyContentByName("log_access") < 1) {
 				return;
 			}
-			$this->params["time"] 				= date("Y-m-d H:i:s");
-			$this->params["ip"] 				= LBOX_REQUEST_IP;
-			$this->params["url"] 				= LBOX_REQUEST_URL;
-			$this->params["referer"] 			= LBOX_REQUEST_REFERER;
-			$this->params["agent"] 				= LBOX_REQUEST_AGENT;
-			$this->params["queries"]			= DbControl::getQueryCount()+1;
-			$this->params["time_execution"]		= LBoxTimer::getInstance()->getTimeOfLife();
 			if ((!array_key_exists("request_time", $this->params)) || (!$this->params["request_time"])) {
 				$this->params["request_time"]	= LBOX_REQUEST_REQUEST_TIME;
-			}
-			if (LBoxXT::isLogged()) {
-				$this->params["ref_xtUser"]		= LBoxXT::getUserXTRecord()->id;
 			}
 			// pro jistotu na 2 pokusy
 			try {

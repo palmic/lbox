@@ -45,6 +45,12 @@ abstract class AbstractRecord implements Iterator
 	protected $synchronized = false;
 
 	/**
+	 * record in database flag
+	 * @var boolean
+	 */
+	protected $isInDatabase;
+	
+	/**
 	 * record loaded flag - for no additional load
 	 * @var boolean
 	 */
@@ -228,7 +234,6 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 			}
 			$idColName	= $this->getClassVar("idColName");
 			if (count($data = LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->getData()) > 0) {
-				if (array_key_exists($idColName, $this->params) && array_key_exists($idColName, $data))
 				if ($data[$idColName] == $this->params[$idColName]) {
 					if (array_key_exists("systemrecord_haschildren", $data)) {
 						$this->hasChildren	= (bool)$data["systemrecord_haschildren"];
@@ -335,6 +340,9 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 				|| strlen($id = $this->params[$this->getClassVar("idColName")]) < 1) {
 				throw new LBoxException("idColName is not defined yet!");
 			}
+			// dependingRecords defined check  - empty array at least
+			$this->getClassVar("dependingRecords");
+			
 			$tableName		= $this->getClassVar("tableName");
 			$hashedID		= md5($id);
 			return "$tableName/$hashedID.cache";
@@ -356,11 +364,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 			$config		= new DbCfg;
 			$path		= "/tasks/project/cache";
 			$value		= $config->$path;
-			
-			// for prior record settings check - throws Exception in other case
-			$this->getClassVar("dependingRecords");
-			
-			return $this->isCacheOn = (bool)current($value);
+			return $this->isCacheOn = (bool)current((array)$value);
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -593,6 +597,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 
 			// update query
 			if ($this->isInDatabase()) {
+				if (count($vals) < 1) return;
 				// we dont want to update records whithout primary key known
 				if (strlen($this->params[$idColName]) < 1) {
 					throw new LBoxException("Cannot UPDATE record whithout primary key value known!");
@@ -600,7 +605,6 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 				if (strtoupper($this->params[$idColName]) == "NULL") {
 					throw new LBoxException("Primary key value is !NULL!");
 				}
-				
 				$whereUpdate	= new QueryBuilderWhere();
 				$whereUpdate	->addConditionColumn($idColName, $this->params[$idColName], 0);
 				$sql			= $this->getQueryBuilder()->getUpdate($tableName, $vals, $whereUpdate);
@@ -617,6 +621,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 			}
 // var_dump(__CLASS__ ."::". __LINE__ .": ". $sql);
 			$this->getDb()->initiateQuery($sql);
+			$this->isInDatabase	= true;
 		}
 		catch(Exception $e) {
 			throw $e;
@@ -630,9 +635,6 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 	 */
 	public function load() {
 		try {
-			if ($this->isInCache()) {
-				$this->loadFromCache();
-			}
 			if ($this->loaded) {
 				return;
 			}
@@ -691,7 +693,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 				return;
 			}
 			if ($this->isTree() && $this->hasChildren()) {
-				throw new LBoxException($this->params[$idColName] .": Cannot delete database record with children!!!");
+				throw new LBoxException("Cannot delete database record with children!!!");
 			}
 			if ($this->isTree()) {
 				$treeColNames	= $this->getClassVar("treeColNames");
@@ -742,6 +744,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 			}
 			$this->getDb()->transactionCommit();
 			$this->clearCache();
+			$this->isInDatabase	= false;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -818,9 +821,12 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 	 */
 	protected function isInDatabase() {
 		try {
+			if (is_bool($this->isInDatabase)) {
+				return $this->isInDatabase;
+			}
 			$idColName = $this->getClassVar("idColName");
 			if (!array_key_exists($idColName, $this->params) || strlen($this->params[$idColName]) < 1) {
-				return false;
+				return $this->isInDatabase = false;
 			}
 
 			$where	= new QueryBuilderWhere();
@@ -831,12 +837,12 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 // var_dump(__CLASS__ ."::". __LINE__ .": ". $sql);
 			$result = $this->getDb()->initiate();
 			if ($result->getNumRows() < 1) {
-				return false;
+				return $this->isInDatabase = false;
 			}
 			else if ($result->getNumRows() > 1) {
 				throw new LBoxException("Defined record values match MORE than one record! We have MORE THAN ONE duplicit records in database!");
 			}
-			return true;
+			return $this->isInDatabase = true;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -1059,7 +1065,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			}
 			$className = get_class($this);
 			$value = eval("return $className::\$$varName;");
-			if (!$force && (!$value) && !is_numeric($value) && !is_bool($value)) {
+			if (!$force && empty($value) && !is_numeric($value) && !is_bool($value)) {
 				throw new LBoxException("Static variable $className::$varName is empty or not exists!");
 			}
 			return $this->cacheClassVars[$varName] = $value;
@@ -1375,7 +1381,6 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system
 			$child->setSynchronized(false);
 			$this->clearCache();
 			$child->load();
-			$this->hasChildren	= true;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -1434,8 +1439,6 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system
 			$chDiff			= ($maxRgt+1) - $chLft;
 
 			$this->getDb()->transactionStart();
-			$sqlsChildUpd	= array();
-			$sqls			= array();
 
 			// cut child and descendants from tree
 			/*$sqlsChildUpd[] = "UPDATE $tableName SET
@@ -1550,7 +1553,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system
 			if (!$sibling->$idColName == $this->params[$idColName]) {
 				throw new LBoxException("You are trying to move me before me!");
 			}
-			
+
 			$quotesColumnName		= $this->getQueryBuilder()->getQuotesColumnName();
 			$lftColNameSlashed		= reset($quotesColumnName) . $lftColName . end($quotesColumnName);
 			$rgtColNameSlashed		= reset($quotesColumnName) . $rgtColName . end($quotesColumnName);
@@ -1559,12 +1562,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system
 			
 			// set sibling as parent's child if is not
 			if ($sibling->$pidColName != $this->get($pidColName)) {
-				if ($this->getParent()) {
-					$this->getParent()->addChild($sibling);
-				}
-				else {
-					$sibling->removeFromTree();
-				}
+				$this->getParent()->addChild($sibling);
 				$this->setSynchronized(false);
 				$this->load();
 			}
@@ -1583,8 +1581,6 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system
 
 			if ($chRgt == $myLft-1) return;
 
-			$sqls	= array();
-			
 			// cut sibling from tree
 			/*$sqls[] = "UPDATE $tableName SET
 			$lftColName = $lftColName + $maxRgt,
@@ -1687,7 +1683,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system
 	}
 	
 	/**
-	 * checks if given record is ancestor of give descendant
+	 * checks if given record is descendant
 	 * @param AbstractRecord $child
 	 * @return bool
 	 * @throws Exception
@@ -1726,7 +1722,6 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system
 	 */
 	public function getDescendantsCount() {
 		try {
-			$this			->load();
 			$tableName		= $this->getClassVar("tableName");
 			$idColName		= $this->getClassVar("idColName");
 			$treeColNames	= $this->getClassVar("treeColNames");
