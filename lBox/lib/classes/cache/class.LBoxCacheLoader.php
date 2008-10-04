@@ -11,11 +11,22 @@ class LBoxCacheLoader extends LBoxCache
 {
 	protected $fileName	= "loader.cache";
 
+	protected static $instance;
+
+	public function __destruct() {
+		try {
+			$this->saveCachedData();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
 	/**
 	 * @return LBoxCacheLoader
 	 * @throws LBoxExceptionCache
 	 */
-	public static function getInstance () {
+	public static function getInstance ($fileName	= "") {
 		$className 	= __CLASS__;
 		try {
 			if (!self::$instance instanceof $className) {

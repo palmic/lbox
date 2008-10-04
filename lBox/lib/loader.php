@@ -1,6 +1,9 @@
 <?php
-
-define("WIN", (array_key_exists("WINDIR", $_SERVER)));
+// IIS / Apache
+define("IIS", (array_key_exists("INSTANCE_ID", $_SERVER)));
+// WIN / Unix
+if (IIS) 	{ define("WIN", true); }
+else 		{ define("WIN", (array_key_exists("WINDIR", $_SERVER))); }
 define("SLASH", (WIN) ? '\\' : '/');
 define("LBOX_DIRNAME_PROJECT", "project");
 
@@ -23,7 +26,7 @@ $projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."dev",
 $projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."css",
 $projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."js",
 $projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."filespace",
-$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."tal_compiled",
+$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash .".tal_compiled",
 $projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."wsw",
 );
 $pathsConfig = array(
@@ -35,7 +38,7 @@ define("LBOX_PATH_INSTANCE_ROOT", 		$projectRootPath);
 define("LBOX_PATH_CORE", 				LBOX_PATH_INSTANCE_ROOT 	 . $slash . "lBox");
 define("LBOX_PATH_CORE_CLASSES", 		LBOX_PATH_CORE 				. $slash ."lib". $slash ."classes");
 define("LBOX_PATH_PROJECT", 			LBOX_PATH_INSTANCE_ROOT 	. $slash . LBOX_DIRNAME_PROJECT);
-define("LBOX_PATH_CACHE", 				LBOX_PATH_CORE 	 			. $slash . "cache");
+define("LBOX_PATH_CACHE", 				LBOX_PATH_INSTANCE_ROOT		. $slash . LBOX_DIRNAME_PROJECT. $slash . ".cache");
 
 // explicitni load
 require(LBOX_PATH_CORE_CLASSES 	. $slash ."loading". $slash ."class.LBoxLoader.php");
@@ -68,8 +71,9 @@ function __autoload ($className)
 }
 
 // define URL parts
-$scheme = array_key_exists('HTTPS', $_SERVER) ? 'https' : 'http';
-$url = $scheme.'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+$requestURI	= IIS ? $_SERVER['HTTP_X_REWRITE_URL'] : $_SERVER['REQUEST_URI'];
+$scheme 	= array_key_exists('HTTPS', $_SERVER) ? 'https' : 'http';
+$url = $scheme.'://'.$_SERVER['HTTP_HOST'].$requestURI;
 $urlArray = parse_url($url);
 // oddelime casti za :
 $urlArrayParts = explode(":", $urlArray["path"]);
@@ -95,7 +99,7 @@ try {
 	
 	// TAL load
 	define("PHPTAL_FORCE_REPARSE", 			LBoxConfigSystem::getInstance()->getParamByPath("output/tal/PHPTAL_FORCE_REPARSE"));
-	define("PHPTAL_PHP_CODE_DESTINATION",	LBOX_PATH_PROJECT 			. $slash ."tal_compiled". $slash);
+	define("PHPTAL_PHP_CODE_DESTINATION",	LBOX_PATH_PROJECT 			. $slash .".tal_compiled". $slash);
 	//die("'". PHPTAL_PHP_CODE_DESTINATION ."'");
 	
 	// pokud nemame pearovsky PHPTAL pouzivame lokani LBOXovy
@@ -106,6 +110,8 @@ try {
 	// standard TAL translator service to extend
 	require (PHPTAL_DIR ."/phptal/GetTextTranslator.php");
 	require("lbox.phptal.php");
+	
+	LBoxUtil::createDirByPath(PHPTAL_PHP_CODE_DESTINATION);
 }
 catch (Exception $e) {
 	echo "<hr />";

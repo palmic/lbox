@@ -45,6 +45,12 @@ abstract class AbstractRecord implements Iterator
 	protected $synchronized = false;
 
 	/**
+	 * record loaded flag - for no additional load
+	 * @var boolean
+	 */
+	protected $loaded = false;
+
+	/**
 	 * database name <b>- need to be set by child to specify working essentials!!!</b>
 	 * @var string
 	 */
@@ -74,6 +80,12 @@ abstract class AbstractRecord implements Iterator
 	 * @var bool
 	 */
 	protected $isTree;
+
+	/**
+	 * hasChildren table flag - do not define it its only cache of hasChildren() method
+	 * @var bool
+	 */
+	protected $hasChildren;
 
 	/**
 	 * array with names of columns that has values hashed with password() SQL method for special handling by store() method.
@@ -109,6 +121,13 @@ abstract class AbstractRecord implements Iterator
 	public static $boundedMN = array();
 
 	/**
+	 * AbstractRecords types delending on this record values (for instance DB VIEWs of my table)
+	 *  - needs to be defined here for prior clearing cache!!!
+	 * @var array
+	 */
+	public static $dependingRecords	= array();
+	
+	/**
 	 * database task id
 	 * @var string
 	 */
@@ -138,10 +157,10 @@ abstract class AbstractRecord implements Iterator
 	 * constructor
 	 * @param mixed $id - leave it empty to create new record
 	 */
-	public function __construct($id = 0) {
+	public function __construct($id = NULL) {
 		try {
-			if (!empty($id)) {
-				$this->params[$this->getClassVar("idColName")] = $id;
+			if (strlen($id) > 0) {
+					$this->params[$this->getClassVar("idColName")] = $id;
 			}
 		}
 		catch (Exception $e) {
@@ -153,6 +172,199 @@ abstract class AbstractRecord implements Iterator
 	//== destructors ====================================================================
 
 	public function __destruct() {
+	}
+
+	//== cache functions ===============================================================
+
+	/**
+	 * is in cache flag
+	 * @var bool
+	 */
+	protected $isInCache;
+	
+	/**
+	 * cache switched on flag
+	 * @var bool
+	 */
+	protected $isCacheOn;
+	
+	/**
+	 * return true if record is cached
+	 * @return bool
+	 */
+	public function isInCache() {
+		try {
+			if (is_bool($this->isInCache)) {
+				return $this->isInCache;
+			}
+			$idColName	= $this->getClassVar("idColName");
+			if (!array_key_exists($idColName, $this->params) || strlen($this->params[$idColName]) < 1) {
+				return false;
+			}
+/*$class	= get_class($this);
+$id		= $this->params[$this->getClassVar("idColName")];
+var_dump("$class:: je $id v cachi?");
+var_dump($this->getCacheFileName());
+var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCacheExists());*/
+			$cacheFileName	= $this->getCacheFileName();
+			if (!LBoxCacheAbstractRecord::getInstance($cacheFileName)->doesCacheExists()) {
+				return $this->isInCache = false;
+			}
+			return $this->isInCache = (count(LBoxCacheAbstractRecord::getInstance($cacheFileName)->getData()) > 0);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * loads data from cache
+	 */
+	protected function loadFromCache() {
+		try {
+			if (!$this->isCacheOn()) return;
+			if (!$this->isInCache()) {
+				return;
+			}
+			$idColName	= $this->getClassVar("idColName");
+			if (count($data = LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->getData()) > 0) {
+				if (array_key_exists($idColName, $this->params) && array_key_exists($idColName, $data))
+				if ($data[$idColName] == $this->params[$idColName]) {
+					if (array_key_exists("systemrecord_haschildren", $data)) {
+						$this->hasChildren	= (bool)$data["systemrecord_haschildren"];
+						unset($data["systemrecord_haschildren"]);
+					}
+					if (array_key_exists("systemrecord_istree", $data)) {
+						$this->isTree	= (bool)$data["systemrecord_istree"];
+						unset($data["systemrecord_istree"]);
+					}
+					$this->params	= $data;
+					$this->passwordChanged  = false;
+					$this->synchronized     = true;
+					$this->loaded     		= true;
+				}
+			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * stores data to cache
+	 */
+	protected function storeToCache() {
+		try {
+			if (!$this->isCacheOn()) return;
+			foreach ($this->params as $key => $value) {
+				LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->$key	= $value;
+			}
+			LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->systemrecord_istree	= (int)$this->isTree();
+			if ($this->isTree()) {
+				LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->systemrecord_haschildren	= (int)$this->hasChildren();
+			}
+			LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->saveCachedData();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * resets Record's cache
+	 */
+	protected function resetCache() {
+		try {
+			if (!$this->isInCache()) {
+				return;
+			}
+			$this				->resetRelevantCache();
+			LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->reset();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * clear all cache data
+	 */
+	protected function clearCache() {
+		try {
+			$this				->resetRelevantCache();
+			if (!array_key_exists($this->getClassVar("idColName"), $this->params)
+				|| strlen($id = $this->params[$this->getClassVar("idColName")]) < 1) {
+				$cacheName			= $this->getClassVar("tableName");
+			}
+			else {
+				$cacheName			= $this->getCacheFileName();				
+			}
+			LBoxCacheAbstractRecord::getInstance($cacheName)->clearCache();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * resets my records cache
+	 */
+	protected function resetRelevantCache() {
+		try {
+			$itemsType			= $this->getClassVar("itemsType");
+			$itemsInstance		= new $itemsType;
+			$itemsInstance		->clearCache();
+			$dependingRecords	= $this->getClassVar("dependingRecords", true);
+			foreach ((array)$dependingRecords as $dependingRecord) {
+				$instance	= new $dependingRecord;
+				$instance	->clearCache();
+			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * returns cache filename
+	 * @return string
+	 */
+	protected function getCacheFileName() {
+		try {
+			if (!array_key_exists($this->getClassVar("idColName"), $this->params)
+				|| strlen($id = $this->params[$this->getClassVar("idColName")]) < 1) {
+				throw new LBoxException("idColName is not defined yet!");
+			}
+			$tableName		= $this->getClassVar("tableName");
+			$hashedID		= md5($id);
+			return "$tableName/$hashedID.cache";
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * returns if cache is swiched on
+	 * @return unknown
+	 */
+	protected function isCacheOn() {
+		try {
+			if (is_bool($this->isCacheOn)) {
+				return $this->isCacheOn;
+			}
+			$config		= new DbCfg;
+			$path		= "/tasks/project/cache";
+			$value		= $config->$path;
+			
+			// for prior record settings check - throws Exception in other case
+			$this->getClassVar("dependingRecords");
+			
+			return $this->isCacheOn = (bool)current($value);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
 	}
 
 	//== public functions ===============================================================
@@ -251,12 +463,13 @@ abstract class AbstractRecord implements Iterator
 	 */
 	public function __get($varName = "*") {
 		try {
-			if ($varName == "*") {
-				$this->load();
-				return $this->params;
+			if ($varName == "*"
+				|| (!array_key_exists($varName, $this->params))
+				|| (is_null($this->params[$varName]))) {
+					$this->load();
 			}
-			if (!$this->params[$varName]) {
-				$this->load();
+			if ($varName == "*") {
+				return $this->params;
 			}
 			return $this->params[$varName];
 		}
@@ -328,13 +541,10 @@ abstract class AbstractRecord implements Iterator
 		if ($this->synchronized) {
 			return;
 		}
-
 		try {
 			$tableName 	= $this->getClassVar("tableName");
 			$idColName 	= $this->getClassVar("idColName");
-			if (!array_key_exists($idColName, $this->params)) {
-				$this->params[$idColName] = $this->getMaxId()+1;
-			}
+			$vals	= array();
 			foreach($this->params as $vname => $vvalue) {
 				// ignore empty items
 				if ($vvalue === false) {
@@ -359,10 +569,6 @@ abstract class AbstractRecord implements Iterator
 					$vals[$vname] = "$vvalue";
 				}
 			}
-			if (count($vals) < 1) {
-				return;
-			}
-
 			// handle tree record system attributes
 			if ($this->isTree()) {
 				$treeColNames 	= $this->getClassVar("treeColNames");
@@ -370,22 +576,25 @@ abstract class AbstractRecord implements Iterator
 				$rgtColname		= $treeColNames[1];
 				$pidColname		= $treeColNames[2];
 				$bidColname		= $treeColNames[3];
-				if (	!is_numeric($this->params[$lftColname])
+				if (	!array_key_exists($lftColname, $this->params)
+					||	!array_key_exists($rgtColname, $this->params)
+					||	!is_numeric($this->params[$lftColname])
 					|| 	!is_numeric($this->params[$rgtColname])) {
-					$bid				= $this->getMaxTreeBid() + 1;
-					$lft				= $this->getMaxTreeRgt() + 1;
-					$rgt				= $lft + 1;
-					$vals[$lftColname]	= $lft;
-					$vals[$rgtColname]	= $rgt;
-					$vals[$bidColname]	= $bid;
-					$vals[$pidColname]	= is_numeric($this->params[$pidColname]) ? $this->params[$pidColname] : 0;
+						$bid				= $this->getMaxTreeBid() + 1;
+						$lft				= $this->getMaxTreeRgt() + 1;
+						$rgt				= $lft + 1;
+						$vals[$lftColname]	= $lft;
+						$vals[$rgtColname]	= $rgt;
+						$vals[$bidColname]	= $bid;
+						$vals[$pidColname]	= (array_key_exists($pidColname, $this->params) && is_numeric($this->params[$pidColname])) ?
+												$this->params[$pidColname] : 0;
 				}
 			}
 
 			// update query
 			if ($this->isInDatabase()) {
 				// we dont want to update records whithout primary key known
-				if (empty($this->params[$idColName])) {
+				if (strlen($this->params[$idColName]) < 1) {
 					throw new LBoxException("Cannot UPDATE record whithout primary key value known!");
 				}
 				if (strtoupper($this->params[$idColName]) == "NULL") {
@@ -395,19 +604,22 @@ abstract class AbstractRecord implements Iterator
 				$whereUpdate	= new QueryBuilderWhere();
 				$whereUpdate	->addConditionColumn($idColName, $this->params[$idColName], 0);
 				$sql			= $this->getQueryBuilder()->getUpdate($tableName, $vals, $whereUpdate);
+				$this			->resetCache();
 			}
 			// insert query
 			else {
+				if (!array_key_exists($idColName, $vals) || strlen($vals[$idColName]) < 1) {
+					$vals[$idColName]			= $this->getMaxId()+1;
+					$this->params[$idColName]	= $vals[$idColName];
+				}
 				$sql	= $this->getQueryBuilder()->getInsert($tableName, $vals);
+				$this	->resetRelevantCache();
 			}
 // var_dump(__CLASS__ ."::". __LINE__ .": ". $sql);
 			$this->getDb()->initiateQuery($sql);
 		}
 		catch(Exception $e) {
 			throw $e;
-		}
-		if (!$this->params[$idColName]) {
-			$this->params[$idColName]	= $this->getMaxId();
 		}
 		$this->load();
 	}
@@ -418,11 +630,14 @@ abstract class AbstractRecord implements Iterator
 	 */
 	public function load() {
 		try {
-			if ($this->synchronized) {
+			if ($this->isInCache()) {
+				$this->loadFromCache();
+			}
+			if ($this->loaded) {
 				return;
 			}
 			$idColName = $this->getIdColName();
-
+			
 			// cannot load without idColName value
 			if (strlen((string)$this->params[$idColName]) < 1) {
 				$className	= get_class($this);
@@ -440,6 +655,7 @@ abstract class AbstractRecord implements Iterator
 			$result = $this->getDb()->initiate();
 			if ($result->getNumRows() < 1) {
 				// $dbName = $this->getClassVar("dbName");
+				$paramString	= "";
 				foreach($this->params as $paramName => $paramValue) {
 					if (strlen($paramString) > 0) {
 						$paramString .= ", ";
@@ -458,6 +674,7 @@ abstract class AbstractRecord implements Iterator
 		}
 		$this->passwordChanged  = false;
 		$this->synchronized     = true;
+		$this->loaded			= true;
 	}
 
 	/**
@@ -469,13 +686,19 @@ abstract class AbstractRecord implements Iterator
 			if (!$this->params[$idColName]) {
 				throw new LBoxException("Cannot delete database record whithout id specified! Can delete more records!!!");
 			}
+			if (!$this->isInDatabase()) {
+				$this->resetCache();
+				return;
+			}
 			if ($this->isTree() && $this->hasChildren()) {
-				throw new LBoxException("Cannot delete database record with children!!!");
+				throw new LBoxException($this->params[$idColName] .": Cannot delete database record with children!!!");
 			}
 			if ($this->isTree()) {
 				$treeColNames	= $this->getClassVar("treeColNames");
 				$lftColName		= $treeColNames[0];
 				$rgtColName		= $treeColNames[1];
+				$pidColName		= $treeColNames[2];
+				$bidColName		= $treeColNames[3];
 				$myLft			= $this->get($lftColName);
 				$myRgt			= $this->get($rgtColName);
 				
@@ -518,6 +741,7 @@ abstract class AbstractRecord implements Iterator
 				}
 			}
 			$this->getDb()->transactionCommit();
+			$this->clearCache();
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -536,8 +760,25 @@ abstract class AbstractRecord implements Iterator
 			throw new LBoxException("Bad parameter value. Must be boolean!");
 		}
 		$this->synchronized = $value;
+		if (!$value) {
+			$this->loaded	= false;
+		}
+		else {
+			$this->storeToCache();
+		}
 	}
-
+	
+	/**
+	 * setter for passwordChanged - ONLY FOR AbstractRecords INSTANCES!!!
+	 * @param boolean $value
+	 */
+	public function setPasswordChanged($value) {
+		if (!is_bool($value)) {
+			throw new LBoxException("Bad parameter value. Must be boolean!");
+		}
+		$this->passwordChanged = $value;
+	}
+	
 	/**
 	 * check for the same record in database table
 	 * @return boolean
@@ -578,7 +819,7 @@ abstract class AbstractRecord implements Iterator
 	protected function isInDatabase() {
 		try {
 			$idColName = $this->getClassVar("idColName");
-			if (empty($this->params[$idColName])) {
+			if (!array_key_exists($idColName, $this->params) || strlen($this->params[$idColName]) < 1) {
 				return false;
 			}
 
@@ -813,12 +1054,12 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			throw new LBoxException("Bad parameter varName, must be string!");
 		}
 		try {
-			if ($this->cacheClassVars[$varName]) {
+			if (array_key_exists($varName, $this->cacheClassVars)) {
 				return $this->cacheClassVars[$varName];
 			}
 			$className = get_class($this);
 			$value = eval("return $className::\$$varName;");
-			if (!$force && empty($value) && !is_numeric($value) && !is_bool($value)) {
+			if (!$force && (!$value) && !is_numeric($value) && !is_bool($value)) {
 				throw new LBoxException("Static variable $className::$varName is empty or not exists!");
 			}
 			return $this->cacheClassVars[$varName] = $value;
@@ -875,9 +1116,20 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 	 */
 	public function hasChildren() {
 		try {
+			if (is_bool($this->hasChildren)) {
+				return $this->hasChildren;
+			}
 			$tableName		= $this->getClassVar("tableName");
 			if (!$isTree = $this->isTree()) {
 				throw new LBoxException("Table '$tableName' seems not to be tree!");
+			}
+			if ($this->isInCache()) {
+/*var_dump($this->getCacheFileName());
+var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->getData());
+var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->systemrecord_haschildren);*/
+				if (is_numeric($cacheValue = LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->systemrecord_haschildren)) {
+					return $this->hasChildren = (bool)$cacheValue;
+				}
 			}
 			$treeColNames	= $this->getClassVar("treeColNames");
 			$pidColName		= $treeColNames[2];
@@ -889,7 +1141,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 // var_dump(__CLASS__ ."::". __LINE__ .": ". $this->getQueryBuilder()->getSelectColumns($tableName, array($idColName), $where, array(1)));
 			$result			= $this->getDb()->initiateQuery($this->getQueryBuilder()->getSelectColumns($tableName, array($idColName), $where, array(1)));
 			//$result			= $this->getDb()->initiateQuery("SELECT $idColName FROM $tableName WHERE $pidWhere LIMIT 1");
-			return ($result->getNumRows() > 0);
+			return $this->hasChildren = ($result->getNumRows() > 0);
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -935,7 +1187,8 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			$idColName		= $this->getClassVar("idColName");
 			$id				= $this->get($idColName);
 			$bId			= $this->get($bidColName);
-
+//var_dump($this->params[$idColName] .": getChildren");
+			
 			$filter 		= array($pidColName => $id, $bidColName => $bId);
 			$order			= array($lftColName => 1);
 			$children		= new $itemsType($filter, $order);
@@ -965,9 +1218,8 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			if (!$child->$idColName == $this->params[$idColName]) {
 				throw new LBoxException("You are trying to set Record as child of itself!");
 			}
-
-			$this->load();
-			$child->load();
+			$this			->load();
+			$child			->load();
 			$tableName		= $this->getClassVar("tableName");
 			$treeColNames	= $this->getClassVar("treeColNames");
 			$lftColName		= $treeColNames[0];
@@ -1030,6 +1282,8 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			$chTmpRgt		= $childTmp->$rgtColName;
 
 			// shift tree left
+			$sqls		= array();
+			$sqls2		= array();
 			if ($chRgt < $myRgt) {
 				/*$sqls[] = "UPDATE $tableName SET
 				$lftColName = $lftColName-$chWeight
@@ -1119,7 +1373,9 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 
 			$this->getDb()->transactionCommit();
 			$child->setSynchronized(false);
+			$this->clearCache();
 			$child->load();
+			$this->hasChildren	= true;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -1178,6 +1434,8 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			$chDiff			= ($maxRgt+1) - $chLft;
 
 			$this->getDb()->transactionStart();
+			$sqlsChildUpd	= array();
+			$sqls			= array();
 
 			// cut child and descendants from tree
 			/*$sqlsChildUpd[] = "UPDATE $tableName SET
@@ -1237,6 +1495,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 
 			$child->setSynchronized(false);
 			$this->setSynchronized(false);
+			$this->resetCache();
 			$child->load();
 			$this->load();
 		}
@@ -1291,7 +1550,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			if (!$sibling->$idColName == $this->params[$idColName]) {
 				throw new LBoxException("You are trying to move me before me!");
 			}
-
+			
 			$quotesColumnName		= $this->getQueryBuilder()->getQuotesColumnName();
 			$lftColNameSlashed		= reset($quotesColumnName) . $lftColName . end($quotesColumnName);
 			$rgtColNameSlashed		= reset($quotesColumnName) . $rgtColName . end($quotesColumnName);
@@ -1300,7 +1559,12 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			
 			// set sibling as parent's child if is not
 			if ($sibling->$pidColName != $this->get($pidColName)) {
-				$this->getParent()->addChild($sibling);
+				if ($this->getParent()) {
+					$this->getParent()->addChild($sibling);
+				}
+				else {
+					$sibling->removeFromTree();
+				}
 				$this->setSynchronized(false);
 				$this->load();
 			}
@@ -1319,6 +1583,8 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 
 			if ($chRgt == $myLft-1) return;
 
+			$sqls	= array();
+			
 			// cut sibling from tree
 			/*$sqls[] = "UPDATE $tableName SET
 			$lftColName = $lftColName + $maxRgt,
@@ -1369,6 +1635,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			}
 			$this->setSynchronized(false);
 			$sibling->setSynchronized(false);
+			$this->clearCache();
 			$this->load();
 			$sibling->load();
 		}
@@ -1420,7 +1687,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 	}
 	
 	/**
-	 * checks if given record is descendant
+	 * checks if given record is ancestor of give descendant
 	 * @param AbstractRecord $child
 	 * @return bool
 	 * @throws Exception
@@ -1459,6 +1726,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 	 */
 	public function getDescendantsCount() {
 		try {
+			$this			->load();
 			$tableName		= $this->getClassVar("tableName");
 			$idColName		= $this->getClassVar("idColName");
 			$treeColNames	= $this->getClassVar("treeColNames");
@@ -1554,6 +1822,11 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 		try {
 			if (is_bool($this->isTree)) {
 				return $this->isTree;
+			}
+			if ($this->isInCache()) {
+				if (is_numeric($cacheValue = LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->systemrecord_istree)) {
+					return $this->isTree = (bool)$cacheValue;
+				}
 			}
 			$className 		= get_class($this);
 			$columns 		= $this->getClassVar("treeColNames");

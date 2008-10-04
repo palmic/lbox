@@ -168,7 +168,9 @@ class DbMssql extends DbPlatform
 
     protected function connect() {
         if(!is_resource($this->connection)) {
-
+			
+        	$hostString = $this->dbParametersMessenger->loginHost;
+			
             // we are not using port value in MSSQL connection - there was problems with that.
 //            if (strlen($this->dbParametersMessenger->port) > 0) {
 //                $hostString = $this->dbParametersMessenger->loginHost .":". $this->dbParametersMessenger->port;

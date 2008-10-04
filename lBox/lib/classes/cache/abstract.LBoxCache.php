@@ -31,17 +31,29 @@ abstract class LBoxCache
 	 * cache zmenena/nezmenena (kuli vyhnuti se zbytecnemu zapisovani cache na disk)
 	 * @var bool
 	 */
-	protected static $changed;
+	protected $changed;
 
 	protected static $instance;
-	
+
 	/**
+	 * @param string fileName - custom filename
 	 * @return AccesRecord
 	 * @throws Exception
 	 */
-	abstract public static function getInstance();
+	abstract public static function getInstance($fileName	= "");
 
 	protected function __construct() {}
+
+	/**
+	 * fileName setter
+	 * @param string $fileName
+	 */
+	public function setFileName($fileName	= "") {
+		if (strlen($fileName) < 1) {
+			throw new LBoxExceptionCache(LBoxExceptionCache::MSG_PARAM_STRING_NOTNULL, LBoxExceptionCache::CODE_BAD_PARAM);
+		}
+		$this->fileName	= $fileName;
+	}
 
 	/**
 	 * getter na hodnotu
@@ -73,15 +85,6 @@ abstract class LBoxCache
 		}
 	}
 
-	public function __destruct() {
-		try {
-			$this->saveCachedData();
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-
 	/**
 	 * vymaze cash
 	 * @throws LBoxExceptionCache
@@ -89,8 +92,7 @@ abstract class LBoxCache
 	public function reset () {
 		try {
 			$this->data	= array();
-			$this->__destruct();
-			
+			@unlink($this->getFilePath());
 			$this->changed	= true;
 		}
 		catch (Exception $e) {
@@ -110,8 +112,22 @@ abstract class LBoxCache
 			// kuli zarucenemu nacteni cache
 			$this->getValue($key);
 			unset($this->data[$key]);
-			
+				
 			$this->changed	= true;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * vraci true, pokud cache existuje
+	 * @return bool
+	 * @throws LBoxException
+	 */
+	public function doesCacheExists() {
+		try {
+			return file_exists($this->getFilePath());
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -130,9 +146,8 @@ abstract class LBoxCache
 				throw new LBoxExceptionCache("\$key: ". LBoxExceptionCache::MSG_PARAM_STRING_NOTNULL, LBoxExceptionCache::CODE_BAD_PARAM);
 			}
 			// loadneme data
-			$data	= $this->getData();
-			// a vratime hodnotu
-			return $data[$key];
+			$data	= 	$this->getData();
+			return		array_key_exists($key, (array)$data) ? $data[$key] : NULL;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -150,17 +165,15 @@ abstract class LBoxCache
 			if (strlen($key) < 1) {
 				throw new LBoxExceptionCache("\$key: ". LBoxExceptionCache::MSG_PARAM_STRING_NOTNULL, LBoxExceptionCache::CODE_BAD_PARAM);
 			}
-			if (is_null($value)) {
-				throw new LBoxExceptionCache("\$value: ". LBoxExceptionCache::MSG_PARAM_NOTNULL, LBoxExceptionCache::CODE_BAD_PARAM);
-			}
-			if ($this->data[$key]	== $value) {
+			if ($value)
+			if (array_key_exists($key, $this->data) && $this->data[$key]	== $value) {
 				return;
 			}
 			// loadneme data
 			$this->getData();
 			// a zapiseme tam hodnotu
 			$this->data[$key]	= $value;
-			
+				
 			$this->changed	= true;
 		}
 		catch (Exception $e) {
@@ -173,7 +186,7 @@ abstract class LBoxCache
 	 * @return array
 	 * @throws LBoxExceptionCache
 	 */
-	private function getData () {
+	protected function getData () {
 		try {
 			if (count($this->data) > 0) {
 				return $this->data;
@@ -197,11 +210,12 @@ abstract class LBoxCache
 		}
 	}
 
+	protected static $uz = false;
 	/**
 	 * uklada nacachovana data, pokud nejaka jsou
 	 * @throws LBoxExceptionCache
 	 */
-	private function saveCachedData () {
+	public function saveCachedData () {
 		try {
 			if (!$this->changed) {
 				return;
@@ -258,12 +272,53 @@ abstract class LBoxCache
 	 * @return string
 	 * @throws LBoxExceptionCache
 	 */
-	private function getFilePath () {
+	protected function getFilePath () {
 		try {
 			if (strlen($this->fileName) < 1) {
 				throw new LBoxExceptionCache("\$fileName". LBoxExceptionCache::MSG_REQUIRED_ATTR_NOT_DEFINED, LBoxExceptionCache::CODE_REQUIRED_ATTR_NOT_DEFINED);
 			}
-			return LBOX_PATH_CACHE . SLASH . $this->fileName;
+			$path	= LBOX_PATH_CACHE . SLASH . str_replace("/", SLASH, $this->fileName);
+			// pokud adresar neexistuje, vytvorime ho
+			if (!is_dir(dirname($path))) {
+				$this->createDirByPath(dirname($path));
+			}
+			return $path;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * Vytvori adresar podle predane cesty
+	 * @param string $path
+	 * @throws LBoxExceptionFilesystem
+	 */
+	protected function createDirByPath($path = "") {
+		try {
+			if (strlen($path) < 1) {
+				throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFilesystem::CODE_BAD_PARAM);
+			}
+			$path		= str_replace("/", SLASH, $path);
+			$path		= str_replace("\\", SLASH, $path);
+			$pathParts	 = explode(SLASH, $path);
+			$pathTMP	 = WIN ? "" : "/";
+			if (is_dir($path)) return;
+			$i	= 1;
+			foreach ($pathParts as $pathPart) {
+				if (strlen($pathPart) < 1) continue;
+				if (WIN) 	$pathTMP	.= strlen($pathTMP) > 0 ? SLASH ."$pathPart" : $pathPart;
+				else 		$pathTMP	.= strlen($pathTMP) > 1 ? SLASH ."$pathPart" : $pathPart;
+				if (strlen(strstr($pathPart, ":")) > 0) continue;
+				$i++;
+				if ($i <= count(explode(SLASH, LBOX_PATH_INSTANCE_ROOT))) continue;
+				if (!is_dir($pathTMP)) {
+					if (!mkdir($pathTMP)) {
+						throw new LBoxExceptionFilesystem(	$pathTMP .": ". LBoxExceptionFilesystem::MSG_DIRECTORY_CANNOT_CREATE,
+						LBoxExceptionFilesystem::CODE_DIRECTORY_CANNOT_CREATE);
+					}
+				}
+			}
 		}
 		catch (Exception $e) {
 			throw $e;

@@ -15,6 +15,13 @@ class InquiriesRecord extends AbstractRecordLBox
 	public static $bounded1M = array(	"InquiriesOptionsRecords" 	=> "ref_inquiry",
 										"InquiriesSummariesRecords"	=> "ref_inquiry");
 	
+	public static $dependingRecords	= array(
+											"InquiriesSummariesRecords",
+											"InquiriesResponsesRecords",
+											"InquiriesOptionsResponsesRecords",
+											"InquiriesOptionsRecords",
+	);
+	
 	/**
 	 * cache variables
 	 */

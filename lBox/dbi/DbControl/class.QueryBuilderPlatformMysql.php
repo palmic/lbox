@@ -8,6 +8,8 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 		if (count($values) < 1) {
 			throw new DbControlException("Ilegal parameter values. Must be NOT-NULL string.");
 		}
+		$columnsString	= "";
+		$valuesString	= "";
 		foreach( $values as $index => $value) {
 			$columnsString	.= strlen($columnsString) > 0 ? ", " : "";
 			$columnsString	.= reset(self::getQuotesColumnName()) . $index . end(self::getQuotesColumnName());
@@ -30,9 +32,10 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 		if (strlen($table) < 1) {
 			throw new DbControlException("Ilegal parameter table. Must be NOT-NULL string.");
 		}
-		if (strlen($values) < 1) {
-			throw new DbControlException("Ilegal parameter values. Must be NOT-NULL string.");
+		if (count($values) < 1) {
+			throw new DbControlException("Ilegal parameter values. Must be NOT-NULL array.");
 		}
+		$updateString	= "";
 		foreach($values as $index => $value) {
 			$value			= $this->getValueWrapped($value);
 			$updateString	.= strlen($updateString) > 0 ? ", " : "";
@@ -69,7 +72,7 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 
 	public function getSelectCount($table, QueryBuilderWhere $where = NULL, $limit	= array(), $groupBy = array(), $orderBy = array()) {
 		try {
-			return $this->getSelect($table, "COUNT(*)", $where, $limit, $groupBy, $orderBy);
+			return $this->getSelect($table, "COUNT(*) AS count", $where, $limit, $groupBy, $orderBy);
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -113,7 +116,7 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 		if (!is_array($orderBy)) {
 			throw new DbControlException("Ilegal parameter groupBy. Must be array.");
 		}
-		if ($where instanceof QueryBuilderWhere) $whereString	= $this->getWhereStringByObject($where);
+		$whereString	= $where instanceof QueryBuilderWhere ? $this->getWhereStringByObject($where) : "";
 		
 		// groupByString
 		$groupByString	= "";

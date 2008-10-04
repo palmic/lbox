@@ -82,6 +82,7 @@ class DbResult implements DbResultInterface
         else {
             $index = $this->currentIndex;
         }
+        if (array_key_exists($index, $this->resultCache))
         if (!is_array($this->resultCache[$index])) {
             $this->readOne();
         }
@@ -89,7 +90,9 @@ class DbResult implements DbResultInterface
             return $this->resultCache[$index];
         }
         else {
-            return $this->resultCache[$index][$columnName];
+        	return array_key_exists($index, $this->resultCache) ?
+        			$this->resultCache[$index][$columnName] :
+        				NULL;
         }
     }
 

@@ -21,6 +21,7 @@
 <tasks>
 	<project>
 					<logon>0</logon>
+					<cache>0</cache>
 					<platform>mysql</platform>
 					<login>
 						<name>lbox</name>

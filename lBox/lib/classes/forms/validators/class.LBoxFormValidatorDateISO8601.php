@@ -8,7 +8,7 @@ class LBoxFormValidatorDateISO8601 extends LBoxFormValidator
 	 * regularni vyraz kontrolujici validitu
 	 * @var string
 	 */
-	protected $regDateISO8601	= "^([[:digit:]]{4})-([[:digit:]]{2})-([[:digit:]]{2})$";
+	protected $regDateISO8601	= '^([[:digit:]]{4})-([[:digit:]]{2})-([[:digit:]]{2})$';
 	
 	public function validate(LBoxFormControl $control = NULL) {
 		try {

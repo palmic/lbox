@@ -42,10 +42,18 @@ abstract class AbstractRecordLBox extends AbstractRecord implements OutputItem
 	 */
 	public function delete() {
 		try {
+			if (!$this->isInDatabase()) {
+				$this->clearCache();
+				return;
+			}
 			if ($this->isTree()) {
-				foreach ($this->getChildren() as $child) {
-					$child->delete();
+				$this->clearCache();
+				if ($this->hasChildren()) {
+					foreach ($this->getChildren() as $child) {
+						$child->delete();
+					}
 					$this->setSynchronized(false);
+					$this->hasChildren	= false;
 					$this->load();
 				}
 			}

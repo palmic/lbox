@@ -65,16 +65,21 @@ class DbStateHandler
     * @return DbPlatform
     */
     public function getDbPlatform() {
-        if (!is_a($this->dbPlatform, "DbPlatform")) {
-            try {
-                $dbSelector = new DbSelector();
-                $this->setDbPlatform($dbSelector->getPlatform($this->getTask(), $this));
-            }
-            catch(DbControlException $e) {
-                throw $e;
-            }
-        }
-        return $this->dbPlatform;
+    	try {
+	        if (!is_a($this->dbPlatform, "DbPlatform")) {
+	            try {
+	                $dbSelector = new DbSelector();
+	                $this->setDbPlatform($dbSelector->getPlatform($this->getTask(), $this));
+	            }
+	            catch(DbControlException $e) {
+	                throw $e;
+	            }
+	        }
+	        return $this->dbPlatform;
+    	}
+    	catch (Exception $e) {
+    		throw $e;
+    	}
     }
 
     /**

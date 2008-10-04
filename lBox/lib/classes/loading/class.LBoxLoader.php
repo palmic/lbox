@@ -132,6 +132,7 @@ class LBoxLoader
 					throw new LBoxExceptionLoader("Error in defined paths. Element ". LBoxExceptionLoader::MSG_INVALID_DIRPATH ." ('$path')", LBoxExceptionLoader::CODE_INVALID_DIRPATH);
 				}
 				$pathSearched = false;
+				if (array_key_exists($type, $this->searchedPathsByTypes))
 				if (is_array($this->searchedPathsByTypes[$type])) {
 					foreach($this->searchedPathsByTypes[$type] as $searchedPath) {
 						if (strstr("$path". SLASH, $searchedPath)) {

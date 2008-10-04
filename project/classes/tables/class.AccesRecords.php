@@ -9,5 +9,10 @@
 class AccesRecords extends AbstractRecordsLBox
 {
     public static $itemType = "AccesRecord";
+
+	/**
+	 * do not use cache
+	 */
+	public function isCacheOn() {return false;}
 }
 ?>

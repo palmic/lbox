@@ -74,7 +74,7 @@ class DbControl implements DbControlInterface
         if (!is_string($task)) {
             throw new DbControlException("Ilegal parameter task. Must be string.");
         }
-		$this->task = $task;
+        $this->task = $task;
         try {
             $this->dbStateHandler = new DbStateHandler($task, $charset);
         }
@@ -87,7 +87,7 @@ class DbControl implements DbControlInterface
     //== destructors ====================================================================
     //== public functions ===============================================================
 
-    public function setQuery(/*string*/ $query, /*boolean*/ $noCache = false) {
+    public function setQuery(/*string*/ $query, /*boolean*/ $noCache = true) {
         if (!is_string($query)) {
             throw new DbControlException("Ilegal parameter query. Must be string.");
         }
@@ -122,8 +122,11 @@ class DbControl implements DbControlInterface
         }
         try {
 			self::$queryCount++;
+/*if (stristr($query, "id`=1")) {
+	throw new LBoxException($query);
+}*/
 			$this->debug($query);
-            $result = $this->dbStateHandler->getDbPlatform()->query($query);
+			$result = $this->dbStateHandler->getDbPlatform()->query($query);
 			if ($this->isLogOn()) {
 				$this->log("Query succesfully done.\n". $query);
 			}
@@ -145,7 +148,7 @@ class DbControl implements DbControlInterface
         }
     }
 
-    public function initiateQuery(/*string*/ $query, /*boolean*/ $noCache = false) {
+    public function initiateQuery(/*string*/ $query, /*boolean*/ $noCache = true) {
         try {
             $this->setQuery($query, $noCache);
             return $this->initiate();
@@ -157,7 +160,7 @@ class DbControl implements DbControlInterface
 
     public function selectDb($dbName) {
         try {
-            $this->dbStateHandler->getDbPlatform()->selectDb($dbName);
+        	$this->dbStateHandler->getDbPlatform()->selectDb($dbName);
 			if ($this->isLogOn()) {
 				$this->log("Database ". $dbName ." succesfully choosed.");
 			}
@@ -273,8 +276,20 @@ class DbControl implements DbControlInterface
 
 	protected function debug($sql) {
 		if (!self::$debug) return;
-		$msg 	= "<font style='background-color:grey; color:white;font-weight:bold;'>". self::$queryCount .": $sql</font>\n";
-		echo nl2br($msg);
+		switch (true) {
+			case is_numeric(strpos($sql, "UPDATE")):
+			case is_numeric(strpos($sql, "DELETE")):
+					$bg	= "#962C2C";
+				break;
+			case is_numeric(strpos($sql, "INSERT")):
+					$bg	= "#6BC764";
+				break;
+			default:
+					$bg	= "#5D5D5D";
+		}
+		$color	= "#ffffff";
+		$msg 	= "<table><th bgcolor='$bg' align='left'><b><font color='$color'>". nl2br(self::$queryCount .": ". $sql) ."</font></b></th></table>\n";
+		echo $msg;
 		flush();
 	}
 }

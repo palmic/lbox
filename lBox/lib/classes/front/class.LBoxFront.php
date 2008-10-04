@@ -368,6 +368,32 @@ class LBoxFront extends LBox
 	 * @return array
 	 */
 	public static function getDataGet() {
+		/*if (IIS) {
+			var_dump($_SERVER['HTTP_X_REWRITE_URL']);
+			echo "<br>\n";
+			$string			= substr($_SERVER['HTTP_X_REWRITE_URL'], strpos($_SERVER['HTTP_X_REWRITE_URL'], "?")+1);
+			$stringParts	= explode("&", $string);
+			foreach($stringParts as $k => $stringPart) {
+				if (strpos($stringPart, "=") < 1) continue;
+				$stringParts[$k]	= str_replace("=", '="', urldecode($stringPart)). '"';
+				if (strpos($stringParts[$k], "[") > 0) {
+					$converted[$k]	= "\$variable[". str_replace("[", "][", $stringParts[$k]);
+				}
+				else {
+					$converted[$k]	= "\$variable[". str_replace("=", "]=", $stringParts[$k]);
+				}
+			}
+			//$calString	= implode("; ", $converted) . "; return \$variable;";
+			$calString	= "return (" . implode("; ", $converted) . ");";
+			$calString	= ereg_replace("\[([[:alnum:]]*)\]", "[\"\\1\"]", $calString);
+			$get		= eval($calString);
+			var_dump($stringParts);
+			var_dump($converted);
+			var_dump($calString);
+			echo "<hr>\n\n";
+			var_dump($get);
+			die;
+		}*/
 		return $_GET;
 	}
 

@@ -37,6 +37,16 @@ class AccesRecord extends AbstractRecordLBox
 	}
 
 	/**
+	 * do not use cache
+	 */
+	public function isCacheOn() {return false;}
+	
+	/**
+	 * do not use cache
+	 */
+	protected function resetRelevantCache() {}
+	
+	/**
 	 * @return AccesRecord
 	 * @throws Exception
 	 */
@@ -46,6 +56,7 @@ class AccesRecord extends AbstractRecordLBox
 			if (!self::$instance instanceof $className) {
 				self::$instance = new $className;
 			}
+			self::$instance->store();
 			return self::$instance;
 		}
 		catch (Exception $e) {
@@ -79,7 +90,7 @@ class AccesRecord extends AbstractRecordLBox
 			$this->params["agent"] 				= LBOX_REQUEST_AGENT;
 			$this->params["queries"]			= DbControl::getQueryCount()+1;
 			$this->params["time_execution"]		= LBoxTimer::getInstance()->getTimeOfLife();
-			if (!$this->params["request_time"]) {
+			if ((!array_key_exists("request_time", $this->params)) || (!$this->params["request_time"])) {
 				$this->params["request_time"]	= LBOX_REQUEST_REQUEST_TIME;
 			}
 			if (LBoxXT::isLogged()) {

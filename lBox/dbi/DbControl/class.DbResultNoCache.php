@@ -49,7 +49,8 @@ class DbResultNoCache extends DbResult
             return $this->resultCache;
         }
         else {
-            return $this->resultCache[$columnName];
+        	return array_key_exists($columnName, $this->resultCache)
+            	? $this->resultCache[$columnName] : NULL;
         }
     }
 

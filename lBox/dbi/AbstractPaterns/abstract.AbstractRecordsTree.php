@@ -23,7 +23,7 @@ abstract class AbstractRecordsTree extends AbstractRecords
 		$this->forceTreeMode = $mode;
 	}
 	
-	protected function getDbResult() {
+	protected function getWhere() {
 		try {
 			do {
 				$itemType 	= $this->getClassVar("itemType");
@@ -45,7 +45,7 @@ abstract class AbstractRecordsTree extends AbstractRecords
 				
 				//$this->whereAdd .= "AND ($pidColName=0 OR $pidColName IS NULL)";
 			} while (false);
-			return parent::getDbResult();
+			return parent::getWhere();
 		}
 		catch (Exception $e) {
 			throw $e;

@@ -8,7 +8,7 @@ class LBoxFormFilterPhoneNumberCS extends LBoxFormFilter
 	 * regularni vyraz pro zjisteni, jestli
 	 * @var string
 	 */
-	protected $regPhone	= "^([[:digit:]]{9})$";
+	protected $regPhone	= '^([[:digit:]]{9})$';
 	
 	/**
 	 * predvolba pro konkretni zemi

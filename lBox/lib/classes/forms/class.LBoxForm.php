@@ -102,6 +102,7 @@ class LBoxForm
 				throw new LBoxExceptionForm(LBoxExceptionForm::MSG_FORM_DUPLICATE_FORMNAME, LBoxExceptionForm::CODE_FORM_DUPLICATE_FORMNAME);
 			}
 			self::$forms[$name]	= $this;
+			if (array_key_exists("LBox", (array)$_SESSION))
 			if ($_SESSION["LBox"]["Forms"][$this->getName()]["succes"]) {
 				unset($_SESSION["LBox"]["Forms"][$this->getName()]["succes"]);
 				$this->sentSucces	= true;
@@ -247,7 +248,7 @@ class LBoxForm
 				$filesData	= $this->getFilesData();
 				$data[$this->getName()]	= array_merge($data[$this->getName()], $filesData[$this->getName()]);
 			}
-			return $data[$this->name];
+			return array_key_exists($this->name, $data) ? $data[$this->name] : NULL;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -266,6 +267,7 @@ class LBoxForm
 			$data	= LBoxFront::getDataFiles();
 			$out	= array();
 			// pretridime data podle files controls
+			if (array_key_exists($this->getName(), (array)$data))
 			foreach ((array)$data[$this->getName()]["name"] as $controlName	=> $fileName) {
 				foreach ($data[$this->getName()] as $paramName	=> $params) {
 					$out[$this->getName()][$controlName][$paramName]	= $params[$controlName];

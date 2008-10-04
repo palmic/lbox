@@ -59,7 +59,7 @@ class LBoxConfigSystem extends LBoxConfig
 		try {
 			ob_start();
 			print_r($_SERVER);
-			if (strlen(stristr($_SERVER["_"], "phpunit")) < 1) {
+			if (strlen(stristr($_SERVER["SCRIPT_FILENAME"], "phpunit")) < 1) {
 				foreach (explode("/", LBOX_PATH_INSTANCE_ROOT) as $ds) {
 					foreach (explode(".", $_SERVER["HTTP_HOST"]) as $hps) {
 						if (strlen(@stristr($ds, $hps)) > 0) {

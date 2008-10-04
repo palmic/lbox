@@ -40,26 +40,30 @@ class DbSelector
         if (!is_string($task)) {
             throw new DbControlException("Ilegal parameter task. Must be string.");
         }
-
-        $dbParametersMessenger = new DbParametersMessenger($this->getTaskHost($task), $this->getTaskName($task), $this->getTaskPassword($task), $this->getTaskSchema($task), false, $this->getTaskPort($task));
-        
-        switch ($platformName = strtolower($this->getPlatformName($task))) {
-            case "mysql":
-                $platform = new DbMysql($dbParametersMessenger, $dbStateHandler);
-                break;
-            case "pgsql":
-                $platform = new DbPgsql($dbParametersMessenger, $dbStateHandler);
-                break;
-            case "mssql":
-                $platform = new DbMssql($dbParametersMessenger, $dbStateHandler);
-                break;
-            case "odbc":
-                $platform = new DbOdbc($dbParametersMessenger, $dbStateHandler);
-                break;
-            default:
-                throw new DbControlException("There is no attached platform library for platformName: '".$platformName."'.");
-        }
-        return $platform;
+		try {
+	        $dbParametersMessenger = new DbParametersMessenger($this->getTaskHost($task), $this->getTaskName($task), $this->getTaskPassword($task), $this->getTaskSchema($task), false, $this->getTaskPort($task));
+	        
+	        switch ($platformName = strtolower($this->getPlatformName($task))) {
+	            case "mysql":
+	                $platform = new DbMysql($dbParametersMessenger, $dbStateHandler);
+	                break;
+	            case "pgsql":
+	                $platform = new DbPgsql($dbParametersMessenger, $dbStateHandler);
+	                break;
+	            case "mssql":
+	                $platform = new DbMssql($dbParametersMessenger, $dbStateHandler);
+	                break;
+	            case "odbc":
+	                $platform = new DbOdbc($dbParametersMessenger, $dbStateHandler);
+	                break;
+	            default:
+	                throw new DbControlException("There is no attached platform library for platformName: '".$platformName."'.");
+	        }
+	        return $platform;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
     }
 
     /**
