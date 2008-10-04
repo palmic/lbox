@@ -2,11 +2,11 @@
 .settings*
 .project
 *.log
-lBox/cache*
 lBox/documents*
+project/.cache*
+project/.tal_compiled*
 project/filespace*
 project/import*
-project/tal_compiled*
-project/documents/material*
+# project/documents/material*
 project/documents/doc/html*
 *~
