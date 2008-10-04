@@ -58,9 +58,7 @@ class AccesRecord extends AbstractRecordLBox
 		try {
 			if (!self::$instance instanceof AccesRecord) {
 				self::$instance = new AccesRecord;
-var_dump("init store");
 				self::$instance	->store();
-var_dump("init store done");
 			}
 			return self::$instance;
 		}
