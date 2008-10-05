@@ -25,7 +25,7 @@ class QueryBuilderWhere
 	 * adds condition
 	 * @param string $column - condition column
 	 * @param mixed $value - compared value
-	 * @param int $comparison 	- type of comparison (-1 = less, 0 = equaling, 1 = more)
+	 * @param int $comparison 	- type of comparison (-2 = <, -1 = <=, 0 = equaling, 1 = >=, 2 = >)
 	 * @param int $glue 		- type of split (0 = AND, 1 = OR)
 	 */
 	public function addConditionColumn(/*string*/ $column = "", $value = "", /*int*/ $comparison	= 0, $glue	= 0) {

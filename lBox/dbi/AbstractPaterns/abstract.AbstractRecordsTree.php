@@ -7,22 +7,6 @@
  */
 abstract class AbstractRecordsTree extends AbstractRecords
 {
-	/**
-	 * if true, getDbResult() method does not check whereAdd and filter
-	 * @var bool
-	 */
-	protected $forceTreeMode = false;
-
-	/**
-	 * setter for $forceTreeMode - be carefull, resets result 
-	 * @param bool $mode
-	 */
-	public function setForceTreeMode($mode = false) {
-		$this->dbResult = NULL;
-		$this->records = array();
-		$this->forceTreeMode = $mode;
-	}
-	
 	protected function getWhere() {
 		try {
 			do {

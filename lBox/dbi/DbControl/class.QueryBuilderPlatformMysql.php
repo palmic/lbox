@@ -175,11 +175,12 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 				$glue			= $condition["glue"] > 0 ? "OR" : "AND";
 				$columnValue	= $this->getValueWrapped($condition["value"]);
 				switch ($condition["comparison"]) {
-								case -2	: $comparison	="<"; break;
-								case -1	: $comparison	="<="; break;
-								case  0 : $comparison	= strtoupper($columnValue) == "NULL" ? " IS " : "="; break;
-								case  1	: $comparison	=">="; break;
-								case  2	: $comparison	=">"; break;
+								case -3		: $comparison	="!="; break;
+								case -2		: $comparison	="<"; break;
+								case -1		: $comparison	="<="; break;
+								case  0 	: $comparison	= strtoupper($columnValue) == "NULL" ? " IS " : "="; break;
+								case  1		: $comparison	=">="; break;
+								case  2		: $comparison	=">"; break;
 				}
 				/*switch (true) { case $condition["comparison"] < 	0	: $comparison	="<"; break;
 								case $condition["comparison"] == 	0	: $comparison	= strtoupper($columnValue) == "NULL" ? " IS " : "="; break;

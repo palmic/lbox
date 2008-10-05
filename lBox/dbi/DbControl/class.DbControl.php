@@ -122,7 +122,7 @@ class DbControl implements DbControlInterface
         }
         try {
 			self::$queryCount++;
-/*if (stristr($query, "inquiries_options_responses")) {
+/*if (stristr($query, "`lft` FROM `photogalleriesImages")) {
 	throw new LBoxException($query);
 }*/
 			$this->debug($query);

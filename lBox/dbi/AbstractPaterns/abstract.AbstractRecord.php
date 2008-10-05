@@ -82,10 +82,10 @@ abstract class AbstractRecord implements Iterator
 	public static $treeColNames = array(0 => "lft", 1 => "rgt", 2 => "pid", 3 => "bid");
 
 	/**
-	 * isTree table flag - do not define it its only cache of isTree() method
-	 * @var bool
+	 * isTree table flags for concrete child classes - do not define it its only cache of isTree() method
+	 * @var array
 	 */
-	protected $isTree;
+	protected static $isTree = array();
 
 	/**
 	 * hasChildren table flag - do not define it its only cache of hasChildren() method
@@ -168,6 +168,9 @@ abstract class AbstractRecord implements Iterator
 			if (strlen($id) > 0) {
 					$this->params[$this->getClassVar("idColName")] = $id;
 			}
+			if ($this->isInDatabase()) {
+				$this->load();
+			}
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -246,7 +249,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 						unset($data["systemrecord_haschildren"]);
 					}
 					if (array_key_exists("systemrecord_istree", $data)) {
-						$this->isTree	= (bool)$data["systemrecord_istree"];
+						self::$isTree[$className]	= (bool)$data["systemrecord_istree"];
 						unset($data["systemrecord_istree"]);
 					}
 					$this->params	= $data;
@@ -469,7 +472,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 	 */
 	public function setIsTree($isTree = true) {
 		try {
-			$this->isTree	= (bool)$isTree;
+			self::$isTree[$className]	= (bool)$isTree;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -1835,15 +1838,15 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system
 	 */
 	protected function isTree() {
 		try {
-			if (is_bool($this->isTree)) {
-				return $this->isTree;
+			$className	= get_class($this);
+			if (array_key_exists($className, self::$isTree) && is_bool(self::$isTree[$className])) {
+				return self::$isTree[$className];
 			}
 			if ($this->isInCache()) {
 				if (is_numeric($cacheValue = LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->systemrecord_istree)) {
-					return $this->isTree = (bool)$cacheValue;
+					return self::$isTree[$className] = (bool)$cacheValue;
 				}
 			}
-			$className 		= get_class($this);
 			$columns 		= $this->getClassVar("treeColNames");
 			$tableName		= $this->getClassVar("tableName");
 			
@@ -1855,12 +1858,12 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system
 			catch (DbControlException $e) {
 				// throw $e;
 				// column does not found - table is not tree
-				$this->isTree = false;
-				return $this->isTree;
+				self::$isTree[$className] = false;
+				return self::$isTree[$className];
 				break;
 			}
-			$this->isTree = true;
-			return $this->isTree;
+			self::$isTree[$className] = true;
+			return self::$isTree[$className];
 		}
 		catch (Exception $e) {
 			throw $e;

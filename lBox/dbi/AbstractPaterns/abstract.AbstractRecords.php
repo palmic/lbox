@@ -97,10 +97,10 @@ abstract class AbstractRecords implements Iterator
 	public static $itemType;
 
 	/**
-	 * isTree table flag - do not define it its only cache of isTree() method
-	 * @var bool
+	 * isTree table flags for concrete subclasses - do not define it its only cache of isTree() method
+	 * @var array
 	 */
-	protected $isTree;
+	protected static $isTree = array();
 
 	/**
 	 * cache array of class vars
@@ -188,14 +188,14 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 var_dump("loaduju kolekci z cache ". $this->getSQL() . " [". $this->getCacheFileName() ."]");
 echo "<br />\n";*/
 			$itemType 		= $this->getClassVar("itemType");
+			$className		= get_class($this);
 			$idColName  	= eval("return $itemType::\$idColName;");
 			if (count($data = LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->getData()) > 0) {
 				if (array_key_exists("system_istree", $data)) {
-					$this->isTree	= (bool)$data["system_istree"];
+					self::$isTree[$className]	= (bool)$data["system_istree"];
 				}
 				foreach ($data as $key => $row) {
 					if ($key == "system_istree") {
-						$this->isTree	= (bool)$row;
 						continue;
 					}
 					$recordRef 		= new $itemType();
@@ -236,8 +236,8 @@ echo count($this->records) ."<hr />\n\n";*/
 			if (!$this->isCacheOn()) return;
 			//if ($this->isCacheSybchronized) return;
 //var_dump("ukladam cache: ". $this->getCacheFileName());flush();
-			if (is_bool($this->isTree)) {
-				LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system_istree	= (int)$this->isTree;
+			if (is_bool($this->isTree())) {
+				LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system_istree	= (int)$this->isTree();
 			}
 			LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->saveCachedData();
 			$this->isCacheSybchronized	= true;
@@ -346,7 +346,8 @@ echo count($this->records) ."<hr />\n\n";*/
 	 */
 	public function setIsTree($isTree = true) {
 		try {
-			$this->isTree	= (bool)$isTree;
+			$className					= get_class($this);
+			self::$isTree[$className]	= (bool)$isTree;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -366,11 +367,15 @@ echo count($this->records) ."<hr />\n\n";*/
 	public function valid() {
 		try {
 			$itemType = $this->getClassVar("itemType");
+//var_dump($this->getSQL() ." pocet: ". count($this->records));
 			if (!is_a(@current($this->records), $itemType)) {
+//var_dump($this->getSQL() .": loaduju next");
 				$this->loadNext();
 			}
 			if (!is_a(@current($this->records), $itemType)) {
 				$this->storeToCache();
+/*var_dump(count($this->records));
+var_dump($this->getSQL() .": neni valid");*/
 				return false;
 			}
 			return true;
@@ -764,10 +769,10 @@ echo count($this->records) ."<hr />\n\n";*/
 	 */
 	protected function isTree() {
 		try {
-			if (is_bool($this->isTree)) {
-				return $this->isTree;
+			$className	= get_class($this);
+			if (array_key_exists($className, self::$isTree) && is_bool(self::$isTree[$className])) {
+				return self::$isTree[$className];
 			}
-			$className 		= get_class($this);
 			$itemType		= $this->getClassVar("itemType");
 			$tableName		= eval("return $itemType::\$tableName;");
 			$columns 		= eval("return $itemType::\$treeColNames;");
@@ -779,13 +784,13 @@ echo count($this->records) ."<hr />\n\n";*/
 				catch (DbControlException $e) {
 					// throw $e;
 					// column does not found - table is not tree
-					$this->isTree = false;
-					return $this->isTree;
+					self::$isTree[$className] = false;
+					return self::$isTree[$className];
 					break;
 				}
 			}
-			$this->isTree = true;
-			return $this->isTree;
+			self::$isTree[$className] = true;
+			return self::$isTree[$className];
 		}
 		catch (Exception $e) {
 			throw $e;
