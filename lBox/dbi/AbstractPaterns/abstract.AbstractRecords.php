@@ -190,6 +190,9 @@ echo "<br />\n";*/
 			$itemType 		= $this->getClassVar("itemType");
 			$idColName  	= eval("return $itemType::\$idColName;");
 			if (count($data = LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->getData()) > 0) {
+				if (array_key_exists("system_istree", $data)) {
+					$this->isTree	= (bool)$data["system_istree"];
+				}
 				foreach ($data as $key => $row) {
 					if ($key == "system_istree") {
 						$this->isTree	= (bool)$row;
@@ -320,7 +323,14 @@ echo count($this->records) ."<hr />\n\n";*/
 			$config		= new DbCfg;
 			$path		= "/tasks/project/cache";
 			$value		= $config->$path;
-			return $this->isCacheOn = (bool)current((array)$value);
+			if (!current((array)$value)) {
+				return $this->isCacheOn = false;
+			}
+			else {
+				$itemType 		= $this->getClassVar("itemType");
+				$cacheDisabled 	= eval("return $itemType::\$cacheDisabled;");
+				return !$cacheDisabled;
+			}
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -390,16 +400,20 @@ echo count($this->records) ."<hr />\n\n";*/
 	 * @return AbstractRecord
 	 */
 	public function current() {
-		$itemType = $this->getClassVar("itemType");
-		if (!is_a(@current($this->records), $itemType)) {
-			try {
+		try {
+			$itemType = $this->getClassVar("itemType");
+			$this->loadNext();
+			/*if (!is_a(@current($this->records), $itemType)) {
 				$this->loadNext();
+			}*/
+			if (!is_a($this->records[$this->key+1], $itemType)) {
+				$this->storeToCache();
 			}
-			catch (Exception $e) {
-				throw $e;
-			}
+			return current($this->records);
 		}
-		return current($this->records);
+		catch (Exception $e) {
+			throw $e;
+		}
 	}
 
 	/**

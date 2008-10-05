@@ -195,6 +195,12 @@ abstract class AbstractRecord implements Iterator
 	protected $isCacheOn;
 	
 	/**
+	 * explicit var to disable cache for concrete tables
+	 * @var bool
+	 */
+	public static $cacheDisabled	= false;
+	
+	/**
 	 * return true if record is cached
 	 * @return bool
 	 */
@@ -368,7 +374,12 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 			$config		= new DbCfg;
 			$path		= "/tasks/project/cache";
 			$value		= $config->$path;
-			return $this->isCacheOn = (bool)current((array)$value);
+			if (!current((array)$value)) {
+				return $this->isCacheOn = false;
+			}
+			else {
+				return $this->isCacheOn = !$this->getClassVar("cacheDisabled");
+			}
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -642,6 +653,11 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 			if ($this->loaded) {
 				return;
 			}
+			$this->loadFromCache();
+			if ($this->loaded) {
+				return;
+			}
+			
 			$idColName = $this->getIdColName();
 			
 			// cannot load without idColName value
@@ -679,7 +695,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 			throw $e;
 		}
 		$this->passwordChanged  = false;
-		$this->synchronized     = true;
+		$this->setSynchronized(true);
 		$this->loaded			= true;
 	}
 

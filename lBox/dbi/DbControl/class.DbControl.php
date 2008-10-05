@@ -122,7 +122,7 @@ class DbControl implements DbControlInterface
         }
         try {
 			self::$queryCount++;
-/*if (stristr($query, "DA-LEECH-Enter")) {
+/*if (stristr($query, "inquiries_options_responses")) {
 	throw new LBoxException($query);
 }*/
 			$this->debug($query);
