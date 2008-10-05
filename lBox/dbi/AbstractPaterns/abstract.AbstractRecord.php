@@ -767,7 +767,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 			}
 			$this->getDb()->transactionCommit();
 			$this->clearCache();
-			$this->isInDatabase	= false;
+			$this->isInDatabase	= NULL;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -849,9 +849,9 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 			}
 			$idColName = $this->getClassVar("idColName");
 			if (!array_key_exists($idColName, $this->params) || strlen($this->params[$idColName]) < 1) {
-				return $this->isInDatabase = false;
+				return false;
 			}
-
+			
 			$where	= new QueryBuilderWhere();
 			$where	->addConditionColumn($idColName, $this->params[$idColName]);
 			$sql	= $this->getQueryBuilder()->getSelectColumns($this->getClassVar("tableName"), array("$idColName"), $where);
@@ -1249,6 +1249,8 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system
 			}
 			$this			->load();
 			$child			->load();
+			$child			->setSynchronized(false);
+			$this			->clearCache();
 			$tableName		= $this->getClassVar("tableName");
 			$treeColNames	= $this->getClassVar("treeColNames");
 			$lftColName		= $treeColNames[0];
@@ -1400,9 +1402,8 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system
 				$this->getDb()->initiateQuery($sql);
 			}
 
-			$this->getDb()->transactionCommit();
-			$child->setSynchronized(false);
-			$this->clearCache();
+			$this	->getDb()->transactionCommit();
+			$this	->clearCache();
 			$child->load();
 		}
 		catch (Exception $e) {
@@ -1419,6 +1420,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system
 		try {
 			$this->load();
 			$child->load();
+			$this->clearCache();
 			$className 	= get_class($this);
 			$idColName	= $this->getIdColName();
 			if (!($child instanceof $className)) {
@@ -1521,7 +1523,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system
 
 			$child->setSynchronized(false);
 			$this->setSynchronized(false);
-			$this->resetCache();
+			$this	->clearCache();
 			$child->load();
 			$this->load();
 		}
@@ -1536,6 +1538,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system
 	 */
 	public function removeFromTree() {
 		try {
+			$this->clearCache();
 			$treeColNames	= $this->getClassVar("treeColNames");
 			$pidColName		= $treeColNames[2];
 			
@@ -1544,6 +1547,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system
 				throw new LBoxException("I have no parent!");
 			}
 			$this->getParent()->removeChild($this);
+			$this	->clearCache();
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -1559,6 +1563,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system
 		try {
 			$this->load();
 			$sibling->load();
+			$this->clearCache();
 			$tableName		= $this->getClassVar("tableName");
 			$className 		= get_class($this);
 			$treeColNames	= $this->getClassVar("treeColNames");
@@ -1654,7 +1659,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system
 			}
 			$this->setSynchronized(false);
 			$sibling->setSynchronized(false);
-			$this->clearCache();
+			$this	->clearCache();
 			$this->load();
 			$sibling->load();
 		}
@@ -1851,7 +1856,6 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system
 			$tableName		= $this->getClassVar("tableName");
 			
 			try {
-// var_dump(__CLASS__ ."::". __LINE__ .": ". $this->getQueryBuilder()->getSelectColumns($tableName, $columns, new QueryBuilderWhere, array(1)));
 				$this->getDb()->initiateQuery($this->getQueryBuilder()
 				->getSelectColumns($tableName, $columns, new QueryBuilderWhere, array(1)));
 			}

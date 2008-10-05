@@ -44,6 +44,12 @@ abstract class LBoxFormControl
 	protected $default	= "";
 	
 	/**
+	 * disabled flag
+	 * @var bool
+	 */
+	protected $disabled = false;
+	
+	/**
 	 * form processed flag
 	 * @var bool
 	 */
@@ -115,6 +121,11 @@ abstract class LBoxFormControl
 			}
 			if (array_key_exists($name, $this->params)) {
 				return $this->params[$name];
+			}
+			switch ($name) {
+				case "getDisabled":
+						return $this->isDisabled() ? "disabled" : "";
+					break;
 			}
 		}
 		catch (Exception $e) {
@@ -406,6 +417,18 @@ abstract class LBoxFormControl
 	 */
 	public function getDefault() {
 		return $this->default;
+	}
+
+	/**
+	 * is disabled getter
+	 * @return bool
+	 */
+	public function isDisabled () {
+		return $this->disabled;
+	}
+	
+	public function setDisabled ($value = true) {
+		$this->disabled = (bool)$value;
 	}
 
 	/**

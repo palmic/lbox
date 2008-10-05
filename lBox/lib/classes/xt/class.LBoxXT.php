@@ -243,7 +243,15 @@ class LBoxXT extends LBox
 	 */
 	public static function getXTRoles($superAdmin = false) {
 		try {
-			$where = $superAdmin ? false : "name != '". self::XT_ROLE_NAME_SUPERADMIN ."'";
+			if ($superAdmin) {
+				$where = NULL;
+			}
+			else {
+				//$where = $superAdmin ? NULL : "name != '". self::XT_ROLE_NAME_SUPERADMIN ."'";
+				$where	= new QueryBuilderWhere();
+				$where	->addConditionColumn("name", self::XT_ROLE_NAME_SUPERADMIN, -3);
+				$where	->addConditionColumn($pidColName, "<<NULL>>", 0, 1);
+			}
 			return new XTRolesRecords(false, array("id" => 0), false, $where);
 		}
 		catch (Exception $e) {
