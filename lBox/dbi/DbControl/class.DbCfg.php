@@ -69,7 +69,7 @@ class DbCfg
     */
     public function get($xpath) {
 		try {
-		  	return $this->__get($xpath);
+			return $this->__get($xpath);
 		}
         catch (Exception $e) {
             throw $e;

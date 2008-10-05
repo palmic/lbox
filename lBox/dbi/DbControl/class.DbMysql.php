@@ -154,7 +154,8 @@ class DbMysql extends DbPlatform
     //== protected functions =============================================================
 
     protected function connect() {
-        if(!is_resource($this->connection)) {
+    	try {
+	        if(!is_resource($this->connection)) {
 
             // we are not using port value in MYSQL connection - there was problems with that.
 //            if (strlen($this->dbParametersMessenger->port) > 0) {
@@ -163,28 +164,32 @@ class DbMysql extends DbPlatform
 //            else {
 //                $hostString = $this->dbParametersMessenger->loginHost;
 //            }
-            $hostString = $this->dbParametersMessenger->loginHost;
-
-            $this->connection = @mysql_connect($hostString, $this->dbParametersMessenger->loginName, $this->dbParametersMessenger->loginPassword);
-            if (!is_resource($this->connection)) {
-                # Exception code -1 for connection error
-                throw new DbControlException("Cant connect to database mysql.\nhost = ". $this->dbParametersMessenger->loginHost, -1);
-            }
-
-            //setting prior charset for connection with MySQL just after connection is needeed from last versions (Espetialy for non-English signs)
-            # Caution: Using $this->query() may rewrite query that is waiting for execute
-            if (!@mysql_query("SET NAMES '". $this->dbStateHandler->getCharset() ."';", $this->connection)) {
-                $this->throwMysqlException("Cannot set charset of DB session.");
-            }
-            
-            //setting default task database schema - if defined 
-            # Caution: Using $this->query() may rewrite query that is waiting for execute
-            if (strlen($schema = $this->dbParametersMessenger->schema) > 0) {            	
-	            if (!@mysql_query("USE $schema;", $this->connection)) {
-	                $this->throwMysqlException("Cannot select default database schema '$schema'.");
+	            $hostString = $this->dbParametersMessenger->loginHost;
+	
+	            $this->connection = @mysql_connect($hostString, $this->dbParametersMessenger->loginName, $this->dbParametersMessenger->loginPassword);
+	            if (!is_resource($this->connection)) {
+	                # Exception code -1 for connection error
+	                throw new DbControlException("Cant connect to database mysql.\nhost = ". $this->dbParametersMessenger->loginHost, -1);
 	            }
-            }
-        }
+	
+	            //setting prior charset for connection with MySQL just after connection is needeed from last versions (Espetialy for non-English signs)
+	            # Caution: Using $this->query() may rewrite query that is waiting for execute
+	            if (!@mysql_query("SET NAMES '". $this->dbStateHandler->getCharset() ."';", $this->connection)) {
+	                $this->throwMysqlException("Cannot set charset of DB session.");
+	            }
+	            
+	            //setting default task database schema - if defined 
+	            # Caution: Using $this->query() may rewrite query that is waiting for execute
+	            if (strlen($schema = $this->dbParametersMessenger->schema) > 0) {            	
+	            	if (!@mysql_query("USE $schema;", $this->connection)) {
+	            		throw new LBoxException("Cannot select default database schema '$schema'.");
+		            }
+	            }
+	        }
+    	}
+    	catch (Exception $e) {
+    		throw $e;
+    	}
     }
 
     /**

@@ -127,6 +127,12 @@ abstract class LBoxCache
 	 */
 	public function doesCacheExists() {
 		try {
+/*if (file_exists($this->getFilePath())) {
+	var_dump($this->getFilePath() ." existuje");
+}
+else {
+	var_dump($this->getFilePath() ." NEexistuje");
+}*/
 			return file_exists($this->getFilePath());
 		}
 		catch (Exception $e) {

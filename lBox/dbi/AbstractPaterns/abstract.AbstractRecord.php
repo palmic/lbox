@@ -137,7 +137,7 @@ abstract class AbstractRecord implements Iterator
 	 * database task id
 	 * @var string
 	 */
-	public static $task ="";
+	public static $task = "project";
 
 	/**
 	 * database connection charset
@@ -361,6 +361,10 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 			if (is_bool($this->isCacheOn)) {
 				return $this->isCacheOn;
 			}
+
+			// dependingRecords variable set check
+			$this		->getClassVar("dependingRecords");
+			
 			$config		= new DbCfg;
 			$path		= "/tasks/project/cache";
 			$value		= $config->$path;

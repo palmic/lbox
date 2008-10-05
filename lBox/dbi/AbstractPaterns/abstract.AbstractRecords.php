@@ -211,8 +211,8 @@ echo "<br />\n";*/
 					$recordRef->setSynchronized(true);
 					$recordRef->setPasswordChanged(false);
 					array_push($this->records, $recordRef);
-//var_dump("Record loadnut:");
-//echo "$recordRef<hr />\n\n";
+/*var_dump("Record loadnut:");
+echo "$recordRef<hr />\n\n";*/
 				}
 /*var_dump("Records loadnuty:");
 echo count($this->records) ."<hr />\n\n";*/
@@ -231,8 +231,8 @@ echo count($this->records) ."<hr />\n\n";*/
 	protected function storeToCache() {
 		try {
 			if (!$this->isCacheOn()) return;
-			if ($this->isCacheSybchronized) return;
-//var_dump("ukladam cache: ". $this->getCacheFileName());
+			//if ($this->isCacheSybchronized) return;
+//var_dump("ukladam cache: ". $this->getCacheFileName());flush();
 			if (is_bool($this->isTree)) {
 				LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system_istree	= (int)$this->isTree;
 			}
@@ -251,6 +251,7 @@ echo count($this->records) ."<hr />\n\n";*/
 	protected function addToCache($data) {
 		try {
 			if (!$this->isCacheOn()) return;
+//var_dump("pridavam do cache ". $this->getCacheFileName() . " $id");
 			$itemType 			= $this->getClassVar("itemType");
 			$idColName  		= eval("return $itemType::\$idColName;");
 			$id					= $data[$idColName];
@@ -315,6 +316,7 @@ echo count($this->records) ."<hr />\n\n";*/
 			if (is_bool($this->isCacheOn)) {
 				return $this->isCacheOn;
 			}
+
 			$config		= new DbCfg;
 			$path		= "/tasks/project/cache";
 			$value		= $config->$path;
@@ -413,6 +415,9 @@ echo count($this->records) ."<hr />\n\n";*/
 	public function count() {
 		try {
 			if (!is_resource($this->dbResult)) {
+				if ($this->isCacheOn() && $this->isCacheSybchronized) {
+					return count($this->records);
+				}
 				$this->getDbResult();
 			}
 			return (int)$this->count;
