@@ -192,6 +192,12 @@ abstract class AbstractRecord implements Iterator
 	protected $isInCache;
 	
 	/**
+	 * cache synchronized flag
+	 * @var bool
+	 */
+	protected $isCacheSynchronized	= false;
+	
+	/**
 	 * cache switched on flag
 	 * @var bool
 	 */
@@ -231,7 +237,17 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 			throw $e;
 		}
 	}
-	
+
+	/**
+	 * isCacheSynchronized setter
+	 * @param bool $value
+	 */
+	public function setCacheSynchronized($value = true) {
+//$idColName	= $this->getClassVar("idColName");
+//var_dump(get_class($this) .":: '". $this->params[$idColName] ."' nastavuju cache na synchronized");
+		$this->isCacheSynchronized	= (bool)$value;
+	}
+
 	/**
 	 * loads data from cache
 	 */
@@ -241,6 +257,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 			if (!$this->isInCache()) {
 				return;
 			}
+//var_dump("loaduju z cache");
 			$idColName	= $this->getClassVar("idColName");
 			if (count($data = LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->getData()) > 0) {
 				if ($data[$idColName] == $this->params[$idColName]) {
@@ -253,9 +270,10 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 						unset($data["systemrecord_istree"]);
 					}
 					$this->params	= $data;
-					$this->passwordChanged  = false;
-					$this->synchronized     = true;
-					$this->loaded     		= true;
+					$this->passwordChanged  	= false;
+					$this->synchronized     	= true;
+					$this->isCacheSynchronized	= true;
+					$this->loaded     			= true;
 				}
 			}
 		}
@@ -270,6 +288,9 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 	protected function storeToCache() {
 		try {
 			if (!$this->isCacheOn()) return;
+			if ($this->isCacheSynchronized) return;
+//$idColName	= $this->getClassVar("idColName");
+//var_dump(get_class($this) .":: '". $this->params[$idColName] ."' ukladam do cache");
 			foreach ($this->params as $key => $value) {
 				LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->$key	= $value;
 			}
@@ -278,6 +299,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 				LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->systemrecord_haschildren	= (int)$this->hasChildren();
 			}
 			LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->saveCachedData();
+			$this->isCacheSynchronized	= true;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -644,6 +666,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 		catch(Exception $e) {
 			throw $e;
 		}
+		$this->isCacheSynchronized	= false;
 		$this->load();
 	}
 

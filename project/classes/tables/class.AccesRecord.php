@@ -75,6 +75,10 @@ class AccesRecord extends AbstractRecordLBox
 		try {
 			$this->params["queries"]			= DbControl::getQueryCount()+1;
 			$this->params["time_execution"]		= LBoxTimer::getInstance()->getTimeOfLife();
+			$this->params["cache_read"]			= LBoxCache::getInstance()->getFilesOpenedRead();
+			$this->params["cache_write"]		= LBoxCache::getInstance()->getFilesOpenedWrite();
+			$this->params["memory"]				= memory_get_peak_usage(true);
+			$this->params["memory_limit"]		= ini_get("memory_limit")*1024*1024;
 			$this->synchronized	= false;
 			$this->store();
 		}

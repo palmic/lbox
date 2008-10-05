@@ -9,7 +9,7 @@ require_once(LBOX_PATH_CORE_CLASSES . SLASH ."exceptions". SLASH ."class.LBoxExc
 
  * @date 2008-02-13
  */
-abstract class LBoxCache
+class LBoxCache
 {
 	/**
 	 * @var string
@@ -34,14 +34,32 @@ abstract class LBoxCache
 	protected $changed;
 
 	protected static $instance;
+	
+	protected static $filesOpenedRead 	= 0;
+	protected static $filesOpenedWrite 	= 0;
 
 	/**
 	 * @param string fileName - custom filename
 	 * @return AccesRecord
 	 * @throws Exception
 	 */
-	abstract public static function getInstance($fileName	= "");
-
+	/**
+	 * @return LBoxCacheLoader
+	 * @throws LBoxExceptionCache
+	 */
+	public static function getInstance ($fileName	= "") {
+		$className 	= __CLASS__;
+		try {
+			if (!self::$instance instanceof $className) {
+				self::$instance = new $className;
+			}
+			return self::$instance;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
 	protected function __construct() {}
 
 	/**
@@ -141,6 +159,22 @@ else {
 	}
 
 	/**
+	 * getter na pocet files otevrenych pro cteni
+	 * @return int
+	 */
+	public function getFilesOpenedRead() {
+		return self::$filesOpenedRead;
+	}
+
+	/**
+	 * getter na pocet files otevrenych pro zapis
+	 * @return int
+	 */
+	public function getFilesOpenedWrite() {
+		return self::$filesOpenedWrite;
+	}
+
+	/**
 	 * uklada hodnotu do cache
 	 * @param string $key
 	 * @param mixed $value
@@ -207,6 +241,7 @@ else {
 			if (!$data) {
 				//throw new LBoxExceptionCache(LBoxExceptionCache::MSG_CACHE_CANNOT_READ, LBoxExceptionCache::CODE_CACHE_CANNOT_READ);
 			}
+			fclose($this->fileR);unset($this->fileR);
 			$this->data	= unserialize($data);
 			$this->changed	= false;
 			return $this->data;
@@ -248,6 +283,7 @@ else {
 				if (!$this->fileR	= fopen($this->getFilePath(), "r")) {
 					throw new LBoxExceptionCache(LBoxExceptionCache::MSG_CACHE_CANNOT_OPEN_READ, LBoxExceptionCache::CODE_CACHE_CANNOT_OPEN_READ);
 				}
+				self::$filesOpenedRead++;
 			}
 			return $this->fileR;
 		}
@@ -266,6 +302,7 @@ else {
 			if (!$fileW	= fopen($this->getFilePath(), "w")) {
 				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_CACHE_CANNOT_OPEN_WRITE, LBoxExceptionCache::CODE_CACHE_CANNOT_OPEN_WRITE);
 			}
+			self::$filesOpenedWrite++;
 			return $fileW;
 		}
 		catch (Exception $e) {

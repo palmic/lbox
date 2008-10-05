@@ -147,7 +147,7 @@ abstract class AbstractRecords implements Iterator
 	 * cache synchronized flag
 	 * @var bool
 	 */
-	protected $isCacheSybchronized	= false;
+	protected $isCacheSynchronized	= false;
 	
 	/**
 	 * cache switched on flag
@@ -183,7 +183,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 		try {
 			if (!$this->isCacheOn()) return;
 			if (!$this->isInCache()) return;
-			if ($this->isCacheSybchronized) return;
+			if ($this->isCacheSynchronized) return;
 /*$sql	= $this->getSQL();
 var_dump("loaduju kolekci z cache ". $this->getSQL() . " [". $this->getCacheFileName() ."]");
 echo "<br />\n";*/
@@ -211,6 +211,7 @@ echo "<br />\n";*/
 						}
 					}
 					// set synchronized-with-db = true to optimize performance (Record shall load data again otherwise)
+					$recordRef->setCacheSynchronized(true);
 					$recordRef->setSynchronized(true);
 					$recordRef->setPasswordChanged(false);
 					array_push($this->records, $recordRef);
@@ -219,7 +220,7 @@ echo "$recordRef<hr />\n\n";*/
 				}
 /*var_dump("Records loadnuty:");
 echo count($this->records) ."<hr />\n\n";*/
-				$this->isCacheSybchronized	= true;
+				$this->isCacheSynchronized	= true;
 				$this->doNotLoad			= true;
 			}
 		}
@@ -234,13 +235,14 @@ echo count($this->records) ."<hr />\n\n";*/
 	protected function storeToCache() {
 		try {
 			if (!$this->isCacheOn()) return;
-			//if ($this->isCacheSybchronized) return;
+			if ($this->isCacheSynchronized) return;
+			//if ($this->isCacheSynchronized) return;
 //var_dump("ukladam cache: ". $this->getCacheFileName());flush();
 			if (is_bool($this->isTree())) {
 				LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system_istree	= (int)$this->isTree();
 			}
 			LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->saveCachedData();
-			$this->isCacheSybchronized	= true;
+			$this->isCacheSynchronized	= true;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -259,7 +261,7 @@ echo count($this->records) ."<hr />\n\n";*/
 			$idColName  		= eval("return $itemType::\$idColName;");
 			$id					= $data[$idColName];
 			LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->$id	= $data;
-			$this->isCacheSybchronized	= false;
+			$this->isCacheSynchronized	= false;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -273,7 +275,7 @@ echo count($this->records) ."<hr />\n\n";*/
 		try {
 //throw new Exception(__FUNCTION__);
 			LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->reset();
-			$this->isCacheSybchronized	= false;
+			$this->isCacheSynchronized	= false;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -287,7 +289,7 @@ echo count($this->records) ."<hr />\n\n";*/
 		try {
 //throw new Exception(__FUNCTION__);
 			LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->clearCache();
-			$this->isCacheSybchronized	= false;
+			$this->isCacheSynchronized	= false;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -434,7 +436,7 @@ var_dump($this->getSQL() .": neni valid");*/
 	public function count() {
 		try {
 			if (!is_resource($this->dbResult)) {
-				if ($this->isCacheOn() && $this->isCacheSybchronized) {
+				if ($this->isCacheOn() && $this->isCacheSynchronized) {
 					return count($this->records);
 				}
 				$this->getDbResult();
