@@ -11,5 +11,6 @@ class InquiriesOptionsResponsesRecord extends AbstractRecordLBox
 	public static $itemsType 		= "InquiriesOptionsResponsesRecords";
 	public static $tableName    	= "inquiries_options_responses";
 	public static $idColName    	= "ref_response";
+	public static $dependingRecords	= array("InquiriesOptionsRecords", "InquiriesResponsesRecords");
 }
 ?>

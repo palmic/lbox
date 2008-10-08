@@ -67,6 +67,12 @@ class LBoxForm
 	 * @var bool
 	 */
 	protected $sentSucces	= false;
+	
+	/**
+	 * do not reload after succcesfull processing flag
+	 * @var bool
+	 */
+	protected $doNotReload	= false;
 
 	/**
 	 * cache metody getFilesData
@@ -138,11 +144,11 @@ class LBoxForm
 	 * @param mixed $value
 	 * @throws LBoxException
 	 */
-	public function __set($name = "", $value = "") {
+	public function __set($name = "", $value = NULL) {
 		if (strlen($name) < 1) {
 			throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
 		}
-		if (!$value) {
+		if (is_null($value)) {
 			throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
 		}
 		$this->params[$name]	= $value;
@@ -465,6 +471,19 @@ class LBoxForm
 	}
 
 	/**
+	 * prepina doNotReload kontrolu
+	 * @param bool $value
+	 */
+	public function setDoNotReload($value	= true) {
+		try {
+			$this->doNotReload	= $value;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * Vraci, jestli je zapnut antispam
 	 * @return bool
 	 */
@@ -525,9 +544,11 @@ class LBoxForm
 				$control->commitProcessSuccess();
 			}
 			// nastavit do session uspesne odeslani a reloadovat stranku
-			if (strtolower($this->method)	== "post") {
-				$_SESSION["LBox"]["Forms"][$this->getName()]["succes"]	= true;
-				LBoxFront::reload();
+			if (!$this->doNotReload) {
+				if (strtolower($this->method)	== "post") {
+					$_SESSION["LBox"]["Forms"][$this->getName()]["succes"]	= true;
+					LBoxFront::reload();
+				}
 			}
 		}
 		catch (Exception $e) {

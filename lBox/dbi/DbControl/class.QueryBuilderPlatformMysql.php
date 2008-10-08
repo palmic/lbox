@@ -193,7 +193,9 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 		foreach ($where->getWheres() as $subWhereSet) {
 			$subWhere		= $subWhereSet["where"];
 			$subWhereGlue	= $subWhereSet["glue"] > 0 ? "OR" : "AND";
-			$subWhereString	= $this->getWhereStringByObject($subWhere, true);
+			if (strlen($subWhereString	= $this->getWhereStringByObject($subWhere, true)) < 1) {
+				continue;
+			}
 			$whereString	= strlen($whereString) > 0 ? "($whereString) $subWhereGlue " : "";
 			$whereString 	.= "($subWhereString)";
 		}

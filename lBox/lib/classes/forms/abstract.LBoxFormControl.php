@@ -83,7 +83,13 @@ abstract class LBoxFormControl
 	 * pole volne definovatelnych parametru
 	 * @var array
 	 */
-	protected $params	= array();
+	protected $params		= array();
+
+	/**
+	 * pokud je nastavena setterem na true, hodnota controlu se pomoci session udrzi i pres reload
+	 * @var bool
+	 */
+	protected $isPersist	= false;
 	
 	/**
 	 *
@@ -316,6 +322,19 @@ abstract class LBoxFormControl
 	}
 
 	/**
+	 * isPersist setter
+	 * @param bool $value
+	 */
+	public function setPersist($value = true) {
+		try {
+			$this->isPersist	= (bool)$value;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * @return string
 	 *
 	 */
@@ -416,6 +435,17 @@ abstract class LBoxFormControl
 	 * @return string
 	 */
 	public function getDefault() {
+		if ($this->isPersist) {
+			if (strlen($_SESSION["LBox"]	["Forms"][$this->form->getName()]
+								["Controls"][$this->getName()]["value"]) > 0) {
+									$defaultValue	= $_SESSION["LBox"]	["Forms"][$this->form->getName()]
+																		["Controls"][$this->getName()]["value"][LBoxFront::getPage()->url];
+									// smazani hodnoty
+									$_SESSION["LBox"]	["Forms"][$this->form->getName()]
+														["Controls"][$this->getName()]["value"][LBoxFront::getPage()->url] = "";
+									return $defaultValue;
+								}
+		}
 		return $this->default;
 	}
 
@@ -455,6 +485,9 @@ abstract class LBoxFormControl
 			foreach ($this->validators as $validator) {
 				$validator->commitProcessSuccess();
 			}
+			// uchovat hodnotu pro pripadnou persistenci
+			$_SESSION["LBox"]	["Forms"][$this->form->getName()]
+								["Controls"][$this->getName()]["value"][LBoxFront::getPage()->url]	= $this->getValue();
 		}
 		catch (Exception $e) {
 			throw $e;
