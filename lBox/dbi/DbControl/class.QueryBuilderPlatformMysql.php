@@ -174,7 +174,9 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 				$columnName		= $condition["column"];
 				$glue			= $condition["glue"] > 0 ? "OR" : "AND";
 				switch ($condition["comparison"]) {
-								case -3		: $comparisonValue	=" != ". $this->getValueWrapped($condition["value"]) .""; break;
+								case  -3 	: $comparisonValue	= strtoupper($this->getValueWrapped($condition["value"])) == "NULL"
+																		? " IS NOT NULL"
+																		: " != ". $this->getValueWrapped($condition["value"]) .""; break;
 								case -2		: $comparisonValue	=" < ". $this->getValueWrapped($condition["value"]) .""; break;
 								case -1		: $comparisonValue	=" <= ". $this->getValueWrapped($condition["value"]) .""; break;
 								case  0 	: $comparisonValue	= strtoupper($this->getValueWrapped($condition["value"])) == "NULL"
@@ -188,6 +190,7 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 								default		: throw new DbControlException("Ilegal comparison '". $condition["comparison"] ."'!");
 				$whereString	.= strlen($whereString) > 0 ? " $glue " : "";
 				$whereString	.= reset(self::getQuotesColumnName()) . $columnName . end(self::getQuotesColumnName()) . $comparisonValue;
+				}
 			}
 		}
 		foreach ($where->getWheres() as $subWhereSet) {
@@ -228,6 +231,16 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 		return $orderByString;
 	}
 
+	public function getValueFormatedDateTime($timeStamp	= 0) {
+		if (!is_int($timeStamp)) {
+			throw new DbControlException("Ilegal parameter timeStamp. Must be NOT-NULL integer.");
+		}
+		if ($timeStamp < 1) {
+			throw new DbControlException("Ilegal parameter timeStamp. Must be NOT-NULL integer.");
+		}
+		return date("Y-m-d H:i:s", $timeStamp);
+    }
+    
 	public function getQuotesDatabaseName() {
 		return array("`", "`");
 	}
