@@ -180,7 +180,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 	 * loads data from cache
 	 */
 	protected function loadFromCache() {
-		try {
+			try {
 			if (!$this->isCacheOn()) return;
 			if (!$this->isInCache()) return;
 			if ($this->isCacheSynchronized) return;
@@ -198,9 +198,10 @@ echo "<br />\n";*/
 					if ($key == "system_istree") {
 						continue;
 					}
-					$recordRef 		= new $itemType();
+					$recordRef 		= new $itemType($row[$idColName]);
 					$recordRef		->setIsTree($this->isTree());
 					foreach ($row as $colName => $colValue) {
+						if ($colName == $idColName) continue;
 						//XXX v pripade nacitani kolekce children vracenych metodou AbstractRecord::getChildren() se tu loaduje z DB isTree
 						//    je to proto, ze se sem tok dostane primo z construktoru jeste pred explicitnim setIsTree() z AbstractRecord
 						if (!$this->isTreeKey($colName)) {
