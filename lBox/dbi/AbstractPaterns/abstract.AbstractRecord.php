@@ -168,13 +168,8 @@ abstract class AbstractRecord implements Iterator
 			if (strlen($id) > 0) {
 					$this->params[$this->getClassVar("idColName")] = $id;
 			}
-			if ($this->isInCache()) {
-				$this->loadFromCache();
-			}
-			if (!$this->loaded) {
-				if ($this->isInDatabase()) {
-					$this->load();
-				}
+			if ($this->isInDatabase()) {
+				$this->load();
 			}
 		}
 		catch (Exception $e) {
@@ -338,7 +333,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 				$cacheName			= $this->getClassVar("tableName");
 			}
 			else {
-				$cacheName			= $this->getCacheFileName();
+				$cacheName			= $this->getCacheFileName();				
 			}
 			LBoxCacheAbstractRecord::getInstance($cacheName)->clearCache();
 		}

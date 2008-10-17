@@ -78,10 +78,6 @@ class DbMssql extends DbPlatform
             throw new DbControlException("Ilegal parameter query. Must be string.");
         }
         try {
-        	// v pripade vkladani musime zajistit povoleni vlozeni zaznamu s definovanym Primary key
-        	if (eregi("^INSERT INTO (\[[[:alnum:]]+\]) ", $query, $regs)) {
-        		NULL; // jen v pripade problemu nevyresitelnych nad DB enginem
-        	}
             if (!$result = @mssql_query($query, $this->getConnection())) {
                 $this->throwMssqlException("SQL query caused Error. Query: ". $query);
             }
