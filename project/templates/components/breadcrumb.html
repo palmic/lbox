@@ -6,6 +6,6 @@
            >Nazev stranky</a>
         <strong tal:CONTENT="node/headingBreadcrumb"
 				tal:condition="node/isCurrent">Nazev stranky</strong>
-	    <tal:block tal:condition="not: node/isCurrent">&raquo;</tal:block>
+	    <span tal:condition="not: node/isCurrent">&raquo;</span>
      </tal:block>
 </div>
