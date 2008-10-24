@@ -9,9 +9,11 @@ class LBoxExceptionForm extends LBoxException
 {
 	const CODE_FORM_DATA_INVALID			= 15101;
 	const CODE_FORM_CONTROL_DOESNOT_EXISTS	= 15102;
+	const CODE_FORM_DUPLICATE_FORMNAME		= 15103;
 	
 	const MSG_FORM_DATA_INVALID				= "Form data invalid";
 	const MSG_FORM_CONTROL_DOESNOT_EXISTS	= "Form data invalid";
+	const MSG_FORM_DUPLICATE_FORMNAME		= "This form name is already used";
 	
 	protected $formArray				= array();
 

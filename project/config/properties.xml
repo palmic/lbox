@@ -28,8 +28,9 @@
 	<property name="form_max_length_phone">20</property>
 	<property name="form_max_length_password">20</property>
 	<property name="form_max_length_www">20</property>
-	<property name="form_max_length_name">50</property>
-	<property name="form_max_length_surname">50</property>
+	<property name="form_max_length_name">20</property>
+	<property name="form_max_length_surname">20</property>
+	<property name="form_max_length_company">30</property>
 
 	<property name="paging_range">5</property>
 	
