@@ -410,7 +410,12 @@ abstract class LBoxFormControl
 				return $this->value;
 			}
 			if ($this->getForm()->wasSent()) {
-				$this->value	= $this->form->getSentDataByControlName($this->getName());
+				if ($this->isDisabled()) {
+					$this->value	= $this->getDefault();
+				}
+				else {
+					$this->value	= $this->form->getSentDataByControlName($this->getName());
+				}
 			}
 			else {
 				$this->value	= $this->getDefault();
