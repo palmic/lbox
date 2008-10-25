@@ -165,6 +165,9 @@ abstract class AbstractRecord implements Iterator
 	 */
 	public function __construct($id = NULL) {
 		try {
+			if (!is_scalar($id)) {
+				throw new LBoxException("You are trying to set not scalar value of ID column!");
+			}
 			if (strlen($id) > 0) {
 					$this->params[$this->getClassVar("idColName")] = $id;
 			}
