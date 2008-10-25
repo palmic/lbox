@@ -587,9 +587,12 @@ var_dump($this->getSQL() .": neni valid");*/
 
 				if ($this->isTree()) {
 					// we want count of all records (including subrecords in trees)
-					$whereCountAdd	= new QueryBuilderWhere();
-					$whereCountAdd	->addConditionColumn($pidColName, 0, 2);
-					$whereCount		->addWhere($whereCountAdd, 1);
+					$whereCountAdd = NULL;
+					if ((!$this->whereAdd instanceof QueryBuilderWhere) && (count($this->filter) < 1)) {
+						$whereCountAdd	= new QueryBuilderWhere();
+						$whereCountAdd	->addConditionColumn($pidColName, 0, 2);
+						$whereCount		->addWhere($whereCountAdd, 1);
+					}
 				}
 				$countSql	= $this->getQueryBuilder()->getSelectCount($tableName, $whereCount);
 				// call created SQL query for get count on db
