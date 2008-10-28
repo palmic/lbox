@@ -75,6 +75,9 @@ class LBoxFront extends LBox
 			// starting timer
 			LBoxTimer::getInstance();
 			
+			// init acces
+			AccesRecord::getInstance();
+			
 			$content		= self::getRequestContent();
 
 			echo $content;
