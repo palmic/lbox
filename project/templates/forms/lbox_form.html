@@ -2,14 +2,16 @@
 	<fieldset>
 		<legend tal:content="SELF/getLabel" />
 		<span class="info-required">Pole označená hvězdičkou jsou poviná</span>
-		<div class="controls">
-			<tal:block tal:repeat="control SELF/getControls">
-				<tal:block tal:condition="not: control/isSpamDefense">
-					<tal:block tal:condition="not: control/isSubControl" tal:content="structure control" />
-				</tal:block>
+		<tal:block tal:repeat="control SELF/getControls">
+			<tal:block tal:condition="not: control/isSpamDefense">
+				<tal:block tal:condition="not: control/isSubControl" tal:content="structure control" />
 			</tal:block>
-		</div>
-		<input class="submit" type="submit" name="${SELF/getName}[sent]" value="${SELF/getLabelSubmit}" />
+		</tal:block>
+		<input tal:condition="not: SELF/isSubForm" class="submit" type="submit" name="${SELF/getName}[sent]" value="${SELF/getLabelSubmit}" />
+		<tal:block tal:condition="SELF/isSubForm">
+			<input class="previous submit" type="submit" name="${SELF/getName}[previous]" value="předchozí" />
+			<input class="submit" type="submit" name="${SELF/getName}[sent]" value="další" />
+		</tal:block>
 	</fieldset>
 </form>
 <tal:block tal:content="structure SELF/getControlSpamDefense" />

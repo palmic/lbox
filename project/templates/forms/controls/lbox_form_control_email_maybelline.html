@@ -1,0 +1,4 @@
+<div tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
+	<label for="${id}"><span class="label">${SELF/getLabel} <tal:block tal:condition="SELF/isRequired">* </tal:block></span><span class="text"><input 	class="text" type="text" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]"
+			tal:attributes="value SELF/getValue | SELF/getDefault; maxlength SELF/getLengthMax | default; size SELF/getLengthMax | default" /></span></label>
+</div>

@@ -1,12 +1,9 @@
 <div tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
 	<label for="${id}"><span class="label">${SELF/getLabel} <tal:block tal:condition="SELF/isRequired">* </tal:block></span><input 	class="file" type="file" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]" /></label>
 	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
-		<tal:block tal:repeat="exception exceptions">
-			<div>vyhozena vyjimka validatoru:
-						<font style="background: #0000ff; color: #ffffff">${exception/getFile}</font>
-			cislo: 		<font style="background: #00ff00; color: #ffffff">${exception/getCode}</font>
-			s hlaskou: 	<font style="background: #ff0000; color: #ffffff">${exception/getMessage}</font>
-			</div>
-		</tal:block>
+		<div tal:condition="exists: exceptions/17001">Prosím vložte foto soutěžící</div>
+		<div tal:condition="exists: exceptions/16101">Upload fotky se nezdařil, prosíme kontaktujte zprávce webu</div>
+		<div tal:condition="exists: exceptions/17005">Uploadovaný soubor není foto</div>
+		<div tal:condition="exists: exceptions/17007">Název souboru není validní (diakritika není povolena)</div>
 	</div>
 </div>

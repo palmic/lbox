@@ -418,7 +418,11 @@ abstract class LBoxFormControl
 				}
 			}
 			else {
-				$this->value	= $this->getDefault();
+				if ($this->form->isSubForm()) {
+					$dataCurrentStep = $this->form->getFormMultiple()->getFormsDataCurrentStep();
+					$this->value	= $dataCurrentStep[$this->getName()];
+				}
+				$this->value	= strlen($this->value) > 0 ? $this->value : $this->getDefault();
 			}
 			return $this->value;
 		}

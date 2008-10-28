@@ -1,0 +1,16 @@
+<div class="control" tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
+	<label for="${id}" tal:condition="SELF/isRequired" class="required"><span class="label">${SELF/getLabel}
+		</span><x metal:use-macro="control_select" />
+	</label>
+	<label for="${id}" tal:condition="not: SELF/isRequired"><span class="label">${SELF/getLabel}
+		</span><x metal:use-macro="control_select" />
+	</label>
+	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
+		<div tal:condition="exists: exceptions/17008">Zadaný věk nevyhovuje nastaveným omezením</div>
+	</div>
+</div>
+<tal:block metal:define-macro="control_select">
+  <select tal:define="options SELF/getOptions" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]">
+      <option tal:repeat="option options" tal:attributes="value option/getValue; selected option/getSelected | default" tal:content="structure option/getLabel" />
+  </select>
+</tal:block>

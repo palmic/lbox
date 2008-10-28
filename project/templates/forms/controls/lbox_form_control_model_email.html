@@ -4,6 +4,6 @@
 	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
 		<div tal:condition="exists: exceptions/17001">Prosím vyplňte email</div>
 		<div tal:condition="exists: exceptions/17003">Emailová adresa není validní</div>
-		<div tal:condition="exists: exceptions/18901">Tento email již je zaregistrován</div>
+		<div tal:condition="exists: exceptions/99001">Soutěžící s tímto emailem je již v systému</div>
 	</div>
 </div>

@@ -1,10 +1,9 @@
-<div tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
-	<label for="${id}"><span class="label">${SELF/getLabel}
-		<tal:block tal:condition="SELF/isRequired">* </tal:block></span>
-		<tal:block tal:repeat="option SELF/getOptions">
+<div tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}" id="${id}-container">
+	<div id="${id}-label"><span class="label">${SELF/getLabel}</span>
+		<div class="options"><tal:block tal:repeat="option SELF/getOptions">
 			<x metal:use-macro="control_checkbox" />
-		</tal:block>
-	</label>
+		</tal:block></div>
+	</div>
 	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
 		<tal:block tal:repeat="exception exceptions">
 			<div>vyhozena vyjimka validatoru:
@@ -16,6 +15,6 @@
 	</div>
 </div>
 <tal:block metal:define-macro="control_checkbox" tal:define="option option">
-	<label class="choose-more" for="${id}-${option/getValue}"><input 	class="checkbox" id="${id}-${option/getValue}" name="${SELF/getForm/getName}[${SELF/getName}][${repeat/option/index}]" type="checkbox"
+	<label class="choose-more" for="${id}-${option/getValue}"><input 	id="${id}-${option/getValue}" class="checkbox" name="${SELF/getForm/getName}[${SELF/getName}][${repeat/option/index}]" type="checkbox"
 			tal:attributes="value option/getValue | SELF/getDefault; checked option/getChecked | default" /><span class="option-label">${option/getLabel}</span></label>
 </tal:block>

@@ -1,7 +1,6 @@
 <form id="frm-${SELF/getName}" method="${SELF/getMethod}" enctype="multipart/form-data" action="">
 	<fieldset>
-		<legend tal:content="SELF/getLabel" />
-		<span class="legend" tal:content="SELF/getLabel" />
+		<legend>Přidat soutěžící</legend>
 		<span class="info-required">Pole označená hvězdičkou jsou poviná</span>
 		<tal:block tal:repeat="control SELF/getControls">
 			<tal:block tal:condition="not: control/isSpamDefense">
@@ -12,4 +11,4 @@
 	</fieldset>
 </form>
 <tal:block tal:content="structure SELF/getControlSpamDefense" />
-<p tal:condition="SELF/wasSentSucces">Formulář byl úspěšně odeslán. Děkujeme.</p>
+<p tal:condition="SELF/wasSentSucces">Soutěžící byla úspěšně uložena.</p>
