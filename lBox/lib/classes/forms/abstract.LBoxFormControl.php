@@ -149,9 +149,6 @@ abstract class LBoxFormControl
 		if (strlen($name) < 1) {
 			throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
 		}
-		if (!$value) {
-			throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
-		}
 		$this->params[$name]	= $value;
 	}
 	
@@ -411,7 +408,7 @@ abstract class LBoxFormControl
 				return $this->value;
 			}
 			if ($this->form->isSubForm()) {
-				$dataCurrentStep = $this->form->getFormMultiple()->getFormsDataCurrentStep();
+				$dataCurrentStep = $this->form->getFormMultistep()->getFormsDataCurrentStep();
 				$this->value	= $dataCurrentStep[$this->getName()];
 			}
 			if ($this->getForm()->wasSent()) {

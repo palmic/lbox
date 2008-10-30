@@ -87,10 +87,10 @@ class LBoxForm
 	protected $params	= array();
 	
 	/**
-	 * master formmultiple if this is subform
-	 * @var LBoxFormMultiple
+	 * master formmultistep if this is subform
+	 * @var LBoxFormMultistep
 	 */
-	protected $formMultiple	= false;
+	protected $formMultistep	= false;
 	
 	/**
 	 *
@@ -169,8 +169,8 @@ class LBoxForm
 			if (array_key_exists($control->getName(), $this->controls)) {
 				throw new LBoxExceptionForm($control->getName() .": ". LBoxExceptionForm::MSG_FORM_CONTROL_DOES_EXISTS, LBoxExceptionForm::CODE_FORM_CONTROL_DOES_EXISTS);
 			}
-			// z multiple control prebereme jeho subcontrols
-			if ($control instanceof LBoxFormControlMultiple) {
+			// z multistep control prebereme jeho subcontrols
+			if ($control instanceof LBoxFormControlMultistep) {
 				foreach ($control->getControls() as $subControl) {
 					if (!array_key_exists($subControl->getName(), $this->controls)) {
 						$this->controls[$subControl->getName()]	= $subControl;
@@ -604,18 +604,18 @@ class LBoxForm
 	}
 	
 	/**
-	 * @param LBoxFormMultiple $form
+	 * @param LBoxFormMultistep $form
 	 */
-	public function setFormMultiple(LBoxFormMultiple $form) {
-		$this->formMultiple	= $form;
+	public function setFormMultistep(LBoxFormMultistep $form) {
+		$this->formMultistep	= $form;
 		$this->method		= "post";
 	}
 
 	/**
-	 * @return LBoxFormMultiple
+	 * @return LBoxFormMultistep
 	 */
-	public function getFormMultiple() {
-		return $this->formMultiple;
+	public function getFormMultistep() {
+		return $this->formMultistep;
 	}
 	
 	/**
@@ -623,7 +623,7 @@ class LBoxForm
 	 * @return bool
 	 */
 	public function isSubForm() {
-		return ($this->formMultiple instanceof LBoxForm);
+		return ($this->formMultistep instanceof LBoxForm);
 	}
 	
 	/**
@@ -633,7 +633,7 @@ class LBoxForm
 		if (!$this->isSubForm()) {
 			return false;
 		}
-		return (reset($this->getFormMultiple()->getFormsSub())->getName() == $this->getName());
+		return (reset($this->getFormMultistep()->getFormsSub())->getName() == $this->getName());
 	}
 	
 	/**
@@ -643,7 +643,7 @@ class LBoxForm
 		if (!$this->isSubForm()) {
 			return false;
 		}
-		return (end($this->getFormMultiple()->getFormsSub())->getName() == $this->getName());
+		return (end($this->getFormMultistep()->getFormsSub())->getName() == $this->getName());
 	}
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-class LBoxFormMultiple extends LBoxForm
+class LBoxFormMultistep extends LBoxForm
 {
 	/**
 	 * subforms array
@@ -10,7 +10,7 @@ class LBoxFormMultiple extends LBoxForm
 	/**
 	 * @var string
 	 */
-	protected $filenameTemplate = "lbox_form_multiple.html";
+	protected $filenameTemplate = "lbox_form_multistep.html";
 
 	/**
 	 * @param string name
@@ -98,7 +98,7 @@ class LBoxFormMultiple extends LBoxForm
 				}
 			}
 			$this->subForms[count($this->subForms)+1]	= $form;
-			$form->setFormMultiple($this);
+			$form->setFormMultistep($this);
 		}
 		catch (Exception $e) {
 			throw $e;
