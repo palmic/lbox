@@ -9,7 +9,7 @@
 		</tal:block>
 		<input tal:condition="not: SELF/isSubForm" class="submit" type="submit" name="${SELF/getName}[sent]" value="${SELF/getLabelSubmit}" />
 		<tal:block tal:condition="SELF/isSubForm">
-			<input tal:condition="not: SELF/isFirstSubForm" class="previous submit" type="submit" name="${SELF/getFormMultiple/getName}[previous]" value="předchozí" />
+			<input tal:condition="not: SELF/isFirstSubForm" class="previous submit" type="submit" name="${SELF/getFormMultistep/getName}[previous]" value="předchozí" />
 			<input tal:condition="not: SELF/isLastSubForm" class="submit" type="submit" name="${SELF/getName}[sent]" value="další" />
 			<input tal:condition="SELF/isLastSubForm" class="submit" type="submit" name="${SELF/getName}[sent]" value="dokončit" />
 		</tal:block>
