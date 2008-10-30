@@ -256,8 +256,22 @@ class LBoxFormMultistep extends LBoxForm
 	 */
 	public function getFormsDataCurrentStep() {
 		try {
+			return $this->getFormsDataStep($this->getStepCurrent(), true);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * vraci formularova data konkretniho kroku
+	 * @param int $step
+	 * @return array
+	 */
+	public function getFormsDataStep($step = 0) {
+		try {
 			$formsData	= $this->getFormsData();
-			return $formsData[$this->getStepCurrent()];
+			return $formsData[$step];
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -275,6 +289,23 @@ class LBoxFormMultistep extends LBoxForm
 				$out[$step]	= $dataSession["data"];
 			}
 			return $out;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * vraci data konkretniho control v konkretnim kroku
+	 * @return array
+	 */
+	public function getFormsDataStepControl($step = 0, $controlName = "") {
+		try {
+			if (strlen($controlName) < 1) {
+				throw new LBoxExceptionForm(LBoxExceptionForm::MSG_PARAM_STRING_NOTNULL, LBoxExceptionForm::CODE_BAD_PARAM);
+			}
+			$stepData	= (array)$this->getFormsDataStep($step);
+			return $stepData[$controlName];
 		}
 		catch (Exception $e) {
 			throw $e;

@@ -2,8 +2,7 @@
 	<label for="${id}"><span class="label">${SELF/getLabel} <tal:block tal:condition="SELF/isRequired">* </tal:block></span><input 	class="text" type="text" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]"
 			tal:attributes="value SELF/getValue | SELF/getDefault; maxlength SELF/getLengthMax | default; size SELF/getLengthMax | default" /></label>
 	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
-		<div tal:condition="exists: exceptions/17001">Prosím vyplňte email</div>
-		<div tal:condition="exists: exceptions/17003">Emailová adresa není validní</div>
-		<div tal:condition="exists: exceptions/99001">Soutěžící s tímto emailem je již v systému</div>
+		<div tal:condition="exists: exceptions/17001">Prosím vyplňte název</div>
+		<div tal:condition="exists: exceptions/99005">Tento název party je již použit</div>
 	</div>
 </div>

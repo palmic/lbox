@@ -170,7 +170,7 @@ class LBoxForm
 				throw new LBoxExceptionForm($control->getName() .": ". LBoxExceptionForm::MSG_FORM_CONTROL_DOES_EXISTS, LBoxExceptionForm::CODE_FORM_CONTROL_DOES_EXISTS);
 			}
 			// z multistep control prebereme jeho subcontrols
-			if ($control instanceof LBoxFormControlMultistep) {
+			if ($control instanceof LBoxFormControlMultiple) {
 				foreach ($control->getControls() as $subControl) {
 					if (!array_key_exists($subControl->getName(), $this->controls)) {
 						$this->controls[$subControl->getName()]	= $subControl;

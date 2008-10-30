@@ -16,7 +16,7 @@ class LBoxExceptionForm extends LBoxException
 	const CODE_FORM_FORM_STEP_DOES_NOT_EXISTS			= 15107;
 	
 	const MSG_FORM_DATA_INVALID							= "Form data invalid";
-	const MSG_FORM_CONTROL_DOESNOT_EXISTS				= "Form data invalid";
+	const MSG_FORM_CONTROL_DOESNOT_EXISTS				= "Form control does not exists";
 	const MSG_FORM_DUPLICATE_FORMNAME					= "This form name is already used";
 	const MSG_FORM_PROCESSOR_DOESNOT_EXISTS				= "No processor defined";
 	const MSG_FORM_FORM_SUB_NOT_SET						= "You are trying to use multiform with no sub-form set at current step";
