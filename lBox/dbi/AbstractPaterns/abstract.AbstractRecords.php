@@ -120,7 +120,7 @@ abstract class AbstractRecords implements Iterator
 	public function __construct($filter = false, $order = false, $limit = false, QueryBuilderWhere $whereAdd = NULL) {
 		if (is_array($filter)) {
 			foreach($filter as $f_key => $f_value) {
-				if (empty($f_value) && (!is_string($f_value))) {
+				if (empty($f_value) && (!is_string($f_value) && ($f_value !== 0))) {
 					throw new LBoxException("You inserted empty filter parameter '$f_key'! ");
 				}
 			}
