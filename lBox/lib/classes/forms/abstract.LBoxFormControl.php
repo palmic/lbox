@@ -419,6 +419,9 @@ abstract class LBoxFormControl
 					$this->value	= $this->form->getSentDataByControlName($this->getName());
 				}
 			}
+			else {
+				$this->value = $this->getDefault();
+			}
 			return $this->value;
 		}
 		catch (Exception $e) {
