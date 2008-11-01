@@ -258,7 +258,12 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 	}
 
 	protected function escapeString($string = "") {
-		return mysql_escape_string($string);
+		if (ini_get("magic_quotes_gpc") == 1 || strtolower(ini_get("magic_quotes_gpc")) == "on") {
+			return $string;
+		}
+		else {
+			return mysql_escape_string($string);
+		}
 	}
 }
 ?>
