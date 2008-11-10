@@ -78,15 +78,7 @@ class DbMssql extends DbPlatform
             throw new DbControlException("Ilegal parameter query. Must be string.");
         }
         try {
-        	$result = @mssql_query($query, $this->getConnection());
-			// v pripade vkladani musime zajistit povoleni vlozeni zaznamu s definovanym Primary key
-            if (!$result) {
-	            if (eregi("^INSERT INTO (\[[[:alnum:]_]+\]) ", $query, $regs)) {
-					@mssql_query("SET IDENTITY_INSERT ". $regs[1] ." ON", $this->getConnection());
-					$result	= @mssql_query($query, $this->getConnection());
-				}
-            }
-            if (!$result) {
+            if (!$result = @mssql_query($query, $this->getConnection())) {
                 $this->throwMssqlException("SQL query caused Error. Query: ". $query);
             }
         }

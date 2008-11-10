@@ -11,5 +11,7 @@ class AccesViewersUniqueRecord extends AbstractRecordLBox
 	public static $itemsType 		= "AccesViewersUniqueRecords";
 	public static $tableName    	= "accesViewersUnique";
 	public static $idColName    	= "ip";
+
+	public static $dependingRecords	= array("");
 }
 ?>

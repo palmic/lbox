@@ -31,7 +31,7 @@ class LBoxConfigManagerProperties extends LBoxConfigManager
 		catch (Exception $e) {
 			throw $e;
 		}
-	}
+	}	
 
 	/**
 	 * getter config vlastnosti by name
@@ -61,7 +61,7 @@ class LBoxConfigManagerProperties extends LBoxConfigManager
 	 */
 	public static function getPropertyContentByName($name = "") {
 		try {
-			return self::getValueParsed(self::getInstance()->getPropertyByName($name)->getContent());
+			return self::getInstance()->getPropertyByName($name)->getContent();
 		}
 		catch (Exception $e) {
 			throw $e;

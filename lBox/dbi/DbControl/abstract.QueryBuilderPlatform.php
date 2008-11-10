@@ -83,12 +83,6 @@ abstract class QueryBuilderPlatform
 	public abstract function getSelectMaxColumns($table, $what = array(), QueryBuilderWhere $where = NULL, $groupBy = array(), $orderBy = array());
     
 	/**
-	 * vraci datum zformatovane podle standardniho datetime typu konkretni databaze
-	 * @param int $timeStamp
-	 */
-	public abstract function getValueFormatedDateTime($timeStamp	= 0);
-    
-	/**
      * validuje hodnotu podle syntaxe konkretniho DB enginu
      * @param mixed $value
      * @return mixed
@@ -104,12 +98,6 @@ abstract class QueryBuilderPlatform
 			   break;*/
 			case strtoupper($value) == "NULL":
 					$out	= $value;
-				break;
-			case $value === FALSE:
-					$out	= "FALSE";
-				break;
-			case $value === TRUE:
-					$out	= "TRUE";
 				break;
 			default:
 				$out	= reset($this->getQuotesValue()) . $this->escapeString($value) . end($this->getQuotesValue());

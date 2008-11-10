@@ -25,7 +25,7 @@ abstract class LBoxConfigManager
 	 * @throws LBoxExceptionConfig
 	 */
 	protected function getNodeByParam($paramName = "", $paramValue = "") {
-		try {
+		try {			
 			if (strlen($paramName) < 1) {
 				throw new LBoxExceptionConfig("Bad param \$paramName, ". LBoxExceptionConfig::MSG_PARAM_STRING_NOTNULL,
 				LBoxExceptionConfig::CODE_BAD_PARAM);
@@ -33,7 +33,7 @@ abstract class LBoxConfigManager
 			if (strlen($paramValue) < 1) {
 				throw new LBoxExceptionConfig("Bad param \$paramValue, ". LBoxExceptionConfig::MSG_PARAM_STRING_NOTNULL,
 				LBoxExceptionConfig::CODE_BAD_PARAM);
-			}
+			}		
 			return $this->findNodeByParam($paramName, $paramValue, $this->getConfigInstance()->getRootIterator());
 		}
 		catch (Exception $e) {
@@ -49,7 +49,7 @@ abstract class LBoxConfigManager
 	 * @throws LBoxExceptionConfig
 	 */
 	protected function findNodeByParam($paramName = "", $paramValue = "", LBoxIteratorConfig $in) {
-		try {
+		try {			
 			if (strlen($paramName) < 1) {
 				throw new LBoxExceptionConfig("Bad param \$paramName, ". LBoxExceptionConfig::MSG_PARAM_STRING_NOTNULL,
 				LBoxExceptionConfig::CODE_BAD_PARAM);
@@ -97,7 +97,7 @@ abstract class LBoxConfigManager
 	 */
 	protected function getConfigInstance() {
 		if (strlen($className = $this->classNameConfig) < 1) {
-			throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_ABSTRACT_CLASSNAME_NOT_DEFINED,
+			throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_ABSTRACT_CLASSNAME_NOT_DEFINED,			
 			LBoxExceptionConfig::CODE_ABSTRACT_CLASSNAME_NOT_DEFINED);
 		}
 		$instance	= eval("return $className::getInstance();");
@@ -105,22 +105,6 @@ abstract class LBoxConfigManager
 			throw new LBoxExceptionConfig("$className class ". LBoxExceptionConfig::MSG_CLASS_NOT_CONFIG, LBoxExceptionConfig::CODE_CLASS_NOT_CONFIG);
 		}
 		return $instance;
-	}
-	
-	/**
-	 * preparseruje hodnotu na pouzite standardni metaelementy
-	 * @param string $value
-	 * @return string
-	 */
-	protected static function getValueParsed($value = "") {
-		try {
-			$value	= str_replace("\$project", 	LBOX_PATH_PROJECT, $value);
-			//$value	= str_replace("\$system", 	LBOX_PATH_CORE, $value);
-			return $value;
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
 	}
 }
 ?>

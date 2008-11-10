@@ -62,18 +62,5 @@ class LBoxFormControlBool extends LBoxFormControl
 			throw $e;
 		}
 	}
-
-	/**
-	 * pretizena o force bool
-	 * @param $value
-	 */
-	public function setValue($value = NULL) {
-		try {
-			parent::setValue((bool)$value);
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
 }
 ?>

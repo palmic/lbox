@@ -7,21 +7,9 @@
 */
 class LBoxExceptionForm extends LBoxException
 {
-	const CODE_FORM_DATA_INVALID						= 15101;
-	const CODE_FORM_CONTROL_DOESNOT_EXISTS				= 15102;
-	const CODE_FORM_DUPLICATE_FORMNAME					= 15103;
-	const CODE_FORM_PROCESSOR_DOESNOT_EXISTS			= 15104;
-	const CODE_FORM_FORM_SUB_NOT_SET					= 15105;
-	const CODE_FORM_FORM_SUB_ALREADY_SET_BY_NAME		= 15106;
-	const CODE_FORM_FORM_STEP_DOES_NOT_EXISTS			= 15107;
+	const CODE_FORM_DATA_INVALID		= 15101;
 	
-	const MSG_FORM_DATA_INVALID							= "Form data invalid";
-	const MSG_FORM_CONTROL_DOESNOT_EXISTS				= "Form control does not exists";
-	const MSG_FORM_DUPLICATE_FORMNAME					= "This form name is already used";
-	const MSG_FORM_PROCESSOR_DOESNOT_EXISTS				= "No processor defined";
-	const MSG_FORM_FORM_SUB_NOT_SET						= "You are trying to use multiform with no sub-form set at current step";
-	const MSG_FORM_FORM_SUB_ALREADY_SET_BY_NAME			= "Subform with this name is already set in this multiple form";
-	const MSG_FORM_FORM_STEP_DOES_NOT_EXISTS			= "This step does not exists in form multistep";
+	const MSG_FORM_DATA_INVALID			= "Form data invalid";
 	
 	protected $formArray				= array();
 

@@ -6,7 +6,7 @@
  * @version 1.0
  * @since 2007-12-08
  */
-class PageDefault extends LBoxPage
+class PageDefault extends PageMaybelline
 {
 	protected function executeStart() {
 		try {
@@ -20,6 +20,7 @@ class PageDefault extends LBoxPage
 	protected function executePrepend(PHPTAL $TAL) {
 		//DbControl::$debug = true;
 		try {
+			parent::executePrepend($TAL);
 		}
 		catch (Exception $e) {
 			throw $e;

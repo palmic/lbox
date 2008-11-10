@@ -291,7 +291,6 @@ echo "<br />\n";*/
 				$recordRef->setIsTree($this->isTree());
 				$recordRef->setSynchronized(true);
 				$recordRef->setPasswordChanged(false);
-
 				return true;
 			}
 		}
@@ -337,6 +336,12 @@ echo "<br />\n";*/
 	}
 
 	/**
+	 * last key stored into cache
+	 * @var int
+	 */
+	protected $cacheLastKeyStored	= 0;
+	
+	/**
 	 * adds record's data to cache
 	 * @param AbstractRecord $record
 	 */
@@ -344,11 +349,12 @@ echo "<br />\n";*/
 		try {
 			if (!$this->isCacheOn()) return;
 //var_dump("pridavam do cache ". $this->getCacheFileName() . " $id");
-			$itemType 			= $this->getClassVar("itemType");
-			$idColName  		= eval("return $itemType::\$idColName;");
-			$id					= $data[$idColName];
+			$itemType 					= $this->getClassVar("itemType");
+			$idColName  				= eval("return $itemType::\$idColName;");
+			$id							= $this->cacheLastKeyStored+1;
 			LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->$id	= $data;
 			$this->isCacheSynchronized	= false;
+			$this->cacheLastKeyStored	++;
 		}
 		catch (Exception $e) {
 			throw $e;

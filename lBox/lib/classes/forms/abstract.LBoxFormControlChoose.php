@@ -57,21 +57,5 @@ abstract class LBoxFormControlChoose extends LBoxFormControl
 			throw $e;
 		}
 	}
-
-	/**
-	 * pretizena o kontrolu, jestli byla hodnota opravdu zadana v options
-	 * @param $value
-	 */
-	public function setValue($value = NULL) {
-		try {
-			if (!array_key_exists($value, $this->options)) {
-				throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_FORM_CONTROL_VALUE_NOT_OPTION, LBoxExceptionFormControl::CODE_FORM_CONTROL_VALUE_NOT_OPTION);
-			}
-			parent::setValue($value);
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
 }
 ?>

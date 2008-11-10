@@ -83,13 +83,7 @@ abstract class LBoxFormControl
 	 * pole volne definovatelnych parametru
 	 * @var array
 	 */
-	protected $params		= array();
-
-	/**
-	 * pokud je nastavena setterem na true, hodnota controlu se pomoci session udrzi i pres reload
-	 * @var bool
-	 */
-	protected $isPersist	= false;
+	protected $params	= array();
 	
 	/**
 	 *
@@ -147,6 +141,9 @@ abstract class LBoxFormControl
 	 */
 	public function __set($name = "", $value = "") {
 		if (strlen($name) < 1) {
+			throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
+		}
+		if (!$value) {
 			throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
 		}
 		$this->params[$name]	= $value;
@@ -319,19 +316,6 @@ abstract class LBoxFormControl
 	}
 
 	/**
-	 * isPersist setter
-	 * @param bool $value
-	 */
-	public function setPersist($value = true) {
-		try {
-			$this->isPersist	= (bool)$value;
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-
-	/**
 	 * @return string
 	 *
 	 */
@@ -404,40 +388,19 @@ abstract class LBoxFormControl
 	public function getValue() {
 		try {
 			if ($this->value !== NULL) {
-			//if ($this->value) {
 				return $this->value;
 			}
-			if ($this->form->isSubForm()) {
-				$dataCurrentStep = $this->form->getFormMultistep()->getFormsDataCurrentStep();
-				$this->value	= $dataCurrentStep[$this->getName()];
-			}
 			if ($this->getForm()->wasSent()) {
-				if ($this->isDisabled()) {
-					$this->value	= $this->getDefault();
-				}
-				else {
-					$this->value	= $this->form->getSentDataByControlName($this->getName());
-				}
+				$this->value	= $this->form->getSentDataByControlName($this->getName());
 			}
 			else {
-				$this->value = $this->getDefault();
+				$this->value	= $this->getDefault();
 			}
 			return $this->value;
 		}
 		catch (Exception $e) {
 			throw $e;
 		}
-	}
-
-	/**
-	 * externi setter na hodnotu pro multistep form
-	 * @param value
-	 */
-	public function setValue($value = NULL) {
-		if ($value === NULL) {
-			throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
-		}
-		$this->value	= $value;
 	}
 
 	/**
@@ -453,17 +416,6 @@ abstract class LBoxFormControl
 	 * @return string
 	 */
 	public function getDefault() {
-		if ($this->isPersist) {
-			if (strlen($_SESSION["LBox"]	["Forms"][$this->form->getName()]
-								["Controls"][$this->getName()]["value"]) > 0) {
-									$defaultValue	= $_SESSION["LBox"]	["Forms"][$this->form->getName()]
-																		["Controls"][$this->getName()]["value"][LBoxFront::getPage()->url];
-									// smazani hodnoty
-									$_SESSION["LBox"]	["Forms"][$this->form->getName()]
-														["Controls"][$this->getName()]["value"][LBoxFront::getPage()->url] = "";
-									return $defaultValue;
-								}
-		}
 		return $this->default;
 	}
 
@@ -503,9 +455,6 @@ abstract class LBoxFormControl
 			foreach ($this->validators as $validator) {
 				$validator->commitProcessSuccess();
 			}
-			// uchovat hodnotu pro pripadnou persistenci
-			$_SESSION["LBox"]	["Forms"][$this->form->getName()]
-								["Controls"][$this->getName()]["value"][LBoxFront::getPage()->url]	= $this->getValue();
 		}
 		catch (Exception $e) {
 			throw $e;

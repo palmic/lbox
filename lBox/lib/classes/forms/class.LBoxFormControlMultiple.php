@@ -84,7 +84,6 @@ class LBoxFormControlMultiple extends LBoxFormControl
 					$this->form->addControl($this);
 				}
 			}
-			$control->setPersist($this->isPersist);
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -160,22 +159,6 @@ class LBoxFormControlMultiple extends LBoxFormControl
 			$this->processed	= true;
 			if 		($controlInvalid) 	return false;
 			else						return (count($this->exceptionsValidations) < 1);
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-	
-	/**
-	 * logic adapter to subcontrols
-	 * @param bool $value
-	 */
-	public function setPersist($value = true) {
-		try {
-			$this->isPersist	= (bool)$value;
-			foreach ($this->controls as $control) {
-				$control->setPersist($value);
-			}
 		}
 		catch (Exception $e) {
 			throw $e;
