@@ -130,7 +130,7 @@ abstract class AbstractRecords implements Iterator
 		$this->order           		= $order;
 		$this->limit           		= $limit;
 		$this->whereAdd				= $whereAdd;
-		$this->loadFromCache();
+		//$this->loadFromCache();
 		reset($this->records);
 	}
 
@@ -154,6 +154,12 @@ abstract class AbstractRecords implements Iterator
 	 * @var bool
 	 */
 	protected $isCacheOn;
+	
+	/**
+	 * cached data var
+	 * @var array
+	 */
+	protected $cacheData;
 	
 	/**
 	 * return true if record is cached
@@ -190,7 +196,7 @@ echo "<br />\n";*/
 			$itemType 		= $this->getClassVar("itemType");
 			$className		= get_class($this);
 			$idColName  	= eval("return $itemType::\$idColName;");
-			if (count($data = LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->getData()) > 0) {
+			if (count($data = $this->getCacheData()) > 0) {
 				if (array_key_exists("system_istree", $data)) {
 					self::$isTree[$className]	= (bool)$data["system_istree"];
 				}
@@ -224,6 +230,86 @@ echo count($this->records) ."<hr />\n\n";*/
 				$this->isCacheSynchronized	= true;
 				$this->doNotLoad			= true;
 			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * posledni key precteny z cache
+	 * @var int
+	 */
+	protected $cacheLastKey	= 0;
+	
+	/**
+	 * description here
+	 * @return string
+	 */
+	protected function loadNextFromCache() {
+		try {
+			if (!$this->isCacheOn()) 		return;
+			if (!$this->isInCache()) 		return;
+			
+			if ($this->isCacheSynchronized) return true;
+/*$sql	= $this->getSQL();
+var_dump("loaduju kolekci z cache ". $this->getSQL() . " [". $this->getCacheFileName() ."]");
+echo "<br />\n";*/
+			$itemType 		= $this->getClassVar("itemType");
+			$className		= get_class($this);
+			$idColName  	= eval("return $itemType::\$idColName;");
+			if (count($data = $this->getCacheData()) > 0) {
+				if ((!array_key_exists($className, self::$isTree)) || !is_bool(self::$isTree[$className])) {
+					if (array_key_exists("system_istree", $data)) {
+						self::$isTree[$className]	= (bool)$data["system_istree"];
+					}
+				}
+				$this->cacheLastKey		++;
+				if (array_key_exists($this->cacheLastKey, $data)) {
+					$recordData				= $data[$this->cacheLastKey];
+				}
+				else {
+					// end of cycle
+					$this->isCacheSynchronized	= true;
+					$this->doNotLoad			= true;
+					return false;
+				}
+
+				$recordRef 				= new $itemType($recordData[$idColName]);
+				foreach ($recordData as $colName => $colValue) {
+					if ($colName == $idColName) continue;
+					if (!$this->isTreeKey($colName)) {
+						$recordRef->$colName = $colValue;
+					}
+					else {
+						$recordRef->setTreeKey($colName, $colValue);
+					}
+				}
+				array_push($this->records, $recordRef);
+	
+				// set synchronized-with-db = true to optimize performance (Record shall load data again otherwise)
+				$recordRef->setIsTree($this->isTree());
+				$recordRef->setSynchronized(true);
+				$recordRef->setPasswordChanged(false);
+
+				return true;
+			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * cache data getter
+	 * @return array
+	 */
+	protected function getCacheData() {
+		try {
+			if (count($this->cacheData) > 0) {
+				return $this->cacheData;
+			}
+			return $this->cacheData = LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->getData();
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -520,6 +606,9 @@ var_dump($this->getSQL() .": neni valid");*/
 		try {
 			if ($this->doNotLoad) {
 				return false;
+			}
+			if (is_bool($returnedCache = $this->loadNextFromCache())) {
+				return $returnedCache;
 			}
 			if (!$this->getDbResult()->next()) {
 				return false;

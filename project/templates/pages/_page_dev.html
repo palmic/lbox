@@ -7,10 +7,8 @@
 	</head>
     <body>
         <h1 tal:content="SELF/page/heading" />
-        <p>
-            testovaci odstavec
-        </p>
-        <p i18n:translate="string:test">translate</p>
-		<x tal:replace="structure lbox:component.box_inquiries" />
+		<ul>
+			<li tal:repeat="record records" tal:content="string:record ${record/id}" />
+		</ul>
     </body>
 </html>
