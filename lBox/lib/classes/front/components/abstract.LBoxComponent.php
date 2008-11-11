@@ -525,6 +525,72 @@ abstract class LBoxComponent
 	}
 	
 	/**
+	 * vraci pole stranek strankovani podle predanych parametru
+	 * @param int $itemsCount
+	 * @param int $pageLimit
+	 * @param int $pagesRange
+	 * @return array
+	 * @throws LBoxExceptionPage
+	 */
+	protected function getPaging3($itemsCount = 0, $pageLimit = 0, $pagesRange	= 0) {
+		try {
+			if (!is_numeric($itemsCount)) {
+				throw new LBoxExceptionPage("\$itemsCount ". LBoxExceptionPage::MSG_PARAM_INT_NOTNULL, LBoxExceptionPage::CODE_BAD_PARAM);
+			}
+			if (!is_numeric($pageLimit)) {
+				throw new LBoxExceptionPage("\$pageLimit ". LBoxExceptionPage::MSG_PARAM_INT, LBoxExceptionPage::CODE_BAD_PARAM);
+			}
+			if (!is_numeric($pagesRange)) {
+				throw new LBoxExceptionPage("\$pagesRange ". LBoxExceptionPage::MSG_PARAM_INT, LBoxExceptionPage::CODE_BAD_PARAM);
+			}
+			
+			$pageLimit 				= $pageLimit 	> 0 ? $pageLimit 	: 99999;
+			$pagesCount 			= ceil($itemsCount/$pageLimit);
+	
+			$pagesStart				= $this->getPagingCurrent() - $pagesRange;
+			$pagesStart				= $pagesStart < 1 ? 1 : $pagesStart;
+			$pagesEnd				= $this->getPagingCurrent() + $pagesRange;
+			$pagesEnd				= $pagesEnd > $pagesCount ? $pagesCount : $pagesEnd;
+			
+			// sestaveni pole pages
+			$out = array();
+			if ($pagesCount < 2) {
+				return NULL;
+			}
+	
+			// sestaveni pole paging
+			$pageCurrent		= $this->getPagingCurrent();
+			$pagePreviousKey	= $pageCurrent > 1 ? $pageCurrent-1 : 1;
+			$pageNextKey		= $pageCurrent+1;
+			$out["<<"]	= $this->getPageURLByIndex($pagePreviousKey);
+			$out["<<"]["first"]		= true;
+			$out["<<"]["active"]	= $this->getPagingCurrent() > 1;
+			$out["<<"]["key"]		= $pagePreviousKey;
+			$out["<<"]["last"]		= false;
+			$out["<<"]["class"]		= "first";
+			for ($i = $pagesStart; $i <= $pagesEnd; $i++) {
+				$out[$i]	= $this->getPageURLByIndex($i);
+				$out[$i]["active"]	= !$out[$i]["current"];
+				$out[$i]["key"]		= $i;
+				$out[$i]["first"]	= false;
+				$out[$i]["last"]	= false;
+				$out[$i]["class"]	= "page". ($i-$pageCurrent);
+			}
+			$out[">>"]	= $this->getPageURLByIndex($pageNextKey);
+			$out[">>"]["first"]		= false;
+			$out[">>"]["active"]	= $this->getPagingCurrent() < $pagesCount;
+			$out[">>"]["key"]		= $pageNextKey;
+			$out[">>"]["last"]		= true;
+			$out[">>"]["class"]		= "last";
+
+			return $out;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
 	 * Vraci jednoduche strankovani (previous/next)
 	 * @param int $itemsCount
 	 * @param int $pageLimit
