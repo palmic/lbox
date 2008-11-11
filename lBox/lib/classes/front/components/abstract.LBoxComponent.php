@@ -434,7 +434,7 @@ abstract class LBoxComponent
 	 * @throws LBoxExceptionPage
 	 */
 	protected function getPaging($itemsCount = 0, $pageLimit = 0, $pagesRange = 0) {
-		if (!is_numeric($itemsCount) || $itemsCount < 1) {
+		if (!is_numeric($itemsCount)) {
 			throw new LBoxExceptionPage("\$itemsCount ". LBoxExceptionPage::MSG_PARAM_INT_NOTNULL, LBoxExceptionPage::CODE_BAD_PARAM);
 		}
 		if (!is_numeric($pageLimit)) {
@@ -477,7 +477,7 @@ abstract class LBoxComponent
 	 * @throws LBoxExceptionPage
 	 */
 	protected function getPaging2($itemsCount = 0, $pageLimit = 0, $pagesRange	= 0) {
-		if (!is_numeric($itemsCount) || $itemsCount < 1) {
+		if (!is_numeric($itemsCount)) {
 			throw new LBoxExceptionPage("\$itemsCount ". LBoxExceptionPage::MSG_PARAM_INT_NOTNULL, LBoxExceptionPage::CODE_BAD_PARAM);
 		}
 		if (!is_numeric($pageLimit)) {
@@ -533,7 +533,7 @@ abstract class LBoxComponent
 	 */
 	protected function getPagingSimple($itemsCount = 0, $pageLimit = 0) {
 		try {
-			if (!is_numeric($itemsCount) || $itemsCount < 1) {
+			if (!is_numeric($itemsCount)) {
 				throw new LBoxExceptionPage("\$itemsCount ". LBoxExceptionPage::MSG_PARAM_INT_NOTNULL, LBoxExceptionPage::CODE_BAD_PARAM);
 			}
 			if (!is_numeric($pageLimit)) {

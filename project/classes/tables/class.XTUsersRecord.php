@@ -3,6 +3,7 @@
 * @author Michal Palma <palmic@email.cz>
 * @package LBox techhouse.cz
 * @version 1.0
+
 * @since 2007-12-08
 */
 class XTUsersRecord extends AbstractRecordLBox
@@ -16,8 +17,6 @@ class XTUsersRecord extends AbstractRecordLBox
 	public static $bounded1M = array("RegistrationConfirmsRecords" => "ref_xtUser");
 	
 	protected	$hashString	= "sdfsdf";
-	
-	public static $dependingRecords	= array("");
 	
 	/**
 	 * OutputItem interface method

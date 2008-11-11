@@ -11,7 +11,5 @@ class AccesNotViewersRecord extends AbstractRecordLBox
 	public static $itemsType 		= "AccesNotViewersRecords";
 	public static $tableName    	= "accesViewers";
 	public static $idColName    	= "id";
-
-	public static $dependingRecords	= array("");
 }
 ?>

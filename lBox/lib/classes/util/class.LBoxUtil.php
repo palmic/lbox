@@ -156,5 +156,44 @@ class LBoxUtil
 			throw $e;
 		}
 	}
+	
+	/**
+	 * smaze adresar podle predane cesty
+	 * @param string $path
+	 * @param bool $withSubDirs
+	 * @throws LBoxExceptionFilesystem
+	 */
+	public static function removeDirByPath($path = "", $withSubDirs = false) {
+		try {
+			if (strlen($path) < 1) {
+				throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFilesystem::CODE_BAD_PARAM);
+			}
+			$path		= str_replace("/", SLASH, $path);
+			$path		= str_replace("\\", SLASH, $path);
+			if (is_dir($path) < 1) {
+				throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_DIRECTORY_NOT_EXISTS, LBoxExceptionFilesystem::CODE_DIRECTORY_NOT_EXISTS);
+			}
+			$d = dir($path);
+			while (false !== ($entry = $d->read())) {
+				if($entry == '.' || $entry == '..') continue;
+				if (is_dir("$path/$entry")) {
+					if (!$withSubDirs) {
+						throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_DIRECTORY_CONTAINS_SUBDIRS, LBoxExceptionFilesystem::CODE_DIRECTORY_CONTAINS_SUBDIRS);
+					}
+					$this->removeDirByPath("$path/$entry", true);
+				}
+				if (!unlink("$path/$entry")) {
+					throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_FILE_CANNOT_DELETE);
+				}
+			}
+			$d->close();
+			if (!rmdir($path)) {
+				throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_DIRECTORY_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_DIRECTORY_CANNOT_DELETE);
+			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
 }
 ?>

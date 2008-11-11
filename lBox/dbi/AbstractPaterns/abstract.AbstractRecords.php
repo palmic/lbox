@@ -130,7 +130,7 @@ abstract class AbstractRecords implements Iterator
 		$this->order           		= $order;
 		$this->limit           		= $limit;
 		$this->whereAdd				= $whereAdd;
-		//$this->loadFromCache();
+		$this->loadFromCache();
 		reset($this->records);
 	}
 
@@ -154,12 +154,6 @@ abstract class AbstractRecords implements Iterator
 	 * @var bool
 	 */
 	protected $isCacheOn;
-	
-	/**
-	 * cached data var
-	 * @var array
-	 */
-	protected $cacheData;
 	
 	/**
 	 * return true if record is cached
@@ -196,7 +190,7 @@ echo "<br />\n";*/
 			$itemType 		= $this->getClassVar("itemType");
 			$className		= get_class($this);
 			$idColName  	= eval("return $itemType::\$idColName;");
-			if (count($data = $this->getCacheData()) > 0) {
+			if (count($data = LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->getData()) > 0) {
 				if (array_key_exists("system_istree", $data)) {
 					self::$isTree[$className]	= (bool)$data["system_istree"];
 				}
@@ -237,6 +231,7 @@ echo count($this->records) ."<hr />\n\n";*/
 	}
 
 	/**
+<<<<<<< HEAD:lBox/dbi/AbstractPaterns/abstract.AbstractRecords.php
 	 * posledni key precteny z cache
 	 * @var int
 	 */
@@ -316,6 +311,8 @@ echo "<br />\n";*/
 	}
 
 	/**
+=======
+>>>>>>> efe2497... Optimalizovano cyklovani cachi:lBox/dbi/AbstractPaterns/abstract.AbstractRecords.php
 	 * stores data to cache
 	 */
 	protected function storeToCache() {
@@ -612,9 +609,6 @@ var_dump($this->getSQL() .": neni valid");*/
 		try {
 			if ($this->doNotLoad) {
 				return false;
-			}
-			if (is_bool($returnedCache = $this->loadNextFromCache())) {
-				return $returnedCache;
 			}
 			if (!$this->getDbResult()->next()) {
 				return false;

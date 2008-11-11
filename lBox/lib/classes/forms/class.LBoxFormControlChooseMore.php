@@ -18,6 +18,13 @@ class LBoxFormControlChooseMore extends LBoxFormControlChoose
 			if ($this->value !== NULL) {
 				return $this->value;
 			}
+			if ($this->isDisabled()) {
+				$valuesDefault	= array();
+				foreach ($this->options as $option) {
+					$valuesDefault[]	= $option->getValue();
+				}
+				return $this->value = $valuesDefault;
+			}
 			$values	= $this->form->getSentDataByControlName($this->getName());
 			foreach ((array)$values as $value) {
 				if (strlen($value) > 0)

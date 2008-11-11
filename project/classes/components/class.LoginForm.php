@@ -2,9 +2,9 @@
 /**
  * login formular
 * @author Michal Palma <palmic@email.cz>
-* @package LBox techhouse.cz
+* @package LBox
 * @version 1.0
-* @license http://creativecommons.org/licenses/by-sa/3.0/
+
 * @since 2007-12-08
 */
 class LoginForm extends LBoxComponent
@@ -13,7 +13,6 @@ class LoginForm extends LBoxComponent
 		// DbControl::$debug = true;
 		try {
 			$TAL->form				= $this->getFormArray();
-			$TAL->spamDefenseJS		= $this->isSpamDefenseJSNeeded();
 			$TAL->xt				= LBoxXT::getInstance();
 			$TAL->logoutUrl			= $this->getURLLogout();
 			$TAL->registrationUrl	= $this->getURLRegistration();
@@ -51,14 +50,6 @@ class LoginForm extends LBoxComponent
 			$error 		= false;
 			$formArray	= $this->getFormArray();
 
-			// controla spam defense JS
-			if ($this->isSpamDefenseJSNeeded()) {
-				if ($_POST[$formGroupName]["defense"] != 1) {
-					$error 									= true;
-					$formArray["error"]["spamDefenseJS"] 	= true;
-				}
-			}
-			
 			$controls	= $formArray["controls"];
 
 			// kontroly
@@ -238,20 +229,6 @@ class LoginForm extends LBoxComponent
 		try {
 			$pageId	= LBoxConfigManagerProperties::getInstance()->getPropertyByName("ref_page_xt_registration")->getContent();
 			return LBoxConfigManagerStructure::getPageById($pageId)->url;
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-
-	/**
-	 * Zjistuje, zda je zapnuta a nutna spam defense pres JS
-	 * @return bool
-	 * @throws LBoxException
-	 */
-	protected function isSpamDefenseJSNeeded() {
-		try {
-			return  (LBoxConfigManagerProperties::getInstance()->getPropertyByName("form_spamdefense_js_login")->getContent() == 1);
 		}
 		catch (Exception $e) {
 			throw $e;

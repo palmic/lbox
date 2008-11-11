@@ -131,7 +131,7 @@ abstract class AbstractRecord implements Iterator
 	 *  - needs to be defined here for prior clearing cache!!!
 	 * @var array
 	 */
-	public static $dependingRecords	= array("");
+	public static $dependingRecords	= array();
 	
 	/**
 	 * database task id
@@ -166,7 +166,10 @@ abstract class AbstractRecord implements Iterator
 	public function __construct($id = NULL) {
 		try {
 			if (strlen($id) > 0) {
-					$this->params[$this->getClassVar("idColName")] = $id;
+				if (!is_scalar($id)) {
+					throw new LBoxException("You are trying to set not scalar value of ID column!");
+				}
+				$this->params[$this->getClassVar("idColName")] = $id;
 			}
 			if ($this->isInCache()) {
 				$this->loadFromCache();
@@ -338,7 +341,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 				$cacheName			= $this->getClassVar("tableName");
 			}
 			else {
-				$cacheName			= $this->getCacheFileName();				
+				$cacheName			= $this->getCacheFileName();
 			}
 			LBoxCacheAbstractRecord::getInstance($cacheName)->clearCache();
 		}

@@ -1,4 +1,74 @@
 <?php
+/**
+* o------------------------------------------------------------------------------o
+* | This is HTMLMimeMail5. It is dual licensed as GPL and a commercial license.  |
+* | If you use the code commercially (or if you don't want to be restricted by   |
+* | the GPL license), you will need the commercial license. It's only �49 (GBP - |
+* | roughly $98 depending on the exchange rate) and helps me out a lot. Thanks.  |
+* o------------------------------------------------------------------------------o
+*
+* � Copyright Richard Heyes
+*/
+
+/**
+*
+*  Raw mime encoding class
+*
+* What is it?
+*   This class enables you to manipulate and build
+*   a mime email from the ground up.
+*
+* Why use this instead of mime.php?
+*   mime.php is a userfriendly api to this class for
+*   people who aren't interested in the internals of
+*   mime mail. This class however allows full control
+*   over the email.
+*
+* Eg.
+*
+* // Since multipart/mixed has no real body, (the body is
+* // the subpart), we set the body argument to blank.
+*
+* $params['content_type'] = 'multipart/mixed';
+* $email = new Mail_mimePart('', $params);
+*
+* // Here we add a text part to the multipart we have
+* // already. Assume $body contains plain text.
+*
+* $params['content_type'] = 'text/plain';
+* $params['encoding']     = '7bit';
+* $text = $email->addSubPart($body, $params);
+*
+* // Now add an attachment. Assume $attach is
+* the contents of the attachment
+*
+* $params['content_type'] = 'application/zip';
+* $params['encoding']     = 'base64';
+* $params['disposition']  = 'attachment';
+* $params['dfilename']    = 'example.zip';
+* $attach =& $email->addSubPart($body, $params);
+*
+* // Now build the email. Note that the encode
+* // function returns an associative array containing two
+* // elements, body and headers. You will need to add extra
+* // headers, (eg. Mime-Version) before sending.
+*
+* $email = $message->encode();
+* $email['headers'][] = 'Mime-Version: 1.0';
+*
+*
+* Further examples are available at http://www.phpguru.org
+*
+* TODO:
+*  - Set encode() to return the $obj->encoded if encode()
+*    has already been run. Unless a flag is passed to specifically
+*    re-build the message.
+*
+* @author  Richard Heyes <richard@phpguru.org>
+* @version $Revision: 1.3 $
+* @package Mail
+*/
+
 class MIMEPart
 {
     /**

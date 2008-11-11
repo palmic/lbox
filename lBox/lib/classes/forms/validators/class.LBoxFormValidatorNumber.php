@@ -8,8 +8,8 @@ class LBoxFormValidatorNumber extends LBoxFormValidator
 		try {
 			if (strlen($control->getValue()) > 0)
 			if (!is_numeric($control->getValue())) {
-				throw new LBoxExceptionFormValidator(	LBoxExceptionFormValidator::MSG_FORM_VALIDATION_CONTROL_NOT_VALID,
-														LBoxExceptionFormValidator::CODE_FORM_VALIDATION_CONTROL_NOT_VALID);
+				throw new LBoxExceptionFormValidator(	LBoxExceptionFormValidator::MSG_FORM_VALIDATION_CONTROL_NOT_NUMBER,
+														LBoxExceptionFormValidator::CODE_FORM_VALIDATION_CONTROL_NOT_NUMBER);
 			}
 		}
 		catch (Exception $e) {

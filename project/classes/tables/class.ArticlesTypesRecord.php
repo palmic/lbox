@@ -6,14 +6,14 @@
 
 * @since 2007-12-08
 */
-class XTRolesRecord extends AbstractRecordLBox
+class ArticlesTypesRecord extends AbstractRecordLBox
 {
-	public static $itemsType 		= "XTRolesRecords";
-	public static $tableName    	= "xtRoles";
+	public static $itemsType 		= "ArticlesTypesRecords";
+	public static $tableName    	= "articlesTypes";
 	public static $idColName    	= "id";
-
-	public static $bounded1M = array("XTUsersRecords" => "ref_xtRole");
-
+	
+	public static $bounded1M = array("ArticlesRecords" => "ref_articleType");
+	
 	/**
 	 * OutputItem interface method
 	 * @throws LBoxException
@@ -33,20 +33,6 @@ class XTRolesRecord extends AbstractRecordLBox
 	public function store() {
 		try {
 			parent::store();
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-	
-	/**
-	 * getter na users role
-	 * @return XTUsersRecords
-	 * @throws Exception
-	 */
-	public function getUsers() {
-		try {
-			return $this->getBounded1MInstance("XTUsersRecords", $filter, $order, $limit, $whereAdd);
 		}
 		catch (Exception $e) {
 			throw $e;

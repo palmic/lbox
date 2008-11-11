@@ -1,4 +1,15 @@
 <?php
+/**
+) o------------------------------------------------------------------------------o
+* | This is HTMLMimeMail5. It is dual licensed as GPL and a commercial license.  |
+* | If you use the code commercially (or if you don't want to be restricted by   |
+* | the GPL license), you will need the commercial license. It's only �49 (GBP - |
+* | roughly $98 depending on the exchange rate) and helps me out a lot. Thanks.  |
+* o------------------------------------------------------------------------------o
+*
+* � Copyright 2005 Richard Heyes
+*/
+
 define('SMTP_STATUS_NOT_CONNECTED', 1, true);
 define('SMTP_STATUS_CONNECTED', 2, true);
 
@@ -59,7 +70,7 @@ class SMTP
 
     /**
     * Connect function. This will, when called
-    * statically, create a new smtp object,
+    * statically, create a new smtp object, 
     * call the connect function (ie this function)
     * and return it. When not called statically,
     * it will connect to the server and send
@@ -338,7 +349,7 @@ class SMTP
 
     /**
     * Sets a variable
-    */
+    */    
     public function set($var, $value)
     {
         $this->$var = $value;

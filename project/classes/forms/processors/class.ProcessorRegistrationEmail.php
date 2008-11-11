@@ -18,14 +18,14 @@ class ProcessorRegistrationEmail extends LBoxFormProcessor
 				$record		= new XTUsersRecord();
 				$record		->name			= $this->form->getControlByName("name")->getValue();
 				$record		->surname		= $this->form->getControlByName("surname")->getValue();
+				$record		->birth_year	= $this->form->getControlByName("birth_year")->getValue();
+				$record		->street		= $this->form->getControlByName("street")->getValue();
+				$record		->city			= $this->form->getControlByName("city")->getValue();
+				$record		->zip			= $this->form->getControlByName("zip")->getValue();
 				$record		->nick			= $this->form->getControlByName("email")->getValue();
 				$record		->email			= $this->form->getControlByName("email")->getValue();
-				$record		->phone			= $this->form->getControlByName("phone")->getValue();
-				$record		->city			= $this->form->getControlByName("city")->getValue();
-				//$record		->ref_school	= $this->form->getControlByName("ref_school")->getValue();
 				$record		->password		= $this->form->getControlByName("password")->getValue();
 				$record->store();
-
 				// zvolene produkty
 				foreach ($this->form->getControlByName("products")->getValue() as $value) {
 					$recordProduct								= new ProductsRegistrationXXTUsersRecord();

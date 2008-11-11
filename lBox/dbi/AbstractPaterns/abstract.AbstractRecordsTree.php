@@ -7,21 +7,6 @@
  */
 abstract class AbstractRecordsTree extends AbstractRecords
 {
-	/**
-	 * tree mode - true = tree, false = flat
-	 * @var bool
-	 */
-	protected $treeMode	= true;
-	
-	/**
-	 * 
-	 * @param $mode
-	 * @return unknown_type
-	 */
-	public function setTreeMode($mode = true) {
-		$this->treeMode	= (bool)$mode;
-	}
-	
 	protected function getWhere() {
 		try {
 			do {
@@ -29,7 +14,7 @@ abstract class AbstractRecordsTree extends AbstractRecords
 				$treeColNames = eval("return $itemType::\$treeColNames;");
 				$pidColName	= $treeColNames[2];
 				
-				if (!$this->isTree() || !$this->treeMode) {
+				if (!$this->isTree()) {
 					break;
 				}
 				if (array_key_exists($pidColName, (array)$this->filter)) {

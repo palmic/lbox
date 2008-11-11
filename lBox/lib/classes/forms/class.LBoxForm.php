@@ -67,6 +67,12 @@ class LBoxForm
 	 * @var bool
 	 */
 	protected $sentSucces	= false;
+	
+	/**
+	 * do not reload after succcesfull processing flag
+	 * @var bool
+	 */
+	protected $doNotReload	= false;
 
 	/**
 	 * cache metody getFilesData
@@ -79,6 +85,12 @@ class LBoxForm
 	 * @var array
 	 */
 	protected $params	= array();
+	
+	/**
+	 * master formmultistep if this is subform
+	 * @var LBoxFormMultistep
+	 */
+	protected $formMultistep	= false;
 	
 	/**
 	 *
@@ -121,7 +133,7 @@ class LBoxForm
 	public function __get($name = "") {
 		try {
 			if (strlen($name) < 1) {
-				throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
+				throw new LBoxExceptionForm(LBoxExceptionForm::MSG_PARAM_STRING_NOTNULL, LBoxExceptionForm::CODE_BAD_PARAM);
 			}
 			if (array_key_exists($name, $this->params)) {
 				return $this->params[$name];
@@ -138,11 +150,11 @@ class LBoxForm
 	 * @param mixed $value
 	 * @throws LBoxException
 	 */
-	public function __set($name = "", $value = "") {
+	public function __set($name = "", $value = NULL) {
 		if (strlen($name) < 1) {
 			throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
 		}
-		if (!$value) {
+		if (is_null($value)) {
 			throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
 		}
 		$this->params[$name]	= $value;
@@ -157,13 +169,16 @@ class LBoxForm
 			if (array_key_exists($control->getName(), $this->controls)) {
 				throw new LBoxExceptionForm($control->getName() .": ". LBoxExceptionForm::MSG_FORM_CONTROL_DOES_EXISTS, LBoxExceptionForm::CODE_FORM_CONTROL_DOES_EXISTS);
 			}
-			// z multiple control prebereme jeho subcontrols
+			// z multistep control prebereme jeho subcontrols
 			if ($control instanceof LBoxFormControlMultiple) {
 				foreach ($control->getControls() as $subControl) {
 					if (!array_key_exists($subControl->getName(), $this->controls)) {
 						$this->controls[$subControl->getName()]	= $subControl;
 					}
 				}
+			}
+			if (strtolower($control->getName()) == "previous") {
+				throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_FORM_CONTROL_NAME_FORBIDDEN, LBoxExceptionFormControl::CODE_FORM_CONTROL_NAME_FORBIDDEN);
 			}
 			$this->controls[$control->getName()]	= $control;
 			$control->setForm($this);
@@ -465,6 +480,19 @@ class LBoxForm
 	}
 
 	/**
+	 * prepina doNotReload kontrolu
+	 * @param bool $value
+	 */
+	public function setDoNotReload($value	= true) {
+		try {
+			$this->doNotReload	= $value;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * Vraci, jestli je zapnut antispam
 	 * @return bool
 	 */
@@ -497,7 +525,7 @@ class LBoxForm
 		try {
 			if (!$this->wasSent()) return;
 			// zkontrolovat, jestli mame nastaven procesor
-			if (count($this->processors) < 1) {
+			if ((!$this->isSubForm()) && count($this->processors) < 1) {
 				throw new LBoxExceptionForm(LBoxExceptionForm::MSG_FORM_PROCESSOR_DOESNOT_EXISTS, LBoxExceptionForm::CODE_FORM_PROCESSOR_DOESNOT_EXISTS);
 			}
 			if ($this->isAntiSpamSet()) {
@@ -525,9 +553,14 @@ class LBoxForm
 				$control->commitProcessSuccess();
 			}
 			// nastavit do session uspesne odeslani a reloadovat stranku
-			if (strtolower($this->method)	== "post") {
-				$_SESSION["LBox"]["Forms"][$this->getName()]["succes"]	= true;
-				LBoxFront::reload();
+			if (!$this->doNotReload) {
+				if (strtolower($this->method)	== "post") {
+					$this->sentSucces	= true;
+					$_SESSION["LBox"]["Forms"][$this->getName()]["succes"]	= true;
+					if (!$this->isSubForm()) {
+						LBoxFront::reload();
+					}
+				}
 			}
 		}
 		catch (Exception $e) {
@@ -568,6 +601,49 @@ class LBoxForm
 		catch (Exception $e) {
 			throw $e;
 		}
+	}
+	
+	/**
+	 * @param LBoxFormMultistep $form
+	 */
+	public function setFormMultistep(LBoxFormMultistep $form) {
+		$this->formMultistep	= $form;
+		$this->method		= "post";
+	}
+
+	/**
+	 * @return LBoxFormMultistep
+	 */
+	public function getFormMultistep() {
+		return $this->formMultistep;
+	}
+	
+	/**
+	 * subform flag getter
+	 * @return bool
+	 */
+	public function isSubForm() {
+		return ($this->formMultistep instanceof LBoxForm);
+	}
+	
+	/**
+	 * @return bool
+	 */
+	public function isFirstSubForm() {
+		if (!$this->isSubForm()) {
+			return false;
+		}
+		return (reset($this->getFormMultistep()->getFormsSub())->getName() == $this->getName());
+	}
+	
+	/**
+	 * @return bool
+	 */
+	public function isLastSubForm() {
+		if (!$this->isSubForm()) {
+			return false;
+		}
+		return (end($this->getFormMultistep()->getFormsSub())->getName() == $this->getName());
 	}
 }
 ?>

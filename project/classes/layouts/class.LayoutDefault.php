@@ -11,12 +11,6 @@ class LayoutDefault extends LBoxComponentLayout
 {
 	protected function executePrepend(PHPTAL $TAL) {
 		try {
-			$pagesCFGs["registrate"]		= LBoxConfigManagerStructure::getPageById(300);
-			
-			foreach($pagesCFGs as $pageCFG) {
-				$pageCFG->setOutputFilter(new OutputFilterPage($pageCFG));
-			}
-			$TAL->pagesCFGs			= $pagesCFGs;
 		}
 		catch (Exception $e) {
 			throw $e;
