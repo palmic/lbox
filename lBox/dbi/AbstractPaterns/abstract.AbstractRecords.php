@@ -231,7 +231,6 @@ echo count($this->records) ."<hr />\n\n";*/
 	}
 
 	/**
-<<<<<<< HEAD:lBox/dbi/AbstractPaterns/abstract.AbstractRecords.php
 	 * posledni key precteny z cache
 	 * @var int
 	 */
@@ -311,8 +310,7 @@ echo "<br />\n";*/
 	}
 
 	/**
-=======
->>>>>>> efe2497... Optimalizovano cyklovani cachi:lBox/dbi/AbstractPaterns/abstract.AbstractRecords.php
+	 * Optimalizovano cyklovani cachi:lBox/dbi/AbstractPaterns/abstract.AbstractRecords.php
 	 * stores data to cache
 	 */
 	protected function storeToCache() {
