@@ -159,6 +159,24 @@ class LBoxFormMultistep extends LBoxForm
 	}
 
 	/**
+	 * vraci formular daneho kroku
+	 * @param int $step
+	 * @return LBoxForm
+	 */
+	public function getFormByStep($step = 1) {
+		try {
+			if (!array_key_exists($step, $this->subForms)) {
+				throw new LBoxExceptionForm(LBoxExceptionForm::MSG_FORM_FORM_STEP_DOES_NOT_EXISTS,
+											LBoxExceptionForm::CODE_FORM_FORM_STEP_DOES_NOT_EXISTS);
+			}
+			return $this->subForms[$step];
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
 	 * getter na next form
 	 * @return LBoxForm
 	 */
@@ -270,6 +288,31 @@ class LBoxFormMultistep extends LBoxForm
 	 */
 	public function getFormsDataStep($step = 0) {
 		try {
+			$formsData	= $this->getFormsData();
+			return $formsData[$step];
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * vraci formularova data konkretniho kroku podle predaneho formu
+	 * @param LBoxForm $form
+	 * @return array
+	 */
+	public function getFormsDataStepByForm(LBoxForm $form) {
+		try {
+			$step = NULL;
+			foreach ($this->subForms as $stepSubform => $subForm) {
+				if ($form->getName() == $subForm->getName()) {
+					$step	= $stepSubform;
+				}
+			}
+			if (!is_int($step)) {
+				throw new LBoxExceptionForm(LBoxExceptionForm::MSG_FORM_FORM_SUB_NOT_SET, LBoxExceptionForm::CODE_FORM_FORM_SUB_NOT_SET);
+			}
+			
 			$formsData	= $this->getFormsData();
 			return $formsData[$step];
 		}

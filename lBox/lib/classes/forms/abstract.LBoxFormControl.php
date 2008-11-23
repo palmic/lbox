@@ -403,13 +403,8 @@ abstract class LBoxFormControl
 	 */
 	public function getValue() {
 		try {
-			if ($this->value !== NULL) {
-			//if ($this->value) {
+			if ($this->value/* !== NULL*/) {
 				return $this->value;
-			}
-			if ($this->form->isSubForm()) {
-				$dataCurrentStep = $this->form->getFormMultistep()->getFormsDataCurrentStep();
-				$this->value	= $dataCurrentStep[$this->getName()];
 			}
 			if ($this->getForm()->wasSent()) {
 				if ($this->isDisabled()) {
@@ -420,7 +415,13 @@ abstract class LBoxFormControl
 				}
 			}
 			else {
-				$this->value = $this->getDefault();
+				if ($this->form->isSubForm()) {
+					$dataMyStep = $this->form->getFormMultistep()->getFormsDataStepByForm($this->form);
+					$this->value	= $dataMyStep[$this->getName()] ? $dataMyStep[$this->getName()] : $this->getDefault();
+				}
+				else {
+					$this->value = $this->getDefault();
+				}
 			}
 			return $this->value;
 		}
