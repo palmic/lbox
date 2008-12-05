@@ -170,7 +170,8 @@ abstract class LBoxComponent
 	 */
 	public function templateSlotContentBegin() {
 		// reinit bufferu pro slot
-		$this->tmpContent	= ob_get_clean();
+		$this->tmpContent	= ob_get_contents();
+		ob_clean();
 		return "";
 	}
 
@@ -183,10 +184,11 @@ abstract class LBoxComponent
 	public function templateSlotContentEnd($name = "") {
 		try {
 			// ulozime vystup slotu
-			LBoxSlotManager::getInstance()->setSlot($name, ob_get_clean());
+			LBoxSlotManager::getInstance()->setSlot($name, ob_get_contents());
+			ob_clean();
 			// puvodni obsah vyhodime zpet na vystup a vynulujeme ho v parametru
 			echo $this->tmpContent;
-			$this->tmpContent = NULL;
+			$this->tmpContent = "";
 			return "";
 		}
 		catch (Exception $e) {
@@ -197,15 +199,21 @@ abstract class LBoxComponent
 	/**
 	 * Vrati obsah slotu podle daneho nazvu
 	 * @param string $name
+	 * @param bool $silent
 	 * @return string
 	 * @throws LBoxExceptionFront
 	 */
-	public function templateGetSlot($name = "") {
+	public function templateGetSlot($name = "", $silent = false) {
 		try {
 			return LBoxSlotManager::getInstance()->getSlot($name);
 		}
 		catch (Exception $e) {
-			throw $e;
+			if ($silent && $e->getCode() == LBoxExceptionFront::CODE_SLOT_NOT_DEFINED) {
+				return "";
+			}
+			else {
+				throw $e;
+			}
 		}
 	}
 

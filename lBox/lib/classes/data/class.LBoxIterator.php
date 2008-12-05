@@ -51,5 +51,12 @@ abstract class LBoxIterator implements Iterator
 	public function rewind() {
 		$this->key = 0;
 	}
+
+	/**
+	 * @return bool
+	 */
+	public function valid() {
+		return @array_key_exists($this->key, $this->items);
+	}
 }
 ?>

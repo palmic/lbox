@@ -20,7 +20,8 @@ function phptal_tales_lbox($src, $nothrow = false) {
 				if (strlen($name = $srcArr[1]) < 1) {
 					throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_SLOT_NAME_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
 				}
-				return '$ctx->SELF->templateGetSlot("'.$name.'")';
+				$silent	= (array_key_exists(2, $srcArr) && $srcArr[2] == "silent") ? "true" : "false";
+				return '$ctx->SELF->templateGetSlot("'.$name.'", '.$silent.')';
 				break;
 			case 'slot_start':
 				return '$ctx->SELF->templateSlotContentBegin()';
