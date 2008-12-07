@@ -17,7 +17,7 @@
 		<filespace>$project/filespace/files</filespace>
 		<output>
 			<!-- Virtualni cesta k souborum - musi byt namapovana v .htacces na fyzicke umisteni download filu -->
-			<path_virtual>/nwod/le</path_virtual>
+			<path_virtual>/download/file</path_virtual>
 		</output>
 	</download>
 	<pages>
