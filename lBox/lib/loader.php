@@ -105,10 +105,10 @@ try {
 	// pokud nemame pearovsky PHPTAL pouzivame lokani LBOXovy
 	@include("PHPTAL.php");
 	if (!@constant("PHPTAL_VERSION")) {
-		require(LBOX_PATH_CORE 			. $slash ."TAL". $slash ."PHPTAL-1.1.13". $slash ."PHPTAL.php");
+		require(LBOX_PATH_CORE 			. $slash ."TAL". $slash ."PHPTAL-1.1.14". $slash ."PHPTAL.php");
 	}
 	// standard TAL translator service to extend
-	require (PHPTAL_DIR ."/phptal/GetTextTranslator.php");
+	require (PHPTAL_DIR ."PHPTAL/GetTextTranslator.php");
 	require("lbox.phptal.php");
 	
 	LBoxUtil::createDirByPath(PHPTAL_PHP_CODE_DESTINATION);

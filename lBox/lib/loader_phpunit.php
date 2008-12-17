@@ -137,7 +137,7 @@ try {
 	}
 
 	// standard TAL translator service to extend
-	require (PHPTAL_DIR ."/phptal/GetTextTranslator.php");
+	require (PHPTAL_DIR ."phptal/GetTextTranslator.php");
 	require("lbox.phptal.php");
 	
 	LBoxUtil::createDirByPath(PHPTAL_PHP_CODE_DESTINATION);

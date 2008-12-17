@@ -64,9 +64,10 @@ class LBoxTranslator extends PHPTAL_GetTextTranslator
 	/**
 	 * zjisti, zda je dostupna hodnota key a pripadne ji vraci
 	 * @param string $key
+	 * @param bool $htmlescape
 	 * @return string
 	 */
-    public function translate($key) {
+    public function translate($key, $htmlescape = true) {
     	try {
     		if (strlen($key) < 1) {
     			throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_PARAM_STRING_NOTNULL, LBoxExceptionConfig::CODE_BAD_PARAM);
@@ -97,6 +98,8 @@ class LBoxTranslator extends PHPTAL_GetTextTranslator
     		throw $e;
     	}
     }
+
+    public function setEncoding($encoding) {}
 
     /**
      * vraci cesty k lang souborum podle jazyka a sablony, ktera instanci obsluhuje
