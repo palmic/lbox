@@ -61,6 +61,18 @@ class OutputFilterPage extends LBoxOutputFilter
 			case "isCurrent":
 					return ($this->instance->url == LBoxFront::getPage()->url);
 				break;
+			case "isCurrentBranch":
+					if ($this->instance->url == LBoxFront::getPage()->url) {
+						return true;
+					}
+					$parent	= LBoxFront::getPage()->config;
+					while ($parent	= $parent->getParent()) {
+						if ($parent->url == $this->instance->url) {
+							return true;
+						}
+					}
+					return false;
+				break;
 			case "name":
 					return $this->instance->heading;
 				break;
