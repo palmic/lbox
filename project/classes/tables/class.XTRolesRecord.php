@@ -13,7 +13,9 @@ class XTRolesRecord extends AbstractRecordLBox
 	public static $idColName    	= "id";
 
 	public static $bounded1M = array("XTUsersRecords" => "ref_xtRole");
-
+	
+	public static $dependingRecords	= array("XTUsersRecords");
+	
 	/**
 	 * OutputItem interface method
 	 * @throws LBoxException
