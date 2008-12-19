@@ -138,7 +138,7 @@ class LBoxXT extends LBox
 				return false;
 				// throw new LBoxExceptionXT(LBoxExceptionXT::MSG_NOT_LOGGED, LBoxExceptionXT::CODE_NOT_LOGGED);
 			}
-			switch (self::getUserXTRoleRecord()->name) {
+			switch (trim(self::getUserXTRoleRecord()->name)) {
 				case self::XT_ROLE_NAME_SUPERADMIN:
 				case self::XT_ROLE_NAME_ADMIN:
 					return true;
