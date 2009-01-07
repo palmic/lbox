@@ -158,9 +158,19 @@ class QueryBuilderPlatformMssql extends QueryBuilderPlatform
 			) as newtbl2 order by lname asc
 		 */
 		if (count($limit) > 0) {
+			$limitOffset	= reset($limit);
+			$limitLimit		= end($limit);
+			/* check table count */
+			$sqlCountNoLimit	= "SELECT COUNT(*) AS count FROM ". reset(self::getQuotesTableName()) ."$table". end(self::getQuotesTableName()) .
+									" $whereString $groupByString";
+			$dbControl			= new DbControl($this->task);
+			$countNoLimit		= $dbControl->initiateQuery($sqlCountNoLimit)->count;
+			$limitLimit			= $limitOffset + $limitLimit > $countNoLimit
+									? $countNoLimit - $limitOffset
+									: $limitLimit;
 			$out	= 	"SELECT * FROM (
-							SELECT TOP ". end($limit) ." $what FROM (".
-								"SELECT TOP ". (reset($limit) + end($limit)) ." $outTmp
+							SELECT TOP ". $limitLimit ." $what FROM (".
+								"SELECT TOP ". ($limitOffset + $limitLimit) ." $outTmp
 							) AS order_tmptable1 $orderByStringReverse".
 						") AS order_tmptable2 $orderByString";
 		}

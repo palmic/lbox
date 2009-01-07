@@ -77,16 +77,16 @@ class DbSelector
 
         switch ($platformName = strtolower($this->getPlatformName($task))) {
             case "mysql":
-                $queryBuilder = new QueryBuilderPlatformMysql();
+                $queryBuilder = new QueryBuilderPlatformMysql($task);
                 break;
             case "pgsql":
-                $queryBuilder = new QueryBuilderPlatformPgsql();
+                $queryBuilder = new QueryBuilderPlatformPgsql($task);
                 break;
             case "mssql":
-                $queryBuilder = new QueryBuilderPlatformMssql();
+                $queryBuilder = new QueryBuilderPlatformMssql($task);
                 break;
             case "odbc":
-                $queryBuilder = new QueryBuilderPlatformOdbc();
+                $queryBuilder = new QueryBuilderPlatformOdbc($task);
                 break;
             default:
                 throw new DbControlException("There is no attached platform specific query builder for platformName: '".$platformName."'.");

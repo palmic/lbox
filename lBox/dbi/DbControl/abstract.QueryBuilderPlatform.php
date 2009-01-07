@@ -89,6 +89,24 @@ abstract class QueryBuilderPlatform
 	public abstract function getValueFormatedDateTime($timeStamp	= 0);
     
 	/**
+	 * relevant database task
+	 * @var string
+	 */
+	protected $task;
+	
+	public function __construct($task = "") {
+		try {
+			if (strlen($task) < 1) {
+				throw new DbControlException("Ilegal parameter task. Must be NOT NULL string.");
+			}
+			$this->task	= $task;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
      * validuje hodnotu podle syntaxe konkretniho DB enginu
      * @param mixed $value
      * @return mixed
