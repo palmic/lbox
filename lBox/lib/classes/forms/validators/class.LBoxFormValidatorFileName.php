@@ -8,7 +8,7 @@ class LBoxFormValidatorFileName extends LBoxFormValidator
 	 * regularni vyraz kontrolujici vymezeni povolenych znaku v nazvu filu
 	 * @var string
 	 */
-	protected $regSigns	= "^([[:alnum:]_\.\-])+$";
+	protected $regSigns	= '^([[:alnum:]_\.\-])+$';
 	
 	public function validate(LBoxFormControl $control = NULL) {
 		try {

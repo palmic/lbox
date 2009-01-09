@@ -166,7 +166,7 @@ class QueryBuilderPlatformMssql extends QueryBuilderPlatform
 			$dbControl			= new DbControl($this->task);
 			$countNoLimit		= $dbControl->initiateQuery($sqlCountNoLimit)->count;
 			$limitLimit			= $limitOffset + $limitLimit > $countNoLimit
-									? $countNoLimit - $limitOffset
+									? $limitOffset > $countNoLimit ? 0 : $countNoLimit - $limitOffset
 									: $limitLimit;
 			$out	= 	"SELECT * FROM (
 							SELECT TOP ". $limitLimit ." $what FROM (".

@@ -8,7 +8,7 @@ class LBoxFormValidatorEmail extends LBoxFormValidator
 	 * regularni vyraz kontrolujici validitu emailu
 	 * @var string
 	 */
-	protected $reg	= "^([_a-z0-9-]+)(\.[_a-z0-9-]+)*@([a-z0-9-]+)(\.[a-z0-9-]+)*(\.[a-z]{2,4})$";
+	protected $reg	= '^([_a-z0-9-]+)(\.[_a-z0-9-]+)*@([a-z0-9-]+)(\.[a-z0-9-]+)*(\.[a-z]{2,4})$';
 	
 	public function validate(LBoxFormControl $control = NULL) {
 		try {
