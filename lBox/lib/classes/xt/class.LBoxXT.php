@@ -100,7 +100,7 @@ class LBoxXT extends LBox
 	 */
 	public static function isLogged() {
 		try {
-			if (array_key_exists("lbox", $_SESSION)) {
+			if (array_key_exists("lbox", (array)$_SESSION)) {
 				if ($_SESSION["lbox"][self::SESSION_ARRAY_NAME]["logout"] == 1) {
 					return false;
 				}
@@ -116,7 +116,7 @@ class LBoxXT extends LBox
 				self::logout();
 				self::login($login[0], $login[1], true);
 			}
-			if (array_key_exists("lbox", $_SESSION)) {
+			if (array_key_exists("lbox", (array)$_SESSION)) {
 				return (bool)$_SESSION["lbox"][self::SESSION_ARRAY_NAME]["signon"];
 			}
 			else {

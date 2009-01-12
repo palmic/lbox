@@ -20,6 +20,14 @@
 			<path_virtual>/download/file</path_virtual>
 		</output>
 	</download>
+	<wsw>
+		<files>
+			<path>/filespace/content/wsw</path>
+		</files>
+		<img>
+			<path>/img/content/wsw</path>
+		</img>
+	</wsw>
 	<pages>
 		<classes>
 			<default>PageDefault</default>

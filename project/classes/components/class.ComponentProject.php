@@ -7,11 +7,11 @@
 
 * @since 2007-12-08
 */
-class ComponentDefault extends ComponentProject
+class ComponentProject extends LBoxComponent
 {
 	protected function executePrepend(PHPTAL $TAL) {
 		try {
-			parent::executePrepend($TAL);
+			$TAL->adminLogged	= LBoxXT::isLoggedAdmin();
 		}
 		catch(Exception $e) {
 			throw $e;

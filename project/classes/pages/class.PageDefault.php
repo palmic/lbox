@@ -6,7 +6,7 @@
  * @version 1.0
  * @since 2007-12-08
  */
-class PageDefault extends LBoxPage
+class PageDefault extends PageProject
 {
 	protected function executeStart() {
 		try {
