@@ -3,11 +3,20 @@ RewriteEngine On
 RewriteRule ^(.*).sql /
 RewriteRule ^(.*).gz /
 RewriteRule ^(.*).xml /
+RewriteRule ^(.*).log /
 RewriteRule ^project/classes/(.*) /
 RewriteRule ^project/templates/(.*) /
 RewriteRule ^project/tal_compiled/(.*) /
 RewriteRule ^project/documents/(.*) /
-
+RewriteRule ^project/.cache/(.*) /
+RewriteRule ^project/.tal_compiled/(.*) /
+RewriteRule ^project/css/$ /
+RewriteRule ^project/config/$ /
+RewriteRule ^project/img/$ /
+RewriteRule ^project/js/$ /
+RewriteRule ^project/$ /
+RewriteRule ^lBox/(.*) /
+RewriteRule ^LBox/(.*) /
 
 # download file - pri zmene upravit nastaveni system.xml
 RewriteCond %{REQUEST_URI} ^/nwod/le(.*)

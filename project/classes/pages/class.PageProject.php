@@ -11,7 +11,7 @@ class PageProject extends LBoxPage
 {
 	protected function executeStart() {
 		try {
-			$this->config->setOutputFilter(new OutputFilterPageMaybelline($this->config));
+			$this->config->setOutputFilter(new OutputFilterPage($this->config));
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -21,7 +21,7 @@ class PageProject extends LBoxPage
 	protected function executePrepend(PHPTAL $TAL) {
 		try {
 			foreach((array)$pagesCFGs as $pageCFG) {
-				$pageCFG->setOutputFilter(new OutputFilterPageMaybelline($pageCFG));
+				$pageCFG->setOutputFilter(new OutputFilterPage($pageCFG));
 			}
 			$TAL->pagesCFGs			= $pagesCFGs;
 		}
