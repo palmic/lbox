@@ -1,9 +1,11 @@
 RewriteEngine On
 
-RewriteRule ^(.*).sql /
-RewriteRule ^(.*).gz /
-RewriteRule ^(.*).xml /
-RewriteRule ^(.*).log /
+RewriteRule ^(.*).sql$ /
+RewriteRule ^(.*).gz$ /
+RewriteRule ^(.*).xml$ /
+RewriteRule ^(.*).log$ /
+RewriteRule ^(.*).tar.gz$ /
+RewriteRule ^(.*).tgz$ /
 RewriteRule ^project/classes/(.*) /
 RewriteRule ^project/templates/(.*) /
 RewriteRule ^project/tal_compiled/(.*) /
