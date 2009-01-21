@@ -105,7 +105,11 @@ abstract class AbstractRecordLBox extends AbstractRecord implements OutputItem
 	 */
 	public function getParamDirect($name = "") {
 		try {
-			return parent::__get($name);
+			$value	= parent::__get($name);
+			if (($name != "*") && (!array_key_exists($name, $this->params))) {
+				$value = parent::__get($this->getColNameLNGCurrent($name));
+			}
+			return $value;
 		}
 		catch (Exception $e) {
 			throw $e;
