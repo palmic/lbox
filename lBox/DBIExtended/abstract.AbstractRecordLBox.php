@@ -22,12 +22,30 @@ abstract class AbstractRecordLBox extends AbstractRecord implements OutputItem
 	public function __get($name = "") {
 		try {
 			$value = $this->getParamDirect($name);
+			// multilang get
+			if (($name != "*") && (!array_key_exists($name, $this->params))) {
+				$value = $this->getParamDirect($this->getColNameLNGCurrent($name));
+			}
 			if ($this->outputFilter instanceof LBoxOutputFilter) {
 				return $this->outputFilter->prepare($name, $value);
 			}
 			else {
 				return $value;
 			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * vraci current language colname podle konvenci
+	 * @param string $name puvodni nazev parametru
+	 * @return mixed
+	 */
+	protected function getColNameLNGCurrent($name) {
+		try {
+			return $name ."_". LBoxFront::getDisplayLanguage();
 		}
 		catch (Exception $e) {
 			throw $e;
