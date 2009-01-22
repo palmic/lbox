@@ -235,7 +235,7 @@ class LBoxForm
 	public function getControlByName($name = "") {
 		try {
 			if (!array_key_exists($name, $this->controls)) {
-				throw new LBoxExceptionForm("\$name: ". LBoxExceptionForm::MSG_FORM_CONTROL_DOESNOT_EXISTS, LBoxExceptionForm::CODE_FORM_CONTROL_DOESNOT_EXISTS);
+				throw new LBoxExceptionForm("$name: ". LBoxExceptionForm::MSG_FORM_CONTROL_DOESNOT_EXISTS, LBoxExceptionForm::CODE_FORM_CONTROL_DOESNOT_EXISTS);
 			}
 			return $this->controls[$name];
 		}
