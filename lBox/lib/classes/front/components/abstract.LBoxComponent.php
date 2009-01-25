@@ -289,7 +289,7 @@ abstract class LBoxComponent
 			$out		= $input;
 			switch (LBoxConfigSystem::getInstance()->getParamByPath("output/remove_coments")) {
 				case -1:
-						if (strlen(stristr(LBOX_REQUEST_URL_HOST, "localhost")) < 1) {
+					if (LBOX_REQUEST_IP == "127.0.0.1") {
 							foreach ((array)$patterns as $pattern => $replacement) {
 								$out	= ereg_replace($pattern, $replacement, $out);
 							}
@@ -323,7 +323,7 @@ abstract class LBoxComponent
 			$out							= $input;
 			switch (LBoxConfigSystem::getInstance()->getParamByPath("output/compression")) {
 				case -1:
-						if (strlen(stristr(LBOX_REQUEST_URL_HOST, "localhost")) < 1) {
+						if (LBOX_REQUEST_IP == "127.0.0.1") {
 							foreach ((array)$patterns as $pattern => $replacement) {
 								$out	= ereg_replace($pattern, $replacement, $out);
 							}
@@ -779,7 +779,7 @@ abstract class LBoxComponent
 		try {
 			switch (LBoxConfigSystem::getInstance()->getParamByPath("debug/components")) {
 				case -1:
-						return (strlen(stristr(LBOX_REQUEST_URL_HOST, "localhost")) > 0);
+						return (LBOX_REQUEST_IP == "127.0.0.1");
 					break;
 				case 0:
 						return false;

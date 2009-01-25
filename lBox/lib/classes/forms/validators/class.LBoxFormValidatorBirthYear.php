@@ -13,7 +13,7 @@ class LBoxFormValidatorBirthYear extends LBoxFormValidator
 	public function validate(LBoxFormControl $control = NULL) {
 		try {
 			if (!$this->isValidBirthYear($control->getValue())) {
-				throw new LBoxExceptionFormValidatorsMaybelline(LBoxExceptionFormValidator::MSG_FORM_VALIDATION_BIRTHYEAR_NOTVALID,
+				throw new LBoxExceptionFormValidatorMaybelline(LBoxExceptionFormValidator::MSG_FORM_VALIDATION_BIRTHYEAR_NOTVALID,
 																LBoxExceptionFormValidator::CODE_FORM_VALIDATION_BIRTHYEAR_NOTVALID);
 			}
 		}

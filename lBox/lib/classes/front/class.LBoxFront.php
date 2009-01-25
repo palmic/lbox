@@ -97,6 +97,11 @@ class LBoxFront extends LBox
 			$pageCfg = self::getPageCfg();
 
 			// xt
+			if ($pageCfg->remoteip_only) {
+				if (LBOX_REQUEST_IP != $pageCfg->remoteip_only) {
+					throw new LBoxExceptionFront(LBoxExceptionFront::MSG_INVALID_REMOTE_IP, LBoxExceptionFront::CODE_INVALID_REMOTE_IP);
+				}
+			}
 			if ($pageCfg->xt == 1) {
 				if (!LBoxXT::isLogged()) {
 					self::reloadXTLogin();

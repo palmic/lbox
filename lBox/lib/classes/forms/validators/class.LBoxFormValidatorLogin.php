@@ -15,11 +15,11 @@ class LBoxFormValidatorLogin extends LBoxFormValidator
 													"password" 	=> $control->getControlByName("password")->getValue(),
 			));
 			if ($records->count() < 1) {
-				throw new LBoxExceptionFormValidatorsLogin(	LBoxExceptionFormValidatorsLogin::MSG_FORM_VALIDATION_LOGIN_NOTSUCCES,
+				throw new LBoxExceptionFormValidatorLogin(	LBoxExceptionFormValidatorsLogin::MSG_FORM_VALIDATION_LOGIN_NOTSUCCES,
 															LBoxExceptionFormValidatorsLogin::CODE_FORM_VALIDATION_LOGIN_NOTSUCCES);
 			}
 			if ($records->current()->confirmed < 1) {
-				throw new LBoxExceptionFormValidatorsLogin(	LBoxExceptionFormValidatorsLogin::MSG_FORM_VALIDATION_LOGIN_NOTCONFIRMED,
+				throw new LBoxExceptionFormValidatorLogin(	LBoxExceptionFormValidatorsLogin::MSG_FORM_VALIDATION_LOGIN_NOTCONFIRMED,
 															LBoxExceptionFormValidatorsLogin::CODE_FORM_VALIDATION_LOGIN_NOTCONFIRMED);
 			}
 		}

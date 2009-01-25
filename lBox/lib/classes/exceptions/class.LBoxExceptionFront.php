@@ -19,8 +19,8 @@ class LBoxExceptionFront extends LBoxException
 	const CODE_PAGE404_NOT_DEFINED		= 2009;	
 	const CODE_PAGE404_NOT_FOUND		= 2010;	
 	const CODE_HTTP_STATUS_NOT_FOUND	= 2011;	
-	
-	const CODE_ACCES_MULTIPLE_INSTANCES	= 2011;	
+	const CODE_ACCES_MULTIPLE_INSTANCES	= 2012;	
+	const CODE_INVALID_REMOTE_IP		= 2013;	
 	
 	const MSG_PAGE404_NOT_DEFINED		= "Page 404 not found in system config!";	
 	const MSG_PAGE404_NOT_FOUND 		= "Page 404 not found in structure config in project!";	
@@ -36,5 +36,6 @@ class LBoxExceptionFront extends LBoxException
 
 	const MSG_ACCES_MULTIPLE_INSTANCES	= "Cannot create more, than one AccesRecord instances!";	
 	const MSG_HTTP_STATUS_NOT_FOUND		= "Given HTTP status not found in definition!";
+	const MSG_INVALID_REMOTE_IP			= "Invalid request!";	
 }
 ?>

@@ -93,5 +93,6 @@
 	</xt>
 	<debug>
 		<components>0</components>
+		<exceptions>-1</exceptions>
 	</debug>
 </system>

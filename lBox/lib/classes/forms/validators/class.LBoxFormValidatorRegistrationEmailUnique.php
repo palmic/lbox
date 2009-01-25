@@ -8,7 +8,7 @@ class LBoxFormValidatorRegistrationEmailUnique extends LBoxFormValidator
 		try {
 			$records	= new XTUsersRecords(array("email" => $control->getValue()));
 			if ($records->count() > 0 && ($records->current()->confirmed > 0)) {
-				throw new LBoxExceptionFormValidatorsRegistration(	LBoxExceptionFormValidatorsRegistration::MSG_FORM_VALIDATION_REGISTRATION_EMAIL_NOTUNIQUE,
+				throw new LBoxExceptionFormValidatorRegistration(	LBoxExceptionFormValidatorsRegistration::MSG_FORM_VALIDATION_REGISTRATION_EMAIL_NOTUNIQUE,
 																	LBoxExceptionFormValidatorsRegistration::CODE_FORM_VALIDATION_REGISTRATION_EMAIL_NOTUNIQUE);
 			}
 		}

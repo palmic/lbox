@@ -20,7 +20,7 @@ abstract class ValidatorRecordExists extends LBoxFormValidator
 		try {
 			if ($control->getValue() > 0)
 			if (!$this->recordExists($control->getValue())) {
-				throw new LBoxExceptionFormValidators(LBoxExceptionFormValidator::MSG_FORM_VALIDATION_CONTROL_NOT_VALID,
+				throw new LBoxExceptionFormValidator(LBoxExceptionFormValidator::MSG_FORM_VALIDATION_CONTROL_NOT_VALID,
 													 LBoxExceptionFormValidator::CODE_FORM_VALIDATION_CONTROL_NOT_VALID);
 			}
 		}
