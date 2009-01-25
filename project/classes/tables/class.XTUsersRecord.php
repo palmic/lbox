@@ -47,6 +47,12 @@ class XTUsersRecord extends AbstractRecordLBox
 				$this->params["hash"]	= md5($this->get("nick") . $this->hashString . $this->get("password"));
 			}
 			parent::store();
+			// vygenerovani hashe
+			if (strlen(trim($this->params["hash"])) < 1) {
+				$hashString	= "kiou5s" . (string)rand(1, 9999) . $this->params[self::$idColName];
+				$this->__set("hash", md5((string)$hashString));
+			}
+			parent::store();
 		}
 		catch (Exception $e) {
 			throw $e;
