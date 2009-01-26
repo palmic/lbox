@@ -6,6 +6,7 @@ if (IIS) 	{ define("WIN", true); }
 else 		{ define("WIN", (array_key_exists("WINDIR", $_SERVER))); }
 define("SLASH", (WIN) ? '\\' : '/');
 define("LBOX_DIRNAME_PROJECT", "project");
+define("LBOX_DIRNAME_PLUGINS", "plugins");
 
 $slash	= SLASH;
 
@@ -18,6 +19,7 @@ $projectRootPath	= implode($slash, $projectRootArr);
 $paths 		= array(
 $projectRootPath . $slash . $lBoxDirName,
 $projectRootPath . $slash . LBOX_DIRNAME_PROJECT,
+$projectRootPath . $slash . LBOX_DIRNAME_PLUGINS,
 );
 $pathsIgnore = array(
 $projectRootPath . $slash ."$lBoxDirName". $slash ."TAL",

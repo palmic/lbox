@@ -22,7 +22,7 @@ class LBoxLoader
 	 * implicit file prefixes
 	 * @var array
 	 */
-	protected $prefixes 				= array("interface", "abstract", "class");
+	protected $prefixes 				= array("interface", "abstract", "class", "include");
 
 	/**
 	 * file postfix

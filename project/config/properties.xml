@@ -39,4 +39,10 @@
 	<property name="registration_confirm_mail_from">info@lbox.cz</property>
 	<!-- subject confirm mailu registrace -->
 	<property name="registration_confirm_mail_subject"><![CDATA[Potvrzeni registrace na webu <host>]]></property>
+
+	<!-- Public key pluginu recaptcha - k pouziti na frontu (javascript) -->
+	<property name="recaptcha_key_public">6LdW2QQAAAAAAHAQAsVrsKgrSBD10Wu4ouZ8VMz-</property>
+	<!-- Private key pluginu recaptcha - k pouziti pouze na serverside API!!!! -->
+	<property name="recaptcha_key_private">6LdW2QQAAAAAAPPGimgi5hK1HcMZh92X2yWdCmVR</property>
+
 </properties>

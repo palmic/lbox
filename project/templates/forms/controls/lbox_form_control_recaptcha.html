@@ -1,0 +1,8 @@
+<div class="control" id="control-${id}" tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
+	<label for="${id}"><span class="label">${SELF/getLabel} <tal:block tal:condition="SELF/isRequired">* </tal:block></span>
+		<span class="recaptcha"><tal:block tal:content="structure SELF/recaptchaGetHTML" /></span></label>
+	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
+		<div tal:condition="exists: exceptions/17001">Prosím vyplňte kontrolní text</div>
+		<div tal:condition="exists: exceptions/17003">Neopsal jste správně kontrolní text</div>
+	</div>
+</div>
