@@ -104,7 +104,19 @@ class LBoxFormMultistep extends LBoxForm
 			throw $e;
 		}
 	}
-	
+
+	/**
+	 * resetuje multistep (zapomene na vlozena data)
+	 */
+	public function reset() {
+		try {
+			$_SESSION["LBox"]["Forms"][$this->getName()]	= array();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
 	protected function process() {
 		try {
 			// zkontrolovat, jestli mame nastaven procesor

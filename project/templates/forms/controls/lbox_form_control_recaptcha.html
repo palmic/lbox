@@ -1,7 +1,21 @@
-<div class="control" id="control-${id}" tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
-	<div class="recaptcha"><tal:block tal:content="structure SELF/recaptchaGetHTML" /></div>
+<div class="control" id="${SELF/getContainerElementID}" tal:define="id SELF/getInputID">
+	<div class="recaptcha">
+		<div class="main" id="${SELF/getContainerElementID}-main">
+			<div id="recaptcha_description">Prosím opište dvě slova z obrázku:</div>
+			<div id="recaptcha_image" />
+			<input type="text" id="recaptcha_response_field" name="recaptcha_response_field" />
+		</div>
+		<div class="controls" id="${SELF/getContainerElementID}-controls">
+			<div class="recaptcha_reload"><a href="javascript:Recaptcha.reload();"><span>Jiná dvě slova</span></a></div>
+			<div class="recaptcha_only_if_image"><a href="javascript:Recaptcha.switch_type('audio')"><span>Spustit zvukovou alternativu obrázku (vyžaduje Apple Quicktime)</span></a></div>
+			<div class="recaptcha_only_if_audio"><a href="javascript:Recaptcha.switch_type('image')"><span>Zobrazit obrázkovou alternativu záznamu</span></a></div>
+		</div>
+		<tal:block tal:content="structure SELF/recaptchaGetHTML" />
+	</div>
 	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
-		<div tal:condition="exists: exceptions/17001">Prosím vyplňte kontrolní text</div>
-		<div tal:condition="exists: exceptions/17003">Neopsal jste správně kontrolní text</div>
+		<div tal:condition="exists: exceptions/17001">Prosím vyplňte kontrolní slova</div>
+		<div tal:condition="exists: exceptions/17010">Neopsal jste správně slova z obrázku</div>
 	</div>
 </div>
+<script type="text/javascript">document.getElementById('${SELF/getContainerElementID}-main').style.display	= 'block';
+								document.getElementById('${SELF/getContainerElementID}-controls').style.display	= 'block';</script>

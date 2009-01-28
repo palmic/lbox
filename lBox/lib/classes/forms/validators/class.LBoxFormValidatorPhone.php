@@ -8,7 +8,7 @@ class LBoxFormValidatorPhone extends LBoxFormValidator
 	 * regularni vyraz kontrolujici validitu telefonniho cisla
 	 * @var string
 	 */
-	protected $regPhone	= '^(\+[[:digit:]]{3})?([[:digit:]]{9})$';
+	protected $regPhone	= '^(\+[[:digit:]]{3})?([[:digit:]]{6})$';
 	
 	public function validate(LBoxFormControl $control = NULL) {
 		try {

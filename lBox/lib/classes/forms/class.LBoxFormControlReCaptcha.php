@@ -55,12 +55,48 @@ class LBoxFormControlReCaptcha extends LBoxFormControlFill
 	 */
 	public function recaptchaGetHTML() {
 		try {
-			return recaptcha_get_html(	$this->getKeyPublic(),
-										$error = NULL,
-										$useSSL = (strtolower(LBOX_REQUEST_URL_SCHEME) == "https")
-										);
+			$preHTML	 = "";
+			$preHTML	.= '<script type="text/javascript">';
+			$preHTML	.= "var RecaptchaOptions = {
+    						theme 				: 'custom',
+    						custom_theme_widget : '". $this->getContainerElementID() ."',
+    						tabindex			: 0
+							};";
+			$preHTML	.= "</script>";
+			return $preHTML . recaptcha_get_html_lbox(	$this->getKeyPublic(),
+													$error = NULL,
+													$useSSL = (strtolower(LBOX_REQUEST_URL_SCHEME) == "https")
+												);
 		}
 		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * getter na ID container HTML elementu 
+	 * @return string
+	 */
+	public function getContainerElementID() {
+		try {
+			return "control-". $this->getInputID();
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * getter na ID vstupniho pole 
+	 * @return string
+	 */
+	public function getInputID() {
+		try {
+			$formName	= $this->getForm()->getName();
+			$name		= $this->getName();
+			return "frm-$formName-ctrl-$name";
+		}
+		catch(Exception $e) {
 			throw $e;
 		}
 	}

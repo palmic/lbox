@@ -45,7 +45,7 @@ class LBoxFormControlSpamDefense extends LBoxFormControlFillHidden
 	 */
 	public function getJSLib() {
 		if (self::$rendered) {
-			return "";
+			//return "";
 		}
 
 		$name	= $this->name;
