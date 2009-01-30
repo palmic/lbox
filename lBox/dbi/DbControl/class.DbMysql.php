@@ -59,7 +59,7 @@ class DbMysql extends DbPlatform
             throw new DbControlException("Ilegal parameter dbName. Must be string.");
         }
         try {
-            $this->query("USE ". $dbName);
+            $this->query("USE `". $dbName ."`");
         }
         catch (Exception $e) {
             throw $e;
@@ -181,7 +181,7 @@ class DbMysql extends DbPlatform
 	            //setting default task database schema - if defined 
 	            # Caution: Using $this->query() may rewrite query that is waiting for execute
 	            if (strlen($schema = $this->dbParametersMessenger->schema) > 0) {            	
-	            	if (!@mysql_query("USE $schema;", $this->connection)) {
+	            	if (!@mysql_query("USE `$schema`;", $this->connection)) {
 	            		throw new LBoxException("Cannot select default database schema '$schema'.");
 		            }
 	            }
