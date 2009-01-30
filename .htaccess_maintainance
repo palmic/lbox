@@ -50,7 +50,7 @@ RewriteRule ^phpunit/(.*) project/documents/tests/PHPUnit/reports/$1
 
 RewriteCond %{REQUEST_FILENAME} !-f
 #RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*) msg_update.html [L]
+RewriteRule ^(.*) msg_maintainance.html [L]
 #RewriteRule ^(.*) index.php?%{QUERY_STRING} [L]
 
 
