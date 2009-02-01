@@ -9,7 +9,7 @@
 
 * @date 2005-01-11
 */
-class DbControlException extends Exception
+class DbControlException extends LBoxException
 {
     public function __construct($message = NULL, $code = 0) {
         parent::__construct($message, $code);
