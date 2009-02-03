@@ -1077,7 +1077,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 	protected function getDb() {
 		try {
 			if (!is_a($this->db, "DbControlInterface")) {
-				$this->db = new DbControl(self::$task, self::$charset);
+				$this->db = new DbControl($this->getClassVar("task", true), $this->getClassVar("charset", true));
 				if (strlen($this->getClassVar("dbName", true)) > 0) {
 					$this->db->selectDb($this->getClassVar("dbName"));
 				}
