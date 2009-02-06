@@ -38,9 +38,8 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 			}
 			$updateString	= "";
 			foreach($values as $index => $value) {
-				$value			= $this->getValueWrapped($value);
 				$updateString	.= strlen($updateString) > 0 ? ", " : "";
-				$updateString 	.= reset(self::getQuotesColumnName()) ."$index". end(self::getQuotesColumnName()) . "=$value";
+				$updateString 	.= reset(self::getQuotesColumnName()) ."$index". end(self::getQuotesColumnName()) . "=". $this->getValueWrapped($value);
 			}
 			if ($where instanceof QueryBuilderWhere) $whereString	= $this->getWhereStringByObject($where);
 			$table	= reset($this->getQuotesTableName()) . $table . end($this->getQuotesTableName());
@@ -258,12 +257,10 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 	}
 
 	protected function escapeString($string = "") {
-		if (ini_get("magic_quotes_gpc") == 1 || strtolower(ini_get("magic_quotes_gpc")) == "on") {
+		/*NONSENSE!!! if (ini_get("magic_quotes_gpc") == 1 || strtolower(ini_get("magic_quotes_gpc")) == "on") {
 			return $string;
-		}
-		else {
-			return mysql_escape_string($string);
-		}
+		}*/
+		return mysql_escape_string($string);
 	}
 }
 ?>
