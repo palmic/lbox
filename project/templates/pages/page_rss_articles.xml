@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="0.91">
+	<channel>
+		<image>
+			<X TAL:REPLACE="structure string:<link>${host}${SELF/getHomePageCfg/url}</link>" />
+			<title>${host}</title>
+			<url>${host}/img/logo.jpg</url>
+		</image>
+		<title TAL:CONTENT="SELF/page/title" />
+		<X TAL:REPLACE="structure string:<link>${host}${SELF/page/url}</link>" />
+		<description TAL:CONTENT="SELF/page/title">heading kanalu</description>
+		<language>cs</language>
+		<item TAL:REPEAT="item items">
+			<title TAL:CONTENT="item/heading" />
+			<X TAL:REPLACE="structure string:<link>${host}${item/url}</link>" />
+			<description>
+				<tal:block tal:CONTENT="item/perex" />
+				<tal:block tal:replace="string:"><!--(<tal:block tal:repeat="author item/multiref_author/getIterator">
+					<tal:block tal:content="string:${author/name} ${author/surname}" />
+				</tal:block>)--></tal:block>
+			</description>
+			<pubDate TAL:CONTENT="item/publishedRSS" />
+		</item>
+	</channel>
+</rss>
