@@ -15,15 +15,22 @@ class LBoxFormValidatorLogin extends LBoxFormValidator
 													"password" 	=> $control->getControlByName("password")->getValue(),
 			));
 			if ($records->count() < 1) {
-				throw new LBoxExceptionFormValidatorLogin(	LBoxExceptionFormValidatorsLogin::MSG_FORM_VALIDATION_LOGIN_NOTSUCCES,
+				throw new LBoxExceptionFormValidatorsLogin(	LBoxExceptionFormValidatorsLogin::MSG_FORM_VALIDATION_LOGIN_NOTSUCCES,
 															LBoxExceptionFormValidatorsLogin::CODE_FORM_VALIDATION_LOGIN_NOTSUCCES);
 			}
 			if ($records->current()->confirmed < 1) {
-				throw new LBoxExceptionFormValidatorLogin(	LBoxExceptionFormValidatorsLogin::MSG_FORM_VALIDATION_LOGIN_NOTCONFIRMED,
+				throw new LBoxExceptionFormValidatorsLogin(	LBoxExceptionFormValidatorsLogin::MSG_FORM_VALIDATION_LOGIN_NOTCONFIRMED,
 															LBoxExceptionFormValidatorsLogin::CODE_FORM_VALIDATION_LOGIN_NOTCONFIRMED);
 			}
 		}
 		catch (Exception $e) {
+			// workaround DEBILNIHO A ABSOLUTNE NELOGICKYHO CHOVANI MSSQL!!!
+			if (strlen(strstr($e->getFile(), "DbMssql")) > 0) {
+				if (strlen(strstr($e->getMessage(), "to a column of data type int")) > 0) {
+					throw new LBoxExceptionFormValidatorsLogin(	LBoxExceptionFormValidatorsLogin::MSG_FORM_VALIDATION_LOGIN_NOTSUCCES,
+																LBoxExceptionFormValidatorsLogin::CODE_FORM_VALIDATION_LOGIN_NOTSUCCES);
+				}
+			}
 			throw $e;
 		}
 	}

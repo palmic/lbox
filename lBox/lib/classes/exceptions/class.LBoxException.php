@@ -42,6 +42,12 @@ class LBoxException extends Exception
 	 * @var string
 	 */
 	protected $logFileDir = "";
+	
+	/**
+	 * file logging on/off
+	 * @var bool
+	 */
+	protected $logVerbose	= true;
 
 	/**
 	 * log file handler
@@ -79,6 +85,9 @@ class LBoxException extends Exception
 	 * @param string message - message to log
 	 */
 	protected function log($message = "") {
+		if (!$this->logVerbose) {
+			return;
+		}
 		if (strlen($message) < 1) {
 			$message  = $this->getLogMessage();
 		}

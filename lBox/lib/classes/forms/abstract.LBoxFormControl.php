@@ -246,9 +246,9 @@ abstract class LBoxFormControl
 			// zajistit nastaveni hodnoty
 			$this->getValue();
 			foreach ($this->filters as $filter) {
-				if (($filteredValue	= $filter->filter($this)) === NULL) {
+				/*DEPRECATED BECAUSE NOT FILLED FIELDS if (($filteredValue	= $filter->filter($this)) === NULL) {
 					throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_FORM_FILTER_OUT_VALUE_NULL, LBoxExceptionFormControl::CODE_FORM_FILTER_OUT_VALUE_NULL);
-				}
+				}*/
 				$this->value	= $filteredValue;
 			}
 			foreach ($this->validators as $validator) {
