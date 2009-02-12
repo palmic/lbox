@@ -286,11 +286,11 @@ class LBoxFront extends LBox
 	 * reloaduje na xt default page
 	 * @throws Exception
 	 */
-	protected static function reloadXTLogged() {
+	public static function reloadXTLogged() {
 		try {
 			$pageCfg = self::getPageCfg();
 			if (strlen($pageCfg->xt_reload_logged) > 0) {
-				$pageReload	= LBoxConfigManagerStructure::getPageById($pageCfg->xt_reload_logged);
+				$pageReload	= LBoxConfigManagerStructure::getPageById(LBoxConfigManagerProperties::getPropertyContentByName("ref_page_xt_admin"));
 				if ($pageCfg->url != $pageReload->url) {
 					self::reload($pageReload->url);
 				}
