@@ -32,6 +32,7 @@ class OutputFilterPage extends LBoxOutputFilter
 	public function prepare($name = "", $value = NULL) {
 		switch ($name) {
 			case "title":
+					$value					= strlen($value) > 0 ? $value : $this->prepare("heading", $this->instance->getParamDirect("heading"));
 					$webTitle				= LBoxConfigManagerProperties::getInstance()->getPropertyByName($this->configParamNameWebTitle)->getContent();
 					$homePageTitlePattern	= LBoxConfigManagerProperties::getInstance()->getPropertyByName($this->configParamNameHomepageTitle)->getContent();
 					$pageTitlePattern	= LBoxConfigManagerProperties::getInstance()->getPropertyByName($this->configParamNamePageTitle)->getContent();
@@ -47,7 +48,9 @@ class OutputFilterPage extends LBoxOutputFilter
 					return $pageTitle;
 				break;
 			case "titleMenu":
-					return $this->instance->getParamDirect("title");
+					return strlen($this->instance->getParamDirect("title")) > 0 ?
+							$this->instance->getParamDirect("title") :
+							$this->prepare("heading", $this->instance->getParamDirect("heading"));
 				break;
 			case "headingMenu":
 					return strlen($value) > 0 ? $value : $this->instance->heading;
