@@ -376,8 +376,12 @@ echo "<br />\n";*/
 	public function clearCache() {
 		try {
 //throw new Exception(__FUNCTION__);
-			LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->clearCache();
-			$this->isCacheSynchronized	= false;
+			$itemType 		= $this->getClassVar("itemType");
+			$cacheDisabled 	= eval("return $itemType::\$cacheDisabled;");
+			if (!$cacheDisabled) {
+				LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->clearCache();
+				$this->isCacheSynchronized	= false;
+			}
 		}
 		catch (Exception $e) {
 			throw $e;

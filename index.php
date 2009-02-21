@@ -5,6 +5,7 @@ session_start();
 ob_start();
 
 //DbControl::$debug = true;
+//LBoxCache::$debug = true;
 
 //LBoxLoaderConfig::getInstance()->debug = true;
 

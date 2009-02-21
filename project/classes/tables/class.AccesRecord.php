@@ -13,6 +13,8 @@ class AccesRecord extends AbstractRecordLBox
 	public static $tableName    	= "acces";
 	public static $idColName    	= "id";
 
+	public static $dependingRecords	= array("");
+	
 	/**
 	 * @var AccesRecord
 	 */

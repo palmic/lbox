@@ -37,7 +37,14 @@ class LBoxCache
 	
 	protected static $filesOpenedRead 	= 0;
 	protected static $filesOpenedWrite 	= 0;
+	protected static $filesDeleted		= 0;
 
+	/**
+	 * debug verbose
+	 * @var bool
+	 */
+	public static $debug	= false;
+	
 	/**
 	 * @param string fileName - custom filename
 	 * @return AccesRecord
@@ -110,6 +117,8 @@ class LBoxCache
 	public function reset () {
 		try {
 			$this->data	= array();
+			self::$filesDeleted++;
+			$this->debug("DELETING cache in '". $this->getFilePath() ."'");
 			@unlink($this->getFilePath());
 			$this->changed	= true;
 		}
@@ -237,8 +246,11 @@ else {
 			if (filesize($this->getFilePath()) < 1) {
 				return "";
 			}
+
+			$this->debug("READING cache data from '". $this->getFilePath() ."'");
 			$data	= fread($this->getFileR(), filesize($this->getFilePath()));
 			if (!$data) {
+				$this->debug("CACHE READ ERROR!!!\n In '". __FILE__ ."' at line ". __LINE__);
 				//throw new LBoxExceptionCache(LBoxExceptionCache::MSG_CACHE_CANNOT_READ, LBoxExceptionCache::CODE_CACHE_CANNOT_READ);
 			}
 			fclose($this->fileR);unset($this->fileR);
@@ -265,6 +277,7 @@ else {
 			if (!fwrite($fileW, serialize($this->data))) {
 				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_CACHE_CANNOT_WRITE, LBoxExceptionCache::CODE_CACHE_CANNOT_WRITE);
 			}
+			$this->debug("WRITING cache data into '". $this->getFilePath() ."'");
 			fclose($fileW);
 		}
 		catch (Exception $e) {
@@ -366,6 +379,31 @@ else {
 		catch (Exception $e) {
 			throw $e;
 		}
+	}
+
+	protected function debug($msg) {
+		if (!self::$debug) return;
+		switch (true) {
+			/*case is_numeric(strpos($msg, 'DELETING cache in \'E:\www\www.techhouse.cz\project\.cache\abstractrecord\acces\\')):
+					throw new LBoxException("sdfsdfds");
+				break;*/
+			
+			case is_numeric(strpos($msg, "WRITING")):
+			case is_numeric(strpos($msg, "DELETING")):
+					$count	= self::$filesOpenedWrite + self::$filesDeleted;
+					$bg		= "#835554";
+				break;
+			case is_numeric(strpos($msg, "READING")):
+					$count	= self::$filesOpenedRead;
+					$bg	= "#54836D";
+				break;
+			default:
+					$bg	= "#546983";
+		}
+		$color	= "#ffffff";
+		$msg 	= "<table><th bgcolor='$bg' align='left'><b><font color='$color'>". nl2br($count .": ". $msg) ."</font></b></th></table>\n";
+		echo $msg;
+		flush();
 	}
 }
 ?>
