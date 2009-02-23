@@ -462,7 +462,6 @@ abstract class LBoxFormControl
 									// smazani hodnoty
 									$_SESSION["LBox"]	["Forms"][$this->form->getName()]
 														["Controls"][$this->getName()]["value"][LBoxFront::getPage()->url] = "";
-									unset($_SESSION["LBox"]	["Forms"][$this->form->getName()]["Controls"][$this->getName()]["value"]);
 									return $defaultValue;
 								}
 		}

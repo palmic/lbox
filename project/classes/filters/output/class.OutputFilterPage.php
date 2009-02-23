@@ -128,13 +128,15 @@ class OutputFilterPage extends LBoxOutputFilter
 	protected function getClassMenu() {
 		try {
 			$className	= "";
-			if ($this->instance->isFirstInMenu()) {
-				if (strlen($className) > 0) $className .= " ";
-				$className .= "first";
+			if ((!$this->instance->hasSiblingBefore())
+				|| ($this->instance->getSiblingBefore()->in_menu != $this->instance->in_menu)) {
+					if (strlen($className) > 0) $className .= " ";
+					$className .= "first";
 			}
-			if ($this->instance->isLastInMenu()) {
-						if (strlen($className) > 0) $className .= " ";
-						$className .= "last";
+			if ((!$this->instance->hasSiblingAfter())
+				|| ($this->instance->getSiblingAfter()->in_menu != $this->instance->in_menu)) {
+					if (strlen($className) > 0) $className .= " ";
+					$className .= "last";
 			}
 			return $className;
 		}
