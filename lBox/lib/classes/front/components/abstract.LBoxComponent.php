@@ -509,10 +509,11 @@ abstract class LBoxComponent
 			return NULL;
 		}
 
+
 		// sestaveni pole paging
 		$pageCurrent	= $this->getPagingCurrent();
 		if ($this->getPagingCurrent() - $pagesRange > 1) {
-			$out["<<"]	= $this->getPageURLByIndex(1);
+			$out["<<"]	= $this->getPageURLByIndex(1) . "?$queryString";
 			$out["<<"]["first"]	= true;
 			$out["<<"]["last"]	= false;
 			$out["<<"]["class"]	= "first";
@@ -653,6 +654,8 @@ abstract class LBoxComponent
 			$paramsString	= "";
 			$paramPagingKey	= NULL;
 			$regsPageKey	= NULL;
+			$queryString	= strlen(LBOX_REQUEST_URL_QUERY) > 0 ? LBOX_REQUEST_URL_QUERY : "";
+
 			if (($paramsCount = count($params = $this->getUrlParamsArray())) > 0) {
 				foreach ($params as $kP => $param) {
 					if (ereg($pagingUrlParamPattern, $param, $regs)) {
@@ -693,6 +696,8 @@ abstract class LBoxComponent
 					}
 				}
 			}
+
+		
 			$urlGlue = count($params) > 0 ? "/" : ":";
 			$pageUrlParam = "";
 			// sestavime paging url param dynamicky podle patternu z configu
@@ -709,7 +714,7 @@ abstract class LBoxComponent
 			// prvni stranku bez parametru pro hezkou url
 			$pagePart			= $index > 1 ? $urlGlue . $pageUrlParam : "";
 			$out["current"]		= ($index == $current);
-			$out["url"]			= $url . $pagePart;
+			$out["url"]			= $url . $pagePart . "?$queryString";
 			return $out;
 		}
 		catch (Exception $e) {

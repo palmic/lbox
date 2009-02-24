@@ -106,12 +106,30 @@ $urlArray = parse_url($url);
 // oddelime casti za :
 $urlArrayParts = explode(":", $urlArray["path"]);
 
+  // emulace GET
+  $urlGetQueryIn  = explode("&", str_replace("&amp;", "&", urldecode($urlArray["query"])));
+  foreach ($urlGetQueryIn as $urlGetVarsLevel1) {
+  	if (is_numeric(strpos($urlGetVarsLevel1, "["))) {
+	    $getVarName   = reset(explode("[", $urlGetVarsLevel1));
+    	$getVarKey    = substr(next(explode("[", $urlGetVarsLevel1)), 0, stripos(next(explode("[", $urlGetVarsLevel1)), "]"));
+     	$getVarValue  = next(explode("=", $urlGetVarsLevel1));
+      	$_GET[$getVarName][$getVarKey]  = $getVarValue;
+    }
+    else {
+    	$getVarName   = reset(explode("=", $urlGetVarsLevel1));
+     	$getVarValue  = next(explode("=", $urlGetVarsLevel1));
+       	$_GET[$getVarName]              = $getVarValue;
+    }
+  }
+  unset($_GET["{QUERY_STRING}"]);
+
 try {
 
 	DEFINE("LBOX_REQUEST_URL", 				$url);
 	DEFINE("LBOX_REQUEST_URL_VIRTUAL", 		"/");
 	
 	DEFINE("LBOX_REQUEST_URL_PARAMS", 		array_key_exists(1, $urlArrayParts) ? $urlArrayParts[1] : "");
+	DEFINE("LBOX_REQUEST_URL_QUERY", 		urldecode($urlArray["query"]));
 	DEFINE("LBOX_REQUEST_URL_PATH", 		strlen(LBOX_REQUEST_URL_PARAMS) > 0 ? LBOX_REQUEST_URL_VIRTUAL .":". LBOX_REQUEST_URL_PARAMS : LBOX_REQUEST_URL_VIRTUAL); // virtual:params
 	DEFINE("LBOX_REQUEST_URL_SCHEME", 		$scheme);
 	DEFINE("LBOX_REQUEST_URL_HOST", 		$_SERVER['HTTP_HOST']);

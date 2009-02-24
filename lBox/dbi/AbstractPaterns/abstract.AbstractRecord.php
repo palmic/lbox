@@ -223,9 +223,6 @@ abstract class AbstractRecord implements Iterator
 	 */
 	public function isInCache() {
 		try {
-			if (!$this->isCacheOn()) {
-				return false;
-			}
 			if (is_bool($this->isInCache)) {
 				return $this->isInCache;
 			}

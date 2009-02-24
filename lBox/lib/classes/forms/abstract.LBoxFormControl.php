@@ -456,12 +456,13 @@ abstract class LBoxFormControl
 	public function getDefault() {
 		if ($this->isPersist) {
 			if (strlen($_SESSION["LBox"]	["Forms"][$this->form->getName()]
-								["Controls"][$this->getName()]["value"]) > 0) {
+								["Controls"][$this->getName()]["value"][LBoxFront::getPage()->url]) > 0) {
 									$defaultValue	= $_SESSION["LBox"]	["Forms"][$this->form->getName()]
 																		["Controls"][$this->getName()]["value"][LBoxFront::getPage()->url];
 									// smazani hodnoty
-									$_SESSION["LBox"]	["Forms"][$this->form->getName()]
+									/*$_SESSION["LBox"]	["Forms"][$this->form->getName()]
 														["Controls"][$this->getName()]["value"][LBoxFront::getPage()->url] = "";
+									unset($_SESSION["LBox"]	["Forms"][$this->form->getName()]["Controls"][$this->getName()]["value"]);*/
 									return $defaultValue;
 								}
 		}

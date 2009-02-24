@@ -74,11 +74,75 @@ class LBoxConfigItemStructure extends LBoxConfigItemComponent
 		try {
 			if (!parent::hasChildren()) return false;
 			foreach ($this->getChildNodesIterator() as $child) {
-				if ($child->in_menu == $this->__get("in_menu")) {
+				if ($child->in_menu) {
 					return true;
 				}
 			}
 			return false;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * Vraci jestli je prvni v menu
+	 * @return bool
+	 */
+	public function isFirstInMenu() {
+		try {
+			// listujeme sourozence
+			$siblingNode	= $this->node;
+			while ($siblingNode = $siblingNode->previousSibling) {
+				if (!($siblingNode instanceof DOMElement)) {
+					continue;
+				}
+				$className	= get_class($this);
+				$sibling	= new $className;
+				$sibling->setNode($siblingNode);
+				if (!$this->outputFilter instanceof LBoxOutputFilter) {
+					throw new LBoxExceptionConfigStructure(LBoxExceptionConfigStructure::MSG_NEEDED_OUTPUTFILTER_NOT_DEFINED, LBoxExceptionConfigStructure::CODE_NEEDED_OUTPUTFILTER_NOT_DEFINED);
+				}
+				$ofClassName	= get_class($this->outputFilter);
+				$sibling->setOutputFilter(new $ofClassName($sibling));
+				// pokud je sourozenec v menu, vracime false
+				if ($sibling->in_menu) {
+					return false;
+				}
+			}
+			return true;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * Vraci jestli je posledni v menu
+	 * @return bool
+	 */
+	public function isLastInMenu() {
+		try {
+			// listujeme sourozence
+			$siblingNode	= $this->node;
+			while ($siblingNode = $siblingNode->nextSibling) {
+				if (!($siblingNode instanceof DOMElement)) {
+					continue;
+				}
+				$className	= get_class($this);
+				$sibling	= new $className;
+				$sibling->setNode($siblingNode);
+				if (!$this->outputFilter instanceof LBoxOutputFilter) {
+					throw new LBoxExceptionConfigStructure(LBoxExceptionConfigStructure::MSG_NEEDED_OUTPUTFILTER_NOT_DEFINED, LBoxExceptionConfigStructure::CODE_NEEDED_OUTPUTFILTER_NOT_DEFINED);
+				}
+				$ofClassName	= get_class($this->outputFilter);
+				$sibling->setOutputFilter(new $ofClassName($sibling));
+				// pokud je sourozenec v menu, vracime false
+				if ($sibling->in_menu) {
+					return false;
+				}
+			}
+			return true;
 		}
 		catch (Exception $e) {
 			throw $e;

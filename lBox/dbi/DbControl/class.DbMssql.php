@@ -186,7 +186,11 @@ class DbMssql extends DbPlatform
 //            else {
 //                $hostString = $this->dbParametersMessenger->loginHost;
 //            }
-            $this->connection = @mssql_pconnect($hostString, $this->dbParametersMessenger->loginName, $this->dbParametersMessenger->loginPassword);
+			for ($i = 0; $i < 50; $i++) {
+            	$this->connection = @mssql_pconnect($hostString, $this->dbParametersMessenger->loginName, $this->dbParametersMessenger->loginPassword);
+				if (is_resource($this->connection)) break;
+				sleep(0.2);
+			}
             if (!is_resource($this->connection)) {
                 throw new DbControlException("Cant connect to database Mssql.\nhost = ". $this->dbParametersMessenger->loginHost, -1);
             }
