@@ -91,26 +91,8 @@ class LBoxConfigItemStructure extends LBoxConfigItemComponent
 	 */
 	public function isFirstInMenu() {
 		try {
-			// listujeme sourozence
-			$siblingNode	= $this->node;
-			while ($siblingNode = $siblingNode->previousSibling) {
-				if (!($siblingNode instanceof DOMElement)) {
-					continue;
-				}
-				$className	= get_class($this);
-				$sibling	= new $className;
-				$sibling->setNode($siblingNode);
-				if (!$this->outputFilter instanceof LBoxOutputFilter) {
-					throw new LBoxExceptionConfigStructure(LBoxExceptionConfigStructure::MSG_NEEDED_OUTPUTFILTER_NOT_DEFINED, LBoxExceptionConfigStructure::CODE_NEEDED_OUTPUTFILTER_NOT_DEFINED);
-				}
-				$ofClassName	= get_class($this->outputFilter);
-				$sibling->setOutputFilter(new $ofClassName($sibling));
-				// pokud je sourozenec v menu, vracime false
-				if ($sibling->in_menu) {
-					return false;
-				}
-			}
-			return true;
+			return $this->hasSiblingBefore() ? 
+				$this->hasSiblingBefore()->in_menu === $this->__get("in_menu") : false;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -123,26 +105,8 @@ class LBoxConfigItemStructure extends LBoxConfigItemComponent
 	 */
 	public function isLastInMenu() {
 		try {
-			// listujeme sourozence
-			$siblingNode	= $this->node;
-			while ($siblingNode = $siblingNode->nextSibling) {
-				if (!($siblingNode instanceof DOMElement)) {
-					continue;
-				}
-				$className	= get_class($this);
-				$sibling	= new $className;
-				$sibling->setNode($siblingNode);
-				if (!$this->outputFilter instanceof LBoxOutputFilter) {
-					throw new LBoxExceptionConfigStructure(LBoxExceptionConfigStructure::MSG_NEEDED_OUTPUTFILTER_NOT_DEFINED, LBoxExceptionConfigStructure::CODE_NEEDED_OUTPUTFILTER_NOT_DEFINED);
-				}
-				$ofClassName	= get_class($this->outputFilter);
-				$sibling->setOutputFilter(new $ofClassName($sibling));
-				// pokud je sourozenec v menu, vracime false
-				if ($sibling->in_menu) {
-					return false;
-				}
-			}
-			return true;
+			return $this->hasSiblingAfter() ? 
+				$this->getSiblingAfter()->in_menu === $this->__get("in_menu") : false;
 		}
 		catch (Exception $e) {
 			throw $e;

@@ -140,6 +140,50 @@ abstract class LBoxConfigItem implements OutputItem
 	}
 
 	/**
+	 * Vraci jestli ma pred sebou sourozence
+	 * @return bool
+	 */
+	public function hasSiblingBefore() {
+		try {
+			$prev	= $this->node->previousSibling;
+			while ($prev && (!$prev instanceof DOMElement)) {
+				$prev	= $prev->previousSibling;
+			}
+			if ($prev) {
+				return $prev->nodeName == $this->nodeName;
+			}
+			else {
+				return false;
+			}
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * Vraci jestli ma za sebou sourozence
+	 * @return bool
+	 */
+	public function hasSiblingAfter() {
+		try {
+			$next	= $this->node->nextSibling;
+			while ($next && (!$next instanceof DOMElement)) {
+				$next	= $next->nextSibling;
+			}
+			if ($next) {
+				return $next->nodeName == $this->nodeName;
+			}
+			else {
+				return false;
+			}
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
 	 * Vraci iterator potomku ve strukture
 	 * @return LBoxIteratorConfig
 	 */
@@ -180,6 +224,58 @@ abstract class LBoxConfigItem implements OutputItem
 			}
 		}
 		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * Vraci parenta ve strukture
+	 * @return LBoxConfigItem
+	 */
+	public function getSiblingBefore() {
+		try {
+			if ($this->hasSiblingBefore()) {
+				$prev	= $this->node->previousSibling;
+				while ($prev && (!$prev instanceof DOMElement)) {
+					$prev	= $prev->previousSibling;
+				}
+				$className	= get_class($this);
+				$previous	= new $className;
+				$previous		->setNode($prev);
+				if ($this->outputFilter instanceof LBoxOutputFilter) {
+					$ofClassName	= get_class($this->outputFilter);
+					$previous->setOutputFilter(new $ofClassName($previous));
+				}
+				return $previous;
+			}
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * Vraci parenta ve strukture
+	 * @return LBoxConfigItem
+	 */
+	public function getSiblingAfter() {
+		try {
+			if ($this->hasSiblingAfter()) {
+				$next	= $this->node->nextSibling;
+				while ($next && (!$next instanceof DOMElement)) {
+					$next	= $next->nextSibling;
+				}
+				$className	= get_class($this);
+				$nextItem	= new $className;
+				$nextItem	->setNode($next);
+				if ($this->outputFilter instanceof LBoxOutputFilter) {
+					$ofClassName	= get_class($this->outputFilter);
+					$nextItem->setOutputFilter(new $ofClassName($nextItem));
+				}
+				return $nextItem;
+			}
+		}
+		catch(Exception $e) {
 			throw $e;
 		}
 	}
