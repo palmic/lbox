@@ -98,12 +98,12 @@ class OutputFilterPage extends LBoxOutputFilter
 				break;
 			case "in_menu":
 					if ($this->instance->superxt == 1) {
-						if (!LBoxXT::isLoggedSuperAdmin()) {
+						if (!LBoxXTProject::isLoggedSuperAdmin()) {
 							return false;
 						}
 					}
 					if ($this->instance->xt == 1) {
-						if (!LBoxXT::isLoggedAdmin()) {
+						if (!LBoxXTProject::isLoggedAdmin()) {
 							return false;
 						}
 					}

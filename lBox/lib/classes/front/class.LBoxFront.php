@@ -103,19 +103,19 @@ class LBoxFront extends LBox
 				}
 			}
 			if ($pageCfg->xt == 1) {
-				if (!LBoxXT::isLogged()) {
+				if (!LBoxXTProject::isLogged()) {
 					self::reloadXTLogin();
 				}
-				if (!LBoxXT::isLoggedAdmin()) {
+				if (!LBoxXTProject::isLoggedAdmin()) {
 					self::reloadHomePage();
 				}
 			}
 			// super xt
 			if ($pageCfg->superxt == 1) {
-				if (!LBoxXT::isLogged()) {
+				if (!LBoxXTProject::isLogged()) {
 					self::reloadXTLogin();
 				}
-				if (!LBoxXT::isLoggedSuperAdmin()) {
+				if (!LBoxXTProject::isLoggedSuperAdmin()) {
 					self::reloadHomePage();
 				}
 			}
