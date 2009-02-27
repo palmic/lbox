@@ -61,6 +61,10 @@ class OutputFilterPage extends LBoxOutputFilter
 			case "titleWeb":
 					return LBoxConfigManagerProperties::getInstance()->getPropertyByName($this->configParamNameWebTitle)->getContent();
 				break;
+			case "description":
+			case "keywords":
+					return strlen($value) ? $value : "";
+				break;
 			case "isCurrent":
 					return ($this->instance->url == LBoxFront::getPage()->url);
 				break;

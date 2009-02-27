@@ -21,6 +21,18 @@ abstract class LBoxConfig extends LBox
 	protected $classNameIterator;
 	
 	/**
+	 * cache var
+	 * @var DOMXPath
+	 */
+	protected static $xPath;
+
+	/**
+	 * cache var
+	 * @var LBoxIteratorConfig
+	 */
+	protected $rootIterator;
+	
+	/**
 	 * vraci objekt s config DOMem
 	 * @return DOMDocument
 	 * @throws LBoxExceptionConfig
@@ -43,14 +55,32 @@ abstract class LBoxConfig extends LBox
 			throw $e;
 		}
 	}
-	
+
+	/**
+	 * getter na xPath
+	 * @return DOMXPath
+	 */
+	protected function getXPath() {
+		try {
+			if (self::$xPath instanceof DOMXPath) {
+				return self::$xPath;
+			}
+			return self::$xPath = new DOMXPath($this->getDOM());
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
 	/**
 	 * Vraci iterator prvni urovne configu
 	 * @return LBoxIteratorConfig
 	 * @throws Exception
 	 */
 	public function getRootIterator() {
-		try {			
+		try {
+			if ($this->rootIterator instanceof LBoxIteratorConfig) {
+				return $this->rootIterator;
+			}
 			if (strlen($className = $this->classNameIterator) < 1) {
 				throw new  LBoxExceptionConfig(LBoxExceptionConfig::MSG_ABSTRACT_CLASSNAME_NOT_DEFINED, LBoxExceptionConfig::CODE_ABSTRACT_CLASSNAME_NOT_DEFINED);
 			}
@@ -59,7 +89,7 @@ abstract class LBoxConfig extends LBox
 				throw new  LBoxExceptionConfig(LBoxExceptionConfig::MSG_CLASS_NOT_ITERATOR_CONFIG, LBoxExceptionConfig::CODE_CLASS_NOT_ITERATOR_CONFIG);
 			}
 			$instance->setParent($this->getDOM()->documentElement);
-			return $instance;
+			return $this->rootIterator = $instance;
 		}
 		catch (Exception $e) {
 			throw $e;

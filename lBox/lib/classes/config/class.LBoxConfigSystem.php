@@ -9,11 +9,17 @@
 */
 class LBoxConfigSystem extends LBoxConfig
 {
-	protected static $instance;
-	protected $configName = "system";
-	private $t = "cimlap";
-	private $td = "liame";
+	protected static 	$instance;
+	protected 			$configName = "system";
+	private 			$t = "cimlap";
+	private 			$td = "liame";
 
+	/**
+	 * cache var
+	 * @var array
+	 */
+	protected static 	$paramsByPaths	= array();
+	
 	/**
 	 * @return LBoxConfigSystem
 	 * @throws Exception
@@ -37,13 +43,15 @@ class LBoxConfigSystem extends LBoxConfig
 	 * @throws Exception
 	 */
 	public function getParamByPath($path = "") {
+		if (strlen(self::$paramsByPaths[$path]) > 0) {
+			return self::$paramsByPaths[$path];
+		}
 		if (strlen($path) < 1) {
 			throw new LBoxExceptionConfig("Bad param, ".	LBoxExceptionConfig::MSG_PARAM_STRING_NOTNULL,
 			LBoxExceptionConfig::CODE_BAD_PARAM
 			);
 		}
-		$xpath = new DOMXPath($this->getDOM());
-		if (!$result = @$xpath->query($path)) {
+		if (!$result = @$this->getXPath()->query($path)) {
 			throw new LBoxExceptionConfig("$path: ". LBoxExceptionConfig::MSG_INVALID_PATH, LBoxExceptionConfig::CODE_INVALID_PATH);
 		}
 		foreach ($result as $node) {
@@ -51,7 +59,7 @@ class LBoxConfigSystem extends LBoxConfig
 			// replace meta words
 			$value = str_replace("\$system", 	LBOX_PATH_CORE, 	$value);
 			$value = str_replace("\$project", 	LBOX_PATH_PROJECT, 	$value);
-			return trim($value);
+			return self::$paramsByPaths[$path] = trim($value);
 		}
 	}
 
