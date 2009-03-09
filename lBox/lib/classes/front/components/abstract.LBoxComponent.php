@@ -600,6 +600,170 @@ abstract class LBoxComponent
 	}
 	
 	/**
+	 * vraci pole stranek strankovani podle predanych parametru
+	 * @param int $itemsCount
+	 * @param int $pageLimit
+	 * @param int $pagesRange
+	 * @return array
+	 * @throws LBoxExceptionPage
+	 */
+	protected function getPaging4($itemsCount = 0, $pageLimit = 0, $pagesRange	= 0) {
+		try {
+			if (!is_numeric($itemsCount)) {
+				throw new LBoxExceptionPage("\$itemsCount ". LBoxExceptionPage::MSG_PARAM_INT_NOTNULL, LBoxExceptionPage::CODE_BAD_PARAM);
+			}
+			if (!is_numeric($pageLimit)) {
+				throw new LBoxExceptionPage("\$pageLimit ". LBoxExceptionPage::MSG_PARAM_INT, LBoxExceptionPage::CODE_BAD_PARAM);
+			}
+			if (!is_numeric($pagesRange)) {
+				throw new LBoxExceptionPage("\$pagesRange ". LBoxExceptionPage::MSG_PARAM_INT, LBoxExceptionPage::CODE_BAD_PARAM);
+			}
+			
+			$pageLimit 				= $pageLimit 	> 0 ? $pageLimit 	: 99999;
+			$pagesCount 			= ceil($itemsCount/$pageLimit);
+	
+			$pagesStart				= $this->getPagingCurrent() - $pagesRange;
+			$pagesStart				= $pagesStart < 1 ? 1 : $pagesStart;
+			$pagesEnd				= $this->getPagingCurrent() + $pagesRange;
+			$pagesEnd				= $pagesEnd > $pagesCount ? $pagesCount : $pagesEnd;
+			
+			// sestaveni pole pages
+			$out = array();
+			if ($pagesCount < 2) {
+				return NULL;
+			}
+	
+			// sestaveni pole paging
+			$pageCurrent		= $this->getPagingCurrent();
+			$pagePreviousKey	= $pageCurrent > 1 ? $pageCurrent-1 : 1;
+			$pageNextKey		= $pageCurrent+1;
+			$out["<<"]			= $this->getPageURLByIndex($pageCurrent > 1 ? $pageCurrent-1 : 1);
+			$out["<<"]["first"]		= true;
+			$out["<<"]["active"]	= $pageCurrent != 1;
+			$out["<<"]["key"]		= $pageCurrent-1;
+			$out["<<"]["last"]		= false;
+			$out["<<"]["class"]		= "first";
+			if (abs($pagesStart-$pageCurrent) > 3) {
+				for ($i = 1; $i <= 2; $i++) {
+					$out[$i]	= $this->getPageURLByIndex($i);
+					$out[$i]["active"]	= !$out[$i]["current"];
+					$out[$i]["key"]		= $i;
+					$out[$i]["first"]	= false;
+					$out[$i]["last"]	= false;
+					$out[$i]["class"]	= "pagefrom";
+				}
+			}
+			for ($i = $pagesStart; $i <= $pagesEnd; $i++) {
+				if ($i < $pageCurrent) {
+					if ($pageCurrent <= $pagesRange+1) {
+						$out[$i]	= $this->getPageURLByIndex($i);
+						$out[$i]["active"]	= !$out[$i]["current"];
+						$out[$i]["key"]		= $i;
+						$out[$i]["first"]	= false;
+						$out[$i]["last"]	= false;
+						$out[$i]["class"]	= "page". ($i-$pageCurrent);
+					}
+					else {
+						if (abs($i-$pageCurrent) == $pagesRange-2) {
+							$out[$i]["current"]	= false;
+							$out[$i]["url"]		= "";
+							$out[$i]["active"]	= false;
+							$out[$i]["key"]		= "...";
+							$out[$i]["etc"]		= true;
+							$out[$i]["first"]	= false;
+							$out[$i]["last"]	= false;
+							$out[$i]["class"]	= "pageetc";
+						}
+						else if (abs($i-$pageCurrent) < $pagesRange-2) {
+							$out[$i]	= $this->getPageURLByIndex($i);
+							$out[$i]["active"]	= !$out[$i]["current"];
+							$out[$i]["key"]		= $i;
+							$out[$i]["first"]	= false;
+							$out[$i]["last"]	= false;
+							$out[$i]["class"]	= "page". ($i-$pageCurrent);
+						}
+						else if (($i < $pageCurrent && $pageCurrent < 1+$pagesRange) || ($i > $pageCurrent && $pagesCount-$pageCurrent < $pagesRange)) {
+							$out[$i]	= $this->getPageURLByIndex($i);
+							$out[$i]["active"]	= !$out[$i]["current"];
+							$out[$i]["key"]		= $i;
+							$out[$i]["first"]	= false;
+							$out[$i]["last"]	= false;
+							$out[$i]["class"]	= "pagefrom";
+						}
+					}
+				}
+				else if ($i > $pageCurrent) {
+					if ($pagesCount-$pageCurrent <= $pagesRange) {
+						$out[$i]	= $this->getPageURLByIndex($i);
+						$out[$i]["active"]	= !$out[$i]["current"];
+						$out[$i]["key"]		= $i;
+						$out[$i]["first"]	= false;
+						$out[$i]["last"]	= false;
+						$out[$i]["class"]	= "page". ($i-$pageCurrent);
+					}
+					else {
+						if (abs($i-$pageCurrent) == $pagesRange-2) {
+							$out[$i]["current"]	= false;
+							$out[$i]["url"]		= "";
+							$out[$i]["active"]	= false;
+							$out[$i]["key"]		= "...";
+							$out[$i]["etc"]		= true;
+							$out[$i]["first"]	= false;
+							$out[$i]["last"]	= false;
+							$out[$i]["class"]	= "pageetc";
+						}
+						else if (abs($i-$pageCurrent) < $pagesRange-2) {
+							$out[$i]	= $this->getPageURLByIndex($i);
+							$out[$i]["active"]	= !$out[$i]["current"];
+							$out[$i]["key"]		= $i;
+							$out[$i]["first"]	= false;
+							$out[$i]["last"]	= false;
+							$out[$i]["class"]	= "page". ($i-$pageCurrent);
+						}
+						else if (($i < $pageCurrent && $pageCurrent < 1+$pagesRange) || ($i > $pageCurrent && $pagesCount-$pageCurrent < $pagesRange)) {
+							$out[$i]	= $this->getPageURLByIndex($i);
+							$out[$i]["active"]	= !$out[$i]["current"];
+							$out[$i]["key"]		= $i;
+							$out[$i]["first"]	= false;
+							$out[$i]["last"]	= false;
+							$out[$i]["class"]	= "pageto";
+						}
+					}
+				}
+				else {
+					$out[$i]	= $this->getPageURLByIndex($i);
+					$out[$i]["active"]	= $i == $pagec;
+					$out[$i]["key"]		= $i;
+					$out[$i]["first"]	= false;
+					$out[$i]["last"]	= false;
+					$out[$i]["class"]	= "page". ($i-$pageCurrent);
+				}
+			}
+			if (abs($pagesCount-$pageCurrent) > 3) {
+				for ($i = $pagesCount-1; $i <= $pagesCount; $i++) {
+					$out[$i]	= $this->getPageURLByIndex($i);
+					$out[$i]["active"]	= !$out[$i]["current"];
+					$out[$i]["key"]		= $i;
+					$out[$i]["first"]	= false;
+					$out[$i]["last"]	= false;
+					$out[$i]["class"]	= "page". ($i-$pageCurrent);
+				}
+			}
+			$out[">>"]				= $this->getPageURLByIndex($pageCurrent+1);
+			$out[">>"]["first"]		= false;
+			$out[">>"]["active"]	= $pageCurrent != $pagesCount;
+			$out[">>"]["key"]		= $pageCurrent+1;
+			$out[">>"]["last"]		= true;
+			$out[">>"]["class"]		= "last";
+
+			return $out;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * Vraci jednoduche strankovani (previous/next)
 	 * @param int $itemsCount
 	 * @param int $pageLimit
@@ -712,9 +876,10 @@ abstract class LBoxComponent
 				}
 			}
 			// prvni stranku bez parametru pro hezkou url
+			$queryStringGlue	= strlen($queryString) > 0 ? "?" : "";
 			$pagePart			= $index > 1 ? $urlGlue . $pageUrlParam : "";
 			$out["current"]		= ($index == $current);
-			$out["url"]			= $url . $pagePart . "?$queryString";
+			$out["url"]			= $url . $pagePart . $queryStringGlue . $queryString;
 			return $out;
 		}
 		catch (Exception $e) {
