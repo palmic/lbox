@@ -229,6 +229,27 @@ abstract class LBoxConfigItem implements OutputItem
 	}
 	
 	/**
+	 * Vraci parenta ve strukture na konkretnim pozadovanem levelu, nebo NULL
+	 * @param int $level - wanted parent level
+	 * @return LBoxConfigItem
+	 */
+	public function getParentLevel($level = 1) {
+		try {
+			if (!is_int($level) || $level < 1) {
+				throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_PARAM_INT_NOTNULL, LBoxExceptionConfig::CODE_BAD_PARAM);
+			}
+			$branch[]	= $this;
+			while (end($branch)->hasParent()) {
+				$branch[]	= end($branch)->getParent();
+			}
+			return $branch[count($branch)-$level];
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
 	 * Vraci parenta ve strukture
 	 * @return LBoxConfigItem
 	 */
