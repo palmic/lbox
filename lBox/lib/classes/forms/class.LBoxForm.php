@@ -1,6 +1,8 @@
 <?php
 /**
  * class LBoxForm
+* @author Michal Palma <palmic at gmail dot com>
+* @package LBox
  */
 class LBoxForm
 {
