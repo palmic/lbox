@@ -17,6 +17,7 @@ class LBoxExceptionFormValidator extends LBoxExceptionForm
 	const CODE_FORM_VALIDATION_FILE_IMAGE_RESOLUTION_HIGH		= 17011;
 	const CODE_FORM_VALIDATION_FILE_SIZE_HIGH			= 17012;
 	const CODE_FORM_VALIDATION_CONTROL_VALUE_NOT_FREE	= 17013;
+	const CODE_FORM_VALIDATION_FILE_NOT_ZIP				= 17014;
 	
 	const MSG_FORM_VALIDATION_CONTROL_EMPTY				= "required control is empty";
 	const MSG_FORM_VALIDATION_PASSWORDS_NOTSAME			= "passwords do not match";
@@ -31,5 +32,6 @@ class LBoxExceptionFormValidator extends LBoxExceptionForm
 	const MSG_FORM_VALIDATION_FILE_IMAGE_RESOLUTION_HIGH			= "Uploaded image exceeded maximum resolution allowed";
 	const MSG_FORM_VALIDATION_FILE_SIZE_HIGH			= "Uploaded file exceeded maximum size allowed";
 	const MSG_FORM_VALIDATION_CONTROL_VALUE_NOT_FREE	= "Control value already used in target data";
+	const MSG_FORM_VALIDATION_FILE_NOT_ZIP				= "file is not zip archive";
 }
 ?>

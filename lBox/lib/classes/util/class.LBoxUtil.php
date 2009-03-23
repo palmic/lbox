@@ -14,6 +14,13 @@ class LBoxUtil
 	 */
 	public $debug = false;
 
+	protected static $extenssionsIMG	= array(
+												"jpg",
+												"jpeg",
+												"gif",
+												"png",
+												);
+	
 	/**
 	 * @param string $to
 	 * @param string $subject
@@ -122,6 +129,23 @@ class LBoxUtil
 	}
 
 	/**
+	 * opravi v predane ceste slashe na validni v ramci current systemu
+	 * @param string $path
+	 * @return string
+	 * @throws Exception
+	 */
+	public static function fixPathSlashes ($path = "") {
+		try {
+			$path		= str_replace("/", SLASH, $path);
+			$path		= str_replace("\\", SLASH, $path);
+			return $path;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * Vytvori adresar podle predane cesty
 	 * @param string $path
 	 * @throws LBoxExceptionFilesystem
@@ -168,8 +192,7 @@ class LBoxUtil
 			if (strlen($path) < 1) {
 				throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFilesystem::CODE_BAD_PARAM);
 			}
-			$path		= str_replace("/", SLASH, $path);
-			$path		= str_replace("\\", SLASH, $path);
+			$path		= self::fixPathSlashes($path);
 			if (is_dir($path) < 1) {
 				throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_DIRECTORY_NOT_EXISTS, LBoxExceptionFilesystem::CODE_DIRECTORY_NOT_EXISTS);
 			}
@@ -192,6 +215,120 @@ class LBoxUtil
 			}
 		}
 		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * zjisti, jestli je dany nazev filu ve filesystemu volny, jinak vraci upraveny
+	 * @param string $path
+	 * @throws LboxException
+	 */
+	public static function getFreeFileNameFrom($path = "") {
+		try {
+			if (strlen($path) < 1) {
+				throw new LBoxExceptionFilesystem("$path: ". LBoxExceptionFilesystem::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFilesystem::CODE_BAD_PARAM);
+			}
+			$path		= self::fixPathSlashes($path);
+			$pathParts	= explode(SLASH, $path);
+			$fileName	= $pathParts[count($pathParts)-1];
+			$pathTarget	= "";
+			foreach ($pathParts as $index => $pathPart) {
+				if ($index == count($pathParts)-1) break;
+				$pathTarget	.= strlen($pathTarget) > 0 ? SLASH : "";
+				$pathTarget	.= $pathPart;
+			}
+			if (!is_dir($pathTarget)) {
+				throw new LBoxExceptionFilesystem("'$pathTarget': ". LBoxExceptionFilesystem::MSG_DIRECTORY_NOT_EXISTS, LBoxExceptionFilesystem::CODE_DIRECTORY_NOT_EXISTS);
+			}
+			$fileName		= ereg_replace("[^[:alpha:]]", "_", $fileName);
+			//$fileName 		= mb_convert_encoding($fileName, "UTF-8");
+			// pryc s diakritikou pokud mame prostredi s mbstring extension
+			$fileName 		= self::removeDiacritic($fileName);
+			//$fileName		= eregi_replace("")
+			while(file_exists("$pathTarget/$fileName")) {
+				$ext		= $this->getFileExt($fileName);
+				$lastDotPos	= strrpos($fileName, ".");
+				$nameOfFile	= substr($fileName, 0, $lastDotPos);
+				$parts	= explode("_", $nameOfFile);
+				if (is_numeric($end = end($parts))) {
+					$num 		= $end+1;
+					$numLastpos	= strrpos($nameOfFile, "_");
+					$nameOfFile	= substr($nameOfFile, 0, $numLastpos) ."_$num";
+				}
+				else {
+					$nameOfFile .= "_2";
+				}
+				$fileName = "$nameOfFile.$ext";
+			}
+			return $fileName;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * Odstrani diakritiku
+	 * @param string $input
+	 */
+	public static function removeDiacritic($input = "") {
+		if (function_exists ("mb_convert_encoding")) {
+			return mb_convert_encoding($input, "UTF-8", mb_detect_encoding($input));
+		}
+		else {
+			return 		strtr($input, 				"áäčďéěëíňóöřšťúůüýžÁÄČĎÉĚËÍŇÓÖŘŠŤÚŮÜÝŽ",
+	    											"aacdeeeinoorstuuuyzAACDEEEINOORSTUUUYZ");
+		}
+	}
+	
+	/**
+	 * vraci bool, jestli je file obrazek
+	 * @param string $filename (muze byt i path)
+	 * @return bool
+	 */
+	public static function isFileImageByName($filename = "") {
+		try {
+			return is_numeric(array_search(self::getExtByFilename($filename), self::$extenssionsIMG));
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * vraci nazev filu bez pripony podle predaneho filename
+	 * @param string $filename (muze byt i path)
+	 * @return string
+	 */
+	public static function getFileNameWithoutExtByFilename($filename = "") {
+		try {
+			$filename		= strtolower(self::fixPathSlashes($filename));
+			$filenameParts	= explode(SLASH, $filename);
+			$basename		= $filenameParts[count($filenameParts)-1];
+			$basenameParts	= explode(".", $basename);
+			unset($basenameParts[count($basenameParts)-1]);
+			return $filename= implode(".", $basenameParts);
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * vraci priponu filu podle predaneho filename
+	 * @param string $filename (muze byt i path)
+	 * @return string
+	 */
+	public static function getExtByFilename($filename = "") {
+		try {
+			$filename		= strtolower(self::fixPathSlashes($filename));
+			$filenameParts	= explode(SLASH, $filename);
+			$basename		= $filenameParts[count($filenameParts)-1];
+			$basenameParts	= explode(".", $basename);
+			return $ext		= $basenameParts[count($basenameParts)-1];
+		}
+		catch(Exception $e) {
 			throw $e;
 		}
 	}
