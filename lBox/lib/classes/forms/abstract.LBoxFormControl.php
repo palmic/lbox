@@ -249,7 +249,7 @@ abstract class LBoxFormControl
 				/*DEPRECATED BECAUSE NOT FILLED FIELDS if (($filteredValue	= $filter->filter($this)) === NULL) {
 					throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_FORM_FILTER_OUT_VALUE_NULL, LBoxExceptionFormControl::CODE_FORM_FILTER_OUT_VALUE_NULL);
 				}*/
-				$this->value	= $filteredValue;
+				$this->value	= $filter->filter($this);
 			}
 			foreach ($this->validators as $validator) {
 				try {

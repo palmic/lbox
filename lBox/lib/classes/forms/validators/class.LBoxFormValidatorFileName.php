@@ -9,12 +9,18 @@ class LBoxFormValidatorFileName extends LBoxFormValidator
 	 * @var string
 	 */
 	protected $regSigns	= '^([[:alnum:]_\.\-])+$';
-	
+
 	public function validate(LBoxFormControl $control = NULL) {
 		try {
-			$valueFiles	= $control->getValueFiles();
-			if (strlen($control->getValue()) > 0)
-			if (!ereg($this->regSigns, $valueFiles["name"])) {
+			if ($control instanceof LBoxFormControlFile) {
+				$valueFiles	= $control->getValueFiles();
+				$value		= $valueFiles["name"];
+			}
+			else {
+				$value		= $control->getValue();
+			}
+			if (strlen($value) > 0)
+			if (!ereg($this->regSigns, $value)) {
 				throw new LBoxExceptionFormValidator(	LBoxExceptionFormValidator::MSG_FORM_VALIDATION_FILENAME_INVALID,
 														LBoxExceptionFormValidator::CODE_FORM_VALIDATION_FILENAME_INVALID);
 			}
