@@ -31,6 +31,12 @@ class LBoxXT extends LBox
 	protected static $xtRoleRecord;
 	
 	/**
+	 * cache roli podle jejich nazvu
+	 * @var array
+	 */
+	protected static $xtRolesRecordsByNames = array();
+	
+	/**
 	 * @var LBoxXT
 	 */
 	protected static $instance;
@@ -224,11 +230,14 @@ class LBoxXT extends LBox
 			if (strlen($name) < 1) {
 				throw new LBoxExceptionXT(LBoxExceptionXT::MSG_PARAM_STRING_NOTNULL, LBoxExceptionXT::CODE_BAD_PARAM);
 			}
+			if (self::$xtRolesRecordsByNames[$name] instanceof XTRolesRecord) {
+				return self::$xtRolesRecordsByNames[$name];
+			}
 			$records	= new XTRolesRecords(array("name" => $name));
 			if ($records->count() < 1) {
 				throw new LBoxExceptionXT("'$name' ". LBoxExceptionXT::MSG_ROLE_NOT_EXISTS, LBoxExceptionXT::CODE_ROLE_NOT_EXISTS);
 			}
-			return $records->current();
+			return self::$xtRolesRecordsByNames[$name] = $records->current();
 		}
 		catch (Exception $e) {
 			throw $e;
