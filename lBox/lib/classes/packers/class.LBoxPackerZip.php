@@ -30,7 +30,7 @@ class LBoxPackerZip extends LBoxPacker
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * @throws Exception
 	 */

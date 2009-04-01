@@ -992,7 +992,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 		try {
 			$bounded1M = $this->getClassVar("bounded1M", true);
 			if (!array_key_exists($type, $bounded1M)) {
-				throw new LBoxException("Cannot find bounded column '". $boundedM1[$type] ."' in my columns!");                                                                                                                //
+				throw new LBoxException("Cannot find bounded column '". $bounded1M[$type] ."' in my columns!");                                                                                                                //
 			}                                                                                                                                //
 			// must add foreign key rulle into filter (Records to find in bounded type must have foreignkey value of primarykey of this type)
 			$fKFilter[$bounded1M[$type]] = $this->params[$this->getClassVar("idColName")];
