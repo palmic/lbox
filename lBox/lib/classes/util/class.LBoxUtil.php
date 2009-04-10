@@ -78,6 +78,27 @@ class LBoxUtil
 	}
 
 	/**
+	 * vrati URL string preparserovany z predaneho nazvu
+	 * @param string $name
+	 * @return string
+	 */
+	public static function getURLByNameString($name = "") {
+		try {
+			$out 	= strtolower(trim($name));
+
+			$vzor = array("@&(.*?);@"); $nahrazeni = array("-"); $text = preg_replace($vzor, $nahrazeni, $out);
+			$out 	= strtr($out, array("á" => "a", "č" => "c", "ď" => "d", "é" => "e", "ě" => "e", "í" => "i", "ň" => "n", "ó" => "o", "ř" => "r", "š" => "s", "ť" => "t", "ú" => "u", "ů" => "u", "ý" => "y", "ž" => "z",
+			"." => "-", "," => "-", ";" => "-", ":" => "-", "&" => "and", "_" => "-", "@" => "", " " => "-"));
+			$out	= ereg_replace("[^[:alnum:]]", "-", $out);
+			$out	= ereg_replace("(-+)", "-", $out);
+			return 	$out;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
 	 * @desc returns timestamp of given date
 	 * @param string date - ISO formated date or date-time
 	 * @param boolean dayPrecission - day precission / second precission

@@ -181,5 +181,19 @@ class LBoxFormControlMultiple extends LBoxFormControl
 			throw $e;
 		}
 	}
+	
+	/**
+	 * prenese required na podrizene controls
+	 */
+	public function setRequired($value = true) {
+		try {
+			foreach ($this->controls as $control) {
+				$control->setRequired($value);
+			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
 }
 ?>

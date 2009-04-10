@@ -82,7 +82,7 @@ abstract class LBoxPacker
 	final public function unpackTo($path = "", $overwrite = false) {
 		try {
 			foreach($this->getFilesPacked() as $filename => $archiveIndex) {
-				$filePath	= "$path/$filename";
+				$filePath	= "$path/". strtolower($filename);
 				$this->unpackFileTo($filename, $filePath, $overwrite);
 				$this->filesExternal[$filePath]	= $archiveIndex;
 			}

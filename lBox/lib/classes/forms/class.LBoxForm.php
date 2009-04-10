@@ -113,7 +113,7 @@ class LBoxForm
 			$this->label		= strlen($label) 		> 0 ? $label 		: $name;
 			$this->labelSubmit	= strlen($labelSubmit) 	> 0 ? $labelSubmit 	: "odeslat";
 			if (array_key_exists($name, self::$forms)) {
-				throw new LBoxExceptionForm(LBoxExceptionForm::MSG_FORM_DUPLICATE_FORMNAME, LBoxExceptionForm::CODE_FORM_DUPLICATE_FORMNAME);
+				throw new LBoxExceptionForm("$name: ". LBoxExceptionForm::MSG_FORM_DUPLICATE_FORMNAME, LBoxExceptionForm::CODE_FORM_DUPLICATE_FORMNAME);
 			}
 			self::$forms[$name]	= $this;
 			if (array_key_exists("LBox", (array)$_SESSION))

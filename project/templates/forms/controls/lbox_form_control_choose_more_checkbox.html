@@ -1,9 +1,9 @@
 <div tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
 	<label for="${id}"><span class="label">${SELF/getLabel}
 		<tal:block tal:condition="SELF/isRequired">* </tal:block></span>
-		<tal:block tal:repeat="option SELF/getOptions">
+		<span class="checkboxes"><tal:block tal:repeat="option SELF/getOptions">
 			<x metal:use-macro="control_checkbox" />
-		</tal:block>
+		</tal:block></span>
 	</label>
 	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
 		<tal:block tal:repeat="exception exceptions">
