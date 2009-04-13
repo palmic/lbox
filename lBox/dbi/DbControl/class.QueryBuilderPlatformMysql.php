@@ -257,9 +257,9 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 	}
 
 	protected function escapeString($string = "") {
-		/*NONSENSE!!! if (ini_get("magic_quotes_gpc") == 1 || strtolower(ini_get("magic_quotes_gpc")) == "on") {
+		if (ini_get("magic_quotes_gpc") == 1 || strtolower(ini_get("magic_quotes_gpc")) == "on") {
 			return $string;
-		}*/
+		}
 		return mysql_escape_string($string);
 	}
 }
