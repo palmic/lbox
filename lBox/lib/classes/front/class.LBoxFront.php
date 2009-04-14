@@ -319,7 +319,12 @@ class LBoxFront extends LBox
 			return array();
 		}
 		else {
-			return explode("/", $paramsString);
+			$params	= explode("/", $paramsString);
+			foreach ($params as $param) {
+				if (strlen($param) < 1) continue;
+				$out[]	= $param;
+			}
+			return $out;
 		}
 	}
 
