@@ -80,6 +80,9 @@ class OutputFilterPage extends LBoxOutputFilter
 					}
 					return false;
 				break;
+			case "heading":
+					return (string)$value;
+				break;
 			case "name":
 					return $this->instance->heading;
 				break;
