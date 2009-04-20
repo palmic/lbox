@@ -615,7 +615,7 @@ var_dump($this->getSQL() .": neni valid");*/
 			$itemType 				= $this->getClassVar("itemType");
 			$idColName  			= eval("return $itemType::\$idColName;");
 			$record 				= $this->getDbResult()->get();
-			$recordRef 				= new $itemType($this->getDbResult()->$idColName);
+			$recordRef 				= new $itemType($this->getDbResult()->$idColName, true);
 			$cacheData[$idColName]	= $this->getDbResult()->$idColName;
 			foreach ($record as $colName => $colValue) {
 				if ($colName == $idColName) continue;

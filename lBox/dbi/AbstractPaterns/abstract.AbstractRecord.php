@@ -162,8 +162,9 @@ abstract class AbstractRecord implements Iterator
 	/**
 	 * constructor
 	 * @param mixed $id - leave it empty to create new record
+	 * @param bool $loaded - only for records classname init!
 	 */
-	public function __construct($id = NULL) {
+	public function __construct($id = NULL, $loaded = false) {
 		try {
 			if (strlen($id) > 0) {
 				if (!is_scalar($id)) {
@@ -173,6 +174,10 @@ abstract class AbstractRecord implements Iterator
 			}
 			if ($this->isInCache()) {
 				$this->loadFromCache();
+			}
+			if ($loaded) {
+				$this->isInDatabase	= true;
+				$this->loaded		= true;
 			}
 			if (!$this->loaded) {
 				if ($this->isInDatabase()) {
