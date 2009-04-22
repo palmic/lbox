@@ -165,33 +165,55 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 	protected function getWhereStringByObject (QueryBuilderWhere $where, $isSub	= false) {
 		// whereString
 		$whereString	= "";
-		if (count($where->getConditions()) < 1) {
-			NULL;
+		/* FULLTEXT WHERE */
+		if ($where instanceof QueryBuilderWhereFullText) {
+			$columnsString	= "";
+			$phrasesString	= "";
+			foreach ($where->getColumns() as $columnName) {
+				$columnsString 	.= strlen($columnsString) > 0 ? "," : "";
+				$columnsString	.= reset(self::getQuotesColumnName()) . $columnName . end(self::getQuotesColumnName());
+			}
+			foreach ($where->getPhrases() as $phrase) {
+				$phrase			 = ereg_replace("[[:punct:]]", "", $phrase);
+				if (strlen(trim($phrase)) < 1) continue;
+				$phrase 		 = $this->escapeString($phrase);
+				$phrasesString	.= strlen($phrasesString) > 0 ? " " : "";
+				$phrasesString	.= '"'. $phrase .'"';
+			}
+			$whereString	= "MATCH (". $columnsString .")
+								AGAINST ('$phrasesString')";
 		}
+		/* NORMAL WHERE */
 		else {
-			foreach ($where->getConditions() as $condition) {
-				$columnName		= $condition["column"];
-				$glue			= $condition["glue"] > 0 ? "OR" : "AND";
-				switch ($condition["comparison"]) {
-								case  -3 	: $comparisonValue	= strtoupper($this->getValueWrapped($condition["value"])) == "NULL"
-																		? " IS NOT NULL"
-																		: " != ". $this->getValueWrapped($condition["value"]) .""; break;
-								case -2		: $comparisonValue	=" < ". $this->getValueWrapped($condition["value"]) .""; break;
-								case -1		: $comparisonValue	=" <= ". $this->getValueWrapped($condition["value"]) .""; break;
-								case  0 	: $comparisonValue	= strtoupper($this->getValueWrapped($condition["value"])) == "NULL"
-																		? " IS NULL"
-																		: " = ". $this->getValueWrapped($condition["value"]) .""; break;
-								case  1		: $comparisonValue	=" >= ". $this->getValueWrapped($condition["value"]) .""; break;
-								case  2		: $comparisonValue	=" > ". $this->getValueWrapped($condition["value"]) .""; break;
-								case  3		: $comparisonValue	=" LIKE ". $this->getValueWrapped("%". $condition["value"] ."") .""; break;
-								case  4		: $comparisonValue	=" LIKE ". $this->getValueWrapped("%". $condition["value"] ."%") .""; break;
-								case  5		: $comparisonValue	=" LIKE ". $this->getValueWrapped("". $condition["value"] ."%") .""; break;
-								default		: throw new DbControlException("Ilegal comparison '". $condition["comparison"] ."'!");
-				}
-				$whereString	.= strlen($whereString) > 0 ? " $glue " : "";
-				$whereString	.= reset(self::getQuotesColumnName()) . $columnName . end(self::getQuotesColumnName()) . $comparisonValue;
+			if (count($where->getConditions()) < 1) {
+				NULL;
+			}
+			else {
+				foreach ($where->getConditions() as $condition) {
+					$columnName		= $condition["column"];
+					$glue			= $condition["glue"] > 0 ? "OR" : "AND";
+					switch ($condition["comparison"]) {
+									case  -3 	: $comparisonValue	= strtoupper($this->getValueWrapped($condition["value"])) == "NULL"
+																			? " IS NOT NULL"
+																			: " != ". $this->getValueWrapped($condition["value"]) .""; break;
+									case -2		: $comparisonValue	=" < ". $this->getValueWrapped($condition["value"]) .""; break;
+									case -1		: $comparisonValue	=" <= ". $this->getValueWrapped($condition["value"]) .""; break;
+									case  0 	: $comparisonValue	= strtoupper($this->getValueWrapped($condition["value"])) == "NULL"
+																			? " IS NULL"
+																			: " = ". $this->getValueWrapped($condition["value"]) .""; break;
+									case  1		: $comparisonValue	=" >= ". $this->getValueWrapped($condition["value"]) .""; break;
+									case  2		: $comparisonValue	=" > ". $this->getValueWrapped($condition["value"]) .""; break;
+									case  3		: $comparisonValue	=" LIKE ". $this->getValueWrapped("%". $condition["value"] ."") .""; break;
+									case  4		: $comparisonValue	=" LIKE ". $this->getValueWrapped("%". $condition["value"] ."%") .""; break;
+									case  5		: $comparisonValue	=" LIKE ". $this->getValueWrapped("". $condition["value"] ."%") .""; break;
+									default		: throw new DbControlException("Ilegal comparison '". $condition["comparison"] ."'!");
+					}
+					$whereString	.= strlen($whereString) > 0 ? " $glue " : "";
+					$whereString	.= reset(self::getQuotesColumnName()) . $columnName . end(self::getQuotesColumnName()) . $comparisonValue;
+				}				
 			}
 		}
+
 		foreach ($where->getWheres() as $subWhereSet) {
 			$subWhere		= $subWhereSet["where"];
 			$subWhereGlue	= $subWhereSet["glue"] > 0 ? "OR" : "AND";

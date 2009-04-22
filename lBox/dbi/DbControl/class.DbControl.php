@@ -288,7 +288,7 @@ class DbControl implements DbControlInterface
 					$bg	= "#5D5D5D";
 		}
 		$color	= "#ffffff";
-		$msg 	= "<table><th bgcolor='$bg' align='left'><b><font color='$color'>". nl2br(self::$queryCount .": ". $sql) ."</font></b></th></table>\n";
+		$msg 	= "<table><th bgcolor='$bg' align='left'><font color='#C0C0C0'>". round(LBoxTimer::getInstance()->getTimeOfLife(), 5) ."</font></th><th bgcolor='$bg' align='left'><b><font color='$color'>". nl2br(self::$queryCount .": ". $sql) ."</font></b></th></table>\n";
 		echo $msg;
 		flush();
 	}

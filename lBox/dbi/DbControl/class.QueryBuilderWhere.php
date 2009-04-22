@@ -16,7 +16,7 @@ class QueryBuilderWhere
 	protected $conditions	= array();
 	
 	/**
-	 * additional "OR wheres" array
+	 * additional "wheres" array
 	 * @var array
 	 */
 	protected $wheres	= array();
