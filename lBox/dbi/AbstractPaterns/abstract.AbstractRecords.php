@@ -198,7 +198,7 @@ echo "<br />\n";*/
 					if ($key == "system_istree") {
 						continue;
 					}
-					$recordRef 		= new $itemType($row[$idColName]);
+					$recordRef 		= new $itemType($row[$idColName], true);
 					$recordRef		->setIsTree($this->isTree());
 					foreach ($row as $colName => $colValue) {
 						if ($colName == $idColName) continue;
@@ -269,7 +269,7 @@ echo "<br />\n";*/
 					return false;
 				}
 
-				$recordRef 				= new $itemType($recordData[$idColName]);
+				$recordRef 				= new $itemType($recordData[$idColName], true);
 				foreach ($recordData as $colName => $colValue) {
 					if ($colName == $idColName) continue;
 					if (!$this->isTreeKey($colName)) {

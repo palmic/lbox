@@ -172,10 +172,12 @@ abstract class AbstractRecord implements Iterator
 				}
 				$this->params[$this->getClassVar("idColName")] = $id;
 			}
-			if ($this->isInCache()) {
-				$this->loadFromCache();
+			if (!$loaded) {
+				if ($this->isInCache()) {
+					$this->loadFromCache();
+				}
 			}
-			if ($loaded) {
+			else {
 				$this->isInDatabase	= true;
 				$this->loaded		= true;
 			}
