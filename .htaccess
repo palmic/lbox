@@ -40,6 +40,7 @@ RewriteRule ^api/(.*) project/api/$1
 RewriteRule ^ajaxfilemanager/(.*) project/wsw/ajaxfilemanager/$1
 RewriteRule ^crypt/(.*) project/crypt/$1
 RewriteRule ^filespace/(.*) project/filespace/$1
+RewriteRule ^mailing/(.*) /project/mailing/$1 [L]
 
 RewriteRule ^data_test/(.*) project/data/test/$1
 
