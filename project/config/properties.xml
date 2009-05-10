@@ -2,7 +2,6 @@
 <properties>
 	<property name="log_access">1</property><!-- prepinatelny atribut, ktery prepina logovani pristupu do databaze -->
 	
-	<property name="contact_form_addresses">info@lbox.cz</property><!-- cilove mailove adresy kontaktnich formularu (oddelovat carkou) -->
 	<property name="web_title">lbox.cz</property><!-- title webu pouzivany na homepage a v ostatnich strankach dynamicky ve vzorech -->
 	<property name="page_title_pattern">$page_title &lt; $properties_web_title</property><!-- vzor titlu stranky -->
 	<property name="page_home_title_pattern">$properties_web_title</property><!-- vzor titlu homepage -->
@@ -44,5 +43,8 @@
 	<property name="recaptcha_key_public">6LdW2QQAAAAAAHAQAsVrsKgrSBD10Wu4ouZ8VMz-</property>
 	<!-- Private key pluginu recaptcha - k pouziti pouze na serverside API!!!! -->
 	<property name="recaptcha_key_private">6LdW2QQAAAAAAPPGimgi5hK1HcMZh92X2yWdCmVR</property>
+
+	<property name="contact_form_addresses">info@lbox.cz</property><!-- cilove mailove adresy kontaktnich formularu (oddelovat carkou) -->
+	<property name="contact_form_subject"><![CDATA[Vzkaz z kontaktního formuláře <host>]]></property><!-- predmet mailu z kontaktnich formularu -->
 
 </properties>

@@ -1,0 +1,18 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Kontaktní formulář</title>
+	</head>
+	<body>
+		<h4>Kontaktní formulář</h4>
+		<p><a href="mailto:${SELF/data/getControls/email/getValue}">${SELF/data/getControls/name/getValue} ${SELF/data/getControls/surname/getValue}</a>
+			odeslal kontaktní formulář s následujícími daty:</p>
+		<h5>Firma:</h5>
+		<p>${SELF/data/getControls/company/getValue}</p>
+		<h5>Telefon:</h5>
+		<p>${SELF/data/getControls/phone/getValue}</p>
+		<h5>Zpráva:</h5>
+		<p>${SELF/data/getControls/message/getValue}</p>
+	</body>
+</html>

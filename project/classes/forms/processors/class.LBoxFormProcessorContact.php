@@ -6,15 +6,15 @@ class LBoxFormProcessorContact extends LBoxFormProcessor
 {
 	public function process() {
 		try {
-			echo "<fieldset>";
+			/*echo "<fieldset>";
 			echo "<legend>Form sent data</legend>";
 			foreach ($this->form->getControls() as $control) {
 				var_dump($control->getName() ." = ". $control->getValue());
 			}
 			echo "</fieldset>";
-			flush();
+			flush();*/
 			
-			//$this->sendByMailToUs();
+			$this->sendByMailToUs();
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -24,7 +24,7 @@ class LBoxFormProcessorContact extends LBoxFormProcessor
 	/**
 	 * odesila mail s obsahem kontaktniho formu na maily zadane v properties jako cilove (contact_form_addresses)
 	 */
-	/*protected function sendByMailToUs() {
+	protected function sendByMailToUs() {
 		try {
 			$mail	= new MailContactForm($this->form);
 			$mail->init();
@@ -32,6 +32,6 @@ class LBoxFormProcessorContact extends LBoxFormProcessor
 		catch (Exception $e) {
 			throw $e;
 		}
-	}*/
+	}
 }
 ?>
