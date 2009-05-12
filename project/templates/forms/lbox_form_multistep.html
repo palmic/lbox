@@ -1,4 +1,4 @@
 <tal:block>
-	<tal:block tal:content="structure SELF/form" />
+	<tal:block tal:content="structure SELF/form" tal:condition="not: SELF/wasSentSucces" />
 </tal:block>
 <p tal:condition="SELF/wasSentSucces">Multi-formulář byl úspěšně odeslán. Děkujeme.</p>
