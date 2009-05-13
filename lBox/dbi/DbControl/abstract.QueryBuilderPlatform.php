@@ -116,8 +116,8 @@ abstract class QueryBuilderPlatform
     	if (ereg($this->regExpDynamic, $value, $regs) > 0) {
     		return $regs[1];
     	}
-		switch (true) {
-			case is_numeric($value):
+    	switch (true) {
+			case (is_float($value) || ctype_digit($value)):
         /*$out = (int)$value;
 			   break;*/
 			case strtoupper($value) == "NULL":

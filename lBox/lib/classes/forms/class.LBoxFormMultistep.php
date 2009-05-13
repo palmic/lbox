@@ -171,6 +171,15 @@ class LBoxFormMultistep extends LBoxForm
 	}
 
 	/**
+	 * vraci sam sebe - pro kompatibilitu v processorech etc.
+	 * (pokud se autor prepise a chce multiform po multiformu, vi ze chce proste multiform, tak ho jako jediny mozny multiform dostane)
+	 * @return LBoxFormMultistep
+	 */
+	public function getFormMultistep() {
+		return $this;
+	}
+	
+	/**
 	 * vraci formular daneho kroku
 	 * @param int $step
 	 * @return LBoxForm
