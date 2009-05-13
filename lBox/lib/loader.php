@@ -44,6 +44,7 @@ define("LBOX_PATH_CORE", 				LBOX_PATH_INSTANCE_ROOT 	 . $slash . "lBox");
 define("LBOX_PATH_CORE_CLASSES", 		LBOX_PATH_CORE 				. $slash ."lib". $slash ."classes");
 define("LBOX_PATH_PROJECT", 			LBOX_PATH_INSTANCE_ROOT 	. $slash . LBOX_DIRNAME_PROJECT);
 define("LBOX_PATH_CACHE", 				LBOX_PATH_INSTANCE_ROOT		. $slash . LBOX_DIRNAME_PROJECT. $slash . ".cache");
+define("LBOX_PATH_PLUGINS", 			LBOX_PATH_INSTANCE_ROOT		. $slash . LBOX_DIRNAME_PLUGINS);
 
 // explicitni load
 require(LBOX_PATH_CORE_CLASSES 	. $slash ."loading". $slash ."class.LBoxLoader.php");
