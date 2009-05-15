@@ -88,6 +88,9 @@
 		<remove_coments>0</remove_coments>
 		<compression>0</compression>
 	</output>
+	<multilang>
+		<default_language>cs</default_language>
+	</multilang>
 	<xt>
 		<remember_cookie_days>30</remember_cookie_days><!-- kolik dni ma vydrzet cookie s persistenci XT loginu -->
 	</xt>

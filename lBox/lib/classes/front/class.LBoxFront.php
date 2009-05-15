@@ -18,12 +18,6 @@ class LBoxFront extends LBox
 	 */
 	protected static $page;
 	
-	/**
-	 * default zobrazovaci jazykova mutace
-	 * @var string
-	 */
-	protected static $displayingLanguageDefault	= "cs";
-
 	public static $HTTP = array (
 	100 => "HTTP/1.1 100 Continue",
 	101 => "HTTP/1.1 101 Switching Protocols",
@@ -435,10 +429,34 @@ class LBoxFront extends LBox
 	 */
 	public static function getDisplayLanguage() {
 		try {
-			if (strlen(self::getPageCfg()->language) > 0) {
-				return self::getPageCfg()->language;
+			$defaultLang	= LBoxConfigSystem::getInstance()->getParamByPath("multilang/default_language");
+			// check page config first
+			if (strlen($pageLang = self::getPageCfg()->lang) > 0) {
+				return trim($pageLang);
 			}
-			return self::$displayingLanguageDefault;
+			// check domain or return default
+			else {
+				try {
+					if (strlen($langDomains = LBoxConfigManagerProperties::getPropertyContentByName("langdomains")) > 0) {
+					}
+					$host	= str_replace(".localhost", "", LBOX_REQUEST_URL_HOST);
+					$langDomainsArr	= explode(",", $langDomains);
+					foreach ($langDomainsArr as $langDomain) {
+						$langDomainArr	= explode("=", trim($langDomain));
+						if (is_numeric(strpos($host, $langDomainArr[1]))) {
+							return $langDomainArr[0];
+						}
+						else {
+							return $defaultLang;
+						}
+					}
+				}
+				catch(LBoxExceptionProperty $e) {
+					if ($e->getCode() == 7001) {
+						return $defaultLang;
+					}
+				}
+			}
 		}
 		catch (Exception $e) {
 			throw $e;
