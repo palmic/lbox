@@ -18,6 +18,12 @@ class LBoxFront extends LBox
 	 */
 	protected static $page;
 	
+	/**
+	 * cache var
+	 * @var string
+	 */
+	protected static $displayLanguage	= "";
+	
 	public static $HTTP = array (
 	100 => "HTTP/1.1 100 Continue",
 	101 => "HTTP/1.1 101 Switching Protocols",
@@ -429,37 +435,42 @@ class LBoxFront extends LBox
 	 */
 	public static function getDisplayLanguage() {
 		try {
+			if (strlen(self::$displayLanguage) > 0) {
+				return self::$displayLanguage;
+			}
 			$defaultLang	= LBoxConfigSystem::getInstance()->getParamByPath("multilang/default_language");
 			// check page config first
 			if (strlen($pageLang = self::getPageCfg()->lang) > 0) {
-				return trim($pageLang);
+				return self::$displayLanguage = trim($pageLang);
 			}
 			// check domain or return default
 			else {
-				try {
-					if (strlen($langDomains = LBoxConfigManagerProperties::getPropertyContentByName("langdomains")) > 0) {
-					}
+				if (strlen($langDomains = LBoxConfigManagerProperties::getPropertyContentByName("langdomains")) > 0) {
 					$host	= str_replace(".localhost", "", LBOX_REQUEST_URL_HOST);
 					$langDomainsArr	= explode(",", $langDomains);
 					foreach ($langDomainsArr as $langDomain) {
 						$langDomainArr	= explode("=", trim($langDomain));
 						if (is_numeric(strpos($host, $langDomainArr[1]))) {
-							return $langDomainArr[0];
+							return self::$displayLanguage = $langDomainArr[0];
 						}
 						else {
-							return $defaultLang;
+							return self::$displayLanguage = $defaultLang;
 						}
 					}
 				}
-				catch(LBoxExceptionProperty $e) {
-					if ($e->getCode() == 7001) {
-						return $defaultLang;
-					}
+				else {
+					return self::$displayLanguage = $defaultLang;
 				}
 			}
 		}
 		catch (Exception $e) {
-			throw $e;
+			switch ($e->getCode()) {
+				case 7001:
+						return self::$displayLanguage = $defaultLang;
+					break;
+				default:
+					throw $e;
+			}
 		}
 	}
 
