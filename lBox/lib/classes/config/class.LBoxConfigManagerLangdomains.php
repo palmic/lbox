@@ -49,7 +49,7 @@ class LBoxConfigManagerLangdomains extends LBoxConfigManager
 				throw new LBoxExceptionProperty(LBoxExceptionProperty::MSG_PARAM_STRING_NOTNULL, LBoxExceptionProperty::CODE_BAD_PARAM);
 			}
 			if (!$node = $this->findNodeByContent(trim($domain), $this->getConfigInstance()->getRootIterator(), true)) {
-				throw new LBoxExceptionProperty(LBoxExceptionProperty::MSG_PROPERTY_LANGDOMAIN_NOT_FOUND ." Tryed to find name = '$name'", LBoxExceptionProperty::CODE_PROPERTY_LANGDOMAIN_NOT_FOUND);
+				throw new LBoxExceptionProperty(LBoxExceptionProperty::MSG_PROPERTY_LANGDOMAIN_NOT_FOUND ." Tryed to find domain = '$domain'", LBoxExceptionProperty::CODE_PROPERTY_LANGDOMAIN_NOT_FOUND);
 			}
 			return $node->lang;
 		}

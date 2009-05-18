@@ -442,6 +442,7 @@ class LBoxFront extends LBox
 			// check domain or return default
 			try {
 				$host	= str_replace(".localhost", "", LBOX_REQUEST_URL_HOST);
+				$host	= str_replace("www.", "", $host);
 				if (strlen($lang = LBoxConfigManagerLangdomains::getInstance()->getLangByDomain($host)) > 0) {
 					return self::$displayLanguage = $lang;
 				}
