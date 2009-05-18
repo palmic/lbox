@@ -11,8 +11,8 @@ class LBoxExceptionFront extends LBoxException
 	const CODE_PAGE_NOT_FOUND 			= 2001;
 	const CODE_PAGE_BAD_TYPE 			= 2002;
 	const CODE_COMPONENT_BAD_TYPE		= 2003;
-	const CODE_SLOT_NOT_DEFINED			= 2004;	
-	const CODE_SLOT_DEFINED				= 2005;	
+	const CODE_SLOT_NOT_DEFINED			= 2004;
+	const CODE_SLOT_DEFINED				= 2005;
 	const CODE_TPL_BAD_KEY				= 2006;	
 	const CODE_TPL_COMPONENT_NAME_EMPTY	= 2007;	
 	const CODE_TPL_LBOX_NS_BAD_CALL		= 2008;	
@@ -31,9 +31,13 @@ class LBoxExceptionFront extends LBoxException
 
 	const MSG_TPL_SLOT_NAME_NOT_VALID	= "slot name invalid!";	
 	const MSG_TPL_SLOT_NAME_EMPTY		= "slot name empty!";	
-	const MSG_TPL_COMPONENT_NAME_EMPTY	= "slot name empty!";	
+	const MSG_TPL_COMPONENT_NAME_EMPTY	= "component name empty!";	
 	const MSG_TPL_LBOX_NS_BAD_CALL		= "invalid call called on namespace lbox!";	
-
+	const MSG_TPL_PAGE_ID_EMPTY			= "page id is not numeric or is empty!";	
+	const MSG_TPL_REQUEST_PARAM_NAME_EMPTY	= "request param name empty!";	
+	const MSG_TPL_FRONT_CALL_EMPTY		= "front call empty!";	
+	const MSG_TPL_PROPERTY_NAME_EMPTY	= "property name empty!";	
+	
 	const MSG_ACCES_MULTIPLE_INSTANCES	= "Cannot create more, than one AccesRecord instances!";	
 	const MSG_HTTP_STATUS_NOT_FOUND		= "Given HTTP status not found in definition!";
 	const MSG_INVALID_REMOTE_IP			= "Invalid request!";	

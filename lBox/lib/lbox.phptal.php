@@ -16,6 +16,77 @@ function phptal_tales_lbox($src, $nothrow = false) {
 				}
 				return '$ctx->SELF->getComponentById("'.$name.'")->getContent()';
 				break;
+			case "page":
+				$pageParams	= explode("/", $srcArr[1]);
+				if (!is_numeric($pageID = $pageParams[0]) || $pageID < 1) {
+					throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_PAGE_ID_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+				}
+				unset($pageParams[0]);
+				if (count($pageParams) < 1 || strlen(current($pageParams)) < 1) {
+					return '$ctx->SELF->getPageById("'.$pageID.'")';
+				}
+				else {
+					return '$ctx->SELF->getPageById("'.$pageID.'")->'. current($pageParams);
+				}
+				break;
+			case "property":
+				if (strlen($name = $srcArr[1]) < 1) {
+					throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_PROPERTY_NAME_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+				}
+				return 'LBoxConfigManagerProperties::getPropertyContentByName("'.$name.'")';
+				break;
+			case "acces":
+				return 'AccesRecord::getInstance()';
+				break;
+			case "front":
+				if (strlen($frontCalling = $srcArr[1]) < 1) {
+					throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_FRONT_CALL_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+				}
+				return 'LBoxFront::$frontCalling';
+				break;
+			case "request":
+				if (strlen($name = $srcArr[1]) < 1) {
+					throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_REQUEST_PARAM_NAME_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+				}
+				switch ($name) {
+					case "url":
+						return "LBOX_REQUEST_URL";
+						break;
+					case "url_virtual":
+						return "LBOX_REQUEST_URL_VIRTUAL";
+						break;
+					case "url_params":
+						return "LBOX_REQUEST_URL_PARAMS";
+						break;
+					case "url_query":
+						return "LBOX_REQUEST_URL_QUERY";
+						break;
+					case "url_path":
+						return "LBOX_REQUEST_URL_PATH";
+						break;
+					case "url_scheme":
+						return "LBOX_REQUEST_URL_SCHEME";
+						break;
+					case "url_host":
+						return "LBOX_REQUEST_URL_HOST";
+						break;
+					case "ip":
+						return "LBOX_REQUEST_IP";
+						break;
+					case "ip_my":
+						return "LBOX_REQUEST_IP_MY";
+						break;
+					case "agent":
+						return "LBOX_REQUEST_AGENT";
+						break;
+					case "referer":
+						return "LBOX_REQUEST_REFERER";
+						break;
+					case "request_time":
+						return "LBOX_REQUEST_REQUEST_TIME";
+						break;
+				}
+				break;
 			case "slot":
 				if (strlen($name = $srcArr[1]) < 1) {
 					throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_SLOT_NAME_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);

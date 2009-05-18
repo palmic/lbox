@@ -44,16 +44,19 @@ class LBoxSlotManager extends LBox
 	/**
 	 * Getter na obsah ulozeneho slotu
 	 * @param string $name
+	 * @param bool $silent
 	 * @return string
 	 * @throws Exception
 	 */
-	public function getSlot($name = "") {
+	public function getSlot($name = "", $silent = false) {
 		try {
 			if (strlen($name) < 1) {
 				throw new LBoxExceptionFront(LBoxExceptionFront::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFront::CODE_BAD_PARAM);
 			}
 			if (!array_key_exists($name, $this->slots)) {
-				throw new LBoxExceptionFront("'$name' ". LBoxExceptionFront::MSG_SLOT_NOT_DEFINED, LBoxExceptionFront::CODE_SLOT_NOT_DEFINED);
+				if (!$silent) {
+					throw new LBoxExceptionFront("'$name' ". LBoxExceptionFront::MSG_SLOT_NOT_DEFINED, LBoxExceptionFront::CODE_SLOT_NOT_DEFINED);
+				}
 			}			
 			return $this->slots[$name];
 		}

@@ -165,6 +165,24 @@ abstract class LBoxComponent
 	}
 
 	/**
+	 * Getter na stranku referencovanou v sablone
+	 * @param int $id
+	 * @return LBoxPage
+	 * @throws Exception
+	 */
+	public function getPageById($id = "") {
+		try {
+			if (strlen($id) < 1) {
+				throw new LBoxExceptionFront(LBoxExceptionFront::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFront::CODE_BAD_PARAM);
+			}
+			return LBoxConfigManagerStructure::getInstance()->getPageById($id);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * startuje buffering slotu
 	 * @return string
 	 */
@@ -205,7 +223,7 @@ abstract class LBoxComponent
 	 */
 	public function templateGetSlot($name = "", $silent = false) {
 		try {
-			return LBoxSlotManager::getInstance()->getSlot($name);
+			return LBoxSlotManager::getInstance()->getSlot($name, $silent);
 		}
 		catch (Exception $e) {
 			if ($silent && $e->getCode() == LBoxExceptionFront::CODE_SLOT_NOT_DEFINED) {

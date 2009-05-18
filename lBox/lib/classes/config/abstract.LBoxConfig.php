@@ -33,11 +33,20 @@ abstract class LBoxConfig extends LBox
 	protected $rootIterator;
 	
 	/**
+	 * cache var
+	 * @var DOMDocument
+	 */
+	protected $dom;
+	
+	/**
 	 * vraci objekt s config DOMem
 	 * @return DOMDocument
 	 * @throws LBoxExceptionConfig
 	 */
 	protected function getDOM() {
+		if ($this->dom instanceof DOMDocument) {
+			return $this->dom;
+		}
 		if (strlen($this->configName) < 1) {
 			throw new  LBoxExceptionConfig(LBoxExceptionConfig::MSG_CFG_FILE_NOT_DEFINED, LBoxExceptionConfig::CODE_CFG_FILE_NOT_DEFINED);
 		}		
@@ -45,11 +54,11 @@ abstract class LBoxConfig extends LBox
 			if (strlen($path = LBoxLoaderConfig::getInstance()->getPathOf($this->configName)) < 1) {
 				throw new  LBoxExceptionConfig("'". $this->configName ."' ". LBoxExceptionConfig::MSG_TYPE_NOT_FOUND, LBoxExceptionConfig::CODE_TYPE_NOT_FOUND);
 			}
-			$domDocument = new DOMDocument;
-			if (!$domDocument->load($path)) {
+			$this->dom = new DOMDocument;
+			if (!$this->dom->load($path)) {
 				throw new  LBoxExceptionConfig("'$path'". LBoxExceptionConfig::MSG_INVALID_PATH, LBoxExceptionConfig::CODE_INVALID_PATH);
 			}
-			return $domDocument;
+			return $this->dom;
 		}
 		catch (Exception $e) {
 			throw $e;

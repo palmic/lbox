@@ -94,6 +94,39 @@ abstract class LBoxConfigManager
 		}
 	}
 
+	/**
+	 * recursive function to read config dom and searching for node by its content
+	 * @param string $content
+	 * @param LBoxIteratorConfig $in - where to search
+	 * @param bool $cache - do cache or not
+	 * @return LBoxConfigItem
+	 * @throws LBoxExceptionConfig
+	 */
+	protected function findNodeByContent($content = "", LBoxIteratorConfig $in, $cache = false) {
+		try {
+			if (strlen($content) < 1) {
+				throw new LBoxExceptionConfig("Bad param \$content, ". LBoxExceptionConfig::MSG_PARAM_STRING_NOTNULL,
+				LBoxExceptionConfig::CODE_BAD_PARAM);
+			}
+			foreach ($in as $node) {
+				if ($node->hasChildren()) {
+					if (($found = self::findNodeByContent($content, $node->getChildNodesIterator(), $cache)) instanceof LBoxConfigItem) {
+						return $found;
+					}
+				}
+				if ($cache) {
+					$this->nodesByParams[$paramName][$node->$paramName]	= $node;
+				}
+				if ($node->getContent() == $content) {
+					return $node;
+				}
+			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
 	abstract public static function getInstance();
 
 	/**

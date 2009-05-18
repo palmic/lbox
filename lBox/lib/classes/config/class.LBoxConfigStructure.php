@@ -46,6 +46,29 @@ class LBoxConfigStructure extends LBoxConfig
 	}
 
 	/**
+	 * pretizeno o kontrolu vzhledem k multilang
+	 */
+	protected function getDOM() {
+		try {
+			if ($this->dom instanceof DOMDocument) {
+				return $this->dom;
+			}
+			$configNameBase	= $this->configName;
+			try {
+				$this->configName .= ".". LBoxFront::getDisplayLanguage();
+				return parent::getDOM();
+			}
+			catch(Exception $e) {
+				$this->configName	= $configNameBase;
+				return parent::getDOM();
+			}
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
 	 * getter configu konkretni stranky podle id
 	 * @param int $id
 	 * @return LBoxConfigItemStructure
