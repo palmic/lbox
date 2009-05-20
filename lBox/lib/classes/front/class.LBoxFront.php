@@ -460,6 +460,23 @@ class LBoxFront extends LBox
 			throw $e;
 		}
 	}
+	
+	/**
+	 * vraci jestli je predany lang momentalne zobrazeny
+	 * @param string $lang
+	 * @return bool
+	 */
+	public static function isDisplayLanguageCurrent($lang = "") {
+		try {
+			if (strlen($lang) < 1) {
+				throw new LBoxExceptionFront(LBoxExceptionFront::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFront::CODE_BAD_PARAM);
+			}
+			return self::getDisplayLanguage() == $lang;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
 
 	/**
 	 * disabled

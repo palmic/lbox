@@ -37,6 +37,7 @@ class LBoxExceptionFront extends LBoxException
 	const MSG_TPL_REQUEST_PARAM_NAME_EMPTY	= "request param name empty!";	
 	const MSG_TPL_FRONT_CALL_EMPTY		= "front call empty!";	
 	const MSG_TPL_PROPERTY_NAME_EMPTY	= "property name empty!";	
+	const MSG_TPL_I18N_CONDITION_INVALID= "Invalid multilang condition call!";	
 	
 	const MSG_ACCES_MULTIPLE_INSTANCES	= "Cannot create more, than one AccesRecord instances!";	
 	const MSG_HTTP_STATUS_NOT_FOUND		= "Given HTTP status not found in definition!";

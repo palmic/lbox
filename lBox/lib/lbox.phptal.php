@@ -42,7 +42,22 @@ function phptal_tales_lbox($src, $nothrow = false) {
 				if (strlen($frontCalling = $srcArr[1]) < 1) {
 					throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_FRONT_CALL_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
 				}
-				return 'LBoxFront::$frontCalling';
+				return 'LBoxFront::'. $frontCalling .'()';
+				break;
+			case "i18n":
+				if (strlen($srcArr[1]) < 1) {
+					throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_I18N_CONDITION_INVALID ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+				}
+				if (count($langConditionArr = explode("/", $srcArr[1])) != 2) {
+					throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_I18N_CONDITION_INVALID ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+				}
+				switch ($langConditionArr[0]) {
+					case 'isDisplayLanguageCurrent':
+						return 'LBoxFront::isDisplayLanguageCurrent("'. $langConditionArr[1] .'")';
+						break;
+					default:
+						throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_I18N_CONDITION_INVALID ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+				}
 				break;
 			case "request":
 				if (strlen($name = $srcArr[1]) < 1) {
@@ -180,8 +195,8 @@ class LBoxTranslator extends PHPTAL_GetTextTranslator
     	try {
     		$lang					= LBoxFront::getDisplayLanguage();
     		$out					= array();
-    		$out[]					= $this->templatePath .".$lang.xml";
-    		$out[]					= LBOX_PATH_FILES_I18N ."/project.$lang.xml";
+    		$out[]					= LBoxUtil::fixPathSlashes($this->templatePath .".$lang.xml");
+    		$out[]					= LBoxUtil::fixPathSlashes(LBOX_PATH_FILES_I18N ."/project.$lang.xml");
     		return $out;
     	}
     	catch (Exception $e) {
