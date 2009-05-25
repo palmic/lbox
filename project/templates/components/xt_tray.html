@@ -1,11 +1,48 @@
-<div id="xt-tray" tal:condition="isLogged">
-	<div class="left">
-	</div>
-	<div class="right">
-		<tal:block tal:repeat="pageCFG pagesCFG">
-		<a href="${pageCFG/url}" title="${pageCFG/title}" tal:content="pageCFG/name_menu">name_menu</a>
-		<tal:block tal:condition="not: repeat/pageCFG/end"> | </tal:block>
-		</tal:block>
-		| <a class="logout" href="${urls/logout}" title="Odlogovat">Logout</a>
-	</div>
+<div id="xt-tray" tal:condition="SELF/isLoggedAdmin">
+	<ul class="page-admin">
+	  <tal:block tal:define="node SELF/getPageRootAdmin">
+	    <li tal:ATTRIBUTES="class node/getClass | default">
+	       <a tal:CONDITION="not: node/isCurrent"
+	          tal:ATTRIBUTES="href node/url; title node/titleMenu">
+	          <span class="lft"><span class="rgt"><span class="mdl" tal:CONTENT="node/name_menu">Nazev stranky</span></span></span>
+	       </a>
+	       <strong tal:CONDITION="node/isCurrent">
+	          <span class="lft"><span class="rgt"><span class="mdl" tal:CONTENT="node/name_menu">Nazev stranky</span></span></span>
+	       </strong>
+	    </li>
+	  </tal:block>
+	</ul>
+	<ul class="structure-admin">
+	  <tal:block tal:REPEAT="node SELF/getPageRootAdmin/getChildnodesIterator">
+	    <li tal:ATTRIBUTES="class node/getClass | default"
+	        tal:CONDITION="node/in_menu">
+	       <a tal:CONDITION="not: node/isCurrent"
+	          tal:ATTRIBUTES="href node/url; title node/titleMenu">
+	          <span class="lft"><span class="rgt"><span class="mdl" tal:CONTENT="node/name_menu">Nazev stranky</span></span></span>
+	       </a>
+	       <strong tal:CONDITION="node/isCurrent">
+	          <span class="lft"><span class="rgt"><span class="mdl" tal:CONTENT="node/name_menu">Nazev stranky</span></span></span>
+	       </strong>
+	       <x tal:condition="node/hasChildrenInMenu" metal:USE-MACRO="menu_list" />
+	    </li>
+	  </tal:block>
+	</ul>
+    <ul
+		metal:DEFINE-MACRO="menu_list"
+       	tal:DEFINE="iterator node/getChildren">
+      <tal:block tal:REPEAT="node iterator">
+        <li tal:ATTRIBUTES="class node/getClass | default"
+            tal:CONDITION="node/in_menu">
+           <a tal:CONDITION="not: node/isCurrent"
+              tal:ATTRIBUTES="href node/url; title node/titleMenu">
+              <span class="lft"><span class="rgt"><span class="mdl" tal:CONTENT="node/name_menu">Nazev stranky</span></span></span>
+           </a>
+           <strong tal:CONDITION="node/isCurrent">
+              <span class="lft"><span class="rgt"><span class="mdl" tal:CONTENT="node/name_menu">Nazev stranky</span></span></span>
+           </strong>
+           <x tal:condition="node/hasChildrenInMenu" metal:USE-MACRO="menu_list"/>
+        </li>
+      </tal:block>
+   </ul>
+	<div class="logout"><a class="logout" href="${SELF/page/url}:${SELF/getURLParamNameLogout}" title="Odlogovat">Odhlásit z adminu</a></div>
 </div>
