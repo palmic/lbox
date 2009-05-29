@@ -49,7 +49,7 @@ class LBoxXT extends LBox
 	 * @param int $loginGroup - you can define more logins for instance for more web xt sections
 	 * @throws LBoxExceptionXT
 	 */
-	public static function login($nick = "", $password = "", $remember = false, $loginGroup = 0) {
+	public static function login($nick = "", $password = "", $remember = false, $loginGroup = 1) {
 		try {
 			if ($loginGroup < 1) {
 				if (strlen(LBoxFront::getPage()->xt) > 0) {
