@@ -96,17 +96,18 @@ class LBoxFront extends LBox
 		try {
 			$pageCfg = self::getPageCfg();
 
-			// xt
 			if ($pageCfg->remoteip_only) {
 				if (LBOX_REQUEST_IP != $pageCfg->remoteip_only) {
 					throw new LBoxExceptionFront(LBoxExceptionFront::MSG_INVALID_REMOTE_IP, LBoxExceptionFront::CODE_INVALID_REMOTE_IP);
 				}
 			}
-			if ($pageCfg->xt == 1) {
-				if (!LBoxXTProject::isLogged()) {
+			// xt
+			if ($pageCfg->xt) {
+				if (!LBoxXTProject::isLogged($pageCfg->xt)) {
 					self::reloadXTLogin();
 				}
-				if (!LBoxXTProject::isLoggedAdmin()) {
+				if (!LBoxXTProject::isLoggedAdmin($pageCfg->xt)) {
+					LBoxXTProject::logout(0);
 					self::reloadHomePage();
 				}
 			}
@@ -116,7 +117,27 @@ class LBoxFront extends LBox
 					self::reloadXTLogin();
 				}
 				if (!LBoxXTProject::isLoggedSuperAdmin()) {
+					LBoxXTProject::logout(0);
 					self::reloadHomePage();
+				}
+			}
+			// logged reload
+			$reloadParamPartsLogged			= strlen($pageCfg->xt_reload_logged)		 	> 0 ? explode(":", (string)$pageCfg->xt_reload_logged) 			: array();
+			$reloadParamPartsLoggedXT		= strlen($pageCfg->xt_reload_logged_xt) 		> 0 ? explode(":", (string)$pageCfg->xt_reload_logged_xt) 		: array();
+			$reloadParamPartsLoggedSuperXT	= strlen($pageCfg->xt_reload_logged_superxt) 	> 0 ? explode(":", (string)$pageCfg->xt_reload_logged_superxt) 	: array();
+			if (count($reloadParamPartsLoggedSuperXT) > 0) {
+				if (LBoxXTProject::isLoggedSuperAdmin($reloadParamPartsLoggedSuperXT[0])) {
+					LBoxFront::reloadLoggedSuperXT();
+				}
+			}
+			if (count($reloadParamPartsLoggedXT) > 0) {
+				if (LBoxXTProject::isLoggedAdmin($reloadParamPartsLoggedXT[0])) {
+					LBoxFront::reloadLoggedXT();
+				}
+			}
+			if (count($reloadParamPartsLogged) > 0) {
+				if (LBoxXTProject::isLogged($reloadParamPartsLogged[0])) {
+					LBoxFront::reloadLogged();
 				}
 			}
 			return trim(self::getPage()->getContent());
@@ -233,8 +254,12 @@ class LBoxFront extends LBox
 	 */
 	public static function reloadXTLogin() {
 		try {
-			if (strlen($pageAdminXTID	= LBoxConfigManagerProperties::getInstance()->getPropertyByName("ref_page_xt_login")->getContent()) < 1) {
-				self::reloadHomePage();
+			// 1) pokus ziskat not-logged referenci primo u stranky ve structure
+			if (strlen($pageAdminXTID = self::getPageCfg()->xt_reload_notlogged) < 1) {
+				// 2) pokus ziskat not-logged referenci v properties
+				if (strlen($pageAdminXTID	= LBoxConfigManagerProperties::getInstance()->getPropertyByName("ref_page_xt_login")->getContent()) < 1) {
+					self::reloadHomePage();
+				}
 			}
 			// pokusime se ziskat stranku ze struktury
 			try {
@@ -283,25 +308,65 @@ class LBoxFront extends LBox
 	}
 
 	/**
-	 * reloaduje na xt default page
+	 * reloaduje na default logged page
 	 * @throws Exception
 	 */
-	public static function reloadXTLogged() {
+	public static function reloadLogged() {
 		try {
 			$pageCfg = self::getPageCfg();
 			if (strlen($pageCfg->xt_reload_logged) > 0) {
-				$pageReload	= LBoxConfigManagerStructure::getPageById(LBoxConfigManagerProperties::getPropertyContentByName("ref_page_xt_admin"));
+				$reloadParamParts	= explode(":", $pageCfg->xt_reload_logged);
+				$pageReload	= LBoxConfigManagerStructure::getPageById($reloadParamParts[1]);
 				if ($pageCfg->url != $pageReload->url) {
 					self::reload($pageReload->url);
 				}
 			}
-			//self::reloadHomePage();
 		}
 		catch (Exception $e) {
 			throw $e;
 		}
 	}
 
+	/**
+	 * reloaduje na default logged xt page
+	 * @throws Exception
+	 */
+	public static function reloadLoggedXT() {
+		try {
+			$pageCfg = self::getPageCfg();
+			if (strlen($pageCfg->xt_reload_logged_xt) > 0) {
+				$reloadParamParts	= explode(":", $pageCfg->xt_reload_logged_xt);
+				$pageReload	= LBoxConfigManagerStructure::getPageById($reloadParamParts[1]);
+				if ($pageCfg->url != $pageReload->url) {
+					self::reload($pageReload->url);
+				}
+			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * reloaduje na default logged super-xt page
+	 * @throws Exception
+	 */
+	public static function reloadLoggedSuperXT() {
+		try {
+			$pageCfg = self::getPageCfg();
+			if (strlen($pageCfg->xt_reload_logged_superxt) > 0) {
+				$reloadParamParts	= explode(":", $pageCfg->xt_reload_logged_superxt);
+				$pageReload	= LBoxConfigManagerStructure::getPageById($reloadParamParts[1]);
+				if ($pageCfg->url != $pageReload->url) {
+					self::reload($pageReload->url);
+				}
+			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
 	/**
 	 * Vraci string z URL za : pokud nejaky je
 	 * @return string

@@ -1,32 +1,7 @@
 <div id="login">
-	<fieldset tal:condition="not:xt/isLogged">
-		<legend>Login</legend>
-		<p tal:condition="exists: userNotConfirmed" class="error">Tvá registrace zatím není potvrzena. Postupuj podle registračního e-mailu.</p>
-		<form id="login-form" method="post" action="${form/target}">
-			<div tal:define="control form/controls/nick">
-				<label for="${control/id}"><tal:block tal:condition="control/required">*</tal:block>nick:
-					<input type="text" id="${control/id}" name="${control/name}" value="${control/value}" /></label>
-					<span class="error" tal:condition="exists:control/error">Nezadal(a) jste nick</span>
-			</div>
-			<div tal:define="control form/controls/password">
-				<label for="${control/id}"><tal:block tal:condition="control/required">*</tal:block>heslo:
-					<input type="password" id="${control/id}" name="${control/name}" value="${control/value}" /></label>
-					<tal:block tal:condition="exists:control/error">
-						<span class="error" tal:condition="exists:control/error/loginInvalid">Nick, nebo heslo není správně.</span>
-						<span class="error" tal:condition="exists:control/error/empty">Nezadal(a) jste heslo</span>
-					</tal:block>
-			</div>
-			<div tal:define="control form/controls/remember">
-				<label for="${control/id}"><tal:block tal:condition="control/required">*</tal:block>pamatovat si přihlášení:
-					<input type="checkbox" id="${control/id}" name="${control/name}" value="${control/value}" tal:attributes="checked control/checked | default" /></label>
-			</div>
-			<div>
-				<input type="submit" name="${SELF/getFormGroupName}[submit]" value="uložit" />
-			</div>
-		</form>
-	</fieldset>
-	<tal:block tal:condition="xt/isLogged">
-		<p>Jste zaregistrován(a) jako <tal:block tal:content="xt/getUserXTRecord/nick" /></p>
+	<tal:block tal:condition="not: isLogged" tal:content="structure form" />
+	<tal:block tal:condition="isLogged">
+		<p>Jste zaregistrován(a) jako <tal:block tal:content="userXTRecord/nick" /></p>
 		<a href="${logoutUrl}">logout</a>
 	</tal:block>
 </div>

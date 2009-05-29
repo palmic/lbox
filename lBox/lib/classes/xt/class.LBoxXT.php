@@ -19,42 +19,54 @@ class LBoxXT extends LBox
 	const COOKIE_NAME_LOGIN			= "lbox-xt-login";
 	
 	/**
-	 * cache na zaznam login usera
-	 * @var XTUsersRecord
+	 * cache na zaznamy loginu uzivatelu podle logingroups
+	 * @var array
 	 */
-	protected static $xtUserRecord;
-	
+	protected static $xtUserRecords = array();
+
 	/**
-	 * cache na zaznam login role usera
-	 * @var XTRolesRecord
+	 * cache na zaznamy login roli uzivatelu podle logingroups indexovano podel user->id
+	 * @var array
 	 */
-	protected static $xtRoleRecord;
-	
+	protected static $xtRoleRecords = array();
+
 	/**
 	 * cache roli podle jejich nazvu
 	 * @var array
 	 */
 	protected static $xtRolesRecordsByNames = array();
-	
+
 	/**
 	 * @var LBoxXT
 	 */
 	protected static $instance;
-	
+
 	/**
 	 * Try to log user into system with given nick and password
 	 * @param string $nick
 	 * @param string $password
 	 * @param bool $remember
+	 * @param int $loginGroup - you can define more logins for instance for more web xt sections
 	 * @throws LBoxExceptionXT
 	 */
-	public static function login($nick = "", $password = "", $remember = false) {
+	public static function login($nick = "", $password = "", $remember = false, $loginGroup = 0) {
 		try {
+			if ($loginGroup < 1) {
+				if (strlen(LBoxFront::getPage()->xt) > 0) {
+					$loginGroup = LBoxFront::getPage()->xt;
+				}
+				else {
+					$loginGroup = 1;
+				}
+			}
 			if (strlen($nick) < 1) {
 				throw new LBoxExceptionXT("\$nick: ". LBoxExceptionXT::MSG_PARAM_STRING_NOTNULL, LBoxExceptionXT::CODE_BAD_PARAM);
 			}
 			if (strlen($password) < 1) {
 				throw new LBoxExceptionXT("\$password: ". LBoxExceptionXT::MSG_PARAM_STRING_NOTNULL, LBoxExceptionXT::CODE_BAD_PARAM);
+			}
+			if (!is_int($loginGroup) || $loginGroup < 1) {
+				throw new LBoxExceptionXT("\$loginGroup: ". LBoxExceptionXT::MSG_PARAM_INT_NOTNULL, LBoxExceptionXT::CODE_BAD_PARAM);
 			}
 			$records	= new XTUsersRecords(array("nick" => $nick, "password" => $password));
 			if ($records->count() < 1) {
@@ -64,20 +76,21 @@ class LBoxXT extends LBox
 				throw new LBoxExceptionXT(LBoxExceptionXT::MSG_USER_NOT_CONFIRMED, LBoxExceptionXT::CODE_USER_NOT_CONFIRMED);
 			}
 			// zjistime si jestli nejde o re-login a pokud ano, nastavime cookie-remember ano/ne podle predchoziho loginu
-			if (self::isLogged()) $remember = (strlen($_COOKIE[self::COOKIE_NAME_LOGIN]) > 0);
+			if (self::isLogged($loginGroup)) $remember = (strlen($_COOKIE[self::COOKIE_NAME_LOGIN ."-". $loginGroup]) > 0);
 			// logout - pro pripad re-loginu
 			self::logout();
-			unset($_SESSION["lbox"][self::SESSION_ARRAY_NAME]["logout"]);
-			self::$xtUserRecord	= $records->current();
-			self::$xtRoleRecord	= self::$xtUserRecord->getRole();
-			$_SESSION["lbox"][self::SESSION_ARRAY_NAME]["signon"]	= true;
-			$_SESSION["lbox"][self::SESSION_ARRAY_NAME]["userId"]	= self::$xtUserRecord->id;
-			$_SESSION["lbox"][self::SESSION_ARRAY_NAME]["roleId"]	= self::$xtRoleRecord->id;
+			unset($_SESSION["lbox"][self::SESSION_ARRAY_NAME][0]["logout"]);
+			unset($_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["logout"]);
+			self::$xtUserRecords[$loginGroup]							= $records->current();
+			self::$xtRoleRecords[self::$xtUserRecords[$loginGroup]->id]	= self::$xtUserRecords[$loginGroup]->getRole();
+			$_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["signon"]	= true;
+			$_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["userId"]	= self::$xtUserRecords[$loginGroup]->id;
+			$_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["roleId"]	= self::$xtRoleRecords[self::$xtUserRecords[$loginGroup]->id]->id;
 			
 			// remember pres cookie
 			if ($remember) {
 				$rememberDays	= self::getCookiePersistenceDays();
-				@setcookie(self::COOKIE_NAME_LOGIN, "$nick:$password", time() + $rememberDays * 24*60*60, "/");
+				@setcookie(self::COOKIE_NAME_LOGIN ."-". $loginGroup, "$nick:$password", time() + $rememberDays * 24*60*60, "/");
 			}
 		}
 		catch (Exception $e) {
@@ -87,13 +100,25 @@ class LBoxXT extends LBox
 
 	/**
 	 * Logout user
+	 * @param int $loginGroup - pokud < 1, odloguje vsechny sekce 
 	 * @throws LBoxExceptionXT
 	 */
-	public static function logout() {
+	public static function logout($loginGroup = 0) {
 		try {
-			setcookie(self::COOKIE_NAME_LOGIN, false, time()-3600, "/");
-			unset($_SESSION["lbox"][self::SESSION_ARRAY_NAME]);
-			$_SESSION["lbox"][self::SESSION_ARRAY_NAME]["logout"] = 1;
+			if ($loginGroup < 1) {
+				if (strlen(LBoxFront::getPage()->xt) > 0) {
+					$loginGroup = LBoxFront::getPage()->xt;
+				}
+				else {
+					$loginGroup = 1;
+				}
+			}
+			setcookie(self::COOKIE_NAME_LOGIN ."-". $loginGroup, false, time()-3600, "/");
+			unset($_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]);
+			if ($loginGroup < 1) {
+				unset($_SESSION["lbox"][self::SESSION_ARRAY_NAME]);
+			}
+			$_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["logout"] = 1;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -102,28 +127,41 @@ class LBoxXT extends LBox
 
 	/**
 	 * checks if user is signed on
+	 * @param int $loginGroup
 	 * @return bool
 	 */
-	public static function isLogged() {
+	public static function isLogged($loginGroup = 0) {
 		try {
+			if ($loginGroup === 0) {
+				if (strlen(LBoxFront::getPage()->xt) > 0) {
+					$loginGroup = LBoxFront::getPage()->xt;
+				}
+				else {
+					$loginGroup = 1;
+				}
+			}
 			if (array_key_exists("lbox", (array)$_SESSION)) {
-				if ($_SESSION["lbox"][self::SESSION_ARRAY_NAME]["logout"] == 1) {
+				if ($_SESSION["lbox"][self::SESSION_ARRAY_NAME][0]["logout"] == 1) {
 					return false;
 				}
-				if ((bool)$_SESSION["lbox"][self::SESSION_ARRAY_NAME]["signon"]) {
+				else if ($_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["logout"] == 1) {
+					return false;
+				}
+				if ((bool)$_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["signon"]) {
 					return true;
 				}
 			}
 			// prihlaseni z cookie
-			if (array_key_exists(self::COOKIE_NAME_LOGIN, $_COOKIE))
-			if (strlen($_COOKIE[self::COOKIE_NAME_LOGIN]) > 0) {
-				$login 			= explode(":", $_COOKIE[self::COOKIE_NAME_LOGIN]);
+			if (array_key_exists(self::COOKIE_NAME_LOGIN ."-". $loginGroup, $_COOKIE))
+			if (strlen($_COOKIE[self::COOKIE_NAME_LOGIN ."-". $loginGroup]) > 0) {
+				$login 			= explode(":", $_COOKIE[self::COOKIE_NAME_LOGIN ."-". $loginGroup]);
+				$group			= is_numeric($login[2]) ? (int)$login[2] : 1;
 				// logout pro obnoveni persistence cookie
 				self::logout();
-				self::login($login[0], $login[1], true);
+				self::login($login[0], $login[1], true, $group);
 			}
 			if (array_key_exists("lbox", (array)$_SESSION)) {
-				return (bool)$_SESSION["lbox"][self::SESSION_ARRAY_NAME]["signon"];
+				return (bool)$_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["signon"];
 			}
 			else {
 				return false;
@@ -136,15 +174,24 @@ class LBoxXT extends LBox
 
 	/**
 	 * checks if user is signed on
+	 * @param int $loginGroup
 	 * @return bool
 	 */
-	public static function isLoggedAdmin() {
+	public static function isLoggedAdmin($loginGroup = 0) {
 		try {
-			if (!self::isLogged()) {
+			if ($loginGroup < 1) {
+				if (strlen(LBoxFront::getPage()->xt) > 0) {
+					$loginGroup = LBoxFront::getPage()->xt;
+				}
+				else {
+					$loginGroup = 1;
+				}
+			}
+			if (!self::isLogged($loginGroup)) {
 				return false;
 				// throw new LBoxExceptionXT(LBoxExceptionXT::MSG_NOT_LOGGED, LBoxExceptionXT::CODE_NOT_LOGGED);
 			}
-			switch (trim(self::getUserXTRoleRecord()->name)) {
+			switch (trim(self::getUserXTRoleRecord($loginGroup)->name)) {
 				case self::XT_ROLE_NAME_SUPERADMIN:
 				case self::XT_ROLE_NAME_ADMIN:
 					return true;
@@ -159,15 +206,24 @@ class LBoxXT extends LBox
 
 	/**
 	 * checks if user is signed on
+	 * @param int $loginGroup
 	 * @return bool
 	 */
-	public static function isLoggedSuperAdmin() {
+	public static function isLoggedSuperAdmin($loginGroup = 0) {
 		try {
-			if (!self::isLogged()) {
+			if ($loginGroup < 1) {
+				if (strlen(LBoxFront::getPage()->xt) > 0) {
+					$loginGroup = LBoxFront::getPage()->xt;
+				}
+				else {
+					$loginGroup = 1;
+				}
+			}
+			if (!self::isLogged($loginGroup)) {
 				return false;
 				// throw new LBoxExceptionXT(LBoxExceptionXT::MSG_NOT_LOGGED, LBoxExceptionXT::CODE_NOT_LOGGED);
 			}
-			switch (self::getUserXTRoleRecord()->name) {
+			switch (self::getUserXTRoleRecord($loginGroup)->name) {
 				case self::XT_ROLE_NAME_SUPERADMIN:
 					return true;
 				default:
@@ -181,18 +237,27 @@ class LBoxXT extends LBox
 
 	/**
 	 * Vrati record XT uzivatele pokud je jiz zalogovan
+	 * @param int $loginGroup
 	 * @return XTUsersRecord
 	 * @throws LBoxExceptionXT
 	 */
-	public static function getUserXTRecord() {
+	public static function getUserXTRecord($loginGroup = 0) {
 		try {			
-			if (!self::isLogged()) {
+			if ($loginGroup < 1) {
+				if (strlen(LBoxFront::getPage()->xt) > 0) {
+					$loginGroup = LBoxFront::getPage()->xt;
+				}
+				else {
+					$loginGroup = 1;
+				}
+			}
+			if (!self::isLogged($loginGroup)) {
 				throw new LBoxExceptionXT(LBoxExceptionXT::MSG_NOT_LOGGED, LBoxExceptionXT::CODE_NOT_LOGGED);
 			}
-			if (self::$xtUserRecord instanceof XTUsersRecord) {
-				return self::$xtUserRecord;
+			if (self::$xtUserRecords[$loginGroup] instanceof XTUsersRecord) {
+				return self::$xtUserRecords[$loginGroup];
 			}
-			return self::$xtUserRecord = new XTUsersRecord($_SESSION["lbox"][self::SESSION_ARRAY_NAME]["userId"]);
+			return self::$xtUserRecords[$loginGroup] = new XTUsersRecord($_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["userId"]);
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -201,18 +266,27 @@ class LBoxXT extends LBox
 	
 	/**
 	 * Vrati XT roli uzivatele pokud je jiz zalogovan
+	 * @param int $loginGroup
 	 * @return XTRolesRecord
 	 * @throws LBoxExceptionXT
 	 */
-	public static function getUserXTRoleRecord() {
+	public static function getUserXTRoleRecord($loginGroup = 0) {
 		try {			
-			if (!self::isLogged()) {
+			if ($loginGroup < 1) {
+				if (strlen(LBoxFront::getPage()->xt) > 0) {
+					$loginGroup = LBoxFront::getPage()->xt;
+				}
+				else {
+					$loginGroup = 1;
+				}
+			}
+			if (!self::isLogged($loginGroup)) {
 				throw new LBoxExceptionXT(LBoxExceptionXT::MSG_NOT_LOGGED, LBoxExceptionXT::CODE_NOT_LOGGED);
 			}
-			if (self::$xtRoleRecord instanceof XTRolesRecord) {
-				return self::$xtRoleRecord;
+			if (self::$xtRoleRecords[self::getUserXTRecord($loginGroup)->id] instanceof XTRolesRecord) {
+				return self::$xtRoleRecords[self::getUserXTRecord($loginGroup)->id];
 			}
-			return self::$xtRoleRecord = new XTRolesRecord($_SESSION["lbox"][self::SESSION_ARRAY_NAME]["roleId"]);
+			return self::$xtRoleRecords[self::getUserXTRecord($loginGroup)->id] = new XTRolesRecord($_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["roleId"]);
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -246,7 +320,7 @@ class LBoxXT extends LBox
 
 	/**
 	 * getter na vsechny XT roles v systemu, krome roli, ktere jsou vyhrazene jako superrole
-	 * @param bool $superAdmin - with superadmin
+	 * @param bool $superAdmin - with superadmin roles
 	 * @return XTRolesRecords
 	 * @throws Exception
 	 */

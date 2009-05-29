@@ -4,7 +4,8 @@
 * @author Michal Palma <palmic@email.cz>
 * @package LBox
 * @version 1.0
-* @since 2009-05-25
+
+* @since 2007-03-12
 */
 class XTTray extends LBoxComponent
 {
@@ -13,75 +14,56 @@ class XTTray extends LBoxComponent
 	 * @var string
 	 */
 	protected $urlParamNameLogout	= "logout";
-
-	protected function executeStart() {
+	
+	protected function executePrepend(PHPTAL $TAL) {
 		try {
-			parent::executeStart();
+			// odlogovat uzivatele, jestli ma byti
 			if ($this->isToLogout()) {
 				$this->logout();
 			}
+
+			$urls["logout"]		= LBOX_REQUEST_URL_VIRTUAL .":". $this->urlParamNameLogout;
+			$pagesCFG["admin"]	= LBoxConfigManagerStructure::getInstance()->getPageById(
+									LBoxConfigManagerProperties::getInstance()->getPropertyByName("ref_page_xt_admin")->getContent()
+									);
+			// nastaveni filtru
+			foreach ($pagesCFG as $pageCFG) {
+				$pageCFG->setOutputFilter(new OutputFilterPage($pageCFG));
+			}
+			$loginGroup					= strlen($this->page->xt) > 0 ? $this->page->xt : 1;
+			$TAL->isLogged				= LBoxXTProject::isLogged($loginGroup);
+			$TAL->isLoggedAdmin			= LBoxXTProject::isLoggedAdmin($loginGroup);
+			$TAL->isLoggedSuperAdmin	= LBoxXTProject::isLoggedSuperAdmin($loginGroup);
+			$TAL->urls			= $urls;
+			$TAL->pagesCFG		= $pagesCFG;
 		}
 		catch (Exception $e) {
 			throw $e;
 		}
 	}
-
-	protected function executePrepend(PHPTAL $TAL) {
-		try {
-//DbControl::$debug=true;
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-
+	
 	/**
-	 * zjisti, jestli se ma odlogovat
+	 * zjisti, jestli uzivatel neklikl na logout
 	 * @return bool
 	 */
 	protected function isToLogout() {
 		try {
-			return (is_numeric(array_search($this->urlParamNameLogout, $this->getUrlParamsArray())));
+			return (is_numeric(array_search($this->getURLParamNameLogout(), $this->getUrlParamsArray())));
 		}
 		catch (Exception $e) {
 			throw $e;
 		}
 	}
-
-	/**
-	 * getter jestli je uzivatel zalogovan
-	 * @return bool
-	 */
-	public function isLogged() {
-		try {
-			return LBoxXTProject::isLogged();
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-
-	/**
-	 * getter jestli je uzivatel zalogovan jako admin
-	 * @return bool
-	 */
-	public function isLoggedAdmin() {
-		try {
-			return LBoxXTProject::isLoggedAdmin();
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-
+	
 	/**
 	 * odloguje uzivatele
 	 * @return bool
 	 */
 	protected function logout() {
 		try {
-			LBoxXTProject::logout();
-			LBoxFront::reload(LBOX_REQUEST_URL_VIRTUAL);
+			$loginGroup					= strlen($this->page->xt) > 0 ? $this->page->xt : 1;
+			LBoxXT::logout($loginGroup);
+			$this->reload(LBOX_REQUEST_URL_VIRTUAL);
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -100,20 +82,16 @@ class XTTray extends LBoxComponent
 			throw $e;
 		}
 	}
-
-	/**
-	 * getter na root stranku adminu
-	 * @return LBoxConfigItemStructure
-	 */
+	
 	public function getPageRootAdmin() {
-		try {
-			$node	= LBoxConfigManagerStructure::getInstance()
-							->getPageById(LBoxConfigManagerProperties::getPropertyContentByName("ref_page_xt_admin"));
-			$node->setOutputFilter(new OutputFilterPage($node));
-			return $node;
-		}
-		catch(Exception $e) {
-			throw $e;
+	    try {
+	      $node  = LBoxConfigManagerStructure::getInstance()
+	              ->getPageById(LBoxConfigManagerProperties::getPropertyContentByName("ref_page_xt_admin"));
+	      $node->setOutputFilter(new OutputFilterPage($node));
+	      return $node;
+	    }
+	    catch(Exception $e) {
+	      throw $e;
 		}
 	} 
 }

@@ -1,4 +1,4 @@
-<div id="xt-tray" tal:condition="SELF/isLoggedAdmin">
+<div id="xt-tray" tal:condition="isLoggedAdmin">
 	<ul class="page-admin">
 	  <tal:block tal:define="node SELF/getPageRootAdmin">
 	    <li tal:ATTRIBUTES="class node/getClass | default">

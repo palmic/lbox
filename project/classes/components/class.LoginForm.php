@@ -4,190 +4,79 @@
 * @author Michal Palma <palmic@email.cz>
 * @package LBox
 * @version 1.0
-
-* @since 2007-12-08
+* @since 2008-09-23
 */
 class LoginForm extends LBoxComponent
 {
+	/**
+	 * @var LBoxForm
+	 */
+	protected $form;
+	
+	/**
+	 * used processors
+	 * @var array
+	 */
+	protected $processors = array();
+	
 	protected function executePrepend(PHPTAL $TAL) {
 		// DbControl::$debug = true;
 		try {
-			$TAL->form				= $this->getFormArray();
-			$TAL->xt				= LBoxXT::getInstance();
+			if (count($this->processors) < 1) {
+				$this->processors[]	= new ProcessorLogin;
+			}
+			$controlNick		= new LBoxFormControlFill("nick", "nick", "", LBoxConfigManagerProperties::getPropertyContentByName("form_max_length_nick"));
+			$controlNick		->setTemplateFileName("lbox_form_control_nick.html");
+			$controlNick		->setRequired();
+			$controlPassword	= new LBoxFormControlPassword("password", "heslo", "", LBoxConfigManagerProperties::getPropertyContentByName("form_max_length_password"));
+			$controlPassword	->setRequired();
+				$controlsLogin			= new LBoxFormControlMultiple("form", "controls");
+				$controlsLogin->setTemplateFileName("lbox_form_control_multi_login.html");
+				$controlsLogin->addControl		($controlNick);
+				$controlsLogin->addControl		($controlPassword);
+				$controlsLogin->addValidator(new LBoxFormValidatorLogin());
+			$form					= new LBoxForm("login", "post", "Přihlášení uživatele", "přihlásit");
+			$form->setTemplateFileName("lbox_form_login.html");
+			$form->addControl($controlsLogin);
+			$form->setAntiSpam(true);
+			foreach ($this->processors as $processor) {
+				$form->addProcessor($processor);
+			}
+			$this->form	= $form;
+
+			$xtReloadLoggedParts	= strlen($this->page->xt_reload_logged_xt) > 0 ? explode(":", $this->page->xt_reload_logged_xt) : array();
+			$loginGroup				= count($xtReloadLoggedParts) > 0 ? $xtReloadLoggedParts[0] : 1;
+			$TAL->form				= $form;
+			$TAL->isLogged			= LBoxXT::isLogged($loginGroup);
+			if (LBoxXT::isLogged($loginGroup)) {
+				$TAL->userXTRecord		= LBoxXT::getUserXTRecord($loginGroup);
+			}
 			$TAL->logoutUrl			= $this->getURLLogout();
-			$TAL->registrationUrl	= $this->getURLRegistration();
-			$this->logout();
-			try {
-				$this->checkData();
-			}
-			catch (LBoxExceptionForm $eF) {
-				$TAL->form	= $eF->getFormArray();
-			}
+			$this->logout($loginGroup);
 		}
 		catch (Exception $e) {
 			if ($e->getCode() == LBoxExceptionXT::CODE_USER_NOT_CONFIRMED) {
 				$TAL->userNotConfirmed	= true;
 			}
-			else {				
-				throw $e;
-			}
-		}
-	}
-
-	/**
-	 * Prekontroluje data, pokud byla odeslana a upravena je vraci
-	 * V pripade chyby vyhozuje vyjimku, ktera obsahuje i kompletni data formu s oznacenymi chybami
-	 * @return array
-	 * @throws LBoxExceptionForm
-	 */
-	protected function checkData() {
-		try {
-			$formGroupName			= $this->getFormGroupName();
-			if (count($_POST[$formGroupName]) < 1) {
-				return;
-			}
-
-			$error 		= false;
-			$formArray	= $this->getFormArray();
-
-			$controls	= $formArray["controls"];
-
-			// kontroly
-			// kontrola required
-			foreach ($controls as $name => $control) {
-				if ($control["required"]) {
-					if (strlen(strip_tags($control["value"])) < 1) {
-						$control["error"]["empty"] = true;
-						$error = true;
-					}
-				}
-				// kontrola detailni
-				if (!$error)
-				switch ($name) {
-					case "password":
-						// login
-						$remember	= ($formArray["controls"]["remember"]["checked"] == "checked");
-						if (!$this->isLogginSuccesfull($formArray["controls"]["nick"]["value"], $control["value"], $remember)) {
-							$control["error"]["loginInvalid"] = true;
-							$error = true;
-						}
-						break;
-				}
-				$controls[$name] = $control;
-			}
-			$formArray["controls"] = $controls;
-			if ($error) {
-				$exception = new LBoxExceptionForm(LBoxExceptionForm::MSG_FORM_DATA_INVALID, LBoxExceptionForm::CODE_FORM_DATA_INVALID);
-				$exception->setFormArray($formArray);
-				throw $exception;
-			}
 			else {
-				// upravy
-				foreach ($controls as $name => $control) {
-					switch ($name) {
-						case "nick":
-							break;
-					}
-					$controls[$name] = $control;
-				}
-			}
-			$formArray["controls"] = $controls;
-			return $formArray;
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-
-	/**
-	 * vraci pole s daty formulare a dalsimi vecmi
-	 * @return array
-	 */
-	protected function getFormArray() {
-		try {
-			$formGroupName			= $this->getFormGroupName();
-			$form 					= array();
-			$controls				= array();
-
-			// id
-			$controls["nick"]["id"]				= $formGroupName. "-nick";
-			$controls["password"]["id"]			= $formGroupName. "-password";
-			$controls["remember"]["id"]			= $formGroupName. "-remember";
-			
-			// groupName
-			$controls["nick"]["name"]				= $formGroupName. "[nick]";
-			$controls["password"]["name"]			= $formGroupName. "[password]";
-			$controls["remember"]["name"]			= $formGroupName. "[remember]";
-			
-			// required
-			$controls["nick"]["required"]			= true;
-			$controls["password"]["required"]		= true;
-			$controls["remember"]["required"]		= false;
-			
-			// data - pokud neexistuji postdata, budou tam prazdne stringy
-			$controls["nick"]["value"]		= $_POST[$formGroupName]["nick"];
-			$controls["password"]["value"]	= $_POST[$formGroupName]["password"];
-			$controls["remember"]["value"]	= 1;
-
-			// checked
-			$controls["remember"]["checked"]	= ($_POST[$formGroupName]["remember"] == 1) ? "checked" : "";
-
-			// ostatni hodnoty formu
-			$form["target"]			= LBOX_REQUEST_URL_PATH;
-			$form["name"]			= $formGroupName;
-			$form["controls"]		= $controls;
-			$form["error"] 			= false;
-			return $form;
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-
-	/**
-	 * Pokusi se uzivatele zalogovat a vraci true, jestli se mu to povedlo
-	 * @param string $nick
-	 * @param string $password
-	 * @param bool $remember
-	 * @return bool
-	 * @throws Exception
-	 */
-	protected function isLogginSuccesfull($nick = "", $password = "", $remember = false) {
-		try {
-			if (strlen($nick) < 1) {
-				throw new LBoxExceptionComponent("\$nick ". LBoxExceptionComponent::MSG_PARAM_STRING_NOTNULL, LBoxExceptionComponent::CODE_BAD_PARAM);
-			}
-			if (strlen($password) < 1) {
-				throw new LBoxExceptionComponent("\$password ". LBoxExceptionComponent::MSG_PARAM_STRING_NOTNULL, LBoxExceptionComponent::CODE_BAD_PARAM);
-			}
-			try {
-				$xt	= LBoxXT::login($nick, $password, $remember);
-				$this->reload();
-			}
-			catch (LBoxExceptionXT $e) {
-				if ($e->getCode() == LBoxExceptionXT::CODE_LOGIN_INVALID) {
-					return false;
-				}
 				throw $e;
 			}
-		}
-		catch (Exception $e) {
-			throw $e;
 		}
 	}
 
 	/**
 	 * odloguje zalogovaneho uzivatele
+	 * @param int $loginGroup
 	 * @throws Exception
 	 */
-	protected function logout() {
+	protected function logout($loginGroup = 1) {
 		try {
 			$signedOff	= false;
 			foreach ($this->getUrlParamsArray() as $param) {
 				if ($this->isUrlParamPaging($param)) continue;
 				if ($param == "logout") {
-					if (LBoxXT::isLogged()) {
-						LBoxXT::getInstance()->logout();
+					if (LBoxXT::isLogged($loginGroup)) {
+						LBoxXT::getInstance()->logout($loginGroup);
 						$signedOff	= true;
 					}
 				}
@@ -214,21 +103,6 @@ class LoginForm extends LBoxComponent
 		try {
 			$glue = (count($this->getUrlParamsArray()) > 0) ? "/" : ":";
 			return LBOX_REQUEST_URL_PATH . $glue . "logout";
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-
-	/**
-	 * Vrati kompletni URL na stranku s registraci
-	 * @return string
-	 * @throws Exception
-	 */
-	protected function getURLRegistration() {
-		try {
-			$pageId	= LBoxConfigManagerProperties::getInstance()->getPropertyByName("ref_page_xt_registration")->getContent();
-			return LBoxConfigManagerStructure::getPageById($pageId)->url;
 		}
 		catch (Exception $e) {
 			throw $e;
