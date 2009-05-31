@@ -67,6 +67,12 @@ class LBoxFront extends LBox
 	);
 
 	/**
+	 * logout URL param name
+	 * @var string
+	 */
+	protected static $urlParamNameLogout	= "logout";
+	
+	/**
 	 * spousti zobrazeni pozadovane stranky
 	 * @throws LBoxException
 	 */
@@ -101,6 +107,13 @@ class LBoxFront extends LBox
 					throw new LBoxExceptionFront(LBoxExceptionFront::MSG_INVALID_REMOTE_IP, LBoxExceptionFront::CODE_INVALID_REMOTE_IP);
 				}
 			}
+
+			// logout if is to
+			if (self::isToLogout()) {
+				$loginGroup				= strlen(self::getPageCfg()->xt) > 0 ? self::getPageCfg()->xt : 0;
+				self::logout($loginGroup);
+			}
+
 			// xt
 			if ($pageCfg->xt) {
 				if (!LBoxXTProject::isLogged($pageCfg->xt)) {
@@ -537,6 +550,37 @@ class LBoxFront extends LBox
 				throw new LBoxExceptionFront(LBoxExceptionFront::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFront::CODE_BAD_PARAM);
 			}
 			return self::getDisplayLanguage() == $lang;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	* logout client user
+	* @param int $loginGroup login group to logout
+	*/
+	public static function logout($loginGroup = 1) {
+		try {
+			LBoxXTProject::logout($loginGroup);
+			self::reload(self::getPage()->url);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	* @return bool
+	*/
+	public static function isToLogout() {
+		try {
+			foreach (self::getUrlParamsArray() as $param) {
+				if ($param == self::$urlParamNameLogout) {
+					return true;
+				}
+			}
+			return false;
 		}
 		catch (Exception $e) {
 			throw $e;
