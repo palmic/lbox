@@ -132,6 +132,9 @@ class LBoxXT extends LBox
 	 */
 	public static function isLogged($loginGroup = 0) {
 		try {
+			if (!is_array($_SESSION["lbox"][self::SESSION_ARRAY_NAME])) {
+				return false;
+			}
 			if ($loginGroup === 0) {
 				if (strlen(LBoxFront::getPage()->xt) > 0) {
 					$loginGroup = LBoxFront::getPage()->xt;
