@@ -18,12 +18,17 @@ class LoginForm extends LBoxComponent
 	 * @var array
 	 */
 	protected $processors = array();
+
+	protected $validators = array();
 	
 	protected function executePrepend(PHPTAL $TAL) {
 		// DbControl::$debug = true;
 		try {
 			if (count($this->processors) < 1) {
 				$this->processors[]	= new ProcessorLogin;
+			}
+			if (count($this->validators) < 1) {
+				$this->validators[]	= new LBoxFormValidatorLogin();
 			}
 			$controlNick		= new LBoxFormControlFill("nick", "nick", "", LBoxConfigManagerProperties::getPropertyContentByName("form_max_length_nick"));
 			$controlNick		->setTemplateFileName("lbox_form_control_nick.html");
@@ -34,6 +39,9 @@ class LoginForm extends LBoxComponent
 				$controlsLogin->setTemplateFileName("lbox_form_control_multi_login.html");
 				$controlsLogin->addControl		($controlNick);
 				$controlsLogin->addControl		($controlPassword);
+				foreach ($this->validators as $validator) {
+					$controlsLogin->addValidator($validator);
+				}
 				$controlsLogin->addValidator(new LBoxFormValidatorLogin());
 			$form					= new LBoxForm("login", "post", "Přihlášení uživatele", "přihlásit");
 			$form->setTemplateFileName("lbox_form_login.html");
@@ -47,9 +55,9 @@ class LoginForm extends LBoxComponent
 			$xtReloadLoggedParts	= strlen($this->page->xt_reload_logged_xt) > 0 ? explode(":", $this->page->xt_reload_logged_xt) : array();
 			$loginGroup				= count($xtReloadLoggedParts) > 0 ? $xtReloadLoggedParts[0] : 1;
 			$TAL->form				= $form;
-			$TAL->isLogged			= LBoxXT::isLogged($loginGroup);
+			$TAL->isLogged			= LBoxXTProject::isLogged($loginGroup);
 			if (LBoxXT::isLogged($loginGroup)) {
-				$TAL->userXTRecord		= LBoxXT::getUserXTRecord($loginGroup);
+				$TAL->userXTRecord		= LBoxXTProject::getUserXTRecord($loginGroup);
 			}
 			$TAL->logoutUrl			= $this->getURLLogout();
 			$this->logout($loginGroup);
