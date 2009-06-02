@@ -531,7 +531,7 @@ abstract class LBoxComponent
 		// sestaveni pole paging
 		$pageCurrent	= $this->getPagingCurrent();
 		if ($this->getPagingCurrent() - $pagesRange > 1) {
-			$out["<<"]	= $this->getPageURLByIndex(1) . "?$queryString";
+			$out["<<"]	= $this->getPageURLByIndex(1);
 			$out["<<"]["first"]	= true;
 			$out["<<"]["last"]	= false;
 			$out["<<"]["class"]	= "first";
