@@ -12,14 +12,18 @@ function phptal_tales_lbox($src, $nothrow = false) {
 		switch (strtolower($srcArr[0])) {
 			case "component":
 				if (strlen($name = $srcArr[1]) < 1) {
-					throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_COMPONENT_NAME_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+					if (!$nothrow) {
+						throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_COMPONENT_NAME_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+					}
 				}
 				return '$ctx->SELF->getComponentById("'.$name.'")->getContent()';
 				break;
 			case "page":
 				$pageParams	= explode("/", $srcArr[1]);
 				if (!is_numeric($pageID = $pageParams[0]) || $pageID < 1) {
-					throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_PAGE_ID_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+					if (!$nothrow) {
+						throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_PAGE_ID_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+					}
 				}
 				unset($pageParams[0]);
 				if (count($pageParams) < 1 || strlen(current($pageParams)) < 1) {
@@ -31,7 +35,9 @@ function phptal_tales_lbox($src, $nothrow = false) {
 				break;
 			case "property":
 				if (strlen($name = $srcArr[1]) < 1) {
-					throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_PROPERTY_NAME_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+					if (!$nothrow) {
+						throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_PROPERTY_NAME_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+					}
 				}
 				return 'LBoxConfigManagerProperties::getPropertyContentByName("'.$name.'")';
 				break;
@@ -40,28 +46,38 @@ function phptal_tales_lbox($src, $nothrow = false) {
 				break;
 			case "front":
 				if (strlen($frontCalling = $srcArr[1]) < 1) {
-					throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_FRONT_CALL_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+					if (!$nothrow) {
+						throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_FRONT_CALL_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+					}
 				}
 				return 'LBoxFront::'. $frontCalling .'()';
 				break;
 			case "i18n":
 				if (strlen($srcArr[1]) < 1) {
-					throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_I18N_CONDITION_INVALID ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+					if (!$nothrow) {
+						throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_I18N_CONDITION_INVALID ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+					}
 				}
 				if (count($langConditionArr = explode("/", $srcArr[1])) != 2) {
-					throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_I18N_CONDITION_INVALID ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+					if (!$nothrow) {
+						throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_I18N_CONDITION_INVALID ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+					}
 				}
 				switch ($langConditionArr[0]) {
 					case 'isDisplayLanguageCurrent':
 						return 'LBoxFront::isDisplayLanguageCurrent("'. $langConditionArr[1] .'")';
 						break;
 					default:
-						throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_I18N_CONDITION_INVALID ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+						if (!$nothrow) {
+							throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_I18N_CONDITION_INVALID ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+						}
 				}
 				break;
 			case "request":
 				if (strlen($name = $srcArr[1]) < 1) {
-					throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_REQUEST_PARAM_NAME_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+					if (!$nothrow) {
+						throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_REQUEST_PARAM_NAME_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+					}
 				}
 				switch ($name) {
 					case "url":
@@ -104,7 +120,9 @@ function phptal_tales_lbox($src, $nothrow = false) {
 				break;
 			case "slot":
 				if (strlen($name = $srcArr[1]) < 1) {
-					throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_SLOT_NAME_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+					if (!$nothrow) {
+						throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_SLOT_NAME_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+					}
 				}
 				$silent	= (array_key_exists(2, $srcArr) && $srcArr[2] == "silent") ? "true" : "false";
 				return '$ctx->SELF->templateGetSlot("'.$name.'", '.$silent.')';
@@ -115,12 +133,16 @@ function phptal_tales_lbox($src, $nothrow = false) {
 					
 			case 'slot_end':
 				if (strlen($name = $srcArr[1]) < 1) {
-					throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_SLOT_NAME_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+					if (!$nothrow) {
+						throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_SLOT_NAME_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+					}
 				}
 				return '$ctx->SELF->templateSlotContentEnd("'.$name.'")';
 				break;
 			default:
-				throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_LBOX_NS_BAD_CALL ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_LBOX_NS_BAD_CALL);
+				if (!$nothrow) {
+					throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_LBOX_NS_BAD_CALL ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_LBOX_NS_BAD_CALL);
+				}
 		}
 		return "";
 	}

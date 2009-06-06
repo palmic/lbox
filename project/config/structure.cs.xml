@@ -8,5 +8,6 @@
 		<page id="9991" url="/dev/form-multistep/" class="PageDevFormMultistep" heading="Development form multistep" title="Development form multistep" template="_page_dev_form_multistep.html" in_menu="0" />
 	</page>
 	
-	<page id="11" url="/test/" class="PageTitle" template="page_title.html" heading="test" in_menu="0" />
+	<page id="11" url="/test/" class="PageTest" template="page_test.html" heading="test" in_menu="0" />
+	<page id="12" url="/test-metanode/" class="PageTest" template="page_testmetanode.html" heading="test" in_menu="0" />
 </pages>
