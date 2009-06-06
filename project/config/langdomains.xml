@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <langdomains>
+	<domain lang="cs">lbox</domain>
 	<domain lang="cs">lbox.cz</domain>
 	<domain lang="en">lbox.com</domain>
 </langdomains>

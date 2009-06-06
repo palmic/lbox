@@ -43,8 +43,15 @@ class LBoxConfigProperties extends LBoxConfig
 				return parent::getDOM();
 			}
 			catch(Exception $e) {
-				$this->configName	= $configNameBase;
-				return parent::getDOM();
+				try {
+					$this->configName	= $configNameBase;
+					return parent::getDOM();
+				}
+				catch (Exception $e) {
+					if ($e->getCode() == LBoxExceptionConfig::CODE_TYPE_NOT_FOUND) {
+						die($this->configName .".xml not found due to langdomain did not recognized!");
+					}
+				}
 			}
 		}
 		catch(Exception $e) {
