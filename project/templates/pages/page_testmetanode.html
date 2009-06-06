@@ -1,5 +1,10 @@
 <x tal:replace="lbox:slot_start" />
 	<h1 tal:content="SELF/page/heading" />
+	<div class="metanode metanode-richtext" tal:content="structure SELF/metanode_1_richtext" />
+	<div class="metanode metanode-richtext" tal:content="structure SELF/metanode_2_int" />
+	<div class="metanode metanode-richtext" tal:content="structure SELF/metanode_3_richtext" />
+	<div class="metanode metanode-richtext" tal:content="structure SELF/metanode_4_richtext" />
 	
+	<div class="metanode metanode-richtext" tal:content="structure SELF/metanode_1_richtext" />
 <x tal:replace="lbox:slot_end.content" />
 <x tal:replace="structure lbox:component.layout_default" />

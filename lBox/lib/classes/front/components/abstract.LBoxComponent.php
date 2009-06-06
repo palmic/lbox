@@ -78,6 +78,10 @@ abstract class LBoxComponent
 			if (strlen($name) < 1) {
 				throw new LBoxExceptionFront(LBoxExceptionFront::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFront::CODE_BAD_PARAM);
 			}
+			// metanodes
+			if (strpos(strtolower($name), "metanode") === 0) {
+				return $this->getMetanodeByCallName($name);
+			}
 			switch (strtolower($name)) {
 				// vraci instanci Page
 				case "page":
@@ -1004,6 +1008,25 @@ abstract class LBoxComponent
 	public function getFormGroupName() {
 		try {
 			return $this->config->id;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	* getter na metanode
+	* @param string $callname
+	* return string
+	*/
+	protected function getMetanodeByCallName($callname = "") {
+		try {
+			$parts	= explode("_", $callname);
+			if (count($parts) < 3) {
+				throw new LBoxExceptionComponent("Wrong metanode callname '$callname'", LBoxExceptionComponent::CODE_BAD_PARAM);
+			}
+			$node	= LBoxMetanodeManager::getNode($parts[2], (int)$parts[1], $this);
+			return $node;
 		}
 		catch (Exception $e) {
 			throw $e;

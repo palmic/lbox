@@ -6,7 +6,7 @@
 * @version 1.0
 * @date 2007-12-08
 */
-abstract class LBoxConfigManager
+abstract class LBoxConfigManager extends LBox
 {
 	/**
 	 * trida iteratoru config nodu - musi byt definovana v podtride!

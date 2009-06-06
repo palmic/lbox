@@ -9,5 +9,5 @@
 	</page>
 	
 	<page id="11" url="/test/" class="PageTest" template="page_test.html" heading="test" in_menu="0" />
-	<page id="12" url="/test-metanode/" class="PageTest" template="page_testmetanode.html" heading="test" in_menu="0" />
+	<page id="12" url="/test-metanode/" class="PageTestMetanode" template="page_testmetanode.html" heading="test" in_menu="0" />
 </pages>

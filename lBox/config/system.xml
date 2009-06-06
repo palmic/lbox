@@ -46,6 +46,11 @@
 			<path>$project/templates/components</path>
 		</templates>
 	</components>
+	<metanodes>
+		<data>
+			<path>$project/.data/metanodes/$caller_type/$caller_id/$seq.$ext</path>
+		</data>
+	</metanodes>
 	<layouts>
 		<classes>
 			<default>LayoutDefault</default>
