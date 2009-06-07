@@ -353,5 +353,76 @@ class LBoxUtil
 			throw $e;
 		}
 	}
+	
+	/**
+	* vrati URL s pridanim parametru
+	* @param array $params - parametry k pridani
+	* @param string $url - url, do ktere se maji parametry pridat - pokud je prazdna, pouzije se url aktualni
+	* @return string
+	*/
+	public static function getURLWithParams($params = array(), $url = "") {
+		try {
+			$url				= strlen($url) > 0 ? $url : str_replace(":". LBOX_REQUEST_URL_PARAMS, "", LBOX_REQUEST_URL);
+			$url				= str_replace("http//", "http://", strtolower($url));
+			$url				= str_replace("https//", "https://", strtolower($url));
+			$paramsNew			= array();
+			$paramsNewString	= "";
+			$paramsOriginal		= LBoxFront::getUrlParamsArray();
+			if (count($paramsOriginal) > 0) {
+				foreach ($paramsOriginal as $k => $paramOriginal) {
+					if (is_numeric(array_search($paramsOriginal, $params))) {
+						continue;
+					}
+					$paramsNew[]	= $paramOriginal;
+				}
+			}
+			if (count($params) > 0) {
+				foreach ($params as $param) {
+					$paramsNew[]	= $param;
+				}
+			}
+			if (count($paramsNew) > 0) {
+				$paramsNewString	= ":". implode("/", $paramsNew);
+			}
+			return $url . $paramsNewString;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	* vrati URL s odebranim parametru
+	* @param array $params - parametry k odebrani
+	* @param string $url - url, do ktere se maji parametry pridat - pokud je prazdna, pouzije se url aktualni
+	* @return string
+	*/
+	public static function getURLWithoutParams($params = array(), $url = "") {
+		try {
+			$url				= strlen($url) > 0 ? $url : str_replace(":". LBOX_REQUEST_URL_PARAMS, "", LBOX_REQUEST_URL);
+			$paramsOriginal		= LBoxFront::getUrlParamsArray();
+			$paramsNew			= array();
+			$paramsNewString	= "";
+			if (count($params) < 1) {
+				throw new LBoxException(LBoxException::MSG_PARAM_STRING_NOTNULL, LBoxException::CODE_BAD_PARAM);
+			}
+			if (count($paramsOriginal) < 1) {
+				return $url;
+			}
+			foreach ($paramsOriginal as $k => $paramOriginal) {
+				if (is_numeric(array_search($paramOriginal, $params))) {
+					continue;
+				}
+				$paramsNew[]	= $paramOriginal;
+			}
+			if (count($paramsNew) > 0) {
+				$paramsNewString	= ":". implode("/", $paramsNew);
+			}
+			return $url . $paramsNewString;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
 }
 ?>

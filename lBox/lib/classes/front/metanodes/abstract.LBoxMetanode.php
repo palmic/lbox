@@ -50,6 +50,10 @@ abstract class LBoxMetanode extends LBox
 	 */
 	protected static $pathsByCallerTypes	= array();
 	
+	CONST XT_FORM_VALIDATOR_CLASSNAME		= "ValidatorMetanode";
+	
+	CONST XT_FORM_FILTER_CLASSNAME			= "LBoxFormFilterMetanode";
+	
 	public function __construct($seq = 0, LBoxComponent $caller) {
 		if (!is_int($seq) || $seq < 1) {
 			throw new LBoxExceptionMetanodes(LBoxExceptionMetanodes::MSG_PARAM_INT_NOTNULL, LBoxExceptionMetanodes::CODE_BAD_PARAM);
@@ -87,7 +91,7 @@ abstract class LBoxMetanode extends LBox
 	* getter na obsah
 	* @return string
 	*/
-	protected function getContent() {
+	public function getContent() {
 		try {
 			return $this->data;
 		}

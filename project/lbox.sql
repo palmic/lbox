@@ -114,7 +114,7 @@ CREATE TABLE  `lbox`.`acces` (
   PRIMARY KEY (`id`),
   KEY `ref_xtUser` (`ref_xtUser`),
   CONSTRAINT `ref_xtUser` FOREIGN KEY (`ref_xtUser`) REFERENCES `xtUsers` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=47454 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=146 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `lbox`.`acces`
@@ -182,15 +182,7 @@ CREATE TABLE  `lbox`.`xtUsers` (
 
 /*!40000 ALTER TABLE `xtUsers` DISABLE KEYS */;
 LOCK TABLES `xtUsers` WRITE;
-INSERT INTO `lbox`.`xtUsers` VALUES  (1,'palmic',6,'b3b4d2dbedc99fe843fd3dedb02f086f','2008-09-21 12:23:15','','','michal.palma@gmail.com','',1,1,'7005f23d64560fcac780f4e28dee1f3b'),
- (2,'brady',6,'8e060ab9ce958ed166f209fcb3622744','2008-09-21 15:22:31','Stepan','Brada','brady@techhouse.cz','http://www.djbrady.cz',1,1,'7005f23d645d08cac780f4228dee1f3b'),
- (3,'blond',5,'aafc46ba9d415655c6f9fbdec29aea4c','2008-09-23 17:45:37','','','blond@techhouse.cz','',1,0,'7005f23ds55d08cac78014248dee1f3b'),
- (4,'next',5,'db4dad8a4896602b676a2fd075517574','2008-10-09 21:27:16','Libor','Šoch','next@techhouse.cz','http://www.techhouse.cz',1,0,'7005f23dd58d08gac78054248des41f3'),
- (5,'Dancer',4,'186167bf392750a108b00eab5f4f9d39','2009-03-27 23:08:32','Lucas','Kosora voe','lukatyr@seznam.cz','',1,0,'6c0c2778a81980ea4a8743af23c8892e'),
- (6,'ura1967',4,'5b23e70cc27103e8ef6d745aaed944f1','2009-03-31 20:00:58','','','kopkin@list.ru','',0,1,'90703cf5a4cb8ba8daca36071c7da378'),
- (7,'side',4,'65a4e611081093e10cf28758f23a7855','2009-04-23 15:34:10','andy','andy','info@autodoprava-ap.sk','',1,0,'a28b9bf6a0217e8f3353e0dab67d6f9f'),
- (8,'K_O_S',4,'ac47421cd4352c0f2cc42d557d8059bc','2009-05-27 11:26:41','','','fuck_your_ass@inbox.ru','',1,0,'3bf10841cda7bc4066e11ee74273d5f5'),
- (9,'seegeng',4,'cb8c31a57b18878df5e8f0b75396e175','2009-05-30 17:50:24','','','seegeng@seznam.cz','',1,0,'68c36b0ab15c32ba85152d7e674c58b1');
+INSERT INTO `lbox`.`xtUsers` VALUES  (1,'palmic',6,'b3b4d2dbedc99fe843fd3dedb02f086f','2008-09-21 12:23:15','','','michal.palma@gmail.com','',1,1,'7005f23d64560fcac780f4e28dee1f3b');
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `xtUsers` ENABLE KEYS */;
 

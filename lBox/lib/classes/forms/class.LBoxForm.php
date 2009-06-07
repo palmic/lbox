@@ -100,7 +100,7 @@ class LBoxForm
 	 * @param string method
 	 * @throws LBoxExceptionForm
 	 */
-	public function __construct( $name = "",  $method = "post", $label	= "", $labelSubmit	= "") {
+	public function __construct($name = "",  $method = "post", $label	= "", $labelSubmit	= "") {
 		try {
 			if (strlen($name) < 1) {
 				throw new LBoxExceptionForm("\$name: ". LBoxExceptionForm::MSG_PARAM_STRING_NOTNULL, LBoxExceptionForm::CODE_BAD_PARAM);

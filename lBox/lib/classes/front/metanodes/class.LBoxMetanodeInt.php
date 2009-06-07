@@ -8,7 +8,12 @@
  */
 class LBoxMetanodeInt extends LBoxMetanode
 {
-	protected function getContent() {
+	CONST XT_FORM_CTRL_CLASSNAME			= "LBoxFormControlFill";
+	CONST XT_FORM_CTRL_TEMPLATE_FILENAME	= "metanode_int.html";
+	CONST XT_FORM_VALIDATOR_CLASSNAME		= "ValidatorMetanodeInt";
+	CONST XT_FORM_FILTER_CLASSNAME			= "LBoxFormFilterMetanodeInt";
+	
+	public function getContent() {
 		try {
 			if (strlen($content = parent::getContent()) > 0) {
 				if (!is_numeric($content)) {

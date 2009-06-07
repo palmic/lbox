@@ -21,7 +21,7 @@ class LBoxMetanodeManager extends LBox
 	 * @var array
 	 */
 	protected static $cache		= array();
-
+	
 	/**
 	 * 
 	 * @param string $type node type
