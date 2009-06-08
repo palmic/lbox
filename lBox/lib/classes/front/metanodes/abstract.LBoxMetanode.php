@@ -109,8 +109,10 @@ abstract class LBoxMetanode extends LBox
 			// drop previous cache
 			unset($this->fileH);
 			@unlink($this->getFilePath());
-			if (!fwrite($this->getFileH(), $content)) {
-				throw new LBoxExceptionMetanodes(LBoxExceptionMetanodes::MSG_DATA_CANNOT_WRITE, LBoxExceptionMetanodes::CODE_DATA_CANNOT_WRITE);
+			if (strlen($content) > 0) {
+				if (!fwrite($this->getFileH(), $content)) {
+					throw new LBoxExceptionMetanodes(LBoxExceptionMetanodes::MSG_DATA_CANNOT_WRITE, LBoxExceptionMetanodes::CODE_DATA_CANNOT_WRITE);
+				}
 			}
 			$this->data	= $content;
 		}
