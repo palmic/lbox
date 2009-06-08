@@ -153,6 +153,7 @@ abstract class LBoxMetanode extends LBox
 			$this->path	= str_replace("\$caller_id", $this->caller->config->id, $this->path);
 			$this->path	= str_replace("\$seq", $this->seq, $this->path);
 			$this->path	= str_replace("\$ext", $this->ext, $this->path);
+			$this->path	= str_replace("\$lng", LBoxFront::getDisplayLanguage(), $this->path);
 			
 			$this->path	= LBoxUtil::fixPathSlashes($this->path);
 			LBoxUtil::createDirByPath(dirname($this->path));
