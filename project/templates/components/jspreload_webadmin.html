@@ -1,0 +1,40 @@
+<!-- Skin CSS file -->
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/assets/skins/sam/skin.css" />
+<!-- Utility Dependencies -->
+<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/yahoo-dom-event/yahoo-dom-event.js"></script> 
+<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/element/element-min.js"></script> 
+<!-- Needed for Menus, Buttons and Overlays used in the Toolbar -->
+<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/container/container_core-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/menu/menu-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/button/button-min.js"></script>
+<!-- Source file for Rich Text Editor-->
+<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/editor/editor-min.js"></script>
+<!-- Source file for Selector-->
+<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/selector/selector-min.js"></script>
+<script type="text/javascript">
+	function metanodes_attach() {
+		YAHOO.util.Dom.addClass(document.body, 'yui-skin-sam'); 
+		var forms	= YAHOO.util.Selector.query('.metanode-richtext');
+		var field;
+		var editor;
+		var submit;
+		for(i in forms) {
+			field 	= YAHOO.util.Selector.query('.wsw', forms[i], true);
+			submit 	= YAHOO.util.Selector.query('input.submit', forms[i], true);
+			// init richtext editors
+			editor = new YAHOO.widget.Editor(field.id, { 
+				dompath: true, //Turns on the bar at the bottom 
+				animate: true, //Animates the opening, closing and moving of Editor windows
+				autoHeight: true,
+				focusAtStart: true
+			});
+			editor.render();
+			//Inside an event handler after the Editor is rendered
+			YAHOO.util.Event.on(submit.id, 'click', function(ev) {
+			    //Put the HTML back into the text area
+			    editor.saveHTML();
+			});
+		}
+	}
+	YAHOO.util.Event.onDOMReady(metanodes_attach);
+</script>
