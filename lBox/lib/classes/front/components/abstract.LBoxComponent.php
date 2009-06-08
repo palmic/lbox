@@ -186,7 +186,11 @@ abstract class LBoxComponent
 			if (strlen($id) < 1) {
 				throw new LBoxExceptionFront(LBoxExceptionFront::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFront::CODE_BAD_PARAM);
 			}
-			return LBoxConfigManagerStructure::getInstance()->getPageById($id);
+			$config		= LBoxConfigManagerStructure::getInstance()->getPageById($id);
+			$config		->setOutputFilter(new OutputFilterPage($config));
+			$pageClass	= $config->class;
+			$page		= new $pageClass($config);
+			return $page;
 		}
 		catch (Exception $e) {
 			throw $e;
