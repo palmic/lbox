@@ -19,7 +19,8 @@ class ProcessorMetanodeXTEdit extends LBoxFormProcessor
 			}
 			$node	= LBoxMetanodeManager::getNode(		$this->form->getControlByName("type")->getValue(),
 														(int)$this->form->getControlByName("seq")->getValue(),
-														$caller);
+														$caller,
+														$this->form->getControlByName("lng")->getValue());
 			$node->setContent($this->form->getControlByName("content")->getValue());
 
 			LBoxFront::reload(LBoxUtil::getURLWithoutParams(array("edit-". $this->form->getName())));

@@ -1054,9 +1054,15 @@ abstract class LBoxComponent
 					return $node;
 				}
 				$ctrlType				= new LBoxFormControlFillHidden("type", "", $type);
+					$ctrlType			->setTemplateFileName("metanode_hidden.html");
 				$ctrlSeq				= new LBoxFormControlFillHidden("seq", "", $seq);
+					$ctrlSeq			->setTemplateFileName("metanode_hidden.html");
 				$ctrlCallerID			= new LBoxFormControlFillHidden("caller_id", "", $callerID);
+					$ctrlCallerID		->setTemplateFileName("metanode_hidden.html");
 				$ctrlCallerType			= new LBoxFormControlFillHidden("caller_type", "", $this instanceof LBoxPage ? "page" : "component");
+					$ctrlCallerType		->setTemplateFileName("metanode_hidden.html");
+				$ctrlLng				= new LBoxFormControlFillHidden("lng", "", LBoxFront::getDisplayLanguage());
+					$ctrlLng			->setTemplateFileName("metanode_hidden.html");
 				if ($this->metanodeIsToEdit($formID)) {
 					// jen pokud jde o editaci metanodu, zobrazime editacni form
 					$ctrlContent		= new $nodeControlClassName("content", "", $node->getContent());
@@ -1070,7 +1076,7 @@ abstract class LBoxComponent
 					$form->className	= "edit";
 				}
 				else {
-					// jinak pouze editacni formular
+					// jinak pouze formular k zobrazeni editace
 					$form				= new LBoxForm($formID, "post", "", "editovat");
 					$form				->setTemplateFileName("metanode_xt_toedit.html");
 					$form				->addProcessor(new ProcessorMetanodeXTToEdit);
@@ -1080,6 +1086,7 @@ abstract class LBoxComponent
 				$form					->addControl($ctrlSeq);
 				$form					->addControl($ctrlCallerID);
 				$form					->addControl($ctrlCallerType);
+				$form					->addControl($ctrlLng);
 				$form->node				= $node;
 				return self::$metanodesXTForms[$formID] = $form;
 			}

@@ -121,11 +121,31 @@ try {
 	// nastavit DbControl config file cestu
 	DbCfg::$cfgFilepath = LBoxLoaderConfig::getInstance()->getPathOf("db");
 	
+	// pokud nemame pearovsky firePHP pouzivame lokani LBOXovy
+	@include("FirePHPCore/fb.php");
+	if (!class_exists("FirePHP")) {
+		require(LBOX_PATH_CORE 			. $slash ."firephp". $slash ."0.3". $slash ."lib" . $slash ."FirePHPCore" . $slash ."FirePHP.class.php");
+	}
+	// disable firePHP on remote mashines (enabled on localhost only!!!)
+	if (LBOX_REQUEST_IP != LBOX_REQUEST_IP_MY) {
+		FirePHP::getInstance(true)->setEnabled(false);
+		FB::setEnabled(false);
+	}
+	$firePHPOptions = array('maxObjectDepth' => 10,
+                 			'maxArrayDepth' => 20,
+               				'useNativeJsonEncode' => true,
+                 			'includeLineNumbers' => true);
+	FirePHP::getInstance(true)->getOptions();
+	FirePHP::getInstance(true)->setOptions($firePHPOptions);
+	FB::setOptions($firePHPOptions);
+	// log exclude of:
+	/*FirePHP::getInstance(true)->setObjectFilter('ClassName',
+	                         					  array('MemberName'));*/
 	// TAL load
 	define("PHPTAL_FORCE_REPARSE", 			LBoxConfigSystem::getInstance()->getParamByPath("output/tal/PHPTAL_FORCE_REPARSE"));
 	define("PHPTAL_PHP_CODE_DESTINATION",	LBOX_PATH_PROJECT 			. $slash .".tal_compiled". $slash);
 	//die("'". PHPTAL_PHP_CODE_DESTINATION ."'");
-	
+
 	// pokud nemame pearovsky PHPTAL pouzivame lokani LBOXovy
 	@include("PHPTAL.php");
 	if (!@constant("PHPTAL_VERSION")) {

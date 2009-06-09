@@ -27,15 +27,19 @@ class LBoxMetanodeManager extends LBox
 	 * @param string $type node type
 	 * @param int $seq node order on page
 	 * @param LBoxComponent $caller
+	 * @param string $lng
 	 * @return LBoxMetanode
 	 */
-	public static function getNode($type = "", $seq = 1, LBoxComponent $caller) {
+	public static function getNode($type = "", $seq = 1, LBoxComponent $caller, $lng = "") {
 		try {
 			if (!is_int($seq) || $seq < 1) {
 				throw new LBoxExceptionMetanodes("\$seq: ". LBoxExceptionMetanodes::MSG_PARAM_INT_NOTNULL, LBoxExceptionMetanodes::CODE_BAD_PARAM);
 			}
 			if (strlen($type) < 1) {
 				throw new LBoxExceptionMetanodes(LBoxExceptionMetanodes::MSG_PARAM_STRING_NOTNULL, LBoxExceptionMetanodes::CODE_BAD_PARAM);
+			}
+			if (strlen($lng) < 1) {
+				$lng	= LBoxFront::getDisplayLanguage();
 			}
 			// get node className
 			switch (strtolower($type)) {
@@ -64,7 +68,7 @@ class LBoxMetanodeManager extends LBox
 					return self::$cache[$callerType][$caller->config->id][$seq];
 				}
 			}
-			return self::$cache[$callerType][$caller->config->id][$seq] = new $nodeClassName($seq, $caller);
+			return self::$cache[$callerType][$caller->config->id][$seq] = new $nodeClassName($seq, $caller, $lng);
 		}
 		catch (Exception $e) {
 			throw $e;

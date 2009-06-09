@@ -48,7 +48,7 @@
 	</components>
 	<metanodes>
 		<data>
-			<path>$project/.data/metanodes/$caller_type/$caller_id/$lng_$seq.$ext</path>
+			<path>$project/data/metanodes/$caller_type/$caller_id/$lng_$seq.$ext</path>
 		</data>
 	</metanodes>
 	<layouts>

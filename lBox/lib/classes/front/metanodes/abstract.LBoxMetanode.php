@@ -21,6 +21,12 @@ abstract class LBoxMetanode extends LBox
 	protected $seq;
 	
 	/**
+	 * data lng
+	 * @var string
+	 */
+	protected $lng;
+	
+	/**
 	 * file pointer cache
 	 * @var resource
 	 */
@@ -54,11 +60,12 @@ abstract class LBoxMetanode extends LBox
 	
 	CONST XT_FORM_FILTER_CLASSNAME			= "LBoxFormFilterMetanode";
 	
-	public function __construct($seq = 0, LBoxComponent $caller) {
+	public function __construct($seq = 0, LBoxComponent $caller, $lng = "") {
 		if (!is_int($seq) || $seq < 1) {
 			throw new LBoxExceptionMetanodes(LBoxExceptionMetanodes::MSG_PARAM_INT_NOTNULL, LBoxExceptionMetanodes::CODE_BAD_PARAM);
 		}
 		$this->seq		= $seq;
+		$this->lng		= strlen($lng) > 0 ? $lng : LBoxFront::getDisplayLanguage();
 		$this->caller	= $caller;
 		
 		//init file
@@ -155,7 +162,7 @@ abstract class LBoxMetanode extends LBox
 			$this->path	= str_replace("\$caller_id", $this->caller->config->id, $this->path);
 			$this->path	= str_replace("\$seq", $this->seq, $this->path);
 			$this->path	= str_replace("\$ext", $this->ext, $this->path);
-			$this->path	= str_replace("\$lng", LBoxFront::getDisplayLanguage(), $this->path);
+			$this->path	= str_replace("\$lng", $this->lng, $this->path);
 			
 			$this->path	= LBoxUtil::fixPathSlashes($this->path);
 			LBoxUtil::createDirByPath(dirname($this->path));

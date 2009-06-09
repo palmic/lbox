@@ -10,7 +10,7 @@
     <!--[if IE 7]>
         <link rel="stylesheet" href="/css/css-ie7.css" type="text/css" media="screen" />
     <![endif]-->
-	<x tal:replace="structure lbox:component.jspreload_webadmin" />
+	<x tal:replace="structure lbox:component.jspreload_webadmin2" />
 	<link tal:condition="exists: SELF/page/rssPage" rel="alternate" type="application/rss+xml" href="${SELF/page/rssPage/url}" title="${SELF/page/rssPage/title}" />
 	</head>
     <body tal:attributes="class SELF/page/bodyclass | default">
