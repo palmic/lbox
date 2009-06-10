@@ -13,51 +13,22 @@ if (!LBoxXTProject::isLoggedAdmin(XT_GROUP)) {
 foreach ($_POST as $k => $v) {
 	$table[] = array($k,$v);
 }
-FirePHP::getInstance(true)->table('POST data debug', $table);
-*/
+FirePHP::getInstance(true)->table('POST data debug', $table);*/
+
 
 try {
 	//////////////////////////////////////////////////////////////////////
 	//	saving data
 	//////////////////////////////////////////////////////////////////////
 
-	$contentRaw			= $_POST["content"];
-	$contentProcessed	= $contentRaw;
-	
-	// page metanode
-	if ($_POST["caller_type"] == "page") {
-		$callerConfig		= LBoxConfigManagerStructure::getInstance()->getPageById($_POST["caller_id"]);
-		$callerClassName	= $callerConfig->class;
-		$caller				= new $callerClassName($callerConfig);
+	if (count($_POST) > 1) {
+		throw new LBoxException("API awaits array with only one node!");
 	}
-	// component metanode
-	else {
-		$callerConfig	= LBoxConfigManagerComponents::getInstance()->getComponentById($_POST["caller_id"]);
-		$caller			= new LBoxComponent($callerConfig, LBoxFront::getPage());
+
+	foreach ($_POST as $k => $postData) {
+		$returned	= saveMetanodeByPostData($postData);
+		echo(json_encode($returned));
 	}
-	$node	= LBoxMetanodeManager::getNode(		$_POST["type"],
-												(int)$_POST["seq"],
-												$caller,
-												$_POST["lng"]);
-	$node->setContent($contentRaw);
-
-
-	//////////////////////////////////////////////////////////////////////
-	//	return filtered data
-	//////////////////////////////////////////////////////////////////////
-	
-	$data = new stdclass(); // PHP base class
-	$data->Results = new stdclass();
-	$data->Results->content_raw = $contentRaw; // raw_data
-	$data->Results->caller_type = $_POST["caller_type"];
-	$data->Results->caller_id = $_POST["caller_id"];
-	$data->Results->type = $_POST["type"];
-	$data->Results->seq = $_POST["seq"];
-	$data->Results->lng = $_POST["lng"];
-	$data->Results->status = 'OK';
-	$data->Results->content = $contentProcessed; // content
-	
-	echo(json_encode($data));
 }
 catch (Exception $e) {
 	/*switch (LBoxConfigSystem::getInstance()->getParamByPath("debug/exceptions")) {
@@ -95,6 +66,60 @@ function throwExceptionToFirePHP(Exception $e) {
 		$i++;
 	}
 	FirePHP::getInstance(true)->table('Stack trace', $trace);
+}
+
+/**
+ * ulozi metanode podle predanych dat a vrati zpet jeji vysledny content
+ * @param $data
+ * @return stdclass
+ */
+function saveMetanodeByPostData($data = array()) {
+	try {
+		if (count($data) < 1) {
+			throw new LBoxException(LBoxException::MSG_PARAM_ARRAY_NOTNULL, LBoxException::CODE_BAD_PARAM);
+		}
+
+		$contentRaw			= $data["content"];
+		$contentProcessed	= $contentRaw;
+		
+		// page metanode
+		if ($data["caller_type"] == "page") {
+			$callerConfig		= LBoxConfigManagerStructure::getInstance()->getPageById($data["caller_id"]);
+			$callerClassName	= $callerConfig->class;
+			$caller				= new $callerClassName($callerConfig);
+		}
+		// component metanode
+		else {
+			$callerConfig	= LBoxConfigManagerComponents::getInstance()->getComponentById($data["caller_id"]);
+			$caller			= new LBoxComponent($callerConfig, LBoxFront::getPage());
+		}
+		$node	= LBoxMetanodeManager::getNode(		$data["type"],
+													(int)$data["seq"],
+													$caller,
+													$data["lng"]);
+		$node->setContent($contentRaw);
+	
+	
+		//////////////////////////////////////////////////////////////////////
+		//	return filtered data
+		//////////////////////////////////////////////////////////////////////
+		
+		$ret = new stdclass(); // PHP base class
+		$ret->Results = new stdclass();
+		$ret->Results->content_raw = $contentRaw; // raw_data
+		$ret->Results->caller_type = $data["caller_type"];
+		$ret->Results->caller_id = $data["caller_id"];
+		$ret->Results->type = $data["type"];
+		$ret->Results->seq = $data["seq"];
+		$ret->Results->lng = $data["lng"];
+		$ret->Results->status = 'OK';
+		$ret->Results->content = $contentProcessed; // content
+		
+		return $ret;
+	}
+	catch(Exception $e) {
+		throw $e;
+	}
 }
 
 ?>

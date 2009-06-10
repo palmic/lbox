@@ -1063,12 +1063,12 @@ abstract class LBoxComponent
 					$ctrlCallerType		->setTemplateFileName("metanode_hidden.html");
 				$ctrlLng				= new LBoxFormControlFillHidden("lng", "", LBoxFront::getDisplayLanguage());
 					$ctrlLng			->setTemplateFileName("metanode_hidden.html");
-				if ($this->metanodeIsToEdit($formID)) {
-					// jen pokud jde o editaci metanodu, zobrazime editacni form
-					$ctrlContent		= new $nodeControlClassName("content", "", $node->getContent());
+				$ctrlContent		= new $nodeControlClassName("content", "", $node->getContent());
 					$ctrlContent		->setTemplateFileName($nodeControlTemplate);
 					$ctrlContent		->addFilter(new $nodeFilterClassName);
 					$ctrlContent		->addValidator(new $nodeValidatorClassName);
+				if ($this->metanodeIsToEdit($formID)) {
+					// v pripade, ze se jedna o zobrazeni pro editaci konkretniho metanode, zobrazime formular bezne
 					$form				= new LBoxForm($formID, "post", "", "uložit");
 					$form				->setTemplateFileName("metanode_xt_edit.html");
 					$form				->addControl($ctrlContent);
@@ -1076,9 +1076,14 @@ abstract class LBoxComponent
 					$form->className	= "edit";
 				}
 				else {
-					// jinak pouze formular k zobrazeni editace
+					// jinak ho vlozime do dialog boxu pro JS GUI
+					$ctrlDialog			= new LBoxFormControlMultiple("dialog", "");
+					$ctrlDialog			->setTemplateFileName("metanode_dialog.html");
+					$ctrlDialog			->addControl($ctrlContent);
 					$form				= new LBoxForm($formID, "post", "", "editovat");
 					$form				->setTemplateFileName("metanode_xt_toedit.html");
+					$form->action		= "/api/metanodes/v0.01/";
+					$form				->addControl($ctrlDialog);
 					$form				->addProcessor(new ProcessorMetanodeXTToEdit);
 					$form->className	= "to-edit";
 				}

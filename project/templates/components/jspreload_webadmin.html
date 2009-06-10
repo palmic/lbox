@@ -1,40 +1,143 @@
 <!-- Skin CSS file -->
 <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/assets/skins/sam/skin.css" />
+<link rel="stylesheet" type="text/css" href="build/button/assets/skins/sam/button.css" />
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/container/assets/skins/sam/container.css" />
 <!-- Utility Dependencies -->
 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/yahoo-dom-event/yahoo-dom-event.js"></script> 
+<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/animation/animation-min.js"></script>
 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/element/element-min.js"></script> 
+<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/button/button-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/dragdrop/dragdrop-min.js"></script>
 <!-- Needed for Menus, Buttons and Overlays used in the Toolbar -->
-<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/container/container_core-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/container/container-min.js"></script>
 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/menu/menu-min.js"></script>
 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/button/button-min.js"></script>
-<!-- Source file for Rich Text Editor-->
+<!-- Rich Text Editor-->
 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/editor/editor-min.js"></script>
-<!-- Source file for Selector-->
+<!-- Selector-->
 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/selector/selector-min.js"></script>
-<script type="text/javascript">
+<!-- Connection manager -->
+<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/connection/connection-min.js"></script>
+<!-- Stylesheet -->
+<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/stylesheet/stylesheet-min.js"></script> 
+<script type="text/javascript">/* <!-- */
+	var nodes		= new Array();
+	var editors		= new Array();
+	var dialogs		= new Array();
+	var klCancels	= new Array();
+	var klSaves		= new Array();
+	// Define various event handlers for Dialog
+	var handleSubmit = function() {
+		editors[this.form.id].saveHTML();
+		this.submit();
+	};
+	var handleCancel = function() {
+		this.cancel();
+	};
+	var handleSuccess = function(o) {
+	    var json = o.responseText.substring(o.responseText.indexOf('{'), o.responseText.lastIndexOf('}') + 1);
+	    var data = eval('(' + json + ')');
+		var data_caller_type	= data.Results.caller_type;
+		var data_caller_id		= data.Results.caller_id;
+		var data_type			= data.Results.type;
+		var data_seq			= data.Results.seq;
+		var data_lng			= data.Results.lng;
+		var form				= document.getElementById('frm-metanode-'+data_caller_id+'-'+data_seq);
+		var nodeInstances		= YAHOO.util.Selector.query('.metanode-'+data_caller_id+'-'+data_seq);
+	    editors[form.id].setEditorHTML(data.Results.content);
+		nodes[form.id].innerHTML	= data.Results.content;
+		/* change all the metanode instances content */
+		for (i in nodeInstances) {
+			if (!YAHOO.util.Selector.query('form.to-edit', nodeInstances[i], true)) {
+				nodeInstances[i].innerHTML	= data.Results.content;
+			}
+		}
+	};
+	var handleFailure = function(o) {
+	    var json = o.responseText.substring(o.responseText.indexOf('{'), o.responseText.lastIndexOf('}') + 1);
+	    var data = eval('(' + json + ')');
+		alert('communication failure!\n\nStatus:\n'+ data.Results.status);
+	};
+
 	function metanodes_attach() {
-		YAHOO.util.Dom.addClass(document.body, 'yui-skin-sam'); 
-		var forms	= YAHOO.util.Selector.query('.metanode-richtext');
+		YAHOO.util.Dom.addClass(document.body, 'yui-skin-sam');
+		var forms		= YAHOO.util.Selector.query('.metanode-richtext form');
+		var dialog;
+		var dialogForm;
+		var dialogBtns;
 		var field;
 		var editor;
 		var submit;
+		var keyListener;
+		var klSave;
+		var klCancel;
 		for(i in forms) {
-			field 	= YAHOO.util.Selector.query('.wsw', forms[i], true);
-			submit 	= YAHOO.util.Selector.query('input.submit', forms[i], true);
+			dialog	= YAHOO.util.Selector.query('.dialog', forms[i], true);
+			if (!dialog) {
+				continue;
+			}
+			dialogForm			= forms[i];
+			field 				= YAHOO.util.Selector.query('.wsw', forms[i], true);
+			submit 				= YAHOO.util.Selector.query('input.submit', forms[i], true);
+			nodes[forms[i].id]	= YAHOO.util.Selector.query('.content', YAHOO.util.Dom.getAncestorByClassName(forms[i], 'metanode'), true);
+			nodes[forms[i].id].style.minHeight	= '20px';
+			forms[i].style.display	= 'block';
+			submit.disabled			= false;
 			// init richtext editors
-			editor = new YAHOO.widget.Editor(field.id, { 
+			editors[forms[i].id] = new YAHOO.widget.Editor(field.id, { 
 				dompath: true, //Turns on the bar at the bottom 
 				animate: true, //Animates the opening, closing and moving of Editor windows
 				autoHeight: true,
 				focusAtStart: true
 			});
-			editor.render();
-			//Inside an event handler after the Editor is rendered
-			YAHOO.util.Event.on(submit.id, 'click', function(ev) {
-			    //Put the HTML back into the text area
-			    editor.saveHTML();
-			});
+
+			// Instantiate the Dialog
+			dialogs[forms[i].id] = new YAHOO.widget.Dialog(dialogForm, 
+						{ fixedcenter : true,
+						  modal : false,
+						  visible : false,
+						  draggable: true,
+						  constraintoviewport : true,
+						 });
+			//set up buttons for the Dialog and wire them
+			//up to our handlers:
+			dialogBtns = [ { text:"Save", 
+								handler:handleSubmit },
+							  { text:"Cancel", 
+								handler:handleCancel,
+								isDefault:true } ];
+			dialogs[forms[i].id].cfg.queueProperty("buttons", dialogBtns);
+
+			// attach dialog cancel to Esc
+			klCancels[forms[i].id] = new YAHOO.util.KeyListener(dialogs[forms[i].id].id, 	{ 	keys:27 },  							
+																{	fn:dialogs[forms[i].id].cancel,
+																	scope:dialogs[forms[i].id],
+																	correctScope:true } );
+			//klCancels[forms[i].id].enable();
+			dialogs[forms[i].id].cfg.queueProperty("keylisteners", klCancels[forms[i].id]);
+
+			/* nechodi
+			// attach dialog save and close to ctrl+s
+			klSaves[forms[i].id] = new YAHOO.util.KeyListener(forms[i], 	{ 	ctrl:true, keys:83 }, 
+														   					{ 	fn:dialogs[forms[i].id].submit, 
+															 					scope:dialogs[forms[i].id],
+															 					correctScope:true } );
+			//dialogs[forms[i].id].cfg.queueProperty("keylisteners", klSaves[forms[i].id]);*/
+
+			// attach dialog handlers
+			dialogs[forms[i].id].callback.success = handleSuccess;
+			dialogs[forms[i].id].callback.failure = handleFailure;
+
+			YAHOO.util.Event.addListener(nodes[forms[i].id], "dblclick", dialogs[forms[i].id].show, dialogs[forms[i].id], true);
+
+			submit.disabled			= true;
+			submit.style.display	= 'none';
+			editors[forms[i].id].render();
+			dialogs[forms[i].id].render();
+
+			nodes[forms[i].id].style.border	= '1px dashed #ff0000';
+			nodes[forms[i].id].style.cursor	= 'pointer';
 		}
 	}
 	YAHOO.util.Event.onDOMReady(metanodes_attach);
-</script>
+/* --> */</script>
