@@ -177,7 +177,7 @@ try {
 	// pokud nemame pearovsky firePHP pouzivame lokani LBOXovy
 	@include("FirePHPCore/FirePHP.class.php");
 	if (!class_exists("FirePHP")) {
-		require(LBOX_PATH_CORE 			. $slash ."firephp". $slash ."0.3". $slash ."lib" . $slash ."FirePHPCore" . $slash ."FirePHP.class.php");
+		require(LBOX_PATH_CORE 			. $slash ."firephp". $slash ."0.3". $slash ."lib" . $slash ."FirePHPCore" . $slash ."fb.php");
 	}
 	
 	// standard TAL translator service to extend
