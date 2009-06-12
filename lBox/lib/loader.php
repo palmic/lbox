@@ -124,7 +124,7 @@ try {
 	// pokud nemame pearovsky firePHP pouzivame lokani LBOXovy
 	@include("FirePHPCore/fb.php");
 	if (!class_exists("FirePHP")) {
-		require(LBOX_PATH_CORE 			. $slash ."firephp". $slash ."0.3". $slash ."lib" . $slash ."FirePHPCore" . $slash ."fb.php");
+		require(LBOX_PATH_CORE 			. $slash ."firephp". $slash ."0.3". $slash ."lib" . $slash ."FirePHPCore" . $slash ."FirePHP.class.php");
 	}
 	// disable firePHP on remote mashines (enabled on localhost only!!!)
 	if (LBOX_REQUEST_IP != LBOX_REQUEST_IP_MY) {

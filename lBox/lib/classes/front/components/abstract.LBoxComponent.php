@@ -57,13 +57,12 @@ abstract class LBoxComponent
 	 */
 	protected $outputFilter;
 	
-	
 	/**
-	 * metanodes cache array indexed by theirs xt edit form ids
+	 * cache var
 	 * @var array
 	 */
-	protected static $metanodesXTForms	= array();
-
+	protected $metanodesByCallnames	= array();
+	
 	/**
 	 * @param string $templateFileName
 	 */
@@ -1032,95 +1031,20 @@ abstract class LBoxComponent
 	*/
 	protected function getMetanodeByCallName($callname = "") {
 		try {
+			if (array_key_exists($callname, $this->metanodesByCallnames) && $this->metanodesByCallnames[$callname] instanceof LBoxMetanode) {
+				// dalsi instance metanodu v komponente / strance zobrazime uz jen pasivni
+				$this->metanodesByCallnames[$callname]->setActive(false);
+				return $this->metanodesByCallnames[$callname];
+			}
 			$parts	= explode("_", $callname);
 			if (count($parts) < 3) {
 				throw new LBoxExceptionComponent("Wrong metanode callname '$callname'", LBoxExceptionComponent::CODE_BAD_PARAM);
 			}
-			$seq	= (int)$parts[1];
-			$type	= $parts[2];
-			$node	= LBoxMetanodeManager::getNode($type, $seq, $this);
-			//xt metanodes admin
-			if (LBoxXTProject::isLoggedAdmin()) {
-				// pokud je prihlasen admin, vytvorime instanci formu, tomu pripojime samotny node k zobrazeni a vratime form
-				$nodeClassName			= get_class($node);
-				$nodeControlClassName	= eval("return $nodeClassName::XT_FORM_CTRL_CLASSNAME;");
-				$nodeFilterClassName	= eval("return $nodeClassName::XT_FORM_FILTER_CLASSNAME;");
-				$nodeValidatorClassName	= eval("return $nodeClassName::XT_FORM_VALIDATOR_CLASSNAME;");
-				$nodeControlTemplate	= eval("return $nodeClassName::XT_FORM_CTRL_TEMPLATE_FILENAME;");
-				$callerID				= $this->config->id;
-				$formID					= "metanode-$callerID-$seq";
-				if (self::$metanodesXTForms[$formID] instanceof LBoxForm) {
-					// pri opakovanem zobrazovani nodu, vracime ne jeho editaci, ale pouze obsah
-					return $node;
-				}
-				$ctrlType				= new LBoxFormControlFillHidden("type", "", $type);
-					$ctrlType			->setTemplateFileName("metanode_hidden.html");
-				$ctrlSeq				= new LBoxFormControlFillHidden("seq", "", $seq);
-					$ctrlSeq			->setTemplateFileName("metanode_hidden.html");
-				$ctrlCallerID			= new LBoxFormControlFillHidden("caller_id", "", $callerID);
-					$ctrlCallerID		->setTemplateFileName("metanode_hidden.html");
-				$ctrlCallerType			= new LBoxFormControlFillHidden("caller_type", "", $this instanceof LBoxPage ? "page" : "component");
-					$ctrlCallerType		->setTemplateFileName("metanode_hidden.html");
-				$ctrlLng				= new LBoxFormControlFillHidden("lng", "", LBoxFront::getDisplayLanguage());
-					$ctrlLng			->setTemplateFileName("metanode_hidden.html");
-				$ctrlContent		= new $nodeControlClassName("content", "", $node->getContent());
-					$ctrlContent		->setTemplateFileName($nodeControlTemplate);
-					$ctrlContent		->addFilter(new $nodeFilterClassName);
-					$ctrlContent		->addValidator(new $nodeValidatorClassName);
-				if ($this->metanodeIsToEdit($formID)) {
-					// v pripade, ze se jedna o zobrazeni pro editaci konkretniho metanode, zobrazime formular bezne
-					$form				= new LBoxForm($formID, "post", "", "uložit");
-					$form				->setTemplateFileName("metanode_xt_edit.html");
-					$form				->addControl($ctrlContent);
-					$form				->addProcessor(new ProcessorMetanodeXTEdit);
-					$form->className	= "edit";
-				}
-				else {
-					// jinak ho vlozime do dialog boxu pro JS GUI
-					$ctrlDialog			= new LBoxFormControlMultiple("dialog", "");
-					$ctrlDialog			->setTemplateFileName("metanode_dialog.html");
-					$ctrlDialog			->addControl($ctrlContent);
-					$form				= new LBoxForm($formID, "post", "", "editovat");
-					$form				->setTemplateFileName("metanode_xt_toedit.html");
-					$form->action		= "/api/metanodes/v0.01/";
-					$form				->addControl($ctrlDialog);
-					$form				->addProcessor(new ProcessorMetanodeXTToEdit);
-					$form->className	= "to-edit";
-				}
-				$form					->addControl($ctrlType);
-				$form					->addControl($ctrlSeq);
-				$form					->addControl($ctrlCallerID);
-				$form					->addControl($ctrlCallerType);
-				$form					->addControl($ctrlLng);
-				$form->node				= $node;
-				return self::$metanodesXTForms[$formID] = $form;
-			}
-			else {
-				// jinak vracime node
-				return $node;
-			}
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-	
-	/**
-	* vraci, jestli jde o zobrazeni editovatelneho metanodu
-	* @return bool
-	*/
-	protected function metanodeIsToEdit($identifier = "") {
-		try {
-			if (strlen($identifier) < 1) {
-				throw new LBoxExceptionComponent(LBoxExceptionComponent::MSG_PARAM_STRING_NOTNULL, LBoxExceptionComponent::CODE_BAD_PARAM);
-			}
-			foreach (LBoxFront::getUrlParamsArray() as $param) {
-				if (LBoxFront::isUrlParamPaging($param)) continue;
-				if ($param == "edit-$identifier") {
-					return true;
-				}
-			}
-			return false;
+			$seq						= (int)$parts[1];
+			$type						= $parts[2];
+			$this->metanodesByCallnames[$callname]	= LBoxMetanodeManager::getNode($type, $seq, $this);
+
+			return $this->metanodesByCallnames[$callname];
 		}
 		catch (Exception $e) {
 			throw $e;

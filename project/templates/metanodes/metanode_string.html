@@ -1,0 +1,4 @@
+<div class="metanode metanode-string metanode-${SELF/getCallerID}-${SELF/getSeq}">
+	<div class="content" style="${SELF/getStylesCSS}" tal:content="structure SELF/getContent" />
+	<tal:block tal:condition="SELF/isActive" tal:content="structure SELF/getForm" />
+</div>

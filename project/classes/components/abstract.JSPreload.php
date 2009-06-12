@@ -15,5 +15,18 @@ abstract class JSPreload extends LBoxComponent
 			throw $e;
 		}
 	}
+	
+	/**
+	 * prepinac na zobrazovani webadminu
+	 * @return bool
+	 */
+	public function isToShow() {
+		try {
+			return LBoxXTProject::isLoggedAdmin();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
 }
 ?>

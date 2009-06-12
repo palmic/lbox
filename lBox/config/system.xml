@@ -47,9 +47,20 @@
 		</templates>
 	</components>
 	<metanodes>
+		<templates>
+			<path>$project/templates/metanodes</path>
+		</templates>
 		<data>
-			<path>$project/data/metanodes/$caller_type/$caller_id/$lng_$seq.$ext</path>
+			<content>
+				<path>$project/data/metanodes/contents/$caller_type/$caller_id/$lng_$seq.$ext</path>
+			</content>
+			<styles>
+				<path>$project/data/metanodes/styles/$caller_type/$caller_id/$lng_$seq.txt</path>
+			</styles>
 		</data>
+		<api>
+			<url>/api/metanodes/v0.01/</url>
+		</api>
 	</metanodes>
 	<layouts>
 		<classes>

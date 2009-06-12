@@ -8,9 +8,9 @@
  */
 class LBoxMetanodeString extends LBoxMetanode
 {
+	CONST TYPE								= "string";
 	CONST XT_FORM_CTRL_CLASSNAME			= "LBoxFormControlFill";
 	CONST XT_FORM_CTRL_TEMPLATE_FILENAME	= "metanode_string.html";
-	CONST XT_FORM_VALIDATOR_CLASSNAME		= "ValidatorMetanodeString";
-	CONST XT_FORM_FILTER_CLASSNAME			= "LBoxFormFilterMetanodeString";
+	CONST TEMPLATE_FILENAME					= "metanode_string.html";
 }
 ?>

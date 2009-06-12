@@ -9,12 +9,7 @@ if (!LBoxXTProject::isLoggedAdmin(XT_GROUP)) {
 }
 
 // firePHP debug
-/*$table[]   = array("post varname", "value");
-foreach ($_POST as $k => $v) {
-	$table[] = array($k,$v);
-}
-FirePHP::getInstance(true)->table('POST data debug', $table);*/
-
+//LBoxFirePHP::table($_POST, 'POST data debug');
 
 try {
 	//////////////////////////////////////////////////////////////////////
@@ -26,78 +21,48 @@ try {
 	}
 
 	foreach ($_POST as $k => $postData) {
-		$returned	= saveMetanodeByPostData($postData);
+		switch($k) {
+			case "style":
+					$styleString	= "";
+					foreach ($postData as $propName => $propValue) {
+						$styleString .= "";
+					}
+					$returned	= saveMetanodeStylePropertiesByPostData($postData);
+				break;
+			default:
+					$returned	= saveMetanodeContentByPostData($postData);
+				break;
+		}
 		echo(json_encode($returned));
 	}
 }
 catch (Exception $e) {
-	/*switch (LBoxConfigSystem::getInstance()->getParamByPath("debug/exceptions")) {
-		case 1:
-			echo getExceptionNotice($e);
-			break;
-		case -1:
-			if (LBOX_REQUEST_IP == "127.0.0.1") {
-				throwExceptionToFirePHP($e);
-			}
-			else {
-				throwExceptionToFirePHP($e);
-			}
-			break;
-		case 0:
-			echo $e->getMessage();
-			break;
-	}*/
-	throwExceptionToFirePHP($e);	
+		throwExceptionToFirePHP($e);
+		$ret 						= new stdclass(); // PHP base class
+		$ret->Exception				= new stdclass();
+		$ret->Exception->code	 	= $e->getCode();
+		$ret->Exception->message 	= $e->getMessage();
+		die(json_encode($ret));
 }
 
 function throwExceptionToFirePHP(Exception $e) {
-	FirePHP::getInstance(true)->error('Exception of code:  '. $e->getCode() .' with message: '. $e->getMessage() . ' thrown');
-	FirePHP::getInstance(true)->warn('Thrown by: :  '. $e->getFile());
-	FirePHP::getInstance(true)->warn('At line: :  '. $e->getLine());
-	$i = 1;
-	foreach ($e->getTrace() as $traceStep) {
-		$traceLine	= array();
-		foreach ($traceStep as $attName => $attValue) {
-			$traceParams[]	= $attName;
-			$traceLine[]	= $attValue;
-		}
-		if ($i < 2) { $trace[0]	= $traceParams; }
-		$trace[$i]	= $traceLine;
-		$i++;
-	}
-	FirePHP::getInstance(true)->table('Stack trace', $trace);
+	LBoxFirePHP::throwException($e);
 }
 
 /**
- * ulozi metanode podle predanych dat a vrati zpet jeji vysledny content
+ * ulozi obsah metanode podle predanych dat a vrati zpet jeji vysledny content
  * @param $data
  * @return stdclass
  */
-function saveMetanodeByPostData($data = array()) {
+function saveMetanodeContentByPostData($data = array()) {
 	try {
-		if (count($data) < 1) {
-			throw new LBoxException(LBoxException::MSG_PARAM_ARRAY_NOTNULL, LBoxException::CODE_BAD_PARAM);
-		}
-
 		$contentRaw			= $data["content"];
 		$contentProcessed	= $contentRaw;
-		
-		// page metanode
-		if ($data["caller_type"] == "page") {
-			$callerConfig		= LBoxConfigManagerStructure::getInstance()->getPageById($data["caller_id"]);
-			$callerClassName	= $callerConfig->class;
-			$caller				= new $callerClassName($callerConfig);
-		}
-		// component metanode
-		else {
-			$callerConfig	= LBoxConfigManagerComponents::getInstance()->getComponentById($data["caller_id"]);
-			$caller			= new LBoxComponent($callerConfig, LBoxFront::getPage());
-		}
-		$node	= LBoxMetanodeManager::getNode(		$data["type"],
-													(int)$data["seq"],
-													$caller,
-													$data["lng"]);
-		$node->setContent($contentRaw);
+
+		$node	= getMetanodeByPostData($data);
+		$node->setContent($contentProcessed);
+		$node->store();
+		$contentProcessed	= $node->getContent();
 	
 	
 		//////////////////////////////////////////////////////////////////////
@@ -122,4 +87,82 @@ function saveMetanodeByPostData($data = array()) {
 	}
 }
 
+/**
+ * ulozi style metanodu podle predanych dat a vrati zpet jeji vysledny content
+ * @param $data
+ * @return stdclass
+ */
+function saveMetanodeStylePropertiesByPostData($data = array()) {
+	try {
+		$contentRaw			= $data["content"];
+		// parsing style properties from css string into clean array for metanode setter
+		$contentRawParts		= explode(";", $contentRaw);
+		$contentProcessedParts	= array();
+		foreach ($contentRawParts as $k => $contentRawPart) {
+			if (strlen(trim($contentRawPart)) < 1) continue;
+			$contentProcessedParts[reset(explode(":", $contentRawPart))]	= end(explode(":", $contentRawPart));
+		}
+
+//LBoxFirePHP::table($contentProcessedParts, 'im about to setting metanode styles data:');
+
+		$node	= getMetanodeByPostData($data);
+		$node->setStyles($contentProcessedParts);
+		$node->store();
+
+		$contentProcessed	= $node->getStyles();
+
+		//////////////////////////////////////////////////////////////////////
+		//	return filtered data
+		//////////////////////////////////////////////////////////////////////
+		
+		$ret = new stdclass(); // PHP base class
+		$ret->Results = new stdclass();
+		$ret->Results->content_raw = $contentRaw; // raw_data
+		$ret->Results->caller_type = $data["caller_type"];
+		$ret->Results->caller_id = $data["caller_id"];
+		$ret->Results->type = $data["type"];
+		$ret->Results->seq = $data["seq"];
+		$ret->Results->lng = $data["lng"];
+		$ret->Results->status = 'OK';
+		$ret->Results->content = $contentProcessed; // content
+		
+		return $ret;
+	}
+	catch(Exception $e) {
+		throw $e;
+	}
+}
+
+/**
+ * getter na motanodes podle predanych dat
+ * @param array $data
+ * @return LBoxMetanode
+ */
+function getMetanodeByPostData($data = array()) {
+	try {
+		if (count($data) < 1) {
+			throw new LBoxException(LBoxException::MSG_PARAM_ARRAY_NOTNULL, LBoxException::CODE_BAD_PARAM);
+		}
+
+		// page metanode
+		if ($data["caller_type"] == "page") {
+			$callerConfig		= LBoxConfigManagerStructure::getInstance()->getPageById($data["caller_id"]);
+			$callerClassName	= $callerConfig->class;
+			$caller				= new $callerClassName($callerConfig);
+		}
+		// component metanode
+		else {
+			$callerConfig	= LBoxConfigManagerComponents::getInstance()->getComponentById($data["caller_id"]);
+			$caller			= new LBoxComponent($callerConfig, LBoxFront::getPage());
+		}
+		$node	= LBoxMetanodeManager::getNode(		$data["type"],
+													(int)$data["seq"],
+													$caller,
+													$data["lng"]);
+		return $node;
+	}
+	catch(Exception $e) {
+		throw $e;
+	}
+}
 ?>
