@@ -20,13 +20,17 @@ class LBoxMetanodeRichText extends LBoxMetanodeString
 	 */
 	public function setContent($content = "") {
 		try {
-			if (function_exists("tidy_parse_string")) {
-				$tidyConfig = array('indent' => false,
-									'output-xhtml' => false,
-                					'wrap' => 200);
-				$tidy	= tidy_parse_string($buffer, $config, 'UTF8');
-				$tidy->cleanRepair();
-				$content	= (string)$tidy;
+			if (class_exists("tidy")) {
+				$tidyConfig = array('indent' => true,
+									'output-xml' => false,
+									'output-html' => false,
+									'output-xhtml' => true,
+									'show-body-only' => true,
+									'wrap' => 200);
+				$tidy	= new tidy();
+				//var_dump($content);
+				$content = $tidy->repairString($content, $tidyConfig, 'UTF8');
+				//var_dump($content);die;
 			}
 			return parent::setContent($content);
 		}
