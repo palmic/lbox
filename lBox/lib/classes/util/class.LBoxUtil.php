@@ -424,5 +424,43 @@ class LBoxUtil
 			throw $e;
 		}
 	}
+
+	/**
+	 * konvertuje string z UTF-8 do CP-1250 za pomoci dostupnych nastroju na serveru
+	 * @param $input
+	 * @return string
+	 */
+	public static function utf8ToCP1250($input = "") {
+		try {
+			$output	= $input;
+			if (function_exists("mb_convert_encoding")) {
+				$output	= mb_convert_encoding($output, "ISO-8859-2", "UTF-8");
+				//$output = StrTr($output,"\xA9\xAB\xAE\xB9\xBB\xBE","\x8A\x8D\x8E\x9A\x9D\x9E");
+			}
+			return $output;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * konvertuje string z CP-1250 do UTF-8 za pomoci dostupnych nastroju na serveru
+	 * @param $input
+	 * @return string
+	 */
+	public static function cp1250ToUTF8($input = "") {
+		try {
+			$output	= $input;
+			if (function_exists("mb_convert_encoding")) {
+				$output	= mb_convert_encoding($output, "UTF-8", "ISO-8859-2");
+				//$output = StrTr($output,"\xA9\xAB\xAE\xB9\xBB\xBE","\x8A\x8D\x8E\x9A\x9D\x9E");
+			}
+			return $output;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
 }
 ?>
