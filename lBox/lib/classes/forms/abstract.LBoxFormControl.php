@@ -106,7 +106,7 @@ abstract class LBoxFormControl
 			if (strlen($label) < 0) {
 				throw new LBoxExceptionFormControl("\$label: ". LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
 			}
-			$this->name		= $name;
+			$this->name		= strtolower($name);
 			$this->label	= $label;
 			$this->default	= $default;
 		}
