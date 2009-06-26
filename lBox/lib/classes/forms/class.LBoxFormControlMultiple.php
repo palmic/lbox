@@ -98,6 +98,7 @@ class LBoxFormControlMultiple extends LBoxFormControl
 	 */
 	public function getControlByName($name = "") {
 		try {
+			$name	= strtolower($name);
 			if (!array_key_exists($name, $this->controls)) {
 				throw new LBoxExceptionFormControl(	"\$name: ". LBoxExceptionFormControl::MSG_FORM_CONTROL_DOESNOT_EXISTS,
 													LBoxExceptionFormControl::CODE_FORM_CONTROL_DOESNOT_EXISTS);

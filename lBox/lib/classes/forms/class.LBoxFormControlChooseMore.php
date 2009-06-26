@@ -25,14 +25,20 @@ class LBoxFormControlChooseMore extends LBoxFormControlChoose
 				}
 				return $this->value = $valuesDefault;
 			}
-			$values	= $this->form->getSentDataByControlName($this->getName());
-			foreach ((array)$values as $value) {
-				if (strlen($value) > 0)
-				if (!array_key_exists($value, $this->options)) {
-					throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_FORM_CONTROL_VALUE_NOT_OPTION, LBoxExceptionFormControl::CODE_FORM_CONTROL_VALUE_NOT_OPTION);
+			if ($this->form->wasSent()) {
+				$values	= $this->form->getSentDataByControlName($this->getName());
+				foreach ((array)$values as $value) {
+					if (strlen($value) > 0)
+					if (!array_key_exists($value, $this->options)) {
+						throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_FORM_CONTROL_VALUE_NOT_OPTION, LBoxExceptionFormControl::CODE_FORM_CONTROL_VALUE_NOT_OPTION);
+					}
 				}
+				$this->value = $values;
 			}
-			return $this->value = $values;
+			else {
+				$this->value	= $this->default;
+			}
+			return $this->value;
 		}
 		catch (Exception $e) {
 			throw $e;
