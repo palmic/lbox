@@ -3,6 +3,9 @@ class LBoxFormFilterTimeHoursMinutes extends LBoxFormFilter
 {
 	public function filter(LBoxFormControl $control = NULL) {
 		try {
+			if (strlen($control->getValue()) < 1) {
+				return $control->getValue();
+			}
 			// prepinac moznosti formatu casu
 			switch (true) {
 				//1205 => 12:05

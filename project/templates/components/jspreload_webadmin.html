@@ -23,6 +23,8 @@
 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/stylesheet/stylesheet-min.js"></script> 
 <!-- Source file for the Resize Utility -->
 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/resize/resize-min.js"></script>
+<!-- Individual YUI JS files -->
+<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/json/json-min.js"></script>
 <script type="text/javascript">/* <!-- */
 	var containers	= new Array();
 	var nodes		= new Array();
@@ -145,11 +147,11 @@
 
 			// Instantiate the Dialog
 			dialogs[forms[i].id] = new YAHOO.widget.Dialog(dialogForm, 
-						{ fixedcenter : true,
-						  modal : false,
+						{ width: "725px",
+						  fixedcenter : true,
+						  modal : true,
 						  visible : false,
-						  draggable: true,
-						  constraintoviewport : true,
+						  draggable: false,
 						 });
 			//set up buttons for the Dialog and wire them
 			//up to our handlers:
@@ -191,7 +193,8 @@
 					dompath: true, //Turns on the bar at the bottom 
 					animate: true, //Animates the opening, closing and moving of Editor windows
 					autoHeight: true,
-					focusAtStart: true
+					focusAtStart: true,
+					width: '724px', height: '200px'
 				});
 				editors[forms[i].id].render();
 			}
