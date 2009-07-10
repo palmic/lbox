@@ -1,10 +1,10 @@
 <tal:block tal:condition="exists: pages">
 	<div id="menusub" tal:DEFINE="iterator pages">
-	   <h3>Submenu</h3>
+	   <h3 class="heading">Submenu</h3>
 	   <ul>
 	      <tal:block tal:REPEAT="node iterator">
 	        <li tal:ATTRIBUTES="class node/getClass | default"
-	            tal:CONDITION="node/in_menu">
+	            tal:CONDITION="node/in_menu"><div class="lft"><div class="rgt"><div class="mdl">
 	           <a tal:CONDITION="not: node/isCurrent"
 	              tal:ATTRIBUTES="href node/url; title node/titleMenu; class node/getClass | default"
 	              tal:CONTENT="node/name_menu">
@@ -15,7 +15,7 @@
 	              Nazev current stranky
 	           </strong>
 	           <x tal:condition="node/hasChildrenInMenu" metal:USE-MACRO="menu_list" />
-	        </li>
+	        </div></div></div></li>
 	      </tal:block>
 	   </ul>
 	    <ul
@@ -24,7 +24,7 @@
 	       	class="submenu">
 	      <tal:block tal:REPEAT="node iterator">
 	        <li tal:ATTRIBUTES="class node/getClass | default"
-	            tal:CONDITION="node/in_menu">
+	            tal:CONDITION="node/in_menu"><div class="lft"><div class="rgt"><div class="mdl">
 	           <a tal:CONDITION="not: node/isCurrent"
 	              tal:ATTRIBUTES="href node/url; title node/titleMenu; class node/getClass | default"
 	              tal:CONTENT="node/name_menu">
@@ -35,7 +35,7 @@
 	              Nazev current stranky
 	           </strong>
 	           <x tal:condition="node/hasChildrenInMenu" metal:USE-MACRO="menu_list"/>
-	        </li>
+	        </div></div></div></li>
 	      </tal:block>
 	   </ul>
 	</div>

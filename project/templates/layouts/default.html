@@ -3,12 +3,16 @@
     <head>
     <meta http-equiv="Content-type" content="application/xhtml+xml; charset=utf-8"/>
     <title tal:content="SELF/page/title" />
+    <link rel="stylesheet" href="/css/css-reset.css" type="text/css"/>
     <link rel="stylesheet" href="/css/css.css" type="text/css"/>
     <!--[if lte IE 6]>
         <link rel="stylesheet" href="/css/css-ie6.css" type="text/css" media="screen" />
     <![endif]-->
     <!--[if IE 7]>
         <link rel="stylesheet" href="/css/css-ie7.css" type="text/css" media="screen" />
+    <![endif]-->
+    <!--[if IE 8]>
+        <link rel="stylesheet" href="/css/css-ie8.css" type="text/css" media="screen" />
     <![endif]-->
 	<x tal:replace="structure lbox:component.jspreload_webadmin" />
 	<link tal:condition="exists: SELF/page/rssPage" rel="alternate" type="application/rss+xml" href="${SELF/page/rssPage/url}" title="${SELF/page/rssPage/title}" />
