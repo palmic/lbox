@@ -20,6 +20,9 @@ class LBoxMetanodeRichText extends LBoxMetanodeString
 	 */
 	public function setContent($content = "") {
 		try {
+			if (ini_get("magic_quotes_gpc")) {
+				$content	= stripslashes($content);
+			}
 			if (class_exists("tidy")) {
 				$tidyConfig = array('indent' => true,
 									'output-xml' => false,
