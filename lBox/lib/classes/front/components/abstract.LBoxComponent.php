@@ -965,7 +965,10 @@ abstract class LBoxComponent
 	public function getHomePageCfg() {
 		try {
 			$page	= LBoxConfigManagerStructure::getInstance()->getHomePage();
-			$page->setOutputFilter(new OutputFilterPage($page));
+			if (LBoxFront::getPage()->config->getOutputFilter() instanceof LBoxOutputFilter) {
+				$outputFilterClassName	= get_class(LBoxFront::getPage()->config->getOutputFilter());
+				$page->setOutputFilter(new $outputFilterClassName($page));
+			}
 			return $page;
 		}
 		catch (Exception $e) {

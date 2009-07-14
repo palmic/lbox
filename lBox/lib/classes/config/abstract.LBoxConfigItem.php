@@ -33,6 +33,12 @@ abstract class LBoxConfigItem implements OutputItem
 	protected $outputFilter;
 
 	/**
+	 * cache var
+	 * @var int
+	 */
+	protected $level;
+	
+	/**
 	 * prijima DOMNode s nodeName == $this->nodeName, jinak vyhodi vyjimku
 	 * @param DOMNode $node
 	 * @throws LBoxExceptionConfig
@@ -243,6 +249,28 @@ abstract class LBoxConfigItem implements OutputItem
 				$branch[]	= end($branch)->getParent();
 			}
 			return $branch[count($branch)-$level];
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * Vraci svuj level ve stromu
+	 * @return int
+	 */
+	public function getLevel() {
+		try {
+			if (is_int($this->level)) {
+				return $this->level;
+			}
+			$node	= $this;
+			$i		= 1;
+			while ($node->hasParent()) {
+				$node	= $node->getParent();
+				$i++;
+			}
+			return $this->level	= $i;
 		}
 		catch(Exception $e) {
 			throw $e;
