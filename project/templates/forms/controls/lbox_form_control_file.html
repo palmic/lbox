@@ -1,4 +1,4 @@
-<div tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}" class="control">
+<div class="control" id="control-${id}" tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
 	<label for="${id}"><span class="label">${SELF/getLabel} <tal:block tal:condition="SELF/isRequired">* </tal:block></span><input 	class="file" type="file" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]" /></label>
 	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
 		<tal:block tal:repeat="exception exceptions">

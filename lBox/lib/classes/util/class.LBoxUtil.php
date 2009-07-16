@@ -167,6 +167,23 @@ class LBoxUtil
 	}
 
 	/**
+	 * ocisti predany filename od nebezpecnych a invalidnich znaku
+	 * @param string $filename
+	 * @return string
+	 * @throws Exception
+	 */
+	public static function fixFileName ($filename = "") {
+		try {
+			$filename	= ereg_replace("[^[:alnum:]_.]", "-", 	$filename);
+			//$filename	= ereg_replace("(-+)", "-", 			$filename);
+			return $filename;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * Vytvori adresar podle predane cesty
 	 * @param string $path
 	 * @throws LBoxExceptionFilesystem
