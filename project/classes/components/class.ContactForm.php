@@ -60,6 +60,7 @@ class ContactForm extends LBoxComponent
 			$form	= new LBoxForm("contact");
 			$form	->setTemplateFileName("lbox_form_contact.html");
 			$form	->addProcessor(new LBoxFormProcessorContact);
+			$form	->addProcessor(new LBoxFormProcessorContactStoreToDB);
 			$form	->addControl($ctrlGroup);
 			$form	->addControl($ctrls["message"]);
 			

@@ -1,7 +1,7 @@
 <div class="control" id="control-${id}" tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
 	<label for="${id}"><span class="label">${SELF/getLabel} <tal:block tal:condition="SELF/isRequired">* </tal:block></span>
-		<span class="textarea"><textarea 	class="textarea" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]" rows="10" cols="20"
-			tal:content="SELF/getValue | SELF/getDefault" tal:attributes="disabled SELF/getDisabled | default" /></span></label>
+		<span class="textarea"><span class="lft"><span class="rgt"><span class="mdl"><textarea 	class="textarea" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]" rows="10" cols="20"
+			tal:content="SELF/getValue | SELF/getDefault" tal:attributes="disabled SELF/getDisabled | default" /></span></span></span></span></label>
 	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
 		<div tal:condition="exists: exceptions/17001">Prosíme vyplňte Vzkaz</div>
 	</div>
