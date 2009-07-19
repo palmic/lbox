@@ -14,7 +14,13 @@ abstract class ValidatorRecordExists extends LBoxFormValidator
 	 * record type
  	 * @var string
  	 */
-	protected $recordClassName = "";
+	protected $recordClassName 	= "";
+	
+	/**
+	 * cache var
+	 * @var array
+	 */
+	protected $existingRelevantRecordsByValues	= array();
 	
 	public function validate(LBoxFormControl $control = NULL) {
 		try {
@@ -36,12 +42,7 @@ abstract class ValidatorRecordExists extends LBoxFormValidator
 	 */
 	protected function recordExists($value	= "") {
 		try {
-			if (strlen($value) < 1) {
-				throw new LBoxExceptionFormValidator(LBoxExceptionFormValidator::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormValidator::CODE_BAD_PARAM);
-			}
-			$classNameRecords	= $this->getClassNameRecords();
-			$records			= new $classNameRecords(array($this->getFilterColName() => $value));
-			return $records->count() > 0;
+			return (bool)$this->getExistingRelevantRecord($value);
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -75,9 +76,48 @@ abstract class ValidatorRecordExists extends LBoxFormValidator
 			if (strlen($this->filterColName) > 0) {
 				return $this->filterColName;
 			}
+			else {
+				return $this->getIDColname();
+			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	* getter na IDColname
+	* @return string
+	*/
+	protected function getIDColname() {
+		try {
 			$recordClassName	= $this->recordClassName;
-			$idColName		 	= eval("return $recordClassName::\$idColName;");
-			return $this->filterColName	= $idColName;
+			return				eval("return $recordClassName::\$idColName;");
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	* getter na existujici record pokud existuje
+	* - pro jeho ziskani pro kontrolu zda se neshoduje s kontrolovanym a tim nema byt ignorovan
+	 * @param mixed $value
+	* @return AbstractRecrdLBox
+	*/
+	protected function getExistingRelevantRecord($value = "") {
+		try {
+			if ($this->existingRelevantRecordsByValues[$value] instanceof AbstractRecordLBox) {
+				return $this->existingRelevantRecordsByValues[$value];
+			}
+			if (strlen($value) < 1) {
+				throw new LBoxExceptionFormValidator(LBoxExceptionFormValidator::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormValidator::CODE_BAD_PARAM);
+			}
+			$classNameRecords	= $this->getClassNameRecords();
+			$records			= new $classNameRecords(array($this->getFilterColName() => $value));
+			if ($records->count() > 0) {
+				return $this->existingRelevantRecordsByValues[$value] = $records->current();
+			}
 		}
 		catch (Exception $e) {
 			throw $e;

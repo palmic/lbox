@@ -1,8 +1,0 @@
-<script type="text/javascript" tal:content="structure SELF/getJSLib" />
-<script type="text/javascript" tal:content="structure SELF/getJSInit" />
-<noscript>
-	<p class="error">Pro použití formuláře je nutno mít zapnutý javascript.</p>
-</noscript>
-<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
-	<div tal:condition="exists: exceptions/17004">Prosím aktivujte javascript!</div>
-</div>

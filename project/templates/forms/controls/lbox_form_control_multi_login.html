@@ -1,7 +1,0 @@
-<div tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
-	<tal:block tal:repeat="control SELF/getControls" tal:content="structure control" />
-	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
-		<div tal:condition="exists: exceptions/18801">Nesprávný login</div>
-		<div tal:condition="exists: exceptions/18802"><span>Váše registrace dosud není potvrzena</span></div>
-	</div>
-</div>
