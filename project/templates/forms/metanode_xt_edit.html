@@ -1,0 +1,9 @@
+<form tal:define="id string:frm-${SELF/getName}" class="${SELF/className}" id="${id}" method="${SELF/getMethod}" action="">
+		<tal:block tal:repeat="control SELF/getControls">
+			<tal:block tal:condition="not: control/isSpamDefense">
+				<tal:block tal:condition="not: control/isSubControl" tal:content="structure control" />
+			</tal:block>
+		</tal:block>
+		<div class="submit"><input tal:condition="not: SELF/isSubForm" id="${id}-submit" class="submit" type="submit" name="${SELF/getName}[sent]" value="${SELF/getLabelSubmit}" /></div>
+</form>
+<tal:block tal:content="structure SELF/getControlSpamDefense" />
