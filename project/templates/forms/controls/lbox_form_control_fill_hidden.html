@@ -1,4 +1,4 @@
-<div class="control" tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
+<div class="control" id="control-${id}" tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
 	<input 	class="hidden" type="hidden" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]"
 			tal:attributes="value SELF/getValue | SELF/getDefault; maxlength SELF/getLengthMax | default; size SELF/getLengthMax | default; disabled SELF/getDisabled | default" />
 	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
