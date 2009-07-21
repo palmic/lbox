@@ -2,7 +2,8 @@
 <!-- Skin CSS file -->
 <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/assets/skins/sam/skin.css" />
 <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/assets/skins/sam/button.css" />
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/container/assets/skins/sam/container.css" />
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/container/assets/skins/sam/menu.css" />
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/container/assets/skins/sam/editor.css" />
 <!-- Utility Dependencies -->
 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/yahoo-dom-event/yahoo-dom-event.js"></script> 
 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/animation/animation-min.js"></script>
@@ -25,14 +26,21 @@
 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/resize/resize-min.js"></script>
 <!-- Individual YUI JS files -->
 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/json/json-min.js"></script>
+
+<script type="text/javascript" tal:condition="SELF/isAllowedResize">/* <!-- */
+	var resizesAllowed	= true;
+/* --> */</script>
+<script type="text/javascript" tal:condition="not: SELF/isAllowedResize">/* <!-- */
+	var resizesAllowed	= false;
+/* --> */</script>
 <script type="text/javascript">/* <!-- */
-	var containers	= new Array();
-	var nodes		= new Array();
-	var editors		= new Array();
-	var dialogs		= new Array();
-	var klCancels	= new Array();
-	var klSaves		= new Array();
-	var resizes		= new Array();
+	var containers		= new Array();
+	var nodes			= new Array();
+	var editors			= new Array();
+	var dialogs			= new Array();
+	var klCancels		= new Array();
+	var klSaves			= new Array();
+	var resizes			= new Array();
 	// Define various event handlers for Dialog
 	var handleSubmit = function() {
 		if (editors[this.form.id]) {
@@ -63,14 +71,16 @@
 		}
 		nodes[form.id].innerHTML	= data.Results.content;
 		// recreate resize onto reloaded metanode
-	    resizes[form.id] = new YAHOO.util.Resize(nodes[form.id], {
-			    proxy: true,
-			    status: true,
-			    animate: true,
-			    animateDuration: .3,
-			    animateEasing: YAHOO.util.Easing.easeBoth
-	    });
-		resizes[form.id].on('endResize', handleResize);
+		if (resizesAllowed) {
+		    resizes[form.id] = new YAHOO.util.Resize(nodes[form.id], {
+				    proxy: true,
+				    status: true,
+				    animate: true,
+				    animateDuration: .3,
+				    animateEasing: YAHOO.util.Easing.easeBoth
+		    });
+			resizes[form.id].on('endResize', handleResize);
+		}
 		/* change all the metanode instances content */
 		for (i in nodeInstances) {
 			nodeInstances[i].style.overflow	= 'hidden';
@@ -145,7 +155,19 @@
 			forms[i].style.display	= 'block';
 			submit.disabled			= false;
 
-			// Instantiate the Dialog
+			// init richtext editors
+			if (YAHOO.util.Dom.hasClass(containers[forms[i].id], 'metanode-richtext')) {
+				editors[forms[i].id] = new YAHOO.widget.Editor(field.id, { 
+					dompath: true, //Turns on the bar at the bottom 
+					animate: false, //Animates the opening, closing and moving of Editor windows
+					autoHeight: false,
+					focusAtStart: true,
+					width: '724px', height: '500px'
+				});
+				editors[forms[i].id].render();
+			}
+
+			// Instantiate the Dialogs
 			dialogs[forms[i].id] = new YAHOO.widget.Dialog(dialogForm, 
 						{ width: "725px",
 						  fixedcenter : true,
@@ -187,34 +209,30 @@
 			submit.disabled			= true;
 			submit.style.display	= 'none';
 
-			// init richtext editors
-			if (YAHOO.util.Dom.hasClass(containers[forms[i].id], 'metanode-richtext')) {
-				editors[forms[i].id] = new YAHOO.widget.Editor(field.id, { 
-					dompath: true, //Turns on the bar at the bottom 
-					animate: true, //Animates the opening, closing and moving of Editor windows
-					autoHeight: true,
-					focusAtStart: true,
-					width: '724px', height: '200px'
-				});
-				editors[forms[i].id].render();
-			}
-
 			// render dialog
 			dialogs[forms[i].id].render();
+			
+			//RTE needs a little love to work in in a Dialog that can be 
+			//shown and hidden; we let it know that it's being
+			//shown/hidden so that it can recover from these actions:
+			dialogs[forms[i].id].showEvent.subscribe(editors[forms[i].id].show, editors[forms[i].id], true);
+			dialogs[forms[i].id].hideEvent.subscribe(editors[forms[i].id].hide, editors[forms[i].id], true);
 
 			nodes[forms[i].id].style.border	= '1px dashed #ff0000';
 			nodes[forms[i].id].style.cursor	= 'pointer';
 
 			// attach resize
-			nodes[forms[i].id].style.overflow	= 'hidden';
-			resizes[forms[i].id] = new YAHOO.util.Resize(nodes[forms[i].id], {
-			    proxy: true,
-			    status: true,
-			    animate: true,
-			    animateDuration: .3,
-			    animateEasing: YAHOO.util.Easing.easeBoth
-			});
-			resizes[forms[i].id].on('endResize', handleResize);
+			if (resizesAllowed) {
+				nodes[forms[i].id].style.overflow	= 'hidden';
+				resizes[forms[i].id] = new YAHOO.util.Resize(nodes[forms[i].id], {
+				    proxy: true,
+				    status: true,
+				    animate: true,
+				    animateDuration: .3,
+				    animateEasing: YAHOO.util.Easing.easeBoth
+				});
+				resizes[forms[i].id].on('endResize', handleResize);
+			}
 		}
 	}
 	YAHOO.util.Event.onDOMReady(metanodes_attach);

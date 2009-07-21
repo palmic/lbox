@@ -47,4 +47,8 @@
 	<property name="contact_form_addresses">info@lbox.cz</property><!-- cilove mailove adresy kontaktnich formularu (oddelovat carkou) -->
 	<property name="contact_form_subject"><![CDATA[Vzkaz z kontaktního formuláře <host>]]></property><!-- predmet mailu z kontaktnich formularu -->
 
+
+	<!-- seznam IDs stranek na kterych bude povolen resize oddelenych mezerou. all znaci vsechny -->
+	<property name="metanodes_allow_resize_pages">all</property>
+
 </properties>
