@@ -155,25 +155,14 @@
 			forms[i].style.display	= 'block';
 			submit.disabled			= false;
 
-			// init richtext editors
-			if (YAHOO.util.Dom.hasClass(containers[forms[i].id], 'metanode-richtext')) {
-				editors[forms[i].id] = new YAHOO.widget.Editor(field.id, { 
-					dompath: true, //Turns on the bar at the bottom 
-					animate: false, //Animates the opening, closing and moving of Editor windows
-					autoHeight: false,
-					focusAtStart: true,
-					width: '724px', height: '500px'
-				});
-				editors[forms[i].id].render();
-			}
-
 			// Instantiate the Dialogs
 			dialogs[forms[i].id] = new YAHOO.widget.Dialog(dialogForm, 
 						{ width: "725px",
 						  fixedcenter : true,
+						  y : 20,
 						  modal : true,
 						  visible : false,
-						  draggable: false,
+						  draggable: true,
 						 });
 			//set up buttons for the Dialog and wire them
 			//up to our handlers:
@@ -208,16 +197,28 @@
 
 			submit.disabled			= true;
 			submit.style.display	= 'none';
+			
+			// init richtext editors
+			if (YAHOO.util.Dom.hasClass(containers[forms[i].id], 'metanode-richtext')) {
+				editors[forms[i].id] = new YAHOO.widget.Editor(field.id, { 
+					dompath: true, //Turns on the bar at the bottom 
+					animate: false, //Animates the opening, closing and moving of Editor windows
+					autoHeight: false,
+					focusAtStart: true,
+					width: '724px', height: '300px'
+				});
+				editors[forms[i].id].render();
+				
+				//RTE needs a little love to work in in a Dialog that can be 
+				//shown and hidden; we let it know that it's being
+				//shown/hidden so that it can recover from these actions:
+				dialogs[forms[i].id].showEvent.subscribe(editors[forms[i].id].show, editors[forms[i].id], true);
+				dialogs[forms[i].id].hideEvent.subscribe(editors[forms[i].id].hide, editors[forms[i].id], true);
+			}
 
 			// render dialog
 			dialogs[forms[i].id].render();
 			
-			//RTE needs a little love to work in in a Dialog that can be 
-			//shown and hidden; we let it know that it's being
-			//shown/hidden so that it can recover from these actions:
-			dialogs[forms[i].id].showEvent.subscribe(editors[forms[i].id].show, editors[forms[i].id], true);
-			dialogs[forms[i].id].hideEvent.subscribe(editors[forms[i].id].hide, editors[forms[i].id], true);
-
 			nodes[forms[i].id].style.border	= '1px dashed #ff0000';
 			nodes[forms[i].id].style.cursor	= 'pointer';
 

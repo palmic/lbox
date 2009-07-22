@@ -1,13 +1,13 @@
 <x tal:replace="lbox:slot_start" />
 	<h1 tal:content="SELF/page/heading" />
-	<tal:block tal:content="structure SELF/metanode_1_richtext" />
-	<tal:block tal:content="structure SELF/metanode_2_int" />
-	<tal:block tal:content="structure SELF/metanode_3_richtext" />
-	<tal:block tal:content="structure SELF/metanode_4_richtext" />
-	<tal:block tal:content="structure SELF/metanode_5_string" />
+	<x tal:replace="structure lbox:metanode.1.richtext" />
+	<x tal:replace="structure lbox:metanode.2.int" />
+	<x tal:replace="structure lbox:metanode.3.richtext" />
+	<x tal:replace="structure lbox:metanode.4.richtext" />
+	<x tal:replace="structure lbox:metanode.5.string" />
 	
 	<x tal:replace="structure lbox:component.login_form" />
 	
-	<tal:block tal:content="structure SELF/metanode_1_richtext" />
+	<x tal:replace="structure lbox:metanode.1.richtext" />
 <x tal:replace="lbox:slot_end.content" />
 <x tal:replace="structure lbox:component.layout_default" />

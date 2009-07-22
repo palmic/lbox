@@ -130,7 +130,6 @@ function phptal_tales_lbox($src, $nothrow = false) {
 			case 'slot_start':
 				return '$ctx->SELF->templateSlotContentBegin()';
 				break;
-					
 			case 'slot_end':
 				if (strlen($name = $srcArr[1]) < 1) {
 					if (!$nothrow) {
@@ -138,6 +137,9 @@ function phptal_tales_lbox($src, $nothrow = false) {
 					}
 				}
 				return '$ctx->SELF->templateSlotContentEnd("'.$name.'")';
+				break;
+			case 'metanode':
+				return '$ctx->SELF->getMetanode("'.$srcArr[1].'", "'.$srcArr[2].'")';
 				break;
 			default:
 				if (!$nothrow) {

@@ -95,12 +95,7 @@ abstract class LBoxComponent
 						return $this;
 					}
 					else {
-						if ($this->outputFilter instanceof LBoxOutputFilter) {
-							return $this->outputFilter->prepare($this, $name, $this->page);
-						}
-						else {
-							return $this->page;
-						}
+						return $this->page;
 					}
 					break;
 					// vraci isntanci LBoxConfigItemComponent
@@ -1030,10 +1025,11 @@ abstract class LBoxComponent
 	/**
 	* getter na metanode
 	* @param string $callname
-	* return string
+	* return LBoxMetanode
 	*/
 	protected function getMetanodeByCallName($callname = "") {
 		try {
+LBoxFirePHP::log($callname);
 			if (array_key_exists($callname, $this->metanodesByCallnames) && $this->metanodesByCallnames[$callname] instanceof LBoxMetanode) {
 				// dalsi instance metanodu v komponente / strance zobrazime uz jen pasivni
 				$this->metanodesByCallnames[$callname]->setActive(false);
@@ -1048,6 +1044,21 @@ abstract class LBoxComponent
 			$this->metanodesByCallnames[$callname]	= LBoxMetanodeManager::getNode($type, $seq, $this);
 
 			return $this->metanodesByCallnames[$callname];
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * public getter na metanode
+	 * @param int $id
+	 * @param string $type
+	 * @return LBoxMetanode
+	 */
+	public function getMetanode($id, $type = "") {
+		try {
+			return $this->getMetanodeByCallName("metanode_". $id ."_". $type);
 		}
 		catch (Exception $e) {
 			throw $e;
