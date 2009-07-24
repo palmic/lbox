@@ -4,6 +4,12 @@
 <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/assets/skins/sam/button.css" />
 <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/container/assets/skins/sam/menu.css" />
 <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/container/assets/skins/sam/editor.css" />
+<style type="text/css">
+	.yui-skin-sam .yui-toolbar-container .yui-toolbar-editcode span.yui-toolbar-icon { background-image: url( http://developer.yahoo.com/yui/examples/editor/assets/html_editor.gif ); background-position: 0 1px; left: 5px; }
+	.yui-skin-sam .yui-toolbar-container .yui-button-editcode-selected span.yui-toolbar-icon { background-image: url( http://developer.yahoo.com/yui/examples/editor/assets/html_editor.gif ); background-position: 0 1px; left: 5px; }
+	.editor-hidden { visibility: hidden; top: -9999px; left: -9999px; position: absolute; }
+	textarea { border: 0; margin: 0; padding: 0; }
+</style>
 <!-- Utility Dependencies -->
 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/yahoo-dom-event/yahoo-dom-event.js"></script> 
 <script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/animation/animation-min.js"></script>
@@ -141,6 +147,8 @@
 		var keyListener;
 		var klSave;
 		var klCancel;
+	    var Dom = YAHOO.util.Dom;
+		var Event = YAHOO.util.Event;
 		for(i in forms) {
 			dialog	= YAHOO.util.Selector.query('.dialog', forms[i], true);
 			if (!dialog) {
@@ -162,7 +170,7 @@
 						  y : 20,
 						  modal : true,
 						  visible : false,
-						  draggable: true,
+						  draggable: true
 						 });
 			//set up buttons for the Dialog and wire them
 			//up to our handlers:
@@ -199,6 +207,8 @@
 			submit.style.display	= 'none';
 			
 			// init richtext editors
+		    var state = 'off';
+
 			if (YAHOO.util.Dom.hasClass(containers[forms[i].id], 'metanode-richtext')) {
 				editors[forms[i].id] = new YAHOO.widget.Editor(field.id, { 
 					dompath: true, //Turns on the bar at the bottom 
@@ -207,6 +217,58 @@
 					focusAtStart: true,
 					width: '724px', height: '300px'
 				});
+				editors[forms[i].id].on('toolbarLoaded', function() {
+				        var codeConfig = { type: 'push', label: 'Edit HTML Code', value: 'editcode' };
+				        this.toolbar.addButtonToGroup(codeConfig, 'insertitem');
+
+				        this.toolbar.on('editcodeClick', function() {
+				            var ta 		= this.get('element'),
+								iframe 	= this.get('iframe').get('element');
+				
+				            if (state == 'on') {
+				                state = 'off';
+				                this.toolbar.set('disabled', false);
+				                this.setEditorHTML(ta.value);
+				                if (!this.browser.ie) {
+				                    this._setDesignMode('on');
+				                }
+				
+				                Dom.removeClass(iframe, 'editor-hidden');
+				                Dom.addClass(ta, 'editor-hidden');
+				                this.show();
+				                this._focusWindow();
+				            } else {
+				                state = 'on';
+				                this.cleanHTML();
+				                Dom.addClass(iframe, 'editor-hidden');
+				                Dom.removeClass(ta, 'editor-hidden');
+				                this.toolbar.set('disabled', true);
+				                this.toolbar.getButtonByValue('editcode').set('disabled', false);
+				                this.toolbar.selectButton('editcode');
+				                this.dompath.innerHTML = 'Editing HTML Code';
+				                this.hide();
+				            }
+				            return false;
+				        }, this, true);
+				
+				        this.on('cleanHTML', function(ev) {
+				            YAHOO.log('cleanHTML callback fired..', 'info', 'example');
+				            this.get('element').value = ev.html;
+				        }, this, true);
+				        
+				        this.on('afterRender', function() {
+				            var wrapper = this.get('editor_wrapper');
+				            wrapper.appendChild(this.get('element'));
+				            this.setStyle('width', '100%');
+				            this.setStyle('height', '100%');
+				            this.setStyle('visibility', '');
+				            this.setStyle('top', '');
+				            this.setStyle('left', '');
+				            this.setStyle('position', '');
+				
+				            this.addClass('editor-hidden');
+				        }, this, true);
+				}, editors[forms[i].id], true);
 				editors[forms[i].id].render();
 				
 				//RTE needs a little love to work in in a Dialog that can be 

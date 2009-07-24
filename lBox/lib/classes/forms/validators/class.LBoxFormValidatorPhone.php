@@ -6,13 +6,14 @@ class LBoxFormValidatorPhone extends LBoxFormValidator
 {
 	/**
 	 * regularni vyraz kontrolujici validitu telefonniho cisla
-	 * bere tyto 3 formaty:
+	 * bere tyto 4 formaty:
 	 * - +420777666333
+	 * - 420777666333
 	 * - 777666333
 	 * - 666333
 	 * @var string
 	 */
-	protected $regPhone	= '^(\+[[:digit:]]{3})?([[:digit:]]{3})?([[:digit:]]{6})$';
+	protected $regPhone	= '^(\+)?([[:digit:]]{3})?([[:digit:]]{3})?([[:digit:]]{6})$';
 	
 	public function validate(LBoxFormControl $control = NULL) {
 		try {
