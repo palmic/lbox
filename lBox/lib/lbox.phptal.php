@@ -27,10 +27,10 @@ function phptal_tales_lbox($src, $nothrow = false) {
 				}
 				unset($pageParams[0]);
 				if (count($pageParams) < 1 || strlen(current($pageParams)) < 1) {
-					return '$ctx->SELF->getPageById("'.$pageID.'")';
+					return 'LBoxConfigManagerStructure::getPageById("'.$pageID.'")';
 				}
 				else {
-					return '$ctx->SELF->getPageById("'.$pageID.'")->'. current($pageParams);
+					return 'LBoxConfigManagerStructure::getPageById("'.$pageID.'")->'. current($pageParams);
 				}
 				break;
 			case "property":
