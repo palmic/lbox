@@ -204,19 +204,33 @@ class PhotosRecord extends AbstractRecordLBox
 	public function createThumbnail ($width = 0, $height = 0, $proportion = true) {
 		try {
 			// pokud nemame dano, ze proporce zustanou, zajistime orezani obrazku tak, aby neprosel destrukci
+			/*LBoxFirePHP::warn($this->filename);
+			LBoxFirePHP::log("My proportions: ". $this->size_x ."X". $this->size_y);
+			LBoxFirePHP::log("Thumb proportions: ". $width ."X". $height);*/
 			if (!$proportion) {
 				$rateMy		= $this->size_x/$this->size_y;
 				$rateThumb	= $width/$height;
 				// proti destrukci natazenim na vysku
 				if ($rateMy > $rateThumb) {
+					//LBoxFirePHP::log(" - Orezavame na vysku");
 					$thumb	= $this->getCreateDuplicate(0, $height, true);
-					$thumb	->crop($x1 = ($thumb->size_x-$width)/2, $x2 = (($thumb->size_y-$width)/2)+$width, $y1 = 0, $y2 = $height);
+					$x1		= (int)(($thumb->size_x-$width)/2);
+					$x2		= (int)($x1+$width);
+					/*LBoxFirePHP::log("zmensenina ma: ". $thumb->size_x ."X". $thumb->size_y);
+					LBoxFirePHP::log("pozadovana sirka: $width");
+					LBoxFirePHP::log("orezavam ji na : ". ($x2-$x1) ."X". $height);
+					LBoxFirePHP::log("bod x1: ". $x1);
+					LBoxFirePHP::log("bod x2: ". $x2);*/
+					$thumb	->crop($x1, $x2, $y1 = 0, $y2 = $height);
 					$this->addChild($thumb);
 				}
 				// proti destrukci natazenim na sirku
 				else {
-					$thumb			= $this->getCreateDuplicate($width, 0, true);
-					$thumb	->crop($x1 = 0, $x2 = $width, $y1 = ($thumb->size_y-$height)/2, $y2 = ($thumb->size_y-$height)/2+$height);
+					//LBoxFirePHP::log(" - Orezavame na sirku");
+					$thumb	= $this->getCreateDuplicate($width, 0, true);
+					$y1		= (int)(($thumb->size_y-$height)/2);
+					$y2		= (int)($y1+$height);
+					$thumb	->crop($x1 = 0, $x2 = $width, $y1, $y2);
 					$this->addChild($thumb);
 				}
 			}
