@@ -153,7 +153,7 @@ function getMetanodeByPostData($data = array()) {
 		// component metanode
 		else {
 			$callerConfig	= LBoxConfigManagerComponents::getInstance()->getComponentById($data["caller_id"]);
-			$caller			= new LBoxComponent($callerConfig, LBoxFront::getPage());
+			$caller			= new LBoxComponentMetanodeCaller($callerConfig);
 		}
 		$node	= LBoxMetanodeManager::getNode(		$data["type"],
 													(int)$data["seq"],
