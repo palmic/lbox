@@ -54,7 +54,7 @@ abstract class LBoxMetanode extends LBox
 	 * data filename ext
 	 * @var string
 	 */
-	protected $ext	= "txt";
+	protected $ext	= "html";
 	
 	/**
 	 * path cache

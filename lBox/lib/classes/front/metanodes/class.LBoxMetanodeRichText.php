@@ -8,8 +8,6 @@
  */
 class LBoxMetanodeRichText extends LBoxMetanodeString
 {
-	protected $ext							= "html";
-	
 	CONST TYPE								= "richtext";
 	CONST XT_FORM_CTRL_CLASSNAME			= "LBoxFormControlFill";
 	CONST XT_FORM_CTRL_TEMPLATE_FILENAME	= "metanode_richtext.html";
