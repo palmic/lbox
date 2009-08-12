@@ -1048,9 +1048,9 @@ function ob_pdml($buffer) {
   $pdml->ParsePDML($buffer);
   $s = $pdml->Output("","S");
   $pdfFilename	= strlen(PDF_FILENAME) > 0 ? PDF_FILENAME : "doc.pdf";
-  Header('Content-Type: application/pdf');
-  Header('Content-Length: '.strlen($s));
-  Header('Content-disposition: inline; filename='. $pdfFilename);
+  //Header('Content-Type: application/pdf');
+  //Header('Content-Length: '.strlen($s));
+  //Header('Content-disposition: inline; filename='. $pdfFilename);
   return $s;
 }
 
