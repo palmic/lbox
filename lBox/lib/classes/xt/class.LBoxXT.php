@@ -289,7 +289,7 @@ class LBoxXT extends LBox
 			if (self::$xtRoleRecords[self::getUserXTRecord($loginGroup)->id] instanceof XTRolesRecord) {
 				return self::$xtRoleRecords[self::getUserXTRecord($loginGroup)->id];
 			}
-			return self::$xtRoleRecords[self::getUserXTRecord($loginGroup)->id] = new XTRolesRecord($_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["roleId"]);
+			return self::$xtRoleRecords[self::getUserXTRecord($loginGroup)->id] = self::getUserXTRecord($loginGroup)->getRole();
 		}
 		catch (Exception $e) {
 			throw $e;

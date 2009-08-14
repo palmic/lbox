@@ -197,7 +197,7 @@ class LBoxForm
 	public function addProcessor(LBoxFormProcessor $processor) {
 		try {
 			if (array_key_exists(get_class($processor), $this->processors)) {
-				throw new LBoxExceptionForm($processor->getName() .": ". LBoxExceptionForm::MSG_FORM_PROCESSOR_DOES_EXISTS, LBoxExceptionForm::CODE_FORM_PROCESSOR_DOES_EXISTS);
+				throw new LBoxExceptionForm(get_class($processor) .": ". LBoxExceptionForm::MSG_FORM_PROCESSOR_DOES_EXISTS, LBoxExceptionForm::CODE_FORM_PROCESSOR_DOES_EXISTS);
 			}
 			$this->processors[get_class($processor)]	= $processor;
 			$processor->setForm($this);

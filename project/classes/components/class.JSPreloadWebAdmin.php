@@ -31,5 +31,29 @@ class JSPreloadWebAdmin extends JSPreload
 			throw $e;
 		}
 	}
+
+	/**
+	 * pretizeno o dalsi kontroly vztahujici se pouze na metanodes
+	 * @return bool
+	 */
+	public function isToShow() {
+		try {
+			if (!parent::isToShow()) {
+				return false;
+			}
+
+			$forbiddenXTRoles = explode(",", LBoxConfigManagerProperties::getPropertyContentByName("metanodes_forbidden_xtroles"));
+			array_walk($forbiddenXTRoles, "trim");
+			foreach ($forbiddenXTRoles as $forbiddenXTRole) {
+				if (trim($forbiddenXTRole) == LBoxXTProject::getUserXTRoleRecord()->id) {
+					return false;
+				}
+			}
+			return true;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
 }
 ?>

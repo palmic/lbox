@@ -16,6 +16,8 @@ class XTRolesRecord extends AbstractRecordLBox
 	
 	public static $dependingRecords	= array("XTUsersRecords");
 	
+	protected $isCacheOn	= false;
+	
 	/**
 	 * OutputItem interface method
 	 * @throws LBoxException
