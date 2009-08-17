@@ -6,7 +6,6 @@ require_once(LBOX_PATH_CORE_CLASSES . SLASH ."exceptions". SLASH ."class.LBoxExc
  * @author Michal Palma <palmic at email dot cz>
  * @package LBox
  * @version 1.0
-
  * @date 2008-02-13
  */
 class LBoxCache

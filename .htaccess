@@ -9,7 +9,7 @@ RewriteRule ^(.*).tgz$ /
 RewriteRule ^project/classes/(.*) /
 RewriteRule ^project/templates/(.*) /
 RewriteRule ^project/tal_compiled/(.*) /
-RewriteRule ^project/documents/(.*) /
+#RewriteRule ^project/documents/(.*) /
 RewriteRule ^project/.cache/(.*) /
 RewriteRule ^project/.tal_compiled/(.*) /
 RewriteRule ^project/css/$ /
