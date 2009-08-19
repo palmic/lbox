@@ -7,8 +7,18 @@
 	</head>
     <body>
         <h1 tal:content="SELF/page/heading" />
-		<ul>
-			<li tal:repeat="record records" tal:content="string:record ${record/id}" />
-		</ul>
+		<table border="1">
+			<caption>Count: ${records/count}</caption>
+			<thead>
+				<tr>
+					<th tal:repeat="column records/current">${repeat/column/key}</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr tal:repeat="record records">
+					<td tal:repeat="column record">${column}</td>
+				</tr>
+			</tbody>
+		</table>
     </body>
 </html>

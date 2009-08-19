@@ -8,11 +8,13 @@
 class PageDev extends PageDefault
 {
 	protected function executePrepend(PHPTAL $TAL) {
-DbControl::$debug = true;
+//DbControl::$debug = true;
 		try {
 			parent::executePrepend($TAL);
-
-			$TAL->records	= new TestRecords();
+			//$iterator		= new AccesNotViewersRecords(false, false, array(0, 65));
+			$iterator		= new LBoxPagingIteratorRecords("AccesNotViewersRecords", 10, false, false, array(0, 65));
+var_dump("URL: ". $iterator->getPages()->getPageByNumber(7)->url);
+			$TAL->records	= $iterator;
 		}
 		catch (Exception $e) {
 			throw $e;

@@ -379,15 +379,22 @@ class LBoxUtil
 	*/
 	public static function getURLWithParams($params = array(), $url = "") {
 		try {
-			$url				= strlen($url) > 0 ? $url : str_replace(":". LBOX_REQUEST_URL_PARAMS, "", LBOX_REQUEST_URL);
+			if (!is_array($params)) {
+				throw new LBoxException(LBoxException::MSG_PARAM_ARRAY_NOTNULL, LBoxException::CODE_BAD_PARAM);
+			}
+			$url				= strlen($url) > 0 ? $url : LBOX_REQUEST_URL;
 			$url				= str_replace("http//", "http://", strtolower($url));
 			$url				= str_replace("https//", "https://", strtolower($url));
 			$paramsNew			= array();
 			$paramsNewString	= "";
-			$paramsOriginal		= LBoxFront::getUrlParamsArray();
+			$urlParts			= explode(":", preg_replace("/(http)(s?):\/\//", "", $url));
+			$paramsOriginalString	= count($urlParts) > 1 ? end($urlParts) : "";
+			$paramsOriginal			= explode("/", $paramsOriginalString);
+			$urlWithoutParams		= str_replace(":$paramsOriginalString", "", $url);
+			
 			if (count($paramsOriginal) > 0) {
 				foreach ($paramsOriginal as $k => $paramOriginal) {
-					if (is_numeric(array_search($paramsOriginal, $params))) {
+					if (is_numeric(array_search($paramOriginal, $params))) {
 						continue;
 					}
 					$paramsNew[]	= $paramOriginal;
@@ -401,9 +408,50 @@ class LBoxUtil
 			if (count($paramsNew) > 0) {
 				$paramsNewString	= ":". implode("/", $paramsNew);
 			}
-			return $url . $paramsNewString;
+			return $urlWithoutParams . $paramsNewString;
 		}
 		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * vrati URL s odebranim parametru podle predaneho PCRE vzoru
+	 * @param string $pattern
+	 * @param string $url
+	 * @return string
+	 */
+	public static function getURLWithoutParamsByPattern($pattern = "", $url = "") {
+		try {
+			$url				= strlen($url) > 0 ? $url : LBOX_REQUEST_URL;
+			$url				= str_replace("http//", "http://", strtolower($url));
+			$url				= str_replace("https//", "https://", strtolower($url));
+			$paramsNew			= array();
+			$paramsNewString	= "";
+			$urlParts			= explode(":", preg_replace("/(http)(s?):\/\//", "", $url));
+			$paramsOriginalString	= count($urlParts) > 1 ? end($urlParts) : "";
+			$paramsOriginal			= explode("/", $paramsOriginalString);
+			$urlWithoutParams		= str_replace(":$paramsOriginalString", "", $url);
+			if (strlen($pattern) < 1) {
+				throw new LBoxException(LBoxException::MSG_PARAM_STRING_NOTNULL, LBoxException::CODE_BAD_PARAM);
+			}
+			if (count($paramsOriginal) < 1) {
+				return $url;
+			}
+			foreach ($paramsOriginal as $k => $paramOriginal) {
+				if (!is_numeric($matchCount = @preg_match($pattern, $paramOriginal, $matches))) {
+					throw new LBoxException("Wrong PCRE patter given, or some another error!");
+				}
+				if ($matchCount < 1) {
+					$paramsNew[]	= $paramOriginal;
+				}
+			}
+			if (count($paramsNew) > 0) {
+				$paramsNewString	= ":". implode("/", $paramsNew);
+			}
+			return $urlWithoutParams . $paramsNewString;
+		}
+		catch(Exception $e) {
 			throw $e;
 		}
 	}
@@ -416,12 +464,17 @@ class LBoxUtil
 	*/
 	public static function getURLWithoutParams($params = array(), $url = "") {
 		try {
-			$url				= strlen($url) > 0 ? $url : str_replace(":". LBOX_REQUEST_URL_PARAMS, "", LBOX_REQUEST_URL);
-			$paramsOriginal		= LBoxFront::getUrlParamsArray();
+			$url				= strlen($url) > 0 ? $url : LBOX_REQUEST_URL;
+			$url				= str_replace("http//", "http://", strtolower($url));
+			$url				= str_replace("https//", "https://", strtolower($url));
 			$paramsNew			= array();
 			$paramsNewString	= "";
-			if (count($params) < 1) {
-				throw new LBoxException(LBoxException::MSG_PARAM_STRING_NOTNULL, LBoxException::CODE_BAD_PARAM);
+			$urlParts			= explode(":", preg_replace("/(http)(s?):\/\//", "", $url));
+			$paramsOriginalString	= count($urlParts) > 1 ? end($urlParts) : "";
+			$paramsOriginal			= explode("/", $paramsOriginalString);
+			$urlWithoutParams		= str_replace(":$paramsOriginalString", "", $url);
+			if (!is_array($params) || count($params) < 1) {
+				throw new LBoxException(LBoxException::MSG_PARAM_ARRAY_NOTNULL, LBoxException::CODE_BAD_PARAM);
 			}
 			if (count($paramsOriginal) < 1) {
 				return $url;
@@ -435,7 +488,7 @@ class LBoxUtil
 			if (count($paramsNew) > 0) {
 				$paramsNewString	= ":". implode("/", $paramsNew);
 			}
-			return $url . $paramsNewString;
+			return $urlWithoutParams . $paramsNewString;
 		}
 		catch (Exception $e) {
 			throw $e;
