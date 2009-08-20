@@ -13,7 +13,7 @@ class PageDev extends PageDefault
 			parent::executePrepend($TAL);
 			//$iterator		= new AccesNotViewersRecords(false, false, array(0, 65));
 			$iterator		= new LBoxPagingIteratorRecords("AccesNotViewersRecords", 10, false, false, array(0, 65));
-var_dump("URL: ". $iterator->getPages()->getPageByNumber(7)->url);
+var_dump("URL sedmé stránky: ". $iterator->getPages()->getPageByNumber(7)->url);
 			$TAL->records	= $iterator;
 		}
 		catch (Exception $e) {
