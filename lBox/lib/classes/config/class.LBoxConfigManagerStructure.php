@@ -35,12 +35,22 @@ class LBoxConfigManagerStructure extends LBoxConfigManager
 	
 	/**
 	 * getter configu konkretni stranky podle url
+	 * @param string $url
+	 * @param string $outputFilterClass
 	 * @return LBoxConfigItemStructure
 	 * @throws LBoxException
 	 */
-	public function getPageByUrl($url = "") {
+	public function getPageByUrl($url = "", $outputFilterClass = "") {
 		try {
-			return self::getInstance()->getConfigInstance()->getNodeByUrl($url);
+			$instance	= self::getInstance()->getConfigInstance()->getNodeByUrl($url);
+			if (strlen($outputFilterClass) > 0) {
+				$of			= new $outputFilterClass($instance);
+				if (!$of instanceof LBoxOutputFilter) {
+					throw new LBoxExceptionConfig("Non OutputFilter compatible OutputFilter given!", LBoxExceptionConfig::CODE_BAD_PARAM);
+				}
+				$instance	->setOutputFilter($of);
+			}
+			return $instance;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -49,12 +59,22 @@ class LBoxConfigManagerStructure extends LBoxConfigManager
 
 	/**
 	 * getter configu konkretni stranky podle id (vyuziva nacachovane pole stranek misto iterace nodu)
+	 * @param int $id
+	 * @param string $outputFilterClass
 	 * @return LBoxConfigItemStructure
 	 * @throws LBoxException
 	 */
-	public function getPageById($id = "") {
+	public function getPageById($id = "", $outputFilterClass = "") {
 		try {
-			return self::getInstance()->getConfigInstance()->getNodeById($id);
+			$instance	= self::getInstance()->getConfigInstance()->getNodeById($id);
+			if (strlen($outputFilterClass) > 0) {
+				$of			= new $outputFilterClass($instance);
+				if (!$of instanceof LBoxOutputFilter) {
+					throw new LBoxExceptionConfig("Non OutputFilter compatible OutputFilter given!", LBoxExceptionConfig::CODE_BAD_PARAM);
+				}
+				$instance	->setOutputFilter($of);
+			}
+			return $instance;
 		}
 		catch (Exception $e) {
 			throw $e;
