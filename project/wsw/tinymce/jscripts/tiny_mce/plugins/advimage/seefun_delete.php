@@ -1,0 +1,1 @@
+<?phprequire_once("seefundo.php");$sfd_delete = sfd_url_param("file");@unlink($sfd_dir_rel.$sfd_delete);?><strong><?=$sfd_delete?></strong> deleted

@@ -1,0 +1,1 @@
+<script language="javascript">	var sfd_dir = '<?=$sfd_dir?>';	var sfd_dir_rel = '<?=$sfd_dir_rel?>';</script>
