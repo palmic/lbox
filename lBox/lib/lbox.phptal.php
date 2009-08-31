@@ -52,6 +52,14 @@ function phptal_tales_lbox($src, $nothrow = false) {
 				}
 				return 'LBoxFront::'. $frontCalling .'()';
 				break;
+			case "xt":
+				if (strlen($frontCalling = $srcArr[1]) < 1) {
+					if (!$nothrow) {
+						throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_FRONT_CALL_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+					}
+				}
+				return 'LBoxXTProject::'. $frontCalling .'()';
+				break;
 			case "i18n":
 				if (strlen($srcArr[1]) < 1) {
 					if (!$nothrow) {
