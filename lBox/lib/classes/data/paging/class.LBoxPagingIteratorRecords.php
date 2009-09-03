@@ -11,6 +11,7 @@ class LBoxPagingIteratorRecords extends LBoxPagingIterator
 	/**
 	 * cache vars
 	 */
+	protected $classNameOutputFilter = "";
 	protected $filter = array();
 	protected $order = array();
 	protected $limit = array();
@@ -25,13 +26,14 @@ class LBoxPagingIteratorRecords extends LBoxPagingIterator
 	 * @param array $limit
 	 * @param QueryBuilderWhere $whereAdd
 	 */
-	public function __construct($classNameIterator, $pageItems, $filter = false, $order = false, $limit = false, QueryBuilderWhere $whereAdd = NULL) {
+	public function __construct($classNameIterator, $pageItems, $classNameOutputFilter = "", $filter = false, $order = false, $limit = false, QueryBuilderWhere $whereAdd = NULL) {
 		try {
 			parent::__construct($classNameIterator, $pageItems);
-			$this->filter	= $filter;
-			$this->order	= $order;
-			$this->limit	= $limit;
-			$this->whereAdd	= $whereAdd;
+			$this->classNameOutputFilter	= $classNameOutputFilter;
+			$this->filter					= $filter;
+			$this->order					= $order;
+			$this->limit					= $limit;
+			$this->whereAdd					= $whereAdd;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -54,13 +56,17 @@ class LBoxPagingIteratorRecords extends LBoxPagingIterator
 			// vypocet limitu od
 			$limitFrom		= ($page-1) * $this->pageItems;
 			// vypocet limitu count
-			if (($page+1) * $this->pageItems > end($this->limit)) {
+			if (is_array($this->limit) && (($page+1) * $this->pageItems > end($this->limit))) {
 				$limitCount	= end($this->limit) % $this->pageItems;
 			}
 			else {
 				$limitCount	= $this->pageItems;
 			}
-			return $this->itemsPages[$page]	= new $classNameRecords($this->filter, $this->order, array($limitFrom, $limitCount), $this->whereAdd);
+			$this->itemsPages[$page]	= new $classNameRecords($this->filter, $this->order, array($limitFrom, $limitCount), $this->whereAdd);
+			if (strlen($this->classNameOutputFilter) > 0) {
+				$this->itemsPages[$page]	->setOutputFilterItemsClass($this->classNameOutputFilter);
+			}
+			return $this->itemsPages[$page];
 		}
 		catch (Exception $e) {
 			throw $e;

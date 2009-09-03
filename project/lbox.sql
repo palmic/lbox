@@ -18,15 +18,12 @@
 -- Create schema lbox
 --
 
-CREATE DATABASE IF NOT EXISTS lbox;
-USE lbox;
-
 --
--- Temporary table structure for view `lbox`.`accesnotviewers`
+-- Temporary table structure for view `accesnotviewers`
 --
-DROP TABLE IF EXISTS `lbox`.`accesnotviewers`;
-DROP VIEW IF EXISTS `lbox`.`accesnotviewers`;
-CREATE TABLE `lbox`.`accesnotviewers` (
+DROP TABLE IF EXISTS `accesnotviewers`;
+DROP VIEW IF EXISTS `accesnotviewers`;
+CREATE TABLE `accesnotviewers` (
   `id` int(11),
   `request_time` int(11),
   `time` datetime,
@@ -38,11 +35,11 @@ CREATE TABLE `lbox`.`accesnotviewers` (
 );
 
 --
--- Temporary table structure for view `lbox`.`accesviewers`
+-- Temporary table structure for view `accesviewers`
 --
-DROP TABLE IF EXISTS `lbox`.`accesviewers`;
-DROP VIEW IF EXISTS `lbox`.`accesviewers`;
-CREATE TABLE `lbox`.`accesviewers` (
+DROP TABLE IF EXISTS `accesviewers`;
+DROP VIEW IF EXISTS `accesviewers`;
+CREATE TABLE `accesviewers` (
   `id` int(11),
   `request_time` int(11),
   `time` datetime,
@@ -54,17 +51,17 @@ CREATE TABLE `lbox`.`accesviewers` (
 );
 
 --
--- Temporary table structure for view `lbox`.`accesviewersunique`
+-- Temporary table structure for view `accesviewersunique`
 --
-DROP TABLE IF EXISTS `lbox`.`accesviewersunique`;
-DROP VIEW IF EXISTS `lbox`.`accesviewersunique`;
+DROP TABLE IF EXISTS `accesviewersunique`;
+DROP VIEW IF EXISTS `accesviewersunique`;
 
 --
--- Temporary table structure for view `lbox`.`performance_pages_base`
+-- Temporary table structure for view `performance_pages_base`
 --
-DROP TABLE IF EXISTS `lbox`.`performance_pages_base`;
-DROP VIEW IF EXISTS `lbox`.`performance_pages_base`;
-CREATE TABLE `lbox`.`performance_pages_base` (
+DROP TABLE IF EXISTS `performance_pages_base`;
+DROP VIEW IF EXISTS `performance_pages_base`;
+CREATE TABLE `performance_pages_base` (
   `page` varchar(384),
   `time_execution_avg` double,
   `time_execution_sum` double,
@@ -76,11 +73,11 @@ CREATE TABLE `lbox`.`performance_pages_base` (
 );
 
 --
--- Temporary table structure for view `lbox`.`performance_urls_base`
+-- Temporary table structure for view `performance_urls_base`
 --
-DROP TABLE IF EXISTS `lbox`.`performance_urls_base`;
-DROP VIEW IF EXISTS `lbox`.`performance_urls_base`;
-CREATE TABLE `lbox`.`performance_urls_base` (
+DROP TABLE IF EXISTS `performance_urls_base`;
+DROP VIEW IF EXISTS `performance_urls_base`;
+CREATE TABLE `performance_urls_base` (
   `url` varchar(128),
   `time_execution_avg` double,
   `time_execution_sum` double,
@@ -92,11 +89,11 @@ CREATE TABLE `lbox`.`performance_urls_base` (
 );
 
 --
--- Definition of table `lbox`.`acces`
+-- Definition of table `acces`
 --
 
-DROP TABLE IF EXISTS `lbox`.`acces`;
-CREATE TABLE  `lbox`.`acces` (
+DROP TABLE IF EXISTS `acces`;
+CREATE TABLE  `acces` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `request_time` int(11) NOT NULL,
   `time` datetime NOT NULL,
@@ -117,7 +114,7 @@ CREATE TABLE  `lbox`.`acces` (
 ) ENGINE=InnoDB AUTO_INCREMENT=146 DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `lbox`.`acces`
+-- Dumping data for table `acces`
 --
 
 /*!40000 ALTER TABLE `acces` DISABLE KEYS */;
@@ -127,11 +124,11 @@ UNLOCK TABLES;
 
 
 --
--- Definition of table `lbox`.`xtRoles`
+-- Definition of table `xtRoles`
 --
 
-DROP TABLE IF EXISTS `lbox`.`xtRoles`;
-CREATE TABLE  `lbox`.`xtRoles` (
+DROP TABLE IF EXISTS `xtRoles`;
+CREATE TABLE  `xtRoles` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(128) NOT NULL,
   PRIMARY KEY (`id`),
@@ -139,12 +136,12 @@ CREATE TABLE  `lbox`.`xtRoles` (
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `lbox`.`xtRoles`
+-- Dumping data for table `xtRoles`
 --
 
 /*!40000 ALTER TABLE `xtRoles` DISABLE KEYS */;
 LOCK TABLES `xtRoles` WRITE;
-INSERT INTO `lbox`.`xtRoles` VALUES  (5,'admin'),
+INSERT INTO `xtRoles` VALUES  (5,'admin'),
  (6,'superadmin'),
  (4,'user');
 UNLOCK TABLES;
@@ -152,11 +149,11 @@ UNLOCK TABLES;
 
 
 --
--- Definition of table `lbox`.`xtUsers`
+-- Definition of table `xtUsers`
 --
 
-DROP TABLE IF EXISTS `lbox`.`xtUsers`;
-CREATE TABLE  `lbox`.`xtUsers` (
+DROP TABLE IF EXISTS `xtUsers`;
+CREATE TABLE  `xtUsers` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nick` varchar(128) NOT NULL,
   `ref_xtRole` int(11) NOT NULL,
@@ -177,55 +174,55 @@ CREATE TABLE  `lbox`.`xtUsers` (
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `lbox`.`xtUsers`
+-- Dumping data for table `xtUsers`
 --
 
 /*!40000 ALTER TABLE `xtUsers` DISABLE KEYS */;
 LOCK TABLES `xtUsers` WRITE;
-INSERT INTO `lbox`.`xtUsers` VALUES  (1,'palmic',6,'b3b4d2dbedc99fe843fd3dedb02f086f','2008-09-21 12:23:15','','','michal.palma@gmail.com','',1,1,'7005f23d64560fcac780f4e28dee1f3b');
+INSERT INTO `xtUsers` VALUES  (1,'palmic',6,'b3b4d2dbedc99fe843fd3dedb02f086f','2008-09-21 12:23:15','','','michal.palma@gmail.com','',1,1,'7005f23d64560fcac780f4e28dee1f3b');
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `xtUsers` ENABLE KEYS */;
 
 
 --
--- Definition of view `lbox`.`accesnotviewers`
+-- Definition of view `accesnotviewers`
 --
 
-DROP TABLE IF EXISTS `lbox`.`accesnotviewers`;
-DROP VIEW IF EXISTS `lbox`.`accesnotviewers`;
-CREATE ALGORITHM=UNDEFINED  SQL SECURITY DEFINER VIEW  `lbox`.`accesnotviewers` AS select `acces`.`id` AS `id`,`acces`.`request_time` AS `request_time`,`acces`.`time` AS `time`,`acces`.`ip` AS `ip`,`acces`.`url` AS `url`,`acces`.`referer` AS `referer`,`acces`.`agent` AS `agent`,`acces`.`ref_xtUser` AS `ref_xtUser` from `acces` where ((not((lcase(`acces`.`agent`) like _utf8'%mozilla%'))) and (not((lcase(`acces`.`agent`) like _utf8'%opera%'))));
+DROP TABLE IF EXISTS `accesnotviewers`;
+DROP VIEW IF EXISTS `accesnotviewers`;
+CREATE ALGORITHM=UNDEFINED  SQL SECURITY DEFINER VIEW  `accesnotviewers` AS select `acces`.`id` AS `id`,`acces`.`request_time` AS `request_time`,`acces`.`time` AS `time`,`acces`.`ip` AS `ip`,`acces`.`url` AS `url`,`acces`.`referer` AS `referer`,`acces`.`agent` AS `agent`,`acces`.`ref_xtUser` AS `ref_xtUser` from `acces` where ((not((lcase(`acces`.`agent`) like _utf8'%mozilla%'))) and (not((lcase(`acces`.`agent`) like _utf8'%opera%'))));
 
 --
--- Definition of view `lbox`.`accesviewers`
+-- Definition of view `accesviewers`
 --
 
-DROP TABLE IF EXISTS `lbox`.`accesviewers`;
-DROP VIEW IF EXISTS `lbox`.`accesviewers`;
-CREATE ALGORITHM=UNDEFINED  SQL SECURITY DEFINER VIEW  `lbox`.`accesviewers` AS select `acces`.`id` AS `id`,`acces`.`request_time` AS `request_time`,`acces`.`time` AS `time`,`acces`.`ip` AS `ip`,`acces`.`url` AS `url`,`acces`.`referer` AS `referer`,`acces`.`agent` AS `agent`,`acces`.`ref_xtUser` AS `ref_xtUser` from `acces` where ((lcase(`acces`.`agent`) like _utf8'%windows%') or (lcase(`acces`.`agent`) like _utf8'%linux%') or (lcase(`acces`.`agent`) like _utf8'%mac os%'));
+DROP TABLE IF EXISTS `accesviewers`;
+DROP VIEW IF EXISTS `accesviewers`;
+CREATE ALGORITHM=UNDEFINED  SQL SECURITY DEFINER VIEW  `accesviewers` AS select `acces`.`id` AS `id`,`acces`.`request_time` AS `request_time`,`acces`.`time` AS `time`,`acces`.`ip` AS `ip`,`acces`.`url` AS `url`,`acces`.`referer` AS `referer`,`acces`.`agent` AS `agent`,`acces`.`ref_xtUser` AS `ref_xtUser` from `acces` where ((lcase(`acces`.`agent`) like _utf8'%windows%') or (lcase(`acces`.`agent`) like _utf8'%linux%') or (lcase(`acces`.`agent`) like _utf8'%mac os%'));
 
 --
--- Definition of view `lbox`.`accesviewersunique`
+-- Definition of view `accesviewersunique`
 --
 
-DROP TABLE IF EXISTS `lbox`.`accesviewersunique`;
-DROP VIEW IF EXISTS `lbox`.`accesviewersunique`;
-CREATE ALGORITHM=UNDEFINED  SQL SECURITY DEFINER VIEW  `lbox`.`accesviewersunique` AS select distinct `acces`.`ip` AS `ip` from `acces` where ((lcase(`acces`.`agent`) like _utf8'%windows%') or (lcase(`acces`.`agent`) like _utf8'%linux%') or (lcase(`acces`.`agent`) like _utf8'%mac os%'));
+DROP TABLE IF EXISTS `accesviewersunique`;
+DROP VIEW IF EXISTS `accesviewersunique`;
+CREATE ALGORITHM=UNDEFINED  SQL SECURITY DEFINER VIEW  `accesviewersunique` AS select distinct `acces`.`ip` AS `ip` from `acces` where ((lcase(`acces`.`agent`) like _utf8'%windows%') or (lcase(`acces`.`agent`) like _utf8'%linux%') or (lcase(`acces`.`agent`) like _utf8'%mac os%'));
 
 --
--- Definition of view `lbox`.`performance_pages_base`
+-- Definition of view `performance_pages_base`
 --
 
-DROP TABLE IF EXISTS `lbox`.`performance_pages_base`;
-DROP VIEW IF EXISTS `lbox`.`performance_pages_base`;
-CREATE ALGORITHM=UNDEFINED  SQL SECURITY DEFINER VIEW  `lbox`.`performance_pages_base` AS select (case when ((locate(_utf8':',substr(`acces`.`url`,locate(_utf8'//',`acces`.`url`))) > 0) and (locate(_utf8'?',`acces`.`url`) < 1)) then substr(`acces`.`url`,1,((locate(_utf8':',substr(`acces`.`url`,locate(_utf8'//',`acces`.`url`))) + locate(_utf8'//',`acces`.`url`)) - 2)) when ((locate(_utf8':',substr(`acces`.`url`,locate(_utf8'//',`acces`.`url`))) < 1) and (locate(_utf8'?',`acces`.`url`) > 0)) then substr(`acces`.`url`,1,(locate(_utf8'?',`acces`.`url`) - 1)) when ((locate(_utf8':',substr(`acces`.`url`,locate(_utf8'//',`acces`.`url`))) > 0) and (locate(_utf8'?',`acces`.`url`) > 0)) then (case when (locate(_utf8':',substr(`acces`.`url`,locate(_utf8'//',`acces`.`url`))) < locate(_utf8'?',`acces`.`url`)) then substr(`acces`.`url`,1,((locate(_utf8':',substr(`acces`.`url`,locate(_utf8'//',`acces`.`url`))) + locate(_utf8'//',`acces`.`url`)) - 2)) else substr(`acces`.`url`,1,(locate(_utf8'?',`acces`.`url`) - 1)) end) else `acces`.`url` end) AS `page`,avg(`acces`.`time_execution`) AS `time_execution_avg`,sum(`acces`.`time_execution`) AS `time_execution_sum`,round(avg(`acces`.`queries`),2) AS `queries_avg`,sum(`acces`.`queries`) AS `queries_sum`,count(`acces`.`id`) AS `hits`,min(`acces`.`time`) AS `first_hit`,max(`acces`.`time`) AS `last_hit` from `acces` where (`acces`.`time_execution` is not null) group by (case when ((locate(_utf8':',substr(`acces`.`url`,locate(_utf8'//',`acces`.`url`))) > 0) and (locate(_utf8'?',`acces`.`url`) < 1)) then substr(`acces`.`url`,1,((locate(_utf8':',substr(`acces`.`url`,locate(_utf8'//',`acces`.`url`))) + locate(_utf8'//',`acces`.`url`)) - 2)) when ((locate(_utf8':',substr(`acces`.`url`,locate(_utf8'//',`acces`.`url`))) < 1) and (locate(_utf8'?',`acces`.`url`) > 0)) then substr(`acces`.`url`,1,(locate(_utf8'?',`acces`.`url`) - 1)) when ((locate(_utf8':',substr(`acces`.`url`,locate(_utf8'//',`acces`.`url`))) > 0) and (locate(_utf8'?',`acces`.`url`) > 0)) then (case when (locate(_utf8':',substr(`acces`.`url`,locate(_utf8'//',`acces`.`url`))) < locate(_utf8'?',`acces`.`url`)) then substr(`acces`.`url`,1,((locate(_utf8':',substr(`acces`.`url`,locate(_utf8'//',`acces`.`url`))) + locate(_utf8'//',`acces`.`url`)) - 2)) else substr(`acces`.`url`,1,(locate(_utf8'?',`acces`.`url`) - 1)) end) else `acces`.`url` end) order by avg(`acces`.`time_execution`) desc;
+DROP TABLE IF EXISTS `performance_pages_base`;
+DROP VIEW IF EXISTS `performance_pages_base`;
+CREATE ALGORITHM=UNDEFINED  SQL SECURITY DEFINER VIEW  `performance_pages_base` AS select (case when ((locate(_utf8':',substr(`acces`.`url`,locate(_utf8'//',`acces`.`url`))) > 0) and (locate(_utf8'?',`acces`.`url`) < 1)) then substr(`acces`.`url`,1,((locate(_utf8':',substr(`acces`.`url`,locate(_utf8'//',`acces`.`url`))) + locate(_utf8'//',`acces`.`url`)) - 2)) when ((locate(_utf8':',substr(`acces`.`url`,locate(_utf8'//',`acces`.`url`))) < 1) and (locate(_utf8'?',`acces`.`url`) > 0)) then substr(`acces`.`url`,1,(locate(_utf8'?',`acces`.`url`) - 1)) when ((locate(_utf8':',substr(`acces`.`url`,locate(_utf8'//',`acces`.`url`))) > 0) and (locate(_utf8'?',`acces`.`url`) > 0)) then (case when (locate(_utf8':',substr(`acces`.`url`,locate(_utf8'//',`acces`.`url`))) < locate(_utf8'?',`acces`.`url`)) then substr(`acces`.`url`,1,((locate(_utf8':',substr(`acces`.`url`,locate(_utf8'//',`acces`.`url`))) + locate(_utf8'//',`acces`.`url`)) - 2)) else substr(`acces`.`url`,1,(locate(_utf8'?',`acces`.`url`) - 1)) end) else `acces`.`url` end) AS `page`,avg(`acces`.`time_execution`) AS `time_execution_avg`,sum(`acces`.`time_execution`) AS `time_execution_sum`,round(avg(`acces`.`queries`),2) AS `queries_avg`,sum(`acces`.`queries`) AS `queries_sum`,count(`acces`.`id`) AS `hits`,min(`acces`.`time`) AS `first_hit`,max(`acces`.`time`) AS `last_hit` from `acces` where (`acces`.`time_execution` is not null) group by (case when ((locate(_utf8':',substr(`acces`.`url`,locate(_utf8'//',`acces`.`url`))) > 0) and (locate(_utf8'?',`acces`.`url`) < 1)) then substr(`acces`.`url`,1,((locate(_utf8':',substr(`acces`.`url`,locate(_utf8'//',`acces`.`url`))) + locate(_utf8'//',`acces`.`url`)) - 2)) when ((locate(_utf8':',substr(`acces`.`url`,locate(_utf8'//',`acces`.`url`))) < 1) and (locate(_utf8'?',`acces`.`url`) > 0)) then substr(`acces`.`url`,1,(locate(_utf8'?',`acces`.`url`) - 1)) when ((locate(_utf8':',substr(`acces`.`url`,locate(_utf8'//',`acces`.`url`))) > 0) and (locate(_utf8'?',`acces`.`url`) > 0)) then (case when (locate(_utf8':',substr(`acces`.`url`,locate(_utf8'//',`acces`.`url`))) < locate(_utf8'?',`acces`.`url`)) then substr(`acces`.`url`,1,((locate(_utf8':',substr(`acces`.`url`,locate(_utf8'//',`acces`.`url`))) + locate(_utf8'//',`acces`.`url`)) - 2)) else substr(`acces`.`url`,1,(locate(_utf8'?',`acces`.`url`) - 1)) end) else `acces`.`url` end) order by avg(`acces`.`time_execution`) desc;
 
 --
--- Definition of view `lbox`.`performance_urls_base`
+-- Definition of view `performance_urls_base`
 --
 
-DROP TABLE IF EXISTS `lbox`.`performance_urls_base`;
-DROP VIEW IF EXISTS `lbox`.`performance_urls_base`;
-CREATE ALGORITHM=UNDEFINED  SQL SECURITY DEFINER VIEW  `lbox`.`performance_urls_base` AS select `acces`.`url` AS `url`,avg(`acces`.`time_execution`) AS `time_execution_avg`,sum(`acces`.`time_execution`) AS `time_execution_sum`,round(avg(`acces`.`queries`),2) AS `queries_avg`,sum(`acces`.`queries`) AS `queries_sum`,count(0) AS `hits`,min(`acces`.`time`) AS `first_hit`,max(`acces`.`time`) AS `last_hit` from `acces` where (`acces`.`time_execution` is not null) group by `acces`.`url` order by avg(`acces`.`time_execution`) desc;
+DROP TABLE IF EXISTS `performance_urls_base`;
+DROP VIEW IF EXISTS `performance_urls_base`;
+CREATE ALGORITHM=UNDEFINED  SQL SECURITY DEFINER VIEW  `performance_urls_base` AS select `acces`.`url` AS `url`,avg(`acces`.`time_execution`) AS `time_execution_avg`,sum(`acces`.`time_execution`) AS `time_execution_sum`,round(avg(`acces`.`queries`),2) AS `queries_avg`,sum(`acces`.`queries`) AS `queries_sum`,count(0) AS `hits`,min(`acces`.`time`) AS `first_hit`,max(`acces`.`time`) AS `last_hit` from `acces` where (`acces`.`time_execution` is not null) group by `acces`.`url` order by avg(`acces`.`time_execution`) desc;
 
 
 
