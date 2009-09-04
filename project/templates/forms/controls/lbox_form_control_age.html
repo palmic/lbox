@@ -1,0 +1,9 @@
+<div class="control" id="control-${id}" tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
+	<label for="${id}"><span class="label">${SELF/getLabel} <tal:block tal:condition="SELF/isRequired">* </tal:block></span>
+		<span class="text"><span class="lft"><span class="rgt"><span class="mdl"><input 	class="text" type="text" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]"
+				tal:attributes="value SELF/getValue | SELF/getDefault; maxlength SELF/getLengthMax | default; size SELF/getLengthMax | default; disabled SELF/getDisabled | default" /></span></span></span></span></label>
+	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
+		<div tal:condition="exists: exceptions/17001">Prosím vyplňte věk</div>
+		<div tal:condition="exists: exceptions/17009">Věk musí být číslo</div>
+	</div>
+</div>
