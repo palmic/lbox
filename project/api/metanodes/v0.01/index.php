@@ -147,7 +147,7 @@ function getMetanodeByPostData($data = array()) {
 		// page metanode
 		if ($data["caller_type"] == "page") {
 			$callerConfig		= LBoxConfigManagerStructure::getInstance()->getPageById($data["caller_id"]);
-			$callerClassName	= $callerConfig->class;
+			$callerClassName	= strlen($callerConfig->class) > 0 ? $callerConfig->class : "PageDefault";
 			$caller				= new $callerClassName($callerConfig);
 		}
 		// component metanode

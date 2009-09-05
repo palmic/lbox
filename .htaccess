@@ -36,11 +36,11 @@ RewriteRule ^js/(.*) project/js/$1
 RewriteRule ^flash/(.*) project/flash/$1
 RewriteRule ^wsw/(.*) project/wsw/$1
 RewriteRule ^wsw_filespace/(.*) project/filespace/wsw_files/$1
-RewriteRule ^api/(.*) project/api/$1
+RewriteRule ^api/(.*) project/api/$1 [L]
 RewriteRule ^ajaxfilemanager/(.*) project/wsw/ajaxfilemanager/$1
 RewriteRule ^crypt/(.*) project/crypt/$1
 RewriteRule ^filespace/(.*) project/filespace/$1
-RewriteRule ^mailing/(.*) /project/mailing/$1 [L]
+RewriteRule ^mailing/(.*) /project/mailing/$1
 
 RewriteRule ^data_test/(.*) project/data/test/$1
 
