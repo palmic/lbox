@@ -1,6 +1,6 @@
 <?php
 /**
- * dvelopment form processor
+ * dvelopment form processor vypisujici JEN multiple controls
  */
 class LBoxFormProcessorDevControlsMultiple extends LBoxFormProcessor
 {

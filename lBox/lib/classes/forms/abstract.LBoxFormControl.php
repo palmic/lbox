@@ -223,7 +223,7 @@ abstract class LBoxFormControl
 	/**
 	 * vraci jestli jde o subControl pod LBoxFormControlMultiple
 	 */
-	public function IsSubControl() {
+	public function isSubControl() {
 		try {
 			return $this->isSubControl;
 		}
