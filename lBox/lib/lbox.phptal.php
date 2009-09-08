@@ -58,7 +58,12 @@ function phptal_tales_lbox($src, $nothrow = false) {
 						throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_FRONT_CALL_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
 					}
 				}
-				return 'LBoxXTProject::'. $frontCalling .'()';
+				if (count($frontCallingXTParts = explode("/", $frontCalling)) == 2) {
+					return 'LBoxXTProject::'. reset($frontCallingXTParts) .'()->'. end($frontCallingXTParts);
+				}
+				else {
+					return 'LBoxXTProject::'. $frontCalling .'()';
+				}
 				break;
 			case "i18n":
 				if (strlen($srcArr[1]) < 1) {

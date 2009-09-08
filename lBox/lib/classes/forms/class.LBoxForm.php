@@ -111,7 +111,7 @@ class LBoxForm
 			$this->name			= $name;
 			$this->method		= strtolower($method);
 			$this->label		= strlen($label) 		> 0 ? $label 		: $name;
-			$this->labelSubmit	= strlen($labelSubmit) 	> 0 ? $labelSubmit 	: "odeslat";
+			$this->labelSubmit	= strlen($labelSubmit) 	> 0 ? $labelSubmit 	: "";
 			if (array_key_exists($name, self::$forms)) {
 				throw new LBoxExceptionForm("$name: ". LBoxExceptionForm::MSG_FORM_DUPLICATE_FORMNAME, LBoxExceptionForm::CODE_FORM_DUPLICATE_FORMNAME);
 			}
