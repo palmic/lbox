@@ -1,6 +1,6 @@
 <div class="control" id="control-${id}" tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
 	<label for="${id}"><span class="label">${SELF/getLabel}
-		<tal:block tal:condition="SELF/isRequired">* </tal:block></span>
+		<span tal:condition="SELF/isRequired" class="info-required">* </span></span>
 		<span class="select"><span class="lft"><span class="rgt"><span class="mdl">
 				<x metal:use-macro="control_select" /></span></span></span></span>
 	</label>

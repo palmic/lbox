@@ -15,8 +15,8 @@
 	</div>
 </div>
 <span metal:define-macro="control_radio" class="options">
-  <span class="labelcontainer" tal:repeat="option SELF/getOptions">
-  		<label id="label-for-${id}-option-${repeat/option/number}" for="${id}-option-${repeat/option/number}">
+  <span class="labelcontainer" id="radio-labelcontainer-${id}-option-${repeat/option/number}" tal:repeat="option SELF/getOptions">
+  		<label for="${id}-option-${repeat/option/number}">
   		<span class="lft" /><span class="mdl"><input type="radio" 		name="${SELF/getForm/getName}[${SELF/getName}]" id="${id}-option-${repeat/option/number}"
   									tal:attributes="value option/getValue; checked option/getChecked | default" />
 		<span class="label-radio-btn" 	tal:content="structure option/getLabel" /></span><span class="rgt" /></label>

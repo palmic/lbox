@@ -1,10 +1,10 @@
 <div class="control" id="control-${id}" tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
-	<label for="${id}"><span class="label">${SELF/getLabel}
-		<tal:block tal:condition="SELF/isRequired">* </tal:block></span>
+	<span class="label-checkboxes"><span class="label">${SELF/getLabel}
+		<span tal:condition="SELF/isRequired" class="info-required">* </span></span>
 		<span class="checkboxes"><tal:block tal:repeat="option SELF/getOptions">
 			<x metal:use-macro="control_checkbox" />
 		</tal:block></span>
-	</label>
+	</span>
 	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
 		<tal:block tal:repeat="exception exceptions">
 			<div>vyhozena vyjimka validatoru:
