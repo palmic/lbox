@@ -6,7 +6,7 @@ class LBoxFormProcessorSQLCreateTable extends LBoxFormProcessor
 {
 	public function process() {
 		try {
-			echo "CREATE TABLE `startuprok`.`data_". $this->form->getName() ."` (<br />";
+			echo "CREATE TABLE `data_". $this->form->getName() ."` (<br />";
 			echo "  `id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,<br />";
 			foreach ($this->form->getControls() as $control) {
 				if ($control instanceof LBoxFormControlMultiple) continue;
