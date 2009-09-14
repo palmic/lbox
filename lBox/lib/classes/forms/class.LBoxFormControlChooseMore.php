@@ -38,7 +38,7 @@ class LBoxFormControlChooseMore extends LBoxFormControlChoose
 			else {
 				$this->value	= $this->default;
 			}
-			return $this->value;
+			return (array)$this->value;
 		}
 		catch (Exception $e) {
 			throw $e;
