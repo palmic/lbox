@@ -101,6 +101,7 @@ class AccesRecord extends AbstractRecordLBox
 			if (array_key_exists("ref_xtUser", $this->params) && !is_numeric($this->params["ref_xtUser"])) {
 				$this->params["ref_xtUser"]	= "NULL";
 			}
+			$this->params["session_id"]	= session_id();
 			// pro jistotu na 2 pokusy
 			try {
 				parent::store();
