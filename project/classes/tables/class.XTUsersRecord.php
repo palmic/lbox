@@ -13,7 +13,7 @@ class XTUsersRecord extends AbstractRecordLBox
 	public static $passwordColNames	= array("password");
 
 	public static $boundedM1 = array("XTRolesRecords" => "ref_xtRole");
-	public static $bounded1M = array("RegistrationConfirmsRecords" => "ref_xtUser");
+	public static $bounded1M = array("RegistrationConfirmsRecords" => "ref_xtuser");
 	
 	protected	$hashString	= "sdfsdf";
 	

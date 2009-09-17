@@ -40,6 +40,14 @@ class LBoxXT extends LBox
 	 * @var LBoxXT
 	 */
 	protected static $instance;
+	
+	/**
+	 * cache vars
+	 */
+	protected static $isLogged = array();
+	protected static $isLoggedAdmin = array();
+	protected static $isLoggedSuperAdmin = array();
+	protected static $isLoggedParalelly;
 
 	/**
 	 * Try to log user into system with given nick and password
@@ -132,8 +140,11 @@ class LBoxXT extends LBox
 	 */
 	public static function isLogged($loginGroup = 0) {
 		try {
+			if (array_key_exists($loginGroup, self::$isLogged)) {
+				return self::$isLogged[$loginGroup];
+			}
 			if (!is_array($_SESSION["lbox"][self::SESSION_ARRAY_NAME])) {
-				return false;
+				return self::$isLogged[$loginGroup] = false;
 			}
 			if ($loginGroup === 0) {
 				if (strlen(LBoxFront::getPage()->xt) > 0) {
@@ -145,13 +156,13 @@ class LBoxXT extends LBox
 			}
 			if (array_key_exists("lbox", (array)$_SESSION)) {
 				if ($_SESSION["lbox"][self::SESSION_ARRAY_NAME][0]["logout"] == 1) {
-					return false;
+					return self::$isLogged[$loginGroup] = false;
 				}
 				else if ($_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["logout"] == 1) {
-					return false;
+					return self::$isLogged[$loginGroup] = false;
 				}
 				if ((bool)$_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["signon"]) {
-					return true;
+					return self::$isLogged[$loginGroup] = true;
 				}
 			}
 			// prihlaseni z cookie
@@ -164,10 +175,10 @@ class LBoxXT extends LBox
 				self::login($login[0], $login[1], true, $group);
 			}
 			if (array_key_exists("lbox", (array)$_SESSION)) {
-				return (bool)$_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["signon"];
+				return self::$isLogged[$loginGroup] = (bool)$_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["signon"];
 			}
 			else {
-				return false;
+				return self::$isLogged[$loginGroup] = false;
 			}
 		}
 		catch (Exception $e) {
@@ -182,6 +193,9 @@ class LBoxXT extends LBox
 	 */
 	public static function isLoggedAdmin($loginGroup = 0) {
 		try {
+			if (array_key_exists($loginGroup, self::$isLoggedAdmin)) {
+				return self::$isLoggedAdmin[$loginGroup];
+			}
 			if ($loginGroup < 1) {
 				if (strlen(LBoxFront::getPage()->xt) > 0) {
 					$loginGroup = LBoxFront::getPage()->xt;
@@ -191,15 +205,15 @@ class LBoxXT extends LBox
 				}
 			}
 			if (!self::isLogged($loginGroup)) {
-				return false;
+				return self::$isLoggedAdmin[$loginGroup] = false;
 				// throw new LBoxExceptionXT(LBoxExceptionXT::MSG_NOT_LOGGED, LBoxExceptionXT::CODE_NOT_LOGGED);
 			}
 			switch (trim(self::getUserXTRoleRecord($loginGroup)->name)) {
 				case self::XT_ROLE_NAME_SUPERADMIN:
 				case self::XT_ROLE_NAME_ADMIN:
-					return true;
+					return self::$isLoggedAdmin[$loginGroup] = true;
 				default:
-					return false;
+					return self::$isLoggedAdmin[$loginGroup] = false;
 			}
 		}
 		catch (Exception $e) {
@@ -214,6 +228,9 @@ class LBoxXT extends LBox
 	 */
 	public static function isLoggedSuperAdmin($loginGroup = 0) {
 		try {
+			if (array_key_exists($loginGroup, self::$isLoggedSuperAdmin)) {
+				return self::$isLoggedSuperAdmin[$loginGroup];
+			}
 			if ($loginGroup < 1) {
 				if (strlen(LBoxFront::getPage()->xt) > 0) {
 					$loginGroup = LBoxFront::getPage()->xt;
@@ -223,15 +240,43 @@ class LBoxXT extends LBox
 				}
 			}
 			if (!self::isLogged($loginGroup)) {
-				return false;
+				return self::$isLoggedSuperAdmin[$loginGroup] = false;
 				// throw new LBoxExceptionXT(LBoxExceptionXT::MSG_NOT_LOGGED, LBoxExceptionXT::CODE_NOT_LOGGED);
 			}
 			switch (self::getUserXTRoleRecord($loginGroup)->name) {
 				case self::XT_ROLE_NAME_SUPERADMIN:
-					return true;
+					return self::$isLoggedSuperAdmin[$loginGroup] = true;
 				default:
-					return false;
+					return self::$isLoggedSuperAdmin[$loginGroup] = false;
 			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * vraci, jestli uzivatel neni zalogovan na stejny login na jine session id
+	 * @return bool
+	 */
+	public static function isLoggedParalelly() {
+		try {
+			if (is_bool(self::$isLoggedParalelly)) {
+				return self::$isLoggedParalelly;
+			}
+			if (!self::isLogged()) {
+				return self::$isLoggedParalelly = false;
+			}
+
+			$timeout	= LBoxConfigSystem::getInstance()->getParamByPath("xt/paralel_login_timeout_hours") * 3600;
+			
+			$where		= new QueryBuilderWhere();
+			$where		->addConditionColumn("ref_xtuser", self::getUserXTRecord()->id);
+			$where		->addConditionColumn("session_id", AccesRecord::getInstance()->session_id, -3);
+			$where		->addConditionColumn("time", date("Y-m-d H:i:s", time()-$timeout), 1);
+			$records	= new AccesRecords(false, false, false, $where);
+
+			return self::$isLoggedParalelly	= $records->count() > 0;
 		}
 		catch (Exception $e) {
 			throw $e;

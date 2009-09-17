@@ -9,7 +9,7 @@
 class XTRolesRecord extends AbstractRecordLBox
 {
 	public static $itemsType 		= "XTRolesRecords";
-	public static $tableName    	= "xtRoles";
+	public static $tableName    	= "xtroles";
 	public static $idColName    	= "id";
 
 	public static $bounded1M = array("XTUsersRecords" => "ref_xtRole");

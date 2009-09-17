@@ -42,7 +42,7 @@ class AccesRecord extends AbstractRecordLBox
 		$this->params["referer"] 			= LBOX_REQUEST_REFERER;
 		$this->params["agent"] 				= LBOX_REQUEST_AGENT;
 		if (LBoxXT::isLogged()) {
-			$this->params["ref_xtUser"]		= LBoxXT::getUserXTRecord()->id;
+			$this->params["ref_xtuser"]		= LBoxXT::getUserXTRecord()->id;
 		}
 		
 	}
@@ -98,8 +98,8 @@ class AccesRecord extends AbstractRecordLBox
 			if ((!array_key_exists("request_time", $this->params)) || (!$this->params["request_time"])) {
 				$this->params["request_time"]	= LBOX_REQUEST_REQUEST_TIME;
 			}
-			if (array_key_exists("ref_xtUser", $this->params) && !is_numeric($this->params["ref_xtUser"])) {
-				$this->params["ref_xtUser"]	= "NULL";
+			if (array_key_exists("ref_xtuser", $this->params) && !is_numeric($this->params["ref_xtuser"])) {
+				$this->params["ref_xtuser"]	= "NULL";
 			}
 			$this->params["session_id"]	= session_id();
 			// pro jistotu na 2 pokusy

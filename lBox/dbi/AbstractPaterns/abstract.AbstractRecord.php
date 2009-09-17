@@ -705,7 +705,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 			// cannot load without idColName value
 			if (strlen((string)$this->params[$idColName]) < 1) {
 				$className	= get_class($this);
-				throw new LBoxException("Cannot load Record without primary column value! ($idColName)");
+				throw new LBoxException(get_class($this). ": Cannot load Record without primary column value! ($idColName)");
 			}
 
 			// do not pass query whithout WHERE
