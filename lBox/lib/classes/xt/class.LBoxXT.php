@@ -48,7 +48,9 @@ class LBoxXT extends LBox
 	protected static $isLoggedAdmin = array();
 	protected static $isLoggedSuperAdmin = array();
 	protected static $isLoggedParalelly;
-
+	protected static $isLoggedParalellyByID	= array();
+	protected static $isLoggedParalellyByLogin	= array();
+	
 	/**
 	 * Try to log user into system with given nick and password
 	 * @param string $nick
@@ -261,22 +263,75 @@ class LBoxXT extends LBox
 	 */
 	public static function isLoggedParalelly() {
 		try {
+			if (!self::isLogged()) {
+				return false;
+			}
 			if (is_bool(self::$isLoggedParalelly)) {
 				return self::$isLoggedParalelly;
 			}
-			if (!self::isLogged()) {
-				return self::$isLoggedParalelly = false;
+			return self::$isLoggedParalelly	= self::isLoggedParalellyByID(self::getUserXTRecord()->id);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * vraci, jestli je uzivatel zalogovan jinde pouze podle predanych login info
+	 * @param $nick
+	 * @param $password
+	 * @return bool
+	 */
+	public static function isLoggedParalellyByLogin($nick = "", $password = "") {
+		try {
+			if (strlen($nick) < 1) {
+				throw new LBoxExceptionXT("\$nick: ". LBoxExceptionXT::MSG_PARAM_STRING_NOTNULL, LBoxExceptionXT::CODE_BAD_PARAM);
+			}
+			if (strlen($password) < 1) {
+				throw new LBoxExceptionXT("\$password: ". LBoxExceptionXT::MSG_PARAM_STRING_NOTNULL, LBoxExceptionXT::CODE_BAD_PARAM);
+			}
+			$hash	= md5("$nick asda $password");
+			if (array_key_exists($hash, self::$isLoggedParalellyByLogin)) {
+				return self::$isLoggedParalellyByLogin[$hash];
+			}
+			$xtUsersRecords	= new XTUsersRecords(array("nick" => $nick, "password" => $password));
+			if ($xtUsersRecords->count() < 1) {
+				return self::$isLoggedParalellyByLogin = false;
+			}
+			return self::$isLoggedParalellyByLogin[$hash]	= self::isLoggedParalellyByID($xtUsersRecords->current()->id);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * vraci, jestli je uzivatel zalogovan jinde pouze podle predaneho XTUser id
+	 * @param int $id
+	 * @return bool
+	 */
+	protected static function isLoggedParalellyByID($id = 0) {
+		try {
+			if (!is_numeric($id) || $id < 1) {
+				throw new LBoxExceptionXT(LBoxExceptionXT::MSG_PARAM_INT_NOTNULL, LBoxExceptionXT::CODE_BAD_PARAM);
+			}
+			if (array_key_exists($id, self::$isLoggedParalellyByID)) {
+				return self::$isLoggedParalellyByID[$id];
 			}
 
 			$timeout	= LBoxConfigSystem::getInstance()->getParamByPath("xt/paralel_login_timeout_hours") * 3600;
 			
 			$where		= new QueryBuilderWhere();
-			$where		->addConditionColumn("ref_xtuser", self::getUserXTRecord()->id);
+			$where		->addConditionColumn("ref_xtuser", $id);
 			$where		->addConditionColumn("session_id", AccesRecord::getInstance()->session_id, -3);
 			$where		->addConditionColumn("time", date("Y-m-d H:i:s", time()-$timeout), 1);
-			$records	= new AccesRecords(false, false, false, $where);
+			$records	= new AccessXTUsersRecords(false, array("time" => 0), false, $where);
 
-			return self::$isLoggedParalelly	= $records->count() > 0;
+			if ($records->count() > 0 && false === strstr($records->current()->url, ":logout")) {
+				return self::$isLoggedParalellyByID[$id]	= true;
+			}
+			return self::$isLoggedParalellyByID[$id]	= false;
+			
 		}
 		catch (Exception $e) {
 			throw $e;

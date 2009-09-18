@@ -1,7 +1,7 @@
 <div id="login">
-	<tal:block tal:condition="not: isLogged" tal:content="structure form" />
-	<tal:block tal:condition="isLogged">
-		<p>Jste zaregistrován(a) jako <tal:block tal:content="userXTRecord/nick" /></p>
-		<a href="${logoutUrl}">logout</a>
+	<tal:block tal:condition="not: lbox:xt.isLogged" tal:content="structure SELF/getForm" />
+	<tal:block tal:condition="lbox:xt.isLogged">
+		<p>Jste zaregistrován(a) jako <tal:block tal:content="lbox:xt.getUserXTRecord/nick" /></p>
+		<a href="${SELF/getURLLogout}">logout</a>
 	</tal:block>
 </div>

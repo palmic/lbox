@@ -109,6 +109,7 @@
 	</multilang>
 	<xt>
 		<remember_cookie_days>30</remember_cookie_days><!-- kolik dni ma vydrzet cookie s persistenci XT loginu -->
+		<paralel_login_timeout_hours>1</paralel_login_timeout_hours><!-- kolik minut po poslednim XT hitu se bude tento vyhledavat jako paralelni login -->
 	</xt>
 	<paging>
 		<url_param_pattern><![CDATA[/pag-<paging_id>\=<paging_page>/]]></url_param_pattern>

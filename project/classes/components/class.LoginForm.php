@@ -4,7 +4,7 @@
 * @author Michal Palma <palmic@email.cz>
 * @package LBox
 * @version 1.0
-* @since 2008-09-23
+* @since 2009-09-18
 */
 class LoginForm extends LBoxComponent
 {
@@ -21,8 +21,31 @@ class LoginForm extends LBoxComponent
 
 	protected $validators = array();
 	
+	protected function executeStart() {
+		try {
+			parent::executeStart();
+			
+			$this->logout();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
 	protected function executePrepend(PHPTAL $TAL) {
 		// DbControl::$debug = true;
+		try {
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * getter na form
+	 * @return LBoxForm
+	 */
+	public function getForm() {
 		try {
 			if (count($this->processors) < 1) {
 				$this->processors[]	= new ProcessorLogin;
@@ -30,7 +53,7 @@ class LoginForm extends LBoxComponent
 			if (count($this->validators) < 1) {
 				$this->validators[]	= new LBoxFormValidatorLogin();
 			}
-			$controlNick		= new LBoxFormControlFill("nick", "nick", "", LBoxConfigManagerProperties::getPropertyContentByName("form_max_length_nick"));
+			$controlNick		= new LBoxFormControlFill("nick", "jméno", "", LBoxConfigManagerProperties::getPropertyContentByName("form_max_length_nick"));
 			$controlNick		->setTemplateFileName("lbox_form_control_nick.html");
 			$controlNick		->setRequired();
 			$controlPassword	= new LBoxFormControlPassword("password", "heslo", "", LBoxConfigManagerProperties::getPropertyContentByName("form_max_length_password"));
@@ -50,25 +73,10 @@ class LoginForm extends LBoxComponent
 			foreach ($this->processors as $processor) {
 				$form->addProcessor($processor);
 			}
-			$this->form	= $form;
-
-			$xtReloadLoggedParts	= strlen($this->page->xt_reload_logged_xt) > 0 ? explode(":", $this->page->xt_reload_logged_xt) : array();
-			$loginGroup				= count($xtReloadLoggedParts) > 0 ? $xtReloadLoggedParts[0] : 1;
-			$TAL->form				= $form;
-			$TAL->isLogged			= LBoxXTProject::isLogged($loginGroup);
-			if (LBoxXT::isLogged($loginGroup)) {
-				$TAL->userXTRecord		= LBoxXTProject::getUserXTRecord($loginGroup);
-			}
-			$TAL->logoutUrl			= $this->getURLLogout();
-			$this->logout($loginGroup);
+			return $this->form	= $form;			
 		}
 		catch (Exception $e) {
-			if ($e->getCode() == LBoxExceptionXT::CODE_USER_NOT_CONFIRMED) {
-				$TAL->userNotConfirmed	= true;
-			}
-			else {
-				throw $e;
-			}
+			throw $e;
 		}
 	}
 
@@ -107,7 +115,7 @@ class LoginForm extends LBoxComponent
 	 * @return string
 	 * @throws Exception
 	 */
-	protected function getURLLogout() {
+	public function getURLLogout() {
 		try {
 			$glue = (count($this->getUrlParamsArray()) > 0) ? "/" : ":";
 			return LBOX_REQUEST_URL_PATH . $glue . "logout";
