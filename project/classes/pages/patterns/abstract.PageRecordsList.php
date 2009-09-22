@@ -26,6 +26,12 @@ abstract class PageRecordsList extends PageDefault
 	protected $orderBy	= false;
 	
 	/**
+	 * limit AbstractRecord parameter
+	 * @var array
+	 */
+	protected $limit	= false;
+	
+	/**
 	 * 
 	 * @var string
 	 */
@@ -81,7 +87,7 @@ abstract class PageRecordsList extends PageDefault
 				throw new LBoxExceptionPage(LBoxExceptionPage::MSG_INSTANCE_VAR_STRING_NOTNULL, LBoxExceptionPage::CODE_BAD_INSTANCE_VAR);
 			}
 			$classNameRecords		= eval("return ". $this->classNameRecord ."::\$itemsType;");
-			$this->records			= new $classNameRecords(false, $this->orderBy/*, $limit = false*//*, QueryBuilderWhere $whereAdd*/);
+			$this->records			= new $classNameRecords(false, $this->orderBy, $this->limit/*, QueryBuilderWhere $whereAdd*/);
 			if (strlen($this->classNameRecordOutputFilter) > 0) {
 				$this->records->setOutputFilterItemsClass($this->classNameRecordOutputFilter);
 			}
