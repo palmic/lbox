@@ -1,8 +1,0 @@
-<div class="content-item" id="login">
-	<tal:block tal:condition="not: xt/isLogged">
-		<div tal:content="structure form" />
-	</tal:block>
-	<tal:block tal:condition="xt/isLogged">
-		<p>Jste zaregistrován(a) jako <tal:block tal:content="xt/getUserXTRecord/nick" /> <a class="logout" title="Odhlásit" href="${logoutUrl}">odhlásit</a></p>
-	</tal:block>
-</div>

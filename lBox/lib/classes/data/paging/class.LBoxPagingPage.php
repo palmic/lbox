@@ -140,7 +140,13 @@ class LBoxPagingPage implements OutputItem
 							$URLParamPattern	= str_replace("<paging_page>", "(\d+)", $URLParamPattern);
 							$URLParam	= str_replace("/", "", $URLParam);
 							$URLParam	= str_replace("\\", "", $URLParam);
-							$value		= LBoxUtil::getURLWithParams(array($URLParam), LBoxUtil::getURLWithoutParamsByPattern($URLParamPattern));
+							if ($this->getNumber() > 1) {
+								$value		= LBoxUtil::getURLWithParams(array($URLParam), LBoxUtil::getURLWithoutParamsByPattern($URLParamPattern));
+							}
+							else {
+								$value		= LBoxUtil::getURLWithoutParamsByPattern($URLParamPattern);
+							}
+							
 						break;
 					default:
 						$value	= NULL;

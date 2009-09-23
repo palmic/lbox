@@ -40,10 +40,10 @@ class OutputFilterPagingPages extends LBoxOutputFilter
 					break;
 				case preg_match("/pages_by_range_(\d+)/", $name, $matches):
 						$rangeStart	= $this->instance->getPaging()->getPageNumberCurrent() - $matches[1] < 1
-											? 1 : $this->instance->getPaging()->getPageNumberCurrent() - $matches[1];
+											? 1 : $this->instance->getPaging()->getPageNumberCurrent() - $matches[1]+1;
 						$rangeEnd	= $this->instance->getPaging()->getPageNumberCurrent() + $matches[1] > $this->instance->getPaging()->getPageMax()
 											? $this->instance->getPaging()->getPageMax()
-											: $this->instance->getPaging()->getPageNumberCurrent() + $matches[1];
+											: $this->instance->getPaging()->getPageNumberCurrent() + $matches[1]-1;
 						for ($i = $rangeStart; $i <= $rangeEnd; $i++) {
 							$value[$i]	= $this->instance->getPageByNumber($i);
 						}

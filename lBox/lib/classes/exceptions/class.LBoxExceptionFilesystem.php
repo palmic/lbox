@@ -24,6 +24,10 @@ class LBoxExceptionFilesystem extends LBoxException
 	const CODE_DIRECTORY_CANNOT_CREATE		= 6014;
 	const CODE_CANNOT_CHANGE_PERMISSIONS	= 6015;
 	const CODE_DIRECTORY_CONTAINS_SUBDIRS	= 6016;
+	const CODE_FILE_CANNOT_CLOSE			= 6017;
+	const CODE_FILE_CANNOT_TRUNCATE			= 6018;
+	const CODE_FILE_CANNOT_REWIND			= 6019;
+	const CODE_FILE_CANNOT_SEEK				= 6020;
 	
 	const MSG_DIRECTORY_NOT_EXISTS 			= "directory does not exists!";
 	const MSG_FILE_NOT_EXISTS 				= "file does not exists!";
@@ -36,10 +40,14 @@ class LBoxExceptionFilesystem extends LBoxException
 	const MSG_FILE_IS_DIR					= "This is not file, but directory!";
 	const MSG_DIR_IS_FILE					= "This is not dir, but file!";
 	const MSG_FILE_ALREADY_EXISTS			= "File already exists!";
-	const MSG_FILE_CANNOT_OPEN				= "Cannot open file!";
-	const MSG_FILE_CANNOT_WRITE				= "Cannot write into file!";
+	const MSG_FILE_CANNOT_OPEN				= "Cannot open the file!";
+	const MSG_FILE_CANNOT_WRITE				= "Cannot write into the file!";
 	const MSG_DIRECTORY_CANNOT_CREATE		= "Cannot create directory!";
 	const MSG_CANNOT_CHANGE_PERMISSIONS		= "Cannot change permissions of file or directory!";
 	const MSG_DIRECTORY_CONTAINS_SUBDIRS	= "Directory contains subdirectories";
+	const MSG_FILE_CANNOT_CLOSE				= "Cannot close the file!";
+	const MSG_FILE_CANNOT_TRUNCATE			= "Cannot truncate the file!";
+	const MSG_FILE_CANNOT_REWIND			= "Cannot rewind the file!";
+	const MSG_FILE_CANNOT_SEEK				= "Cannot seek the file!";
 }
 ?>

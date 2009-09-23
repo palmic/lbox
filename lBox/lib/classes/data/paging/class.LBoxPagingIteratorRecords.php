@@ -55,13 +55,7 @@ class LBoxPagingIteratorRecords extends LBoxPagingIterator
 
 			// vypocet limitu od
 			$limitFrom		= ($page-1) * $this->pageItems;
-			// vypocet limitu count
-			if (is_array($this->limit) && (($page+1) * $this->pageItems > end($this->limit))) {
-				$limitCount	= end($this->limit) % $this->pageItems;
-			}
-			else {
-				$limitCount	= $this->pageItems;
-			}
+			$limitCount		= $this->count();
 			$this->itemsPages[$page]	= new $classNameRecords($this->filter, $this->order, array($limitFrom, $limitCount), $this->whereAdd);
 			if (strlen($this->classNameOutputFilter) > 0) {
 				$this->itemsPages[$page]	->setOutputFilterItemsClass($this->classNameOutputFilter);
@@ -87,6 +81,25 @@ class LBoxPagingIteratorRecords extends LBoxPagingIterator
 		}
 	}
 
+	/**
+	 * vraci realny pocet items na strance (polymorfne vuci AbstractRecords::count())
+	 * @return int
+	 */
+	public function count() {
+		try {
+			// vypocet limitu count
+			if (is_array($this->limit) && (($page+1) * $this->pageItems > end($this->limit))) {
+				return end($this->limit) % $this->pageItems;
+			}
+			else {
+				return $this->pageItems;
+			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
 	public function current() {
 		try {
 			return $this->getItemsPageCurrent() ? $this->getItemsPageCurrent()->current() : NULL;

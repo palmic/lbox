@@ -390,10 +390,17 @@ class LBoxUtil
 			$urlParts			= explode(":", preg_replace("/(http)(s?):\/\//", "", $url));
 			$paramsOriginalString	= count($urlParts) > 1 ? end($urlParts) : "";
 			$paramsOriginal			= explode("/", $paramsOriginalString);
-			$urlWithoutParams		= str_replace(":$paramsOriginalString", "", $url);
-			
+			if (strlen($paramsOriginalString) > 0) {
+				$urlWithoutParams		= str_replace(":$paramsOriginalString", "", $url);
+			}
+			else {
+				$urlWithoutParams	= $url;
+			}
 			if (count($paramsOriginal) > 0) {
 				foreach ($paramsOriginal as $k => $paramOriginal) {
+					if (strlen($paramOriginal) < 1) {
+						continue;
+					}
 					if (is_numeric(array_search($paramOriginal, $params))) {
 						continue;
 					}
@@ -431,7 +438,12 @@ class LBoxUtil
 			$urlParts			= explode(":", preg_replace("/(http)(s?):\/\//", "", $url));
 			$paramsOriginalString	= count($urlParts) > 1 ? end($urlParts) : "";
 			$paramsOriginal			= explode("/", $paramsOriginalString);
-			$urlWithoutParams		= str_replace(":$paramsOriginalString", "", $url);
+			if (strlen($paramsOriginalString) > 0) {
+				$urlWithoutParams		= str_replace(":$paramsOriginalString", "", $url);
+			}
+			else {
+				$urlWithoutParams	= $url;
+			}
 			if (strlen($pattern) < 1) {
 				throw new LBoxException(LBoxException::MSG_PARAM_STRING_NOTNULL, LBoxException::CODE_BAD_PARAM);
 			}
@@ -442,7 +454,7 @@ class LBoxUtil
 				if (!is_numeric($matchCount = @preg_match($pattern, $paramOriginal, $matches))) {
 					throw new LBoxException("Wrong PCRE patter given, or some another error!");
 				}
-				if ($matchCount < 1) {
+				if (strlen($paramOriginal) > 0 && $matchCount < 1) {
 					$paramsNew[]	= $paramOriginal;
 				}
 			}

@@ -20,6 +20,18 @@ abstract class PageRecordsList extends PageDefault
 	protected $classNameRecordOutputFilter	= "";
 	
 	/**
+	 * filter AbstractRecord parameter
+	 * array
+	 */
+	protected $filter						= false;
+
+	/**
+	 * whereAdd AbstractRecord parameter
+	 * QueryBuilderWhere
+	 */
+	protected $where						= NULL;
+	
+	/**
 	 * orderBy AbstractRecord parameter
 	 * @var array
 	 */
@@ -30,6 +42,12 @@ abstract class PageRecordsList extends PageDefault
 	 * @var array
 	 */
 	protected $limit	= false;
+	
+	/**
+	 * if > 0, records bude paging
+	 * @var int
+	 */
+	protected $pageItems = 0;
 	
 	/**
 	 * 
@@ -87,10 +105,16 @@ abstract class PageRecordsList extends PageDefault
 				throw new LBoxExceptionPage(LBoxExceptionPage::MSG_INSTANCE_VAR_STRING_NOTNULL, LBoxExceptionPage::CODE_BAD_INSTANCE_VAR);
 			}
 			$classNameRecords		= eval("return ". $this->classNameRecord ."::\$itemsType;");
-			$this->records			= new $classNameRecords(false, $this->orderBy, $this->limit/*, QueryBuilderWhere $whereAdd*/);
-			if (strlen($this->classNameRecordOutputFilter) > 0) {
-				$this->records->setOutputFilterItemsClass($this->classNameRecordOutputFilter);
+			if (is_numeric($this->pageItems) && $this->pageItems > 0) {
+				$this->records = new LBoxPagingIteratorRecords($classNameRecords, $this->pageItems, $this->classNameRecordOutputFilter, $this->filter, $this->orderBy, $this->limit, $this->where);
 			}
+			else {
+				$this->records			= new $classNameRecords($this->filter, $this->orderBy, $this->limit, $this->where);
+				if (strlen($this->classNameRecordOutputFilter) > 0) {
+					$this->records->setOutputFilterItemsClass($this->classNameRecordOutputFilter);
+				}
+			}
+			
 /*DbControl::$debug	= true;
 $this->records->count();
 DbControl::$debug	= false;*/
