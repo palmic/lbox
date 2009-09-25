@@ -61,7 +61,7 @@ class LBoxIteratorPagingPages extends LBoxIterator implements OutputItem
 			if ((!is_numeric($number)) || $number < 1) {
 				throw new LBoxExceptionPaging(LBoxExceptionPaging::MSG_PARAM_INT_NOTNULL, LBoxExceptionPaging::CODE_BAD_PARAM);
 			}
-			if ($number > $this->paging->getPageMax()) {
+			if ($number > 1 && $number > $this->paging->getPageMax()) {
 				throw new LBoxExceptionPaging(LBoxExceptionPaging::MSG_PAGE_OUT_OF_RANGE, LBoxExceptionPaging::CODE_PAGE_OUT_OF_RANGE);
 			}
 			$index	= $number-1;
@@ -115,6 +115,18 @@ class LBoxIteratorPagingPages extends LBoxIterator implements OutputItem
 		}
 	}
 	
+	/**
+	 * vraci pocet stranek
+	 * @return int
+	 */
+	public function count() {
+		try {
+			return $this->paging->getPageMax();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
 	
 	############################################################################################################################################
 	#

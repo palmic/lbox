@@ -92,7 +92,7 @@ class LBoxPagingIteratorRecords extends LBoxPagingIterator
 				return end($this->limit) % $this->pageItems;
 			}
 			else {
-				return $this->pageItems;
+				return $this->pageItems > $this->getItemsCount() ? $this->getItemsCount() : $this->pageItems;
 			}
 		}
 		catch (Exception $e) {
