@@ -276,22 +276,34 @@ class DbControl implements DbControlInterface
 
 	protected function debug($sql) {
 		if (!self::$debug) return;
-		switch (true) {
-			case is_numeric(strpos($sql, "UPDATE")):
-			case is_numeric(strpos($sql, "DELETE")):
-					$bg	= "#962C2C";
-				break;
-			case is_numeric(strpos($sql, "INSERT")):
-					$bg	= "#6BC764";
-				break;
-			default:
-					$bg	= "#5D5D5D";
+		if (strtolower(self::$debug) == "firephp") {
+			switch (true) {
+				case is_numeric(strpos($sql, "UPDATE")):
+				case is_numeric(strpos($sql, "DELETE")):
+						LBoxFirePHP::warn(round(LBoxTimer::getInstance()->getTimeOfLife(), 5) ." - ". str_replace("\n", "", self::$queryCount .": ". $sql));
+					break;
+				default:
+						LBoxFirePHP::log(round(LBoxTimer::getInstance()->getTimeOfLife(), 5) ." - ". str_replace("\n", "", self::$queryCount .": ". $sql));
+			}
 		}
-		$color	= "#ffffff";
-		$msg 	= "<table><th bgcolor='$bg' align='left'><font color='#C0C0C0'>". round(LBoxTimer::getInstance()->getTimeOfLife(), 5) ."</font></th><th bgcolor='$bg' align='left'><b><font color='$color'>". nl2br(self::$queryCount .": ". $sql) ."</font></b></th></table>\n";
-		echo $msg;
-		flush();
-	}
+		else {
+			switch (true) {
+				case is_numeric(strpos($sql, "UPDATE")):
+				case is_numeric(strpos($sql, "DELETE")):
+						$bg	= "#962C2C";
+					break;
+				case is_numeric(strpos($sql, "INSERT")):
+						$bg	= "#6BC764";
+					break;
+				default:
+						$bg	= "#5D5D5D";
+			}
+			$color	= "#ffffff";
+			$msg 	= "<table><th bgcolor='$bg' align='left'><font color='#C0C0C0'>". round(LBoxTimer::getInstance()->getTimeOfLife(), 5) ."</font></th><th bgcolor='$bg' align='left'><b><font color='$color'>". nl2br(self::$queryCount .": ". $sql) ."</font></b></th></table>\n";
+			echo $msg;
+			flush();
+			}
+		}
 }
 
 ?>
