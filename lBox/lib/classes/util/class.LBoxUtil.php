@@ -457,6 +457,9 @@ class LBoxUtil
 				if (strlen($paramOriginal) > 0 && $matchCount < 1) {
 					$paramsNew[]	= $paramOriginal;
 				}
+				if (strlen($paramOriginal) < 1) {
+					continue;
+				}
 			}
 			if (count($paramsNew) > 0) {
 				$paramsNewString	= ":". implode("/", $paramsNew);
@@ -493,6 +496,9 @@ class LBoxUtil
 			}
 			foreach ($paramsOriginal as $k => $paramOriginal) {
 				if (is_numeric(array_search($paramOriginal, $params))) {
+					continue;
+				}
+				if (strlen($paramOriginal) < 1) {
 					continue;
 				}
 				$paramsNew[]	= $paramOriginal;

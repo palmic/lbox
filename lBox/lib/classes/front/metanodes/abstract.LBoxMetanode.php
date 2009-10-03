@@ -285,7 +285,16 @@ LBoxFirePHP::table($this->styles, basename(__FILE__) ."::". __LINE__.': ' . 'met
 			if (is_bool($this->isActive)) {
 				return $this->isActive;
 			}
-			return $this->isActive = LBoxXTProject::isLoggedAdmin();
+			/* prihlaseni uzivatele kontrolujeme dvema zpusoby
+			 * 1) zkontrolujeme LBoxXTDBFree, coz bylo zrizeno specialne pro metanodes
+			 * 2) potom se mrkneme jeste na LBoxXTProject::isLoggedAdmin() - priorita #2
+			*/
+			if (LBoxXTDBFree::isLogged()) {
+				return $this->isActive = true;
+			}
+			else {
+				return $this->isActive = LBoxXTProject::isLoggedAdmin();
+			}
 		}
 		catch (Exception $e) {
 			throw $e;

@@ -15,6 +15,12 @@ class LBoxXTDBFree extends LBox
 	 */
 	protected static $isLogged = array();
 	
+	/**
+	 * cache na zaznamy loginu uzivatelu podle logingroups
+	 * @var array
+	 */
+	protected static $xtUserRecords = array();
+
 	public static function login($nick = "", $password = "", $remember = false, $loginGroup = 1) {
 		try {
 			if ($loginGroup < 1) {
@@ -34,7 +40,13 @@ class LBoxXTDBFree extends LBox
 			if (!is_int($loginGroup) || $loginGroup < 1) {
 				throw new LBoxExceptionXT("\$loginGroup: ". LBoxExceptionXT::MSG_PARAM_INT_NOTNULL, LBoxExceptionXT::CODE_BAD_PARAM);
 			}
-			if (LBoxConfigManagerAuthDBFree::getInstance()->getNameByPassword($password) != $nick) {
+			$flagNameFound	= false;
+			foreach (LBoxConfigManagerAuthDBFree::getInstance()->getLoginsByPassword($password) as $login) {
+				if ($login->name == $nick) {
+					$flagNameFound	= true;
+				}
+			}
+			if (!$flagNameFound) {
 				throw new LBoxExceptionXT(LBoxExceptionXT::MSG_LOGIN_INVALID, LBoxExceptionXT::CODE_LOGIN_INVALID);
 			}
 			// zjistime si jestli nejde o re-login a pokud ano, nastavime cookie-remember ano/ne podle predchoziho loginu
@@ -43,7 +55,8 @@ class LBoxXTDBFree extends LBox
 			self::logout();
 			unset($_SESSION["lbox"][self::SESSION_ARRAY_NAME][0]["logout"]);
 			unset($_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["logout"]);
-			$_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["signon"]	= true;
+			$_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["signon"]		= true;
+			$_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["usernick"]	= $nick;
 			
 			// remember pres cookie
 			if ($remember) {
@@ -136,6 +149,35 @@ class LBoxXTDBFree extends LBox
 		}
 	}
 
+	/**
+	 * kvuli kompatibilite s LBoxXT::getUserXTRecord() se jmenuje stejne, ale vraci LBoxConfigItemAuthDBFree
+	 * @param int $loginGroup
+	 * @return LBoxConfigItemAuthDBFree
+	 * @throws LBoxExceptionXT
+	 */
+	public static function getUserXTRecord($loginGroup = 0) {
+		try {			
+			if ($loginGroup < 1) {
+				if (strlen(LBoxFront::getPage()->xt) > 0) {
+					$loginGroup = LBoxFront::getPage()->xt;
+				}
+				else {
+					$loginGroup = 1;
+				}
+			}
+			if (!self::isLogged($loginGroup)) {
+				throw new LBoxExceptionXT(LBoxExceptionXT::MSG_NOT_LOGGED, LBoxExceptionXT::CODE_NOT_LOGGED);
+			}
+			if (self::$xtUserRecords[$loginGroup] instanceof LBoxConfigItemAuthDBFree) {
+				return self::$xtUserRecords[$loginGroup];
+			}
+			return self::$xtUserRecords[$loginGroup] = LBoxConfigManagerAuthDBFree::getInstance()->getLoginByName($_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["usernick"]);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
 	/**
 	 * Vraci pocet dni, po ktere ma byt remember cookie aktivni
 	 * @return int

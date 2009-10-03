@@ -73,6 +73,12 @@ class LBoxFront extends LBox
 	protected static $urlParamNameLogout	= "logout";
 	
 	/**
+	 * logout URL param name
+	 * @var string
+	 */
+	protected static $urlParamNameLogoutDBFree	= "logout-dbfree";
+	
+	/**
 	 * spousti zobrazeni pozadovane stranky
 	 * @throws LBoxException
 	 */
@@ -113,7 +119,11 @@ class LBoxFront extends LBox
 				$loginGroup				= strlen(self::getPageCfg()->xt) > 0 ? self::getPageCfg()->xt : 0;
 				self::logout($loginGroup);
 			}
-
+			if (self::isToLogoutDBFree()) {
+				$loginGroup				= strlen(self::getPageCfg()->xt) > 0 ? self::getPageCfg()->xt : 0;
+				self::logoutDBFree($loginGroup);
+			}
+			
 			// xt
 			if ($pageCfg->xt) {
 				if (!LBoxXTProject::isLogged($pageCfg->xt)) {
@@ -581,7 +591,21 @@ class LBoxFront extends LBox
 	public static function logout($loginGroup = 1) {
 		try {
 			LBoxXTProject::logout($loginGroup);
-			self::reload(self::getPage()->url);
+			self::reload(LBoxUtil::getURLWithoutParams(array(self::getURLParamNameLogout())));
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	* logout client user from DB-free login
+	* @param int $loginGroup login group to logout
+	*/
+	public static function logoutDBFree($loginGroup = 1) {
+		try {
+			LBoxXTDBFree::logout($loginGroup);
+			self::reload(LBoxUtil::getURLWithoutParams(array(self::getURLParamNameLogoutDBFree())));
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -594,7 +618,7 @@ class LBoxFront extends LBox
 	public static function isToLogout() {
 		try {
 			foreach (self::getUrlParamsArray() as $param) {
-				if ($param == self::$urlParamNameLogout) {
+				if ($param == self::getURLParamNameLogout()) {
 					return true;
 				}
 			}
@@ -603,6 +627,39 @@ class LBoxFront extends LBox
 		catch (Exception $e) {
 			throw $e;
 		}
+	}
+
+	/**
+	* @return bool
+	*/
+	public static function isToLogoutDBFree() {
+		try {
+			foreach (self::getUrlParamsArray() as $param) {
+				if ($param == self::getURLParamNameLogoutDBFree()) {
+					return true;
+				}
+			}
+			return false;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * getter na public URL param pro logout
+	 * @return string
+	 */
+	public static function getURLParamNameLogout() {
+		return self::$urlParamNameLogout;
+	}
+
+	/**
+	 * getter na public URL param pro logout db free
+	 * @return string
+	 */
+	public static function getURLParamNameLogoutDBFree() {
+		return self::$urlParamNameLogoutDBFree;
 	}
 
 	/**

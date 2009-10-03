@@ -52,10 +52,10 @@
 		</templates>
 		<data>
 			<content>
-				<path>$project/data/metanodes/contents/$caller_type/$caller_id/$lng_$seq.$ext</path>
+				<path>$project/.data/metanodes/contents/$caller_type/$caller_id/$lng_$seq.$ext</path>
 			</content>
 			<styles>
-				<path>$project/data/metanodes/styles/$caller_type/$caller_id/$lng_$seq.txt</path>
+				<path>$project/.data/metanodes/styles/$caller_type/$caller_id/$lng_$seq.txt</path>
 			</styles>
 		</data>
 		<api>

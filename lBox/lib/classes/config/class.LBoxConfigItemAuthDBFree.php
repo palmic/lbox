@@ -18,5 +18,15 @@ class LBoxConfigItemAuthDBFree extends LBoxConfigItem
 
 	protected $nodeName 			= "login";
 	protected $classNameIterator	= "LBoxIteratorAuthDBFree";
+
+	public function __construct() {
+		try {
+			// nastavim defaultni outputfilter
+			$this->setOutputFilter(new OutputFilterAuthDBFree($this));
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
 }
 ?>

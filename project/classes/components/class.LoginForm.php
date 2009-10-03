@@ -24,8 +24,6 @@ class LoginForm extends LBoxComponent
 	protected function executeStart() {
 		try {
 			parent::executeStart();
-			
-			$this->logout();
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -65,7 +63,6 @@ class LoginForm extends LBoxComponent
 				foreach ($this->validators as $validator) {
 					$controlsLogin->addValidator($validator);
 				}
-				$controlsLogin->addValidator(new LBoxFormValidatorLogin());
 			$form					= new LBoxForm("login", "post", "Přihlášení uživatele", "přihlásit");
 			$form->setTemplateFileName("lbox_form_login.html");
 			$form->addControl($controlsLogin);
@@ -81,44 +78,13 @@ class LoginForm extends LBoxComponent
 	}
 
 	/**
-	 * odloguje zalogovaneho uzivatele
-	 * @param int $loginGroup
-	 * @throws Exception
-	 */
-	protected function logout($loginGroup = 1) {
-		try {
-			$signedOff	= false;
-			foreach ($this->getUrlParamsArray() as $param) {
-				if ($this->isUrlParamPaging($param)) continue;
-				if ($param == "logout") {
-					if (LBoxXT::isLogged($loginGroup)) {
-						LBoxXT::getInstance()->logout($loginGroup);
-						$signedOff	= true;
-					}
-				}
-				else {
-					$paramsNew[] = $param;
-				}
-			}
-			$glue	= count($paramsNew) > 0 ? ":" : "";
-			if ($signedOff) {
-				$this->reload(LBOX_REQUEST_URL_VIRTUAL .$glue. implode("/", (array)$paramsNew));
-			}
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-
-	/**
 	 * Vrati kompletni logout URL
 	 * @return string
 	 * @throws Exception
 	 */
 	public function getURLLogout() {
 		try {
-			$glue = (count($this->getUrlParamsArray()) > 0) ? "/" : ":";
-			return LBOX_REQUEST_URL_PATH . $glue . "logout";
+			return LBoxUtil::getURLWithParams(array(LBoxFront::getURLParamNameLogout()), LBoxUtil::getURLWithoutParams(array(Front::getURLParamNameLogout())));
 		}
 		catch (Exception $e) {
 			throw $e;

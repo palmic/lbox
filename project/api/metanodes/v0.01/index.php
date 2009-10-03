@@ -4,7 +4,7 @@ require("../../../../lBox/lib/loader.php");
 session_start();
 
 // check xt session
-if (!LBoxXTProject::isLoggedAdmin(XT_GROUP)) {
+if ((!LBoxXTDBFree::isLogged(XT_GROUP)) && (!LBoxXTProject::isLoggedAdmin(XT_GROUP))) {
 	header("HTTP/1.1 404 Not Found");die;
 }
 

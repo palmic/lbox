@@ -45,8 +45,15 @@ class JSPreloadWebAdmin extends JSPreload
 			$forbiddenXTRoles = explode(",", LBoxConfigManagerProperties::getPropertyContentByName("metanodes_forbidden_xtroles"));
 			array_walk($forbiddenXTRoles, "trim");
 			foreach ($forbiddenXTRoles as $forbiddenXTRole) {
-				if (trim($forbiddenXTRole) == LBoxXTProject::getUserXTRoleRecord()->id) {
-					return false;
+				if (LBoxXTDBFree::isLogged()) {
+					if (trim($forbiddenXTRole) == LBoxXTDBFree::getUserXTRecord()->ref_xtrole) {
+						return false;
+					}
+				}
+				else {
+					if (trim($forbiddenXTRole) == LBoxXTProject::getUserXTRoleRecord()->id) {
+						return false;
+					}
 				}
 			}
 			return true;

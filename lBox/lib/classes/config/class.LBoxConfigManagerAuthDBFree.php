@@ -13,8 +13,14 @@ class LBoxConfigManagerAuthDBFree extends LBoxConfigManager
 	 */
 	protected static $instance;
 	
-	protected $classNameConfig 		= "LBoxConfigAuthDBFree";
+	protected $classNameConfig 				= "LBoxConfigAuthDBFree";
 
+	/**
+	 * cache var
+	 * @var array
+	 */
+	protected static $loginsByPasswords		= array();
+	
 	/**
 	 * @return LBoxConfigManagerAuthDBFree
 	 * @throws Exception
@@ -33,18 +39,23 @@ class LBoxConfigManagerAuthDBFree extends LBoxConfigManager
 	}
 	
 	/**
-	 * getter na login podle hesla, pokud takovy existuje (heslo sam prevadi do md5)
+	 * getter na loginy podle hesla, pokud takovy existuje (heslo sam prevadi do md5)
 	 * @param string $password
-	 * @return LBoxConfigItemAuthDBFree
+	 * @return array
 	 * @throws LBoxException
 	 */
-	public function getLoginByPassword($password = "") {
+	public function getLoginsByPassword($password = "") {
 		try {
+			$password	= md5($password);
+			if (array_key_exists($password, self::$loginsByPasswords) && count(self::$loginsByPasswords[$password]) > 0) {
+				return self::$loginsByPasswords[$password];
+			}
 			foreach ($this->getConfigInstance()->getRootIterator() as $node) {
-				if ($node->password == md5($password)) {
-					return $node;
+				if ($node->password == $password) {
+					$loginsByPasswords[$password][] = $node;
 				}
 			}
+			return $loginsByPasswords[$password];
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -52,19 +63,14 @@ class LBoxConfigManagerAuthDBFree extends LBoxConfigManager
 	}
 
 	/**
-	 * getter na name loginu podle hesla
-	 * @param string $password
-	 * @return string
+	 * getter na jmena loginu podle jmena
+	 * @param string $name
+	 * @return LBoxConfigItemAuthDBFree
 	 * @throws LBoxException
 	 */
-	public function getNameByPassword($password = "") {
+	public function getLoginByName($name = "") {
 		try {
-			if ($node = $this->getLoginByPassword($password)) {
-				return $node->name;
-			}
-			else {
-				return NULL;
-			}
+			return $this->getConfigInstance()->getInstance()->getNodeById($name);
 		}
 		catch (Exception $e) {
 			throw $e;

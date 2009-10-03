@@ -13,8 +13,18 @@ class XTTray extends LBoxComponent
 	 * nazev URL param pro logout
 	 * @var string
 	 */
-	protected $urlParamNameLogout	= "logout";
+	protected $urlParamNameLogout	= "";
 	
+	protected function executeStart() {
+		try {
+			parent::executeStart();
+			$this->urlParamNameLogout	= LBoxFront::getURLParamNameLogout();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
 	protected function executePrepend(PHPTAL $TAL) {
 		try {
 			// odlogovat uzivatele, jestli ma byti

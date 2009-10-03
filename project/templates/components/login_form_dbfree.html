@@ -1,0 +1,7 @@
+<div id="login">
+	<tal:block tal:condition="not: lbox:xt_dbfree.isLogged" tal:content="structure SELF/getForm" />
+	<tal:block tal:condition="lbox:xt_dbfree.isLogged">
+		<p>Jste zaregistrován(a) jako <tal:block tal:content="lbox:xt_dbfree.getUserXTRecord/nick" /></p>
+		<a href="${SELF/getURLLogout}">logout</a>
+	</tal:block>
+</div>

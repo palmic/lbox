@@ -22,7 +22,12 @@ abstract class JSPreload extends LBoxComponent
 	 */
 	public function isToShow() {
 		try {
-			return LBoxXTProject::isLoggedAdmin();
+			if (LBoxXTDBFree::isLogged()) {
+				return true;
+			}
+			else {
+				return LBoxXTProject::isLoggedAdmin();
+			}
 		}
 		catch (Exception $e) {
 			throw $e;

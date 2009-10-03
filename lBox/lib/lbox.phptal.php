@@ -65,6 +65,19 @@ function phptal_tales_lbox($src, $nothrow = false) {
 					return 'LBoxXTProject::'. $frontCalling .'()';
 				}
 				break;
+			case "xt_dbfree":
+				if (strlen($frontCalling = $srcArr[1]) < 1) {
+					if (!$nothrow) {
+						throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_FRONT_CALL_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+					}
+				}
+				if (count($frontCallingXTParts = explode("/", $frontCalling)) == 2) {
+					return 'LBoxXTDBFree::'. reset($frontCallingXTParts) .'()->'. end($frontCallingXTParts);
+				}
+				else {
+					return 'LBoxXTDBFree::'. $frontCalling .'()';
+				}
+				break;
 			case "i18n":
 				if (strlen($srcArr[1]) < 1) {
 					if (!$nothrow) {
