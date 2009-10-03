@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Structure config manager
 * @author Michal Palma <palmic at email dot cz>

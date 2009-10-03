@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * config manager protocol
 * @author Michal Palma <palmic at email dot cz>

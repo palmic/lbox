@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * @author Michal Palma <palmic@email.cz>
 * @package LBox softub.cz

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Default component class for layouts
 * @author Michal Palma <palmic@email.cz>

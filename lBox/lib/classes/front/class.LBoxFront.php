@@ -237,6 +237,24 @@ class LBoxFront extends LBox
 	}
 
 	/**
+	 * LBoxFront::setCookie PHP function alias
+	 * @param string $name
+	 * @param string $value
+	 * @param int $expire
+	 * @param string $path
+	 * @param string $domain
+	 * @param bool $secure
+	 * @param bool $httponly
+	 * @return bool
+	 */
+	public static function setCookie($name = "", $value = NULL, $expire = NULL, $path = NULL, $domain = NULL, $secure = false, $httponly = false) {
+		if (strlen($name) < 1) {
+			throw new LBoxExceptionFront(LBoxExceptionFront::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFront::CODE_BAD_PARAM);
+		}
+		return setcookie($name, $value, $expire, $path, $domain, $secure, $httponly);
+	}
+
+	/**
 	 * reloaduje na predane, nebo aktualni (bez url params) URL
 	 * @param string $url
 	 */

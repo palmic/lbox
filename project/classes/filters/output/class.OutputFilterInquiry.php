@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * @author Michal Palma <palmic@email.cz>
 * @package LBox
@@ -70,7 +70,7 @@ class OutputFilterInquiry extends LBoxOutputFilter
 			// session
 			if (array_key_exists($cookieName, $_SESSION)) {
 				if (strlen((string)$_SESSION[$cookieName]) > 0) {
-					@setcookie($cookieName, (string)time(), time() + LBoxFormValidatorSubmitedYetCookie::$cookiePersistenceDays * 24*60*60, "/");
+					@LBoxFront::setCookie($cookieName, (string)time(), time() + LBoxFormValidatorSubmitedYetCookie::$cookiePersistenceDays * 24*60*60, "/");
 					return true;
 				}
 			}

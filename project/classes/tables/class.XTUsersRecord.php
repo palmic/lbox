@@ -8,7 +8,7 @@
 class XTUsersRecord extends AbstractRecordLBox
 {
 	public static $itemsType 		= "XTUsersRecords";
-	public static $tableName    	= "xtUsers";
+	public static $tableName    	= "xtusers";
 	public static $idColName    	= "id";
 	public static $passwordColNames	= array("password");
 

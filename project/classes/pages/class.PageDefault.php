@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Default page class used in case of no defined page class
  * @author Michal Palma <palmic@email.cz>

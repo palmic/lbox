@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Default component class used in case of no defined component class
 * @author Michal Palma <palmic@email.cz>

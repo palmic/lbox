@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * trida obsahujici funkcnost seznamu vcetne strankovani - pro pouziti v komponentach/strankach zobrazujjicich strankovaci seznamy
 * @author Michal Palma <palmic@email.cz>

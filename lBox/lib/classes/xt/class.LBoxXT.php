@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * @author Michal Palma <palmic at email dot cz>
 * @package LBox
@@ -100,7 +100,7 @@ class LBoxXT extends LBox
 			// remember pres cookie
 			if ($remember) {
 				$rememberDays	= self::getCookiePersistenceDays();
-				@setcookie(self::COOKIE_NAME_LOGIN ."-". $loginGroup, "$nick:$password", time() + $rememberDays * 24*60*60, "/");
+				@LBoxFront::setCookie(self::COOKIE_NAME_LOGIN ."-". $loginGroup, "$nick:$password", time() + $rememberDays * 24*60*60, "/");
 			}
 		}
 		catch (Exception $e) {
@@ -123,7 +123,7 @@ class LBoxXT extends LBox
 					$loginGroup = 1;
 				}
 			}
-			setcookie(self::COOKIE_NAME_LOGIN ."-". $loginGroup, false, time()-3600, "/");
+			LBoxFront::setCookie(self::COOKIE_NAME_LOGIN ."-". $loginGroup, false, time()-3600, "/");
 			unset($_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]);
 			if ($loginGroup < 1) {
 				unset($_SESSION["lbox"][self::SESSION_ARRAY_NAME]);

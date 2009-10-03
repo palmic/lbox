@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * submenu class
 * @author Michal Palma <palmic@email.cz>

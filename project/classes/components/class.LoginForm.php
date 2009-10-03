@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * login formular
 * @author Michal Palma <palmic@email.cz>

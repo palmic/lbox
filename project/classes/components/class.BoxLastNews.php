@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * breadcrumb navigation class
 * @author Michal Palma <palmic@email.cz>

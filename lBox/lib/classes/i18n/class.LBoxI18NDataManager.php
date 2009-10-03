@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * upraveno pro cteni datovych XML Airtoy
 * @author Michal Palma <palmic at email dot cz>

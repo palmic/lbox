@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * komponenta kompletne resici diskuzi
 * @author Michal Palma <palmic@email.cz>

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * @author Michal Palma <palmic at email dot cz>
 * @package LBox

@@ -16,7 +16,7 @@ abstract class LBoxConfig extends LBox
 
 	/**
 	 * typ vyuzivaneho iteratoru - definovat v podtride!
-	 * @var string 
+	 * @var string
 	 */
 	protected $classNameIterator;
 	

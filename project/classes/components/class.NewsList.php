@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * komponenta zobrazujici seznam novinek
 * @author Michal Palma <palmic@email.cz>

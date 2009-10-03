@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * formular contact us
  * @author Michal Palma <palmic@email.cz>

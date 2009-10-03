@@ -31,7 +31,7 @@ class LBoxFormValidatorSubmitedYetCookie extends LBoxFormValidator
 			// session
 			if (array_key_exists($cookieName, $_SESSION)) {
 				if (strlen((string)$_SESSION[$cookieName]) > 0) {
-					@setcookie($cookieName, (string)time(), time() + self::$cookiePersistenceDays * 24*60*60, "/");
+					@LBoxFront::setCookie($cookieName, (string)time(), time() + self::$cookiePersistenceDays * 24*60*60, "/");
 					throw new LBoxExceptionFormValidator(	LBoxExceptionFormValidator::MSG_FORM_VALIDATION_FORM_SUBMITED_YET_CLIENT,
 															LBoxExceptionFormValidator::CODE_FORM_VALIDATION_FORM_SUBMITED_YET_CLIENT);
 				}
@@ -56,7 +56,7 @@ class LBoxFormValidatorSubmitedYetCookie extends LBoxFormValidator
 			$cookieName	= str_replace("<formName>", $this->control->getForm()->getName(), $cookieName);
 			
 			// ulozit zaznam do session a cookie
-			@setcookie($cookieName, (string)time(), time() + self::$cookiePersistenceDays * 24*60*60, "/");
+			@LBoxFront::setCookie($cookieName, (string)time(), time() + self::$cookiePersistenceDays * 24*60*60, "/");
 			$_SESSION[$cookieName]	= (string)time();
 		}
 		catch (Exception $e) {
