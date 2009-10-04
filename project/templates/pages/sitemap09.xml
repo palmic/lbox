@@ -6,14 +6,14 @@
 	http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
    	<tal:block tal:repeat="node iterator">
 	<url tal:condition="node/in_menu"><loc>${host}${node/url}</loc></url>
-	<x tal:condition="node/hasChildrenInMenu" metal:USE-MACRO="pages_list"/>
+	<x tal:condition="node/hasChildrenInMenu" metal:use-macro="pages_list"/>
 	</tal:block>  
 </urlset>
 <tal:block
-	metal:DEFINE-MACRO="pages_list"
-   	tal:DEFINE="iterator node/getChildren">
+	metal:define-macro="pages_list"
+   	tal:define="iterator node/getChildren">
    	<tal:block tal:repeat="node iterator">
 	<url tal:condition="node/in_menu"><loc>${host}${node/url}</loc></url>
-	<x tal:condition="node/hasChildrenInMenu" metal:USE-MACRO="pages_list"/>
+	<x tal:condition="node/hasChildrenInMenu" metal:use-macro="pages_list"/>
 	</tal:block>  
 </tal:block>
