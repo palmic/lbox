@@ -69,25 +69,25 @@
 		</fieldset>
 	</form>
 	<script tal:condition="spamDefenseJS" type="text/javascript" tal:content="structure string:Page.sDefense(document.getElementById('new-post'), '${SELF/getFormGroupName}');"></script>
-	<x tal:condition="parent/getChildren/count" metal:USE-MACRO="discussion_list" />	
+	<x tal:condition="parent/getChildren/count" metal:use-macro="discussion_list" />	
 </div>
-<ul metal:DEFINE-MACRO="discussion_list" tal:define="parent parent">
+<ul metal:define-macro="discussion_list" tal:define="parent parent">
 	<li tal:repeat="post parent/getChildren" id="${SELF/getFormGroupName}-post-${post/id}">
-		<x metal:USE-MACRO="discussion_post_detail" />
-		<tal:block tal:condition="post/hasChildren" tal:define="parent post"><x metal:USE-MACRO="discussion_list" /></tal:block>
+		<x metal:use-macro="discussion_post_detail" />
+		<tal:block tal:condition="post/hasChildren" tal:define="parent post"><x metal:use-macro="discussion_list" /></tal:block>
 	</li>
 </ul>
-<div metal:DEFINE-MACRO="discussion_post_detail" tal:define="post post">
-	<div class="title"><span class="title" tal:CONTENT="post/title" /></div>
+<div metal:define-macro="discussion_post_detail" tal:define="post post">
+	<div class="title"><span class="title" tal:content="post/title" /></div>
 	<div>
 		<strong>Autor:</strong>
-		<em><a tal:CONDITION="post/email" tal:CONTENT="post/nick" href="mailto:${post/email}" /></em>
-			<span tal:CONDITION="not: post/email" tal:CONTENT="post/nick" />
-	        <a tal:CONDITION="post/www" href="${post/www}">www</a>
+		<em><a tal:condition="post/email" tal:content="post/nick" href="mailto:${post/email}" /></em>
+			<span tal:condition="not: post/email" tal:content="post/nick" />
+	        <a tal:condition="post/www" href="${post/www}">www</a>
 	        | <strong>Zasláno:</strong>
 		<span tal:REPLACE="post/created" />
 	</div>
-	<div class="content wsw" tal:CONTENT="structure post/body" class="body" />
+	<div class="content wsw" tal:content="structure post/body" class="body" />
 	<!-- <a href="${discussion/url}?${SELF/getFormGroupName}[${replyToParamName}]=${post/id}#new-post">Odpovědět</a> -->
 	<form action="${discussion/url}?${SELF/getFormGroupName}[${replyToParamName}]=${post/id}#new-post" id="reply-${post/id}" method="post"><div><input type="submit" name="reply" value="Odpovědět" /></div></form>
 	<div class="xt-admin" tal:condition="xtAdmin">

@@ -142,17 +142,20 @@ try {
 	/*FirePHP::getInstance(true)->setObjectFilter('ClassName',
 	                         					  array('MemberName'));*/
 	// TAL load
-	define("PHPTAL_FORCE_REPARSE", 			LBoxConfigSystem::getInstance()->getParamByPath("output/tal/PHPTAL_FORCE_REPARSE"));
-	define("PHPTAL_PHP_CODE_DESTINATION",	LBOX_PATH_PROJECT 			. $slash .".tal_compiled". $slash);
-	//die("'". PHPTAL_PHP_CODE_DESTINATION ."'");
-
 	// pokud nemame pearovsky PHPTAL pouzivame lokani LBOXovy
 	@include("PHPTAL.php");
 	if (!@constant("PHPTAL_VERSION")) {
-		require(LBOX_PATH_CORE 			. $slash ."TAL". $slash ."PHPTAL-1.1.16". $slash ."PHPTAL.php");
+		define("LBOX_PATH_PHPTAL", LBOX_PATH_CORE . $slash ."TAL". $slash ."PHPTAL-1.2.0");
+		define("LBOX_PATH_PHPTAL_GETTEXTTRANSLATOR", LBOX_PATH_PHPTAL . $slash ."phptal");
+		
+		require(LBOX_PATH_PHPTAL . $slash ."PHPTAL.php");
 	}
-	// standard TAL translator service to extend
-	require (PHPTAL_DIR ."PHPTAL/GetTextTranslator.php");
+	else {
+		define("LBOX_PATH_PHPTAL", "PHPTAL");
+		define("LBOX_PATH_PHPTAL_GETTEXTTRANSLATOR", LBOX_PATH_PHPTAL);
+	}
+	// TAL translator service to extend the standard
+	require (LBOX_PATH_PHPTAL_GETTEXTTRANSLATOR . $slash ."GetTextTranslator.php");
 	require("lbox.phptal.php");
 	
 	LBoxUtil::createDirByPath(PHPTAL_PHP_CODE_DESTINATION);

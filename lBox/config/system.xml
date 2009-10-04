@@ -93,6 +93,7 @@
 	<output>
 		<tal>
 			<PHPTAL_FORCE_REPARSE>0</PHPTAL_FORCE_REPARSE>
+			<PHPTAL_PHP_CODE_DESTINATION>$project/.tal_compiled/</PHPTAL_PHP_CODE_DESTINATION>
 		</tal>
 		<paging>
 			<paging_by_default>10</paging_by_default>

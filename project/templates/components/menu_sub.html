@@ -1,40 +1,40 @@
 <tal:block tal:condition="exists: pages">
-	<div id="menusub" tal:DEFINE="iterator pages">
+	<div id="menusub" tal:define="iterator pages">
 	   <h3 class="heading">Submenu</h3>
 	   <ul>
-	      <tal:block tal:REPEAT="node iterator">
-	        <li tal:ATTRIBUTES="class node/getClass | default"
-	            tal:CONDITION="node/in_menu"><div class="lft"><div class="rgt"><div class="mdl">
-	           <a tal:CONDITION="not: node/isCurrent"
-	              tal:ATTRIBUTES="href node/url; title node/titleMenu; class node/getClass | default"
-	              tal:CONTENT="node/name_menu">
+	      <tal:block tal:repeat="node iterator">
+	        <li tal:attributes="class node/getClass | default"
+	            tal:condition="node/in_menu"><div class="lft"><div class="rgt"><div class="mdl">
+	           <a tal:condition="not: node/isCurrent"
+	              tal:attributes="href node/url; title node/titleMenu; class node/getClass | default"
+	              tal:content="node/name_menu">
 	              Nazev stranky
 	           </a>
-	           <strong tal:CONDITION="node/isCurrent"
-	                   tal:CONTENT="node/name_menu">
+	           <strong tal:condition="node/isCurrent"
+	                   tal:content="node/name_menu">
 	              Nazev current stranky
 	           </strong>
-	           <x tal:condition="node/hasChildrenInMenu" metal:USE-MACRO="menu_list" />
+	           <x tal:condition="node/hasChildrenInMenu" metal:use-macro="menu_list" />
 	        </div></div></div></li>
 	      </tal:block>
 	   </ul>
 	    <ul
-			metal:DEFINE-MACRO="menu_list"
-	       	tal:DEFINE="iterator node/getChildren"
+			metal:define-macro="menu_list"
+	       	tal:define="iterator node/getChildren"
 	       	class="submenu">
-	      <tal:block tal:REPEAT="node iterator">
-	        <li tal:ATTRIBUTES="class node/getClass | default"
-	            tal:CONDITION="node/in_menu"><div class="lft"><div class="rgt"><div class="mdl">
-	           <a tal:CONDITION="not: node/isCurrent"
-	              tal:ATTRIBUTES="href node/url; title node/titleMenu; class node/getClass | default"
-	              tal:CONTENT="node/name_menu">
+	      <tal:block tal:repeat="node iterator">
+	        <li tal:attributes="class node/getClass | default"
+	            tal:condition="node/in_menu"><div class="lft"><div class="rgt"><div class="mdl">
+	           <a tal:condition="not: node/isCurrent"
+	              tal:attributes="href node/url; title node/titleMenu; class node/getClass | default"
+	              tal:content="node/name_menu">
 	              Nazev stranky
 	           </a>
-	           <strong tal:CONDITION="node/isCurrent"
-	                   tal:CONTENT="node/name_menu">
+	           <strong tal:condition="node/isCurrent"
+	                   tal:content="node/name_menu">
 	              Nazev current stranky
 	           </strong>
-	           <x tal:condition="node/hasChildrenInMenu" metal:USE-MACRO="menu_list"/>
+	           <x tal:condition="node/hasChildrenInMenu" metal:use-macro="menu_list"/>
 	        </div></div></div></li>
 	      </tal:block>
 	   </ul>

@@ -4,20 +4,20 @@
 	   	<tal:block tal:repeat="node iterator">
 		<li tal:condition="node/in_menu">
 			<a title="${node/title}" href="${node/url}">${node/heading}</a>
-			<x tal:condition="node/hasChildrenInMenu" metal:USE-MACRO="pages_list"/>
+			<x tal:condition="node/hasChildrenInMenu" metal:use-macro="pages_list"/>
 		</li>
 		</tal:block>
 	</ul>  
 </div>
 <tal:block
-	metal:DEFINE-MACRO="pages_list"
-   	tal:DEFINE="iterator node/getChildren">
+	metal:define-macro="pages_list"
+   	tal:define="iterator node/getChildren">
 	<ul>
 	   	<tal:block tal:repeat="node iterator">
 		<li tal:condition="node/in_menu">
 			<a title="${node/title}" href="${node/url}">${node/heading}</a>
 		</li>
-		<x tal:condition="node/hasChildrenInMenu" metal:USE-MACRO="pages_list"/>
+		<x tal:condition="node/hasChildrenInMenu" metal:use-macro="pages_list"/>
 		</tal:block>
 	</ul>  
 </tal:block>
