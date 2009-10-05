@@ -284,6 +284,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 						self::$isTree[$className]	= (bool)$data["systemrecord_istree"];
 						unset($data["systemrecord_istree"]);
 					}
+					unset($data["sql"]);
 					$this->params	= $data;
 					$this->passwordChanged  	= false;
 					$this->synchronized     	= true;
@@ -309,6 +310,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 			foreach ($this->params as $key => $value) {
 				LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->$key	= $value;
 			}
+			LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->sql	= $this->getQueryBuilder()->getSelectColumns($this->getClassVar("tableName"), array(), $this->getWhere());
 			LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->systemrecord_istree	= (int)$this->isTree();
 			if ($this->isTree()) {
 				LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->systemrecord_haschildren	= (int)$this->hasChildren();

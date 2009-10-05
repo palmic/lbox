@@ -198,6 +198,9 @@ echo "<br />\n";*/
 					if ($key == "system_istree") {
 						continue;
 					}
+					if ($key == "sql") {
+						continue;
+					}
 					$recordRef 		= new $itemType($row[$idColName], true);
 					$recordRef		->setIsTree($this->isTree());
 					foreach ($row as $colName => $colValue) {
@@ -322,6 +325,7 @@ echo "<br />\n";*/
 			if (is_bool($this->isTree())) {
 				LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system_istree	= (int)$this->isTree();
 			}
+			LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->sql	= $this->getSQL();
 			LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->saveCachedData();
 			$this->isCacheSynchronized	= true;
 		}
