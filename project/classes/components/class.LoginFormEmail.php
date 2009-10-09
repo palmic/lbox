@@ -6,21 +6,8 @@
 * @version 1.0
 * @since 2009-09-18
 */
-class LoginForm extends LBoxComponent
+class LoginFormEmail extends LoginForm
 {
-	/**
-	 * @var LBoxForm
-	 */
-	protected $form;
-	
-	/**
-	 * used processors
-	 * @var array
-	 */
-	protected $processors = array();
-
-	protected $validators = array();
-	
 	protected function executeStart() {
 		try {
 			parent::executeStart();
@@ -51,16 +38,16 @@ class LoginForm extends LBoxComponent
 			if (count($this->validators) < 1) {
 				$this->validators[]	= new LBoxFormValidatorLogin();
 			}
-			$controlNick		= new LBoxFormControlFill("nick", "jméno", "", LBoxConfigManagerProperties::getPropertyContentByName("form_max_length_nick"));
-			$controlNick		->setTemplateFileName("lbox_form_control_nick.html");
-			$controlNick		->setRequired();
+			$controlEmail		= new LBoxFormControlFill("email", "e-mail", "", LBoxConfigManagerProperties::getPropertyContentByName("form_max_length_email"));
+			$controlEmail		->setTemplateFileName("lbox_form_control_email.html");
+			$controlEmail		->setRequired();
 			$controlPassword	= new LBoxFormControlPassword("password", "heslo", "", LBoxConfigManagerProperties::getPropertyContentByName("form_max_length_password"));
 			$controlPassword	->setRequired();
 
 			$controlsLogin			= new LBoxFormControlMultiple("form", "controls");
 			$controlsLogin->setTemplateFileName("lbox_form_control_multi_login.html");
-			$controlsLogin->addControl		($controlNick);
-			$controlsLogin->addControl		($controlPassword);
+			$controlsLogin->addControl($controlEmail);
+			$controlsLogin->addControl($controlPassword);
 			foreach ($this->validators as $validator) {
 				$controlsLogin->addValidator($validator);
 			}

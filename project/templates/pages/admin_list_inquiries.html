@@ -1,0 +1,12 @@
+<x tal:replace="lbox:slot_start" />
+	<h1 tal:content="SELF/page/heading" />
+	<p><a tal:condition="exists: SELF/page/getPageEdit" href="${SELF/page/getPageEdit/url}" title="${SELF/page/getPageEdit/title_menu}">Vložit novou anketu</a></p>
+	<ul tal:condition="SELF/getRecords/count">
+		<li tal:repeat="record SELF/getRecords">
+			<span>${record/question}</span>
+			<tal:block tal:content="structure record/form_xt_to_edit" />
+			<tal:block tal:content="structure record/form_xt_delete" />
+		</li>
+	</ul>
+<x tal:replace="lbox:slot_end.content" />
+<x tal:replace="structure lbox:component.layout_default" />

@@ -1,4 +1,4 @@
-<?php
+<?
 /**
 * @author Michal Palma <palmic@email.cz>
 * @package LBox
@@ -114,7 +114,6 @@ abstract class PageRecordsList extends PageDefault
 					$this->records->setOutputFilterItemsClass($this->classNameRecordOutputFilter);
 				}
 			}
-			
 /*DbControl::$debug	= true;
 $this->records->count();
 DbControl::$debug	= false;*/

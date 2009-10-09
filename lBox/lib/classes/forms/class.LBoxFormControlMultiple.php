@@ -53,7 +53,7 @@ class LBoxFormControlMultiple extends LBoxFormControl
 	/**
 	 * @param LBoxFormControl control 
 	 */
-	public function addControl(LBoxFormControl $control = NULL ) {
+	public function addControl(LBoxFormControl $control) {
 		try {
 			// multiple rozdelime a prekontrolujeme zvlast
 			if ($control instanceof LBoxFormControlMultiple) {

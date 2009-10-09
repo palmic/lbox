@@ -10,10 +10,8 @@ class LBoxFormValidatorLogin extends LBoxFormValidator
 	 */
 	public function validate(LBoxFormControl $control = NULL) {
 		try {
-			$records	= new XTUsersRecords(array(
-													"nick" 	=> $control->getControlByName("nick")->getValue(),
-													"password" 	=> $control->getControlByName("password")->getValue(),
-			));
+			$records	= $this->getRecordsByControls($control);
+			
 			if ($records->count() < 1) {
 				throw new LBoxExceptionFormValidatorsLogin(	LBoxExceptionFormValidatorsLogin::MSG_FORM_VALIDATION_LOGIN_NOTSUCCES,
 															LBoxExceptionFormValidatorsLogin::CODE_FORM_VALIDATION_LOGIN_NOTSUCCES);
@@ -31,6 +29,19 @@ class LBoxFormValidatorLogin extends LBoxFormValidator
 																LBoxExceptionFormValidatorsLogin::CODE_FORM_VALIDATION_LOGIN_NOTSUCCES);
 				}
 			}
+			throw $e;
+		}
+	}
+	
+	protected function getRecordsByControls(LBoxFormControlMultiple $control) {
+		try {
+			$filter	= array();
+			foreach ($control->getControls() as $ctrlName => $control) {
+				$filter[$ctrlName]	= $control->getValue();
+			}
+			return new XTUsersRecords($filter);
+		}
+		catch (Exception $e) {
 			throw $e;
 		}
 	}

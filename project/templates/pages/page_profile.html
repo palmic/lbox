@@ -1,0 +1,5 @@
+<x tal:replace="lbox:slot_start" />
+	<h1 tal:content="SELF/page/heading" />
+	<tal:block tal:content="structure SELF/page/getForm" />
+<x tal:replace="lbox:slot_end.content" />
+<x tal:replace="structure lbox:component.layout_default" />

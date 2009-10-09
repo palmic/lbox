@@ -88,5 +88,19 @@ class XTUsersRecord extends AbstractRecordLBox
 			throw $e;
 		}
 	}
+	
+	/**
+	 * potvrdi registraci uzivatele
+	 * @throws Exception
+	 */
+	public function confirm() {
+		try {
+			$this->__set("confirmed", 1);
+			$this->store();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
 }
 ?>

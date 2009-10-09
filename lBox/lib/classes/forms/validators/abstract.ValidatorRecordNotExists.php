@@ -1,6 +1,6 @@
 <?php
 /**
- * zkontroluje, jestli hodnota odpovida existujicimu recordu
+ * zkontroluje, jestli record v databazi podle hodnoty controlu neexistuje
  */
 abstract class ValidatorRecordNotExists extends ValidatorRecordExists
 {
@@ -24,7 +24,7 @@ abstract class ValidatorRecordNotExists extends ValidatorRecordExists
 				if ($tmpRecords->count() < 1) {
 					throw new LBoxExceptionFormValidator("Invalid ignore-ID given - it does not exists in database!");
 				}
-				$this->idChecking	= $id;
+				$this->idChecking	= $tmpRecords->current()->id;
 			}
 		}
 		catch (Exception $e) {

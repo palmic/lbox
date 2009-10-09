@@ -1,0 +1,17 @@
+<x tal:replace="lbox:slot_start" />
+	<h1 tal:content="SELF/page/heading" />
+	<p tal:condition="not: SELF/getXTUsersByURLHash/count">Uživatelský profil nenalezen.</p>
+	<tal:block tal:condition="SELF/getXTUsersByURLHash/count">
+		<tal:block tal:condition="SELF/getXTUsersByURLHash/current/confirmed">
+			<p>Váš profil již je potvrzen.<br />Přihlasit se můžete zde:</p>
+			<x tal:replace="structure lbox:component.login_form" />
+		</tal:block>
+		<tal:block tal:condition="not: SELF/getXTUsersByURLHash/current/confirmed">
+			<!--! samotny confirm pomoci XTUsersRecord::confirm() -->
+			<tal:block tal:define="resConfirm SELF/getXTUsersByURLHash/current/confirm" />
+			<p>Váš profil byl aktivován.<br />Přihlasit se můžete zde:</p>
+			<x tal:replace="structure lbox:component.login_form" />
+		</tal:block>
+	</tal:block>
+<x tal:replace="lbox:slot_end.content" />
+<x tal:replace="structure lbox:component.layout_default" />

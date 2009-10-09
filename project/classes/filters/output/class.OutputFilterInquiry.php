@@ -6,20 +6,24 @@
 * @license http://creativecommons.org/licenses/by-sa/3.0/
 * @since 2008-09-07
 */
-class OutputFilterInquiry extends LBoxOutputFilter
+class OutputFilterInquiry extends OutputFilterRecordEditableByAdmin
 {
+	protected $propertyNameRefPageEdit		= "ref_page_xt_edit_inquiry";
+
 	/**
 	 * cache variable
 	 * @var LBoxForm
 	 */
 	protected $form;
-	
+
 	public function prepare($name = "", $value = NULL) {
 		switch ($name) {
+			case "name":
+				return $this->instance->question;
 			case "didUserVotedFor":
 				return $this->didUserVotedFor();
 			default:
-				return $value;
+				return parent::prepare($name, $value);
 		}
 	}
 

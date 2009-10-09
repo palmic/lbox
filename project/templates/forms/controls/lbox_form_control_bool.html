@@ -1,6 +1,6 @@
 <div class="control" id="control-${id}" tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
 	<label for="${id}"><span class="label">${SELF/getLabel} <tal:block tal:condition="SELF/isRequired">* </tal:block></span><input 	class="bool" type="checkbox" value="1" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]"
-			tal:attributes="checked SELF/getChecked | default" /></label>
+			tal:attributes="checked SELF/getChecked" /></label>
 	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
 		<tal:block tal:repeat="exception exceptions">
 			<div>vyhozena vyjimka validatoru:
