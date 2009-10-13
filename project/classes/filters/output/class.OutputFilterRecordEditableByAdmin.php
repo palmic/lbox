@@ -14,6 +14,12 @@ abstract class OutputFilterRecordEditableByAdmin extends LBoxOutputFilter
 	protected $propertyNameRefPageEdit		= "";
 
 	/**
+	 * explicitni definice nazvu atributu editovaneho recordu podle ktereho ho bude stranka s editaci hledat
+	 * @var string
+	 */
+	protected $editURLFilterColname			= "";
+
+	/**
 	 * cache var
 	 * @var LboxForm
 	 */
@@ -61,7 +67,7 @@ abstract class OutputFilterRecordEditableByAdmin extends LBoxOutputFilter
 			}
 			$instanceType	= get_class($this->instance);
 			$idColName		= eval("return $instanceType::\$idColName;");
-			$id					= $this->instance->getParamDirect($idColName);
+			$id					= $this->instance->getParamDirect(strlen($this->editURLFilterColname) > 0 ? $this->editURLFilterColname : $idColName);
 			$controlID			= new LBoxFormControlFillHidden("id", "", $id);
 			$controlRefPageEdit	= new LBoxFormControlFillHidden("rpe", "", LBoxConfigManagerStructure::getInstance()->getPageById(LBoxConfigManagerProperties::getPropertyContentByName($this->propertyNameRefPageEdit))->id);
 			$form				= new LBoxForm("record_xt_to_edit_$id", "post", "", "edit");

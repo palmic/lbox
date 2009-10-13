@@ -91,6 +91,9 @@ abstract class ValidatorRecordExists extends LBoxFormValidator
 	*/
 	protected function getIDColname() {
 		try {
+			if (strlen($this->recordClassName) < 1) {
+				throw new LBoxExceptionFormValidator(LBoxExceptionFormValidator::MSG_INSTANCE_VAR_STRING_NOTNULL, LBoxExceptionFormValidator::CODE_BAD_INSTANCE_VAR);
+			}
 			$recordClassName	= $this->recordClassName;
 			return				eval("return $recordClassName::\$idColName;");
 		}

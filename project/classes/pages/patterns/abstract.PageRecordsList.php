@@ -62,6 +62,12 @@ abstract class PageRecordsList extends PageDefault
 	protected $propertyNamePagingBy = "paging_list_records_page_length";
 	
 	/**
+	 * 
+	 * @var string
+	 */
+	protected $propertyNameRefPageEdit		= "";
+	
+	/**
 	 * cache records
 	 * @var AbstractRecords
 	 */
@@ -72,6 +78,12 @@ abstract class PageRecordsList extends PageDefault
 	 * @var LBoxPagingIterator
 	 */
 	protected $recordsPaging;
+	
+	/**
+	 * cache var
+	 * @var LBoxPage
+	 */
+	protected $pageEdit;
 
 	protected function executeStart() {
 		try {
@@ -139,6 +151,27 @@ DbControl::$debug	= false;*/
 			$classNameRecords			= eval("return ". $this->classNameRecord ."::\$itemsType;");
 			$this->recordsPaging	= new LBoxPagingIteratorRecords($classNameRecords, $this->getPagingBy(), $this->classNameRecordOutputFilter/*, $filter = false*//*, $order = false*//*, $limit = false*//*, QueryBuilderWhere $whereAdd*/);
 			return $this->recordsPaging;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * getter na stranku s editaci
+	 * @return LBoxPage
+	 */
+	public function getPageEdit() {
+		try {
+			if ($this->pageEdit instanceof LBoxPage) {
+				return $this->pageEdit;
+			}
+			if (strlen($this->propertyNameRefPageEdit) < 1) {
+				return NULL;
+			}
+			$this->pageEdit	= LBoxConfigManagerStructure::getInstance()->getPageById(LBoxConfigManagerProperties::getPropertyContentByName($this->propertyNameRefPageEdit));
+			$this->pageEdit	->setOutputFilter(new OutputFilterPage($this->pageEdit));
+			return $this->pageEdit;
 		}
 		catch (Exception $e) {
 			throw $e;

@@ -16,16 +16,7 @@ abstract class ValidatorRecordNotExists extends ValidatorRecordExists
 	*/
 	public function __construct($id = "") {
 		try {
-			if ($id) {
-				$recordClassName	= $this->recordClassName;
-				$idColName			= $this->getIDColname();
-				$recordsClassName	= eval("return $recordClassName::\$itemsType;");
-				$tmpRecords			= new $recordsClassName(array($idColName => $id));
-				if ($tmpRecords->count() < 1) {
-					throw new LBoxExceptionFormValidator("Invalid ignore-ID given - it does not exists in database!");
-				}
-				$this->idChecking	= $tmpRecords->current()->id;
-			}
+			$this->idChecking	= $id;
 		}
 		catch (Exception $e) {
 			throw $e;

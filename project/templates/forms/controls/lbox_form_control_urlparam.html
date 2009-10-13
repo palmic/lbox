@@ -2,8 +2,8 @@
 	<label for="${id}"><span class="label">${SELF/getLabel} <tal:block tal:condition="SELF/isRequired">* </tal:block></span><input 	class="text" type="text" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]"
 			tal:attributes="value SELF/getValue | SELF/getDefault; maxlength SELF/getLengthMax | default; size SELF/getLengthMax | default" /></label>
 	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
-		<div tal:condition="exists: exceptions/17001">Prosím vyplňte název</div>
-		<div tal:condition="exists: exceptions/17010">Název není validní</div>
-		<div tal:condition="exists: exceptions/99005">Tento název je již použit</div>
+		<div tal:condition="exists: exceptions/17001">Prosím vyplňte URL</div>
+		<div tal:condition="exists: exceptions/17010">URL param není validní</div>
+		<div tal:condition="exists: exceptions/99005">Tento URL param je již použit</div>
 	</div>
 </div>
