@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pages>
 	<page id="1" url="/" class="PageTitle" template="page_title.html" title="lbox.cz" heading="lbox.cz" name_menu="home" in_menu="0" class_name_body="layout-title" />
-	<page id="600" url="/rss/" template="page_rss_articles.xml" class="PageRSSArticlesNews" title="RSS novinek" heading="RSS novinek" in_menu="0" rss="600" />
-	<page id="404" url="/404/" template="page_404.html" title="Stránka nebyla nalezena" heading="Stránka nebyla nalezena" in_menu="0" />
-	<page id="899" url="/sitemap.xml" class="PageSitemap09" template="sitemap09.xml" in_menu="0" />
+	<page id="901" url="/rss/" template="page_rss_articles.xml" class="PageRSSArticlesNews" title="RSS novinek" heading="RSS novinek" in_menu="0" rss="600" />
+	<page id="902" url="/404/" template="page_404.html" title="Stránka nebyla nalezena" heading="Stránka nebyla nalezena" in_menu="0" />
+	<page id="903" url="/sitemap.xml" class="PageSitemap09" template="sitemap09.xml" in_menu="0" />
 	<page id="999" url="/dev/" class="PageDev" heading="Development page" title="Development page" template="_page_dev.html" in_menu="0">
 		<page id="9991" url="/dev/form-multistep/" class="PageDevFormMultistep" heading="Development form multistep" title="Development form multistep" template="_page_dev_form_multistep.html" in_menu="0" />
 	</page>

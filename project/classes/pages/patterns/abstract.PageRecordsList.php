@@ -158,27 +158,6 @@ DbControl::$debug	= false;*/
 	}
 	
 	/**
-	 * getter na stranku s editaci
-	 * @return LBoxPage
-	 */
-	public function getPageEdit() {
-		try {
-			if ($this->pageEdit instanceof LBoxPage) {
-				return $this->pageEdit;
-			}
-			if (strlen($this->propertyNameRefPageEdit) < 1) {
-				return NULL;
-			}
-			$this->pageEdit	= LBoxConfigManagerStructure::getInstance()->getPageById(LBoxConfigManagerProperties::getPropertyContentByName($this->propertyNameRefPageEdit));
-			$this->pageEdit	->setOutputFilter(new OutputFilterPage($this->pageEdit));
-			return $this->pageEdit;
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-
-	/**
 	 * vraci paging range z configu
 	 * @return int
 	 */
@@ -201,6 +180,42 @@ DbControl::$debug	= false;*/
 		try {
 			return LBoxConfigManagerProperties::getPropertyContentByName($this->propertyNamePagingBy);
 		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * getter na stranku s editaci
+	 * @return LBoxPage
+	 */
+	public function getPageEdit() {
+		try {
+			if ($this->pageEdit instanceof LBoxPage) {
+				return $this->pageEdit;
+			}
+			if (strlen($this->propertyNameRefPageEdit) < 1) {
+				return NULL;
+			}
+			$this->pageEdit	= LBoxConfigManagerStructure::getInstance()->getPageById(LBoxConfigManagerProperties::getPropertyContentByName($this->propertyNameRefPageEdit));
+			$this->pageEdit	->setOutputFilter(new OutputFilterPage($this->pageEdit));
+			return $this->pageEdit;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * getter na prvni URL param
+	 * @return string
+	 */
+	protected function getURLParamFirst() {
+		try {
+			foreach (LBoxFront::getUrlParamsArray() as $param) {
+				return $param;
+			}
+ 		}
 		catch (Exception $e) {
 			throw $e;
 		}

@@ -5,19 +5,13 @@
 * @version 1.0
 * @since 2009-10-08
 */
-abstract class OutputFilterRecordEditableByAdmin extends LBoxOutputFilter
+abstract class OutputFilterRecordEditableByAdmin extends OutputFilterRecord
 {
 	/**
 	 * musi byt nastaveno konkretnim podedenym OF
 	 * @var string
 	 */
 	protected $propertyNameRefPageEdit		= "";
-
-	/**
-	 * explicitni definice nazvu atributu editovaneho recordu podle ktereho ho bude stranka s editaci hledat
-	 * @var string
-	 */
-	protected $editURLFilterColname			= "";
 
 	/**
 	 * cache var
@@ -41,7 +35,7 @@ abstract class OutputFilterRecordEditableByAdmin extends LBoxOutputFilter
 						return $this->getFormXTDelete();
 					break;
 				default:
-					return $value;
+					return parent::prepare($name, $value);
 			}
 		}
 		catch (Exception $e) {
@@ -63,7 +57,7 @@ abstract class OutputFilterRecordEditableByAdmin extends LBoxOutputFilter
 				return $this->formToEdit;
 			}
 			if (strlen($this->propertyNameRefPageEdit) < 1) {
-				throw new LBoxExceptionOutputFilter(LBoxExceptionOutputFilter::MSG_INSTANCE_VAR_STRING_NOTNULL, LBoxExceptionOutputFilter::CODE_BAD_INSTANCE_VAR);
+				throw new LBoxExceptionOutputFilter(get_class($this)."::\$propertyNameRefPageDetail: ". LBoxExceptionOutputFilter::MSG_INSTANCE_VAR_STRING_NOTNULL, LBoxExceptionOutputFilter::CODE_BAD_INSTANCE_VAR);
 			}
 			$instanceType	= get_class($this->instance);
 			$idColName		= eval("return $instanceType::\$idColName;");

@@ -20,6 +20,12 @@ abstract class PageRecordDetail extends PageDefault
 	protected $classNameRecordOutputFilter	= "";
 	
 	/**
+	 * 
+	 * @var string
+	 */
+	protected $propertyNameRefPageEdit		= "";
+	
+	/**
 	 * attribute, ktery bude pouzit jako filter pro vytahnuti zaznamu ze systemu
 	 * @var string
 	 */
@@ -30,6 +36,12 @@ abstract class PageRecordDetail extends PageDefault
 	 * @var AbstractRecord
 	 */
 	protected $record;
+
+	/**
+	 * cache var
+	 * @var LBoxPage
+	 */
+	protected $pageEdit;
 
 	protected function executeStart() {
 		try {
@@ -96,6 +108,27 @@ abstract class PageRecordDetail extends PageDefault
 				if (LBoxFront::isUrlParamPaging($param)) continue;
 				return $param;
 			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * getter na stranku s editaci
+	 * @return LBoxPage
+	 */
+	public function getPageEdit() {
+		try {
+			if ($this->pageEdit instanceof LBoxPage) {
+				return $this->pageEdit;
+			}
+			if (strlen($this->propertyNameRefPageEdit) < 1) {
+				return NULL;
+			}
+			$this->pageEdit	= LBoxConfigManagerStructure::getInstance()->getPageById(LBoxConfigManagerProperties::getPropertyContentByName($this->propertyNameRefPageEdit));
+			$this->pageEdit	->setOutputFilter(new OutputFilterPage($this->pageEdit));
+			return $this->pageEdit;
 		}
 		catch (Exception $e) {
 			throw $e;
