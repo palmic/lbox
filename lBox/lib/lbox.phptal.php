@@ -33,6 +33,21 @@ function phptal_tales_lbox($src, $nothrow = false) {
 					return 'LBoxConfigManagerStructure::getPageById("'.$pageID.'", "OutputFilterPage")->'. current($pageParams);
 				}
 				break;
+			case "page_by_property":
+				$pageParams	= explode("/", $srcArr[1]);
+				if (!is_numeric($pageID = LBoxConfigManagerProperties::getPropertyContentByName($propertyName = $pageParams[0])) || $pageID < 1) {
+					if (!$nothrow) {
+						throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_PAGE_ID_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+					}
+				}
+				unset($pageParams[0]);
+				if (count($pageParams) < 1 || strlen(current($pageParams)) < 1) {
+					return 'LBoxConfigManagerStructure::getPageById("'.$pageID.'", "OutputFilterPage")';
+				}
+				else {
+					return 'LBoxConfigManagerStructure::getPageById("'.$pageID.'", "OutputFilterPage")->'. current($pageParams);
+				}
+				break;
 			case "property":
 				if (strlen($name = $srcArr[1]) < 1) {
 					if (!$nothrow) {

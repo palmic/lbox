@@ -23,6 +23,7 @@ class LBoxExceptionConfig extends LBoxException
 	const CODE_PAGING_URLPARAM_EXAMPLE_NOT_CORRESPOND_PATTERN	= 1012;
 	const CODE_CFG_FILE_NOT_DEFINED								= 1013;
 	const CODE_INVALID_PATH 									= 1014;
+	const CODE_ATTRIBUTE_WRONG		 							= 1015;
 	
 	const MSG_CFG_FILE_NOT_DEFINED 									= "must be valid absolute valid path to dir!";	
 	const MSG_INVALID_PATH 											= "path is invalid. Config file or config paths error!";	
@@ -44,5 +45,6 @@ class LBoxExceptionConfig extends LBoxException
 	const MSG_ATTRIBUTE_UNIQUE_NOT_UNIQUE							= "unique attribute is not uniue!";
 	const MSG_NODE_BYID_NOT_FOUND									= "node was not found in config by given id attribute!";	
 	const MSG_PAGING_URLPARAM_EXAMPLE_NOT_CORRESPOND_PATTERN		= "paging_url_param_example config value does not correspond paging_url_param_pattern value!";	
+	const MSG_ATTRIBUTE_WRONG		 								= "config attribute is wrong!";
 }
 ?>
