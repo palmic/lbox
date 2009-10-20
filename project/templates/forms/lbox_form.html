@@ -1,7 +1,7 @@
 <form id="frm-${SELF/getName}" method="${SELF/getMethod}" enctype="multipart/form-data" action="">
 	<fieldset>
 		<legend tal:content="SELF/getLabel" />
-		<span class="info-required">Pole označená hvězdičkou jsou poviná</span>
+		<span class="info-required">Pole označená hvězdičkou jsou povinná</span>
 		<tal:block tal:repeat="control SELF/getControls">
 			<tal:block tal:condition="not: control/isSpamDefense">
 				<tal:block tal:condition="not: control/isSubControl" tal:content="structure control" />

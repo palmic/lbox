@@ -67,5 +67,20 @@ class LBoxConfigManagerProperties extends LBoxConfigManager
 			throw $e;
 		}
 	}
+	
+	/**
+	 * alias k getPropertyContentByName
+	 * @param string $name
+	 * @return string
+	 * @throws LBoxException
+	 */
+	public static function gpcn($name = "") {
+		try {
+			return self::getPropertyContentByName($name);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
 }
 ?>
