@@ -218,7 +218,38 @@ class LBoxUtil
 			throw $e;
 		}
 	}
-	
+
+	/**
+	 * vyprazdni adresar podle predane cesty (ta musi byt cestou na adresar)
+	 * @param string $path
+	 * @param bool $recursive
+	 */
+	public static function emptyDirByPath($path = "", $recursive = false) {
+		try {
+			if (strlen($path) < 1) {
+				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_PARAM_STRING_NOTNULL, LBoxExceptionCache::CODE_BAD_PARAM);
+			}
+			$path	= self::fixPathSlashes($path);
+			if (is_file($path)) { $path	= dirname($path); }
+			$dir	= dir($path);
+			while (($entry = $dir->read()) !== false) {
+				if($entry == '.' || $entry == '..') continue;
+				if(is_dir($path .SLASH. $entry))  {
+					if ($recursive) {
+						self::emptyDirByPath($path . SLASH . $entry, $recursive);
+//LBoxFirePHP::warn("adresar ". $path .SLASH. $entry ." smazan");
+					}
+					continue;
+				}
+				unlink($path .SLASH. $entry);
+			}
+			$dir->close();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
 	/**
 	 * smaze adresar podle predane cesty
 	 * @param string $path
@@ -241,7 +272,7 @@ class LBoxUtil
 					if (!$withSubDirs) {
 						throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_DIRECTORY_CONTAINS_SUBDIRS, LBoxExceptionFilesystem::CODE_DIRECTORY_CONTAINS_SUBDIRS);
 					}
-					$this->removeDirByPath("$path/$entry", true);
+					self::removeDirByPath("$path/$entry", true);
 				}
 				if (!unlink("$path/$entry")) {
 					throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_FILE_CANNOT_DELETE);
@@ -285,7 +316,7 @@ class LBoxUtil
 			$fileName 		= self::removeDiacritic($fileName);
 			//$fileName		= eregi_replace("")
 			while(file_exists("$pathTarget/$fileName")) {
-				$ext		= $this->getFileExt($fileName);
+				$ext		= self::getExtByFilename($fileName);
 				$lastDotPos	= strrpos($fileName, ".");
 				$nameOfFile	= substr($fileName, 0, $lastDotPos);
 				$parts	= explode("_", $nameOfFile);

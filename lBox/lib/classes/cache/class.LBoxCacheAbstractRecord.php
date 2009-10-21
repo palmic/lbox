@@ -53,15 +53,7 @@ class LBoxCacheAbstractRecord extends LBoxCache
 	public function clearCache() {
 		try {
 			$this->reset();
-			$path	= dirname($this->getFilePath());
-			$dir	= dir($path);
-			while (false !== ($entry = $dir->read())) {
-				if($entry == '.' || $entry == '..') continue;
-				if(is_dir($path .SLASH. $entry)) continue;
-//var_dump("mazu ". $path .SLASH. $entry);
-				unlink($path .SLASH. $entry);
-			}
-			$dir->close();
+			LBoxUtil::emptyDirByPath(dirname($this->getFilePath()), true);
 /*echo "<hr>";
 var_dump("v adresari '$path' zbylo:");
 $dir	= dir($path);

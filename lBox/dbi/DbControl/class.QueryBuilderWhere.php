@@ -74,5 +74,38 @@ class QueryBuilderWhere
 	public function getWheres() {
 		return $this->wheres;
 	}
+	
+    /**
+     * checks, if contains condition for given column name
+     * @param string $columnName
+     * @param QueryBuilderWhere $where
+     * @return bool
+     */
+	public function doesContainsConditionColumn($columnName = "", QueryBuilderWhere $where = NULL) {
+		try {
+			if (!$where) {
+				$where	= $this;
+			}
+			if (strlen($columnName) < 1) {
+    			throw new LBoxException(LBoxException::MSG_PARAM_STRING_NOTNULL, LBoxException::CODE_BAD_PARAM);
+    		}
+    		// checks subwheres recursive
+    		foreach ($where->getWheres() as $subWhere) {
+	    		if ($this->doesContainsConditionColumn($columnName, $subWhere["where"])) {
+	    			return true;
+	    		}
+	    	}
+	    	// checks conditions
+	    	foreach ($where->getConditions() as $condition) {
+	    		if ($condition["column"] == $columnName) {
+	    			return true;
+	    		}
+	    	}
+	    	return false;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
 }
 ?>

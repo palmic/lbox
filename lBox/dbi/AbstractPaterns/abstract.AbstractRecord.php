@@ -324,25 +324,9 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 	}
 
 	/**
-	 * resets Record's cache
-	 */
-	protected function resetCache() {
-		try {
-			if (!$this->isInCache()) {
-				return;
-			}
-			$this				->resetRelevantCache();
-			LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->reset();
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-	
-	/**
 	 * clear all cache data
 	 */
-	protected function clearCache() {
+	public function clearCache() {
 		try {
 			$this				->resetRelevantCache();
 			if (!array_key_exists($this->getClassVar("idColName"), $this->params)
@@ -360,18 +344,53 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 	}
 
 	/**
+	 * resets Record's cache
+	 */
+	public function resetCache() {
+		try {
+			if (!$this->isInCache()) {
+				return;
+			}
+			$this				->resetRelevantCache();
+			LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->reset();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * array of currently clearing caches
+	 * @var array
+	 */
+	private static $cacheRecordsCurrentlyClearing	= array();
+	
+	/**
 	 * resets my records cache
 	 */
 	protected function resetRelevantCache() {
 		try {
-			$itemsType			= $this->getClassVar("itemsType");
+			$myClass			= get_class($this);
+			/*$itemsType			= $this->getClassVar("itemsType");
 			$itemsInstance		= new $itemsType;
-			$itemsInstance		->clearCache();
+			$itemsInstance		->clearCache();*/
 			$dependingRecords	= $this->getClassVar("dependingRecords", true);
 			foreach ((array)$dependingRecords as $dependingRecord) {
 				if (strlen($dependingRecord) < 1) continue;
 				$instance	= new $dependingRecord;
+				if ($instance instanceof AbstractRecords) {
+					$dependingRecord	= eval("return $dependingRecord::\$itemType;");
+					$instance			= new $dependingRecord;
+				}
+				if ($dependingRecord instanceof $myClass) {
+					throw new LBoxException("Cannot define the same className into dependingRecords attribute!");
+				}
+				if (array_key_exists($dependingRecord, self::$cacheRecordsCurrentlyClearing)) {
+					continue;
+				}
+				self::$cacheRecordsCurrentlyClearing[$dependingRecord]	= $dependingRecord;
 				$instance	->clearCache();
+				unset(self::$cacheRecordsCurrentlyClearing[$dependingRecord]);
 			}
 		}
 		catch (Exception $e) {

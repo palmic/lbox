@@ -338,29 +338,7 @@ else {
 	 */
 	protected function createDirByPath($path = "") {
 		try {
-			if (strlen($path) < 1) {
-				throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFilesystem::CODE_BAD_PARAM);
-			}
-			$path		= str_replace("/", SLASH, $path);
-			$path		= str_replace("\\", SLASH, $path);
-			$pathParts	 = explode(SLASH, $path);
-			$pathTMP	 = WIN ? "" : "/";
-			if (is_dir($path)) return;
-			$i	= 1;
-			foreach ($pathParts as $pathPart) {
-				if (strlen($pathPart) < 1) continue;
-				if (WIN) 	$pathTMP	.= strlen($pathTMP) > 0 ? SLASH ."$pathPart" : $pathPart;
-				else 		$pathTMP	.= strlen($pathTMP) > 1 ? SLASH ."$pathPart" : $pathPart;
-				if (strlen(strstr($pathPart, ":")) > 0) continue;
-				$i++;
-				if ($i <= count(explode(SLASH, LBOX_PATH_INSTANCE_ROOT))) continue;
-				if (!is_dir($pathTMP)) {
-					if (!mkdir($pathTMP)) {
-						throw new LBoxExceptionFilesystem(	$pathTMP .": ". LBoxExceptionFilesystem::MSG_DIRECTORY_CANNOT_CREATE,
-						LBoxExceptionFilesystem::CODE_DIRECTORY_CANNOT_CREATE);
-					}
-				}
-			}
+			LBoxUtil::createDirByPath($path);
 		}
 		catch (Exception $e) {
 			throw $e;
