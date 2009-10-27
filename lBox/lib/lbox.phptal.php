@@ -1,5 +1,4 @@
 <?php
-
 /**
  * pridava TALu namespace lbox
  * @param string $src
@@ -269,5 +268,4 @@ class LBoxTranslator extends PHPTAL_GetTextTranslator
     	}
     }
 }
-
 ?>
