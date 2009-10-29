@@ -23,15 +23,29 @@ abstract class LBoxFormControlChooseFromRecords extends LBoxFormControlChoose
 	protected $colnameLabel = "";
 	
 	/**
+	 * options, ktere budou zarazeny na zacatek
+	 * @var array
+	 */
+	protected $optionsPrepend 	= array();
+	
+	/**
+	 * options, ktere budou zarazeny na konec
+	 * @var array
+	 */
+	protected $optionsAppend	= array();
+	
+	/**
 	 * @param string name
 	 * @param string label
 	 * @param string default defaultni hodnota ovladaciho prvku
 	 * @param AbstractRecords $records
 	 * @param string $colnameValue
 	 * @param string $colnameLabel
+	 * @param array $optionsPrepend
+	 * @param array $optionsAppend
 	 * @throws LBoxException
 	 */
-	public function __construct($name = "",  $label = "",  $default = "", AbstractRecords $records, $colnameValue = "", $colnameLabel = "") {
+	public function __construct($name = "",  $label = "",  $default = "", AbstractRecords $records, $colnameValue = "", $colnameLabel = "", $optionsPrepend = array(), $optionsAppend = array()) {
 		try {
 			parent::__construct($name,  $label,  $default);
 			if (!$records) {
@@ -43,9 +57,12 @@ abstract class LBoxFormControlChooseFromRecords extends LBoxFormControlChoose
 			if (strlen($colnameLabel) < 1) {
 				throw new LBoxExceptionFormControl("\$colnameLabel: ". LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
 			}
-			$this->records		= $records;
-			$this->colnameValue	= $colnameValue;
-			$this->colnameLabel	= $colnameLabel;
+			$this->records			= $records;
+			$this->colnameValue		= $colnameValue;
+			$this->colnameLabel		= $colnameLabel;
+			$this->colnameLabel		= $colnameLabel;
+			$this->optionsPrepend	= $optionsPrepend;
+			$this->optionsAppend	= $optionsAppend;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -61,8 +78,14 @@ abstract class LBoxFormControlChooseFromRecords extends LBoxFormControlChoose
 			if (count($this->options) < 1) {
 				$colnameValue	= $this->colnameValue;
 				$colnameLabel	= $this->colnameLabel;
+				foreach ($this->optionsPrepend as $optionValue => $optionLabel) {
+					$this->addOption(new LBoxFormControlOption($optionValue, $optionLabel));
+				}
 				foreach($this->records as $record) {
 					$this->addOption(new LBoxFormControlOption($record->$colnameValue, $record->$colnameLabel));
+				}
+				foreach ($this->optionsAppend as $optionValue => $optionLabel) {
+					$this->addOption(new LBoxFormControlOption($optionValue, $optionLabel));
 				}
 			}
 			return parent::getOptions();

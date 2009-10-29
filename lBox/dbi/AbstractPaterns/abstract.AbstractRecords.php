@@ -915,12 +915,16 @@ var_dump($this->getSQL() .": neni valid");*/
 			if (strlen($type) < 1) {
 				throw new LBoxException("\$type: ". LBoxException::MSG_PARAM_STRING_NOTNULL, LBoxException::CODE_BAD_PARAM);
 			}
-			
+
 			$testRecord				= new $type;
-			if ($testRecord instanceof $type) {
-				$itemType				= eval("return $type::\$itemType;");
+			if ($testRecord instanceof AbstractRecords) {
+				$itemsType				= $type;
+				$itemType				= eval("return $itemsType::\$itemType;");
 			}
-			$itemsType				= eval("return $itemType::\$itemsType;");
+			else {
+				$itemType				= $type;
+				$itemsType				= eval("return $itemType::\$itemsType;");
+			}
 			$paramName				= strlen($paramName) > 0 ? $paramName : eval("return $itemType::\$idColName;");
 
 			if (	array_key_exists($paramName, 	self::$recordsByParams)
@@ -928,7 +932,7 @@ var_dump($this->getSQL() .": neni valid");*/
 				&& 	self::$recordsByParams[$paramName][$value] instanceof LBoxShopingOrdersStatesRecord) {
 						return self::$recordsByParams[$paramName][$value];
 			}
-			
+
 			$records				= new $itemsType(array($paramName => $value));
 			if ($records->count() < 1) {
 				throw new LBoxException("$itemType record not found by name='$name'!");
