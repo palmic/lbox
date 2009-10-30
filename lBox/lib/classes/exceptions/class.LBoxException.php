@@ -11,6 +11,7 @@ class LBoxException extends Exception
 	const CODE_BAD_PARAM 			= 1;
 	const CODE_BAD_CLASS_VAR		= 2;
 	const CODE_BAD_INSTANCE_VAR		= 3;
+	const CODE_RECORD_NOT_FOUND		= 4;
 	
 	const MSG_PARAM_STRING_NOTNULL 				= "must be NOT-NULL string!";
 	const MSG_PARAM_STRING_VALID_PATH_DIR		= "must be valid dir path!";
@@ -23,7 +24,8 @@ class LBoxException extends Exception
 	const MSG_PARAM_BOOL 						= "must be boolean!";
 	
 	const MSG_INSTANCE_VAR_STRING_NOTNULL		= "Bad instance param, must be NOT NULL string!";
-
+	const MSG_RECORD_NOT_FOUND					= "Record not found!";
+	
 	/**
 	 * default destination email addresses for error notification
 	 * @var string
