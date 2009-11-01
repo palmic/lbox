@@ -145,7 +145,7 @@ try {
 	// pokud nemame pearovsky PHPTAL pouzivame lokani LBOXovy
 	@include("PHPTAL.php");
 	if (!@constant("PHPTAL_VERSION")) {
-		define("LBOX_PATH_PHPTAL", LBOX_PATH_CORE . $slash ."TAL". $slash ."PHPTAL-1.2.0");
+		define("LBOX_PATH_PHPTAL", LBOX_PATH_CORE . $slash ."TAL". $slash ."PHPTAL-1.2.1");
 		define("LBOX_PATH_PHPTAL_GETTEXTTRANSLATOR", LBOX_PATH_PHPTAL . $slash ."phptal");
 		
 		require(LBOX_PATH_PHPTAL . $slash ."PHPTAL.php");
