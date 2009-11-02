@@ -380,7 +380,7 @@ abstract class LBoxComponent
 		}
 		$translator	= new LBoxTranslator($this->templatePath ."/". $this->getTemplateFileName());
 		// zajistit existenci ciloveho adresare PHP kodu pro TAL:
-		$phptalPhpCodeDestination	= LBoxConfigSystem::getInstance()->getParamByPath("output/tal/PHPTAL_PHP_CODE_DESTINATION");
+		$phptalPhpCodeDestination	= LBoxUtil::fixPathSlashes(LBoxConfigSystem::getInstance()->getParamByPath("output/tal/PHPTAL_PHP_CODE_DESTINATION"));
 		LBoxUtil::createDirByPath($phptalPhpCodeDestination);
 		$this->TAL->setTranslator($translator);
 		$this->TAL->setForceReparse(LBoxConfigSystem::getInstance()->getParamByPath("output/tal/PHPTAL_FORCE_REPARSE"));
