@@ -1,6 +1,6 @@
 <form id="frm-${SELF/getName}" method="${SELF/getMethod}" action="">
 	<fieldset>
-		<span class="legend" tal:condition="exists: SELF/translateKeyLegend" i18n:replace="translateKeyLegend" />
+		<span class="legend" tal:condition="exists: SELF/translateKeyLegend" i18n:translate="translateKeyLegend" />
 		<span class="legend" tal:condition="not: exists: SELF/translateKeyLegend" tal:content="SELF/getLabel" />
 		<span class="info-required" i18n:translate="info_required">Pole označená hvězdičkou jsou povinná</span>
 		<tal:block tal:repeat="control SELF/getControls">

@@ -20,6 +20,8 @@ class LBoxExceptionFormValidator extends LBoxExceptionForm
 	const CODE_FORM_VALIDATION_FILE_NOT_ZIP				= 17014;
 	const CODE_FORM_VALIDATION_CONTROL_NOT_NUMBER_POSITIVE		= 17015;
 	const CODE_FORM_VALIDATION_CONTROL_NOT_INTEGER		= 17016;
+	const CODE_FORM_VALIDATION_CONTROL_IS_UNIQUE		= 17017;
+	const CODE_FORM_VALIDATION_CONTROL_IS_NOT_UNIQUE	= 17018;
 	
 	const MSG_FORM_VALIDATION_CONTROL_EMPTY				= "required control is empty";
 	const MSG_FORM_VALIDATION_PASSWORDS_NOTSAME			= "passwords do not match";
@@ -37,5 +39,7 @@ class LBoxExceptionFormValidator extends LBoxExceptionForm
 	const MSG_FORM_VALIDATION_FILE_NOT_ZIP				= "file is not zip archive";
 	const MSG_FORM_VALIDATION_CONTROL_NOT_NUMBER_POSITIVE		= "value is not positive number";
 	const MSG_FORM_VALIDATION_CONTROL_NOT_INTEGER		= "value is not integer";
+	const MSG_FORM_VALIDATION_CONTROL_IS_UNIQUE			= "value is not in database yet";
+	const MSG_FORM_VALIDATION_CONTROL_IS_NOT_UNIQUE		= "value is in database already";
 }
 ?>
