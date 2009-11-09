@@ -72,28 +72,28 @@ abstract class ValidatorCSVLineExists extends LBoxFormValidator
 			$filterColumnOrder		= 0;
 			$filterColumnOrderFound	= false;
 			$dataColNames			= array();
-			while (($data = fgetcsv($fileH, 1000, ";", '"')) !== FALSE) {
+			while (($data = fgetcsv($fileH, 1000, ",", '"')) !== FALSE) {
 				if ($lineCount < 2) {
 					$dataColNames	= $data;
-					foreach ($dataColNames as $columnName) {
+					foreach ($dataColNames as $key => $columnName) {
 						if ($this->filterColName == $columnName) {
+							$filterColumnOrder = $key;
 							$filterColumnOrderFound	= true;
+							break;
 						}
-						$filterColumnOrder++;
 					}
 				}
 				if (!$filterColumnOrderFound) {
-					throw new LBoxExceptionFormValidator("Filter column name ". $this->filterColName . " not found on data file");
+					throw new LBoxExceptionFormValidator($this->filterColName .": Filter column name ". $this->filterColName . " not found in data file '". $this->getFilePath() ."'");
 				}
 				// line found
-				if ($data[$filterColumnOrderFound] == $value) {
+				if ($data[$filterColumnOrderFound+1] == $value) {
 					for ($i = 0; $i < count($data); $i++) {
 						$out[$dataColNames[$i]]	= $data[$i];
 					}
 					return $out;
 					break;
 				}
-				
 				$lineCount++;
 			}
 		}
