@@ -13,8 +13,8 @@
 	<property name="page_rss_discussion_party_title_pattern">$page_title party $article_heading na $properties_web_title</property><!-- vzor titlu RSS stranky komentaru party -->
 	<property name="page_rss_discussion_guestbook_title_pattern">$page_title guestbooku na lbox.cz</property><!-- vzor titlu RSS stranky komentaru guestbooku -->
 
-	<property name="ref_page_xt_admin">700</property><!-- id stranky, pro extranet admin -->
-	<property name="ref_page_xt_login">701</property><!-- id stranky, pro xt login, pokud je na to nejaka specialni -->
+	<property name="ref_page_xt_admin">999</property><!-- id stranky, pro extranet admin -->
+	<property name="ref_page_xt_login">9999</property><!-- id stranky, pro xt login, pokud je na to nejaka specialni -->
 
 	<property name="ref_page_xt_registration">300</property><!-- id stranky s registraci usera -->
 	<property name="ref_page_registration_confirm">301</property><!-- id stranky, ktera potvrzuje confirm registrace -->
