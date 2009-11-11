@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <translation>
-	<text id="test">Obsah SEKUNDARNI ceske mutace testovaciho klice 'test'</text>
+	<text id="currency_short">CZK</text>
+	<text id="currency">korun</text>
+	<text id="account_actual_state_is">Aktuální stav Vašeho konta je</text>
+	<text id="points_4p">bodů</text>
+	<text id="extrapay">doplatek</text>
+	<text id="you_have">máte</text>
+	<text id="or">nebo</text>
+	<text id="in_UCF">V</text>
+	<text id="info_required">Pole označená hvězdičkou jsou povinná</text>
+	<text id="form_submit_next">další</text>
+	<text id="form_submit_previous">předchozí</text>
+	<text id="form_submit_end">dokončit</text>
+	<text id="add_new_category">Přidat novou kategorii</text>
+	<text id="add_new_goods">Přidat nové zboží</text>
+	<text id="Message">Text</text>
 </translation>

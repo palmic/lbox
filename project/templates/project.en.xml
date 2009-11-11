@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<translation>
+	<text id="currency_short">EUR</text>
+	<text id="currency">euro</text>
+	<text id="account_actual_state_is">Actual state of your account is</text>
+	<text id="points_4p">points</text>
+	<text id="extrapay">Extra pay</text>
+	<text id="you_have">You have</text>
+	<text id="or">or</text>
+	<text id="in_UCF">In</text>
+	<text id="info_required">Star marked fields are required</text>
+	<text id="form_submit_next">next</text>
+	<text id="form_submit_previous">previous</text>
+	<text id="form_submit_end">finish</text>
+	<text id="add_new_category">Add new Category</text>
+	<text id="add_new_goods">Add new Goods</text>
+</translation>

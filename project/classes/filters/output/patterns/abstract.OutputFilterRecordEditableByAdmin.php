@@ -57,7 +57,7 @@ abstract class OutputFilterRecordEditableByAdmin extends OutputFilterRecord
 				return $this->formToEdit;
 			}
 			if (strlen($this->propertyNameRefPageEdit) < 1) {
-				throw new LBoxExceptionOutputFilter(get_class($this)."::\$propertyNameRefPageDetail: ". LBoxExceptionOutputFilter::MSG_INSTANCE_VAR_STRING_NOTNULL, LBoxExceptionOutputFilter::CODE_BAD_INSTANCE_VAR);
+				throw new LBoxExceptionOutputFilter(get_class($this)."::\$propertyNameRefPageEdit: ". LBoxExceptionOutputFilter::MSG_INSTANCE_VAR_STRING_NOTNULL, LBoxExceptionOutputFilter::CODE_BAD_INSTANCE_VAR);
 			}
 			$instanceType	= get_class($this->instance);
 			$idColName		= eval("return $instanceType::\$idColName;");

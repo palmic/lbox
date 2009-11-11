@@ -1,0 +1,14 @@
+<form id="frm-${SELF/getName}" method="${SELF/getMethod}" action="">
+	<tal:block tal:repeat="control SELF/getControls">
+		<tal:block tal:condition="not: control/isSpamDefense">
+			<tal:block tal:condition="not: control/isSubControl" tal:content="structure control" />
+		</tal:block>
+	</tal:block>
+	<div class="submit"><input tal:condition="not: SELF/isSubForm" class="submit" type="submit" name="${SELF/getName}[sent]" value="${SELF/getLabelSubmit}" /></div>
+	<div class="submit" tal:condition="SELF/isSubForm">
+		<input tal:condition="SELF/isLastSubForm" class="submit" type="submit" name="${SELF/getName}[sent]" value="dokončit" />
+		<input tal:condition="not: SELF/isLastSubForm" class="submit" type="submit" name="${SELF/getName}[sent]" value="další" />
+		<input tal:condition="not: SELF/isFirstSubForm" class="previous submit" type="submit" name="${SELF/getFormMultistep/getName}[previous]" value="předchozí" />
+	</div>
+</form>
+<tal:block tal:content="structure SELF/getControlSpamDefense" />
