@@ -21,8 +21,16 @@ abstract class ProcessorRecordEdit extends LBoxFormProcessor
 				if ($control instanceof LBoxFormControlSpamDefense) continue;
 				if ($control->getName() == eval("return $classNameRecord::\$idColName;")) continue;
 				if ($control->getName() == "filter_by") continue;
+				// prepinac podle typu controlu
+				switch (true) {
+					case ($control instanceof LBoxFormControlBool):
+							$value	= (int)$control->getValue();
+						break;
+					default:
+							$value	= $control->getValue();
+				}
 				$colName	= $control->getName();
-				$record	->$colName	= strlen($control->getValue()) > 0 ? $control->getValue() : "<<NULL>>";
+				$record	->$colName	= strlen($value) > 0 ? $value : "<<NULL>>";
 			}
 			$record	->store();
 		}

@@ -30,6 +30,12 @@ abstract class PageAdminRecord extends PageDefault
 	 * @var AbstractRecordLBox
 	 */
 	protected $record;
+	
+	/**
+	 * whereAdd, ktery bude pouzit pri ziskavani zaznamu pres records kolekci
+	 * @var QueryBuilderWhere
+	 */
+	protected $where = NULL;
 
 	protected function executeStart() {
 		try {
@@ -76,7 +82,7 @@ abstract class PageAdminRecord extends PageDefault
 			}
 			$colNameURLParam	= strlen($this->colNameURLParam) > 0 ? $this->colNameURLParam : eval("return $classNameRecord::\$idColName;");
 			$classNameRecords	= eval("return $classNameRecord::\$itemsType;");
-			$records = new $classNameRecords(array($colNameURLParam => $this->getRecordURLParam()));
+			$records = new $classNameRecords(array($colNameURLParam => $this->getRecordURLParam()), $order = false, $limit = false, $this->where);
 			if (strlen($this->classNameRecordOutputFilter) > 0) {
 				$records->setOutputFilterItemsClass($this->classNameRecordOutputFilter);
 			}

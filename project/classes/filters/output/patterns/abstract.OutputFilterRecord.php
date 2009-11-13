@@ -14,22 +14,24 @@ abstract class OutputFilterRecord extends LBoxOutputFilter
 	protected $propertyNameRefPageDetail		= "";
 
 	/**
-	 * explicitni definice nazvu atributu editovaneho recordu podle ktereho ho bude stranka s editaci hledat
+	 * explicitni definice nazvu atributu editovaneho recordu podle ktereho ho bude stranka s detailem hledat
 	 * @var string
 	 */
 	protected $editURLFilterColname			= "";
 
 	public function prepare($name = "", $value = NULL) {
 		try {
+			$classNameInstance		= get_class($this->instance);
+			$editURLFilterColname	= strlen($this->editURLFilterColname) > 0 ? $this->editURLFilterColname : eval("return $classNameInstance::\$idColName;");
 			switch ($name) {
 				case "url_detail":
 						if (strlen($this->propertyNameRefPageDetail) < 1) {
-							return $this->instance->getParamDirect("url");
+							return $this->instance->getParamDirect($this->editURLFilterColname);
 						}
 						return LBoxConfigManagerStructure::getInstance()
 									->getPageById(LBoxConfigManagerProperties::getPropertyContentByName($this->propertyNameRefPageDetail))->url
 								. ":"
-								. $this->instance->getParamDirect("url");
+								. $this->instance->getParamDirect($this->editURLFilterColname);
 					break;
 				default:
 					return $value;
