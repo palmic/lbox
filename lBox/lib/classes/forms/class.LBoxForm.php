@@ -397,7 +397,7 @@ class LBoxForm
 	protected function getPathTemplate() {
 		try {
 			$pathTemplatesForms	= LBoxConfigSystem::getInstance()->getParamByPath("forms/templates/forms/path");
-			return "$pathTemplatesForms/". $this->filenameTemplate;
+			return LBoxUtil::fixPathSlashes("$pathTemplatesForms/". $this->filenameTemplate);
 		}
 		catch (Exception $e) {
 			throw $e;

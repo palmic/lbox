@@ -376,9 +376,9 @@ abstract class LBoxComponent
 	 */
 	protected function getTAL() {
 		if (!$this->TAL instanceof PHPTAL) {
-			$this->TAL = new PHPTAL($this->templatePath ."/". $this->getTemplateFileName());
+			$this->TAL = new PHPTAL(LBoxUtil::fixPathSlashes($this->templatePath ."/". $this->getTemplateFileName()));
 		}
-		$translator	= new LBoxTranslator($this->templatePath ."/". $this->getTemplateFileName());
+		$translator	= new LBoxTranslator(LBoxUtil::fixPathSlashes($this->templatePath ."/". $this->getTemplateFileName()));
 		// zajistit existenci ciloveho adresare PHP kodu pro TAL:
 		$phptalPhpCodeDestination	= LBoxUtil::fixPathSlashes(LBoxConfigSystem::getInstance()->getParamByPath("output/tal/PHPTAL_PHP_CODE_DESTINATION"));
 		LBoxUtil::createDirByPath($phptalPhpCodeDestination);

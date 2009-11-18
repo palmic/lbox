@@ -19,6 +19,6 @@
   		<label for="${id}-option-${repeat/option/number}">
   		<span class="lft" /><span class="mdl"><span class="label-radio-btn" 	tal:content="structure option/getLabel" />
   			<input type="radio" 	name="${SELF/getForm/getName}[${SELF/getName}]" id="${id}-option-${repeat/option/number}"
-  									tal:attributes="value option/getValue; checked option/getChecked | default" /></span><span class="rgt" /></label>
+  									tal:attributes="value option/getValue; checked option/getChecked; title option/title | default" /></span><span class="rgt" /></label>
   </span>
 </span>
