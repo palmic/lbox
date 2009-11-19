@@ -940,7 +940,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 	 * @return AbstractRecords
 	 * @throws LBoxException
 	 */
-	public function getBoundedInstance($type = false, $filter = false, $order = false, QueryBuilderWhere $whereAdd = NULL) {
+	public function getBoundedInstance($type = false, $filter = false, $order = false, $limit = false, QueryBuilderWhere $whereAdd = NULL) {
 		try {
 			$boundedM1  = $this->getClassVar("boundedM1", true);
 			$bounded1M = $this->getClassVar("bounded1M", true);
@@ -949,10 +949,10 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 						throw new LBoxException("Type $type is defined in both bounded types definitions (1:M and M:1), cannot choose one automaticaly!");
 					break;
 				case (array_key_exists($type, $boundedM1)):
-						$instance = $this->getBoundedM1Instance($type, $filter, $order, $whereAdd);
+						$instance = $this->getBoundedM1Instance($type, $filter, $order, $limit, $whereAdd);
 					break;
 				case (array_key_exists($type, $bounded1M)):
-						$instance = $this->getBounded1MInstance($type, $filter, $order, $whereAdd);
+						$instance = $this->getBounded1MInstance($type, $filter, $order, $limit, $whereAdd);
 					break;
 				default:
 					throw new LBoxException("Type $type has no bounded types definition!");
@@ -971,7 +971,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 	 * @param $order  - Is specified by AbstractRecords class
 	 * @return AbstractRecords
 	 */
-	protected function getBoundedM1Instance($type = false, $filter = false, $order = false, QueryBuilderWhere $whereAdd = NULL) {
+	protected function getBoundedM1Instance($type = false, $filter = false, $order = false, $limit = false, QueryBuilderWhere $whereAdd = NULL) {
 		if (!class_exists($type)) {
 			throw new LBoxException("Type $type has no defined Class!");
 		}
@@ -995,7 +995,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 			// add custom filter to foreignkey rulle
 			$filter   = is_array($filter) ? array_merge($fKFilter, $filter) : $fKFilter;
 			// create instance
-			$instance = new $type($filter, $order, $whereAdd);
+			$instance = new $type($filter, $order, $limit, $whereAdd);
 			if (!$instance instanceof AbstractRecords) {
 				throw new LBoxException("Type $type is not AbstractRecords's descendant!");
 			}

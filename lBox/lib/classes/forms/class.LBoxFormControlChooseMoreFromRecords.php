@@ -20,7 +20,7 @@ class LBoxFormControlChooseMoreFromRecords extends LBoxFormControlChooseFromReco
 			}
 			if ($this->isDisabled()) {
 				$valuesDefault	= array();
-				foreach ($this->options as $option) {
+				foreach ($this->getOptions() as $option) {
 					$valuesDefault[]	= $option->getValue();
 				}
 				return $this->value = $valuesDefault;
@@ -29,7 +29,7 @@ class LBoxFormControlChooseMoreFromRecords extends LBoxFormControlChooseFromReco
 				$values	= $this->form->getSentDataByControlName($this->getName());
 				foreach ((array)$values as $value) {
 					if (strlen($value) > 0)
-					if (!array_key_exists($value, $this->options)) {
+					if (!array_key_exists($value, $this->getOptions())) {
 						throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_FORM_CONTROL_VALUE_NOT_OPTION, LBoxExceptionFormControl::CODE_FORM_CONTROL_VALUE_NOT_OPTION);
 					}
 				}
