@@ -5,13 +5,11 @@
         <li tal:attributes="class node/getClass | default"
             tal:condition="node/in_menu">
            <a tal:condition="not: node/isCurrent"
-              tal:attributes="href node/url; title node/titleMenu"
-              tal:content="node/name_menu">
-              Nazev stranky
+              tal:attributes="href node/url; title node/titleMenu">
+              <span class="lft"><span class="rgt"><span class="mdl" tal:content="node/name_menu">Nazev stranky</span></span></span>
            </a>
-           <strong tal:condition="node/isCurrent"
-                   tal:content="node/name_menu">
-              Nazev current stranky
+           <strong tal:condition="node/isCurrent">
+              <span class="lft"><span class="rgt"><span class="mdl" tal:content="node/name_menu">Nazev stranky</span></span></span>
            </strong>
         </li>
       </tal:block>
@@ -24,13 +22,11 @@
         <li tal:attributes="class node/getClass | default"
             tal:condition="node/in_menu">
            <a tal:condition="not: node/isCurrent"
-              tal:attributes="href node/url; title node/titleMenu"
-              tal:content="node/name_menu">
-              Nazev stranky
+              tal:attributes="href node/url; title node/titleMenu">
+              <span class="lft"><span class="rgt"><span class="mdl" tal:content="node/name_menu">Nazev stranky</span></span></span>
            </a>
-           <strong tal:condition="node/isCurrent"
-                   tal:content="node/name_menu">
-              Nazev current stranky
+           <strong tal:condition="node/isCurrent">
+              <span class="lft"><span class="rgt"><span class="mdl" tal:content="node/name_menu">Nazev stranky</span></span></span>
            </strong>
            <x tal:condition="node/hasChildrenInMenu" metal:use-macro="menu_list"/>
         </li>
