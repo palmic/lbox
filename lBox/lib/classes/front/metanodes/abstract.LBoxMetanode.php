@@ -594,8 +594,13 @@ LBoxFirePHP::log(basename(__FILE__) ."::". __LINE__.': ' . 'storing the data of 
 			if (!$this->TAL instanceof PHPTAL) {
 				$this->TAL = new PHPTAL($templatePath ."/". $this->getTemplateFileName());
 			}
+			// zajistit existenci ciloveho adresare PHP kodu pro TAL:
+			$phptalPhpCodeDestination	= LBoxUtil::fixPathSlashes(LBoxConfigSystem::getInstance()->getParamByPath("output/tal/PHPTAL_PHP_CODE_DESTINATION"));
+			LBoxUtil::createDirByPath($phptalPhpCodeDestination);
 			$translator	= new LBoxTranslator($templatePath ."/". $this->getTemplateFileName());
 			$this->TAL->setTranslator($translator);
+			$this->TAL->setForceReparse(LBoxConfigSystem::getInstance()->getParamByPath("output/tal/PHPTAL_FORCE_REPARSE"));
+			$this->TAL->setPhpCodeDestination($phptalPhpCodeDestination);
 			$this->TAL->SELF = $this;
 			return $this->TAL;
 		}
