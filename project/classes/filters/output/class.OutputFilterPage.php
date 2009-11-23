@@ -108,6 +108,9 @@ class OutputFilterPage extends LBoxOutputFilter
 					}
 				break;
 			case "in_menu":
+					return $this->instance->is_accesible ? $value : false;
+				break;
+			case "is_accesible":
 					if ($this->instance->superxt == 1) {
 						if (!LBoxXTProject::isLoggedSuperAdmin()) {
 							return false;
@@ -118,7 +121,7 @@ class OutputFilterPage extends LBoxOutputFilter
 							return false;
 						}
 					}
-					return $value;
+					return true;
 				break;
 			case "getClass":
 					return $this->getClassMenu();
