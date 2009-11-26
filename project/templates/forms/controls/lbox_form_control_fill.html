@@ -1,4 +1,4 @@
-<div class="control" id="control-${id}" tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
+<div class="control" id="control-${id}" tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}" tal:attributes="title SELF/title | default">
 	<label for="${id}"><span class="label">
 			<tal:block tal:condition="not: exists: SELF/translateKey">${SELF/getLabel}</tal:block>
 			<tal:block tal:condition="exists: SELF/translateKey" i18n:translate="SELF/translateKey">${SELF/getLabel}</tal:block>
