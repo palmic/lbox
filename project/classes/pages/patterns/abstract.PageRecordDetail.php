@@ -32,6 +32,12 @@ abstract class PageRecordDetail extends PageDefault
 	protected $colNameURLParam	= "";
 	
 	/**
+	 * whereAdd AbstractRecords parameter for check-collection loading
+	 * QueryBuilderWhere
+	 */
+	protected $whereRecordsCheck			= NULL;
+	
+	/**
 	 * cache records
 	 * @var AbstractRecord
 	 */
@@ -81,7 +87,7 @@ abstract class PageRecordDetail extends PageDefault
 				throw new LBoxExceptionPage(LBoxExceptionPage::MSG_URL_PARAM_EMPTY, LBoxExceptionPage::CODE_URL_PARAM_EMPTY);
 			}
 			$classNameRecords		= eval("return ". $this->classNameRecord ."::\$itemsType;");
-			$records				= new $classNameRecords(array($this->colNameURLParam => $this->getURLParamRecord()));
+			$records				= new $classNameRecords(array($this->colNameURLParam => $this->getURLParamRecord()), false, false, $this->whereRecordsCheck);
 			if (strlen($this->classNameRecordOutputFilter) > 0) {
 				$records->setOutputFilterItemsClass($this->classNameRecordOutputFilter);
 			}

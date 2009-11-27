@@ -149,7 +149,7 @@ DbControl::$debug	= false;*/
 				throw new LBoxExceptionPage(LBoxExceptionPage::MSG_INSTANCE_VAR_STRING_NOTNULL, LBoxExceptionPage::CODE_BAD_INSTANCE_VAR);
 			}
 			$classNameRecords			= eval("return ". $this->classNameRecord ."::\$itemsType;");
-			$this->recordsPaging	= new LBoxPagingIteratorRecords($classNameRecords, $this->getPagingBy(), $this->classNameRecordOutputFilter/*, $filter = false*//*, $order = false*//*, $limit = false*//*, QueryBuilderWhere $whereAdd*/);
+			$this->recordsPaging	= new LBoxPagingIteratorRecords($classNameRecords, $this->getPagingBy(), $this->classNameRecordOutputFilter, $this->filter, $this->orderBy, $this->limit, $this->where);
 			return $this->recordsPaging;
 		}
 		catch (Exception $e) {

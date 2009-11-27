@@ -1,4 +1,4 @@
-<form id="frm-${SELF/getName}" method="${SELF/getMethod}" enctype="multipart/form-data" action="">
+<form id="frm-${SELF/getName}" method="${SELF/getMethod}" enctype="multipart/form-data" action="" tal:attributes="class SELF/class | default">
 	<fieldset>
 		<span class="legend" tal:condition="exists: SELF/translateKeyLegend" i18n:translate="translateKeyLegend" />
 		<span class="legend" tal:condition="not: exists: SELF/translateKeyLegend" tal:content="SELF/getLabel" />
