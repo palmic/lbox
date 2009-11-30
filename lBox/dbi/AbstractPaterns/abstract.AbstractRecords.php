@@ -318,6 +318,9 @@ echo "<br />\n";*/
 	 */
 	protected function storeToCache() {
 		try {
+			if (is_bool(AbstractRecord::$isCacheOnTempSwitch) && (!AbstractRecord::$isCacheOnTempSwitch)) {
+				return;
+			}
 			if (!$this->isCacheOn()) return;
 			if ($this->isCacheSynchronized) return;
 			//if ($this->isCacheSynchronized) return;
@@ -346,6 +349,9 @@ echo "<br />\n";*/
 	 */
 	protected function addToCache($data) {
 		try {
+			if (is_bool(AbstractRecord::$isCacheOnTempSwitch) && (!AbstractRecord::$isCacheOnTempSwitch)) {
+				return;
+			}
 			if (!$this->isCacheOn()) return;
 //var_dump("pridavam do cache ". $this->getCacheFileName() . " $id");
 			$itemType 					= $this->getClassVar("itemType");

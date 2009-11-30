@@ -264,6 +264,12 @@ else {
 			if (!fwrite($fileW, serialize($this->data))) {
 				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_CACHE_CANNOT_WRITE, LBoxExceptionCache::CODE_CACHE_CANNOT_WRITE);
 			}
+/*XXX if (strstr($this->getFilePath(), "/windows/E/www/timesheets/project/.cache/abstractrecord/xtusers_employees_positions")) {
+	if ($this->getFilePath() == "/windows/E/www/timesheets/project/.cache/abstractrecord/xtusers_employees_positions/collections/ad4bec8f6e8768c0ffda5cfff5093893.cache") {
+		throw new Exception("HA!");
+	}
+	LBoxFirePHP::error("VYTVARIM ". $this->getFilePath());
+}*/
 			fclose($fileW);
 		}
 		catch (Exception $e) {
@@ -360,6 +366,10 @@ else {
 				$i++;
 				if ($i <= count(explode(SLASH, LBOX_PATH_INSTANCE_ROOT))) continue;
 				if (!is_dir($pathTMP)) {
+					if (file_exists($pathTMP)) {
+						throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_ALREADY_EXISTS, LBoxExceptionFilesystem::CODE_FILE_ALREADY_EXISTS);
+					}
+//if (class_exists("FirePHP")){LBoxFirePHP::error("Vytvarim adresar $pathTMP");}
 					if (!mkdir($pathTMP)) {
 						throw new LBoxExceptionFilesystem(	$pathTMP .": ". LBoxExceptionFilesystem::MSG_DIRECTORY_CANNOT_CREATE,
 															LBoxExceptionFilesystem::CODE_DIRECTORY_CANNOT_CREATE);

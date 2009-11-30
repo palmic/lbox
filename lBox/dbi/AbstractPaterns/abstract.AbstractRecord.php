@@ -219,6 +219,12 @@ abstract class AbstractRecord implements Iterator
 	protected $isCacheOn;
 	
 	/**
+	 * cache temporary switch - used in cases of data manipulation operations to disable all the caching while operation is done
+	 * @var bool
+	 */
+	public static $isCacheOnTempSwitch;
+	
+	/**
 	 * explicit var to disable cache for concrete tables
 	 * @var bool
 	 */
@@ -303,6 +309,9 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 	 */
 	protected function storeToCache() {
 		try {
+			if (is_bool(self::$isCacheOnTempSwitch) && (!self::$isCacheOnTempSwitch)) {
+				return;
+			}
 			if (!$this->isCacheOn()) return;
 			if ($this->isCacheSynchronized) return;
 //$idColName	= $this->getClassVar("idColName");
@@ -328,7 +337,6 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 	 */
 	public function clearCache() {
 		try {
-			$this				->resetRelevantCache();
 			if (!array_key_exists($this->getClassVar("idColName"), $this->params)
 				|| strlen($id = $this->params[$this->getClassVar("idColName")]) < 1) {
 				$cacheName			= $this->getClassVar("tableName");
@@ -337,6 +345,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 				$cacheName			= $this->getCacheFileName();
 			}
 			LBoxCacheAbstractRecord::getInstance($cacheName)->clearCache();
+			$this				->resetRelevantCache();
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -348,10 +357,10 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 	 */
 	public function resetCache() {
 		try {
+			$this				->resetRelevantCache();
 			if (!$this->isInCache()) {
 				return;
 			}
-			$this				->resetRelevantCache();
 			LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->reset();
 		}
 		catch (Exception $e) {
@@ -767,6 +776,8 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 	 */
 	public function delete() {
 		try {
+			self::$isCacheOnTempSwitch	= false;
+			
 			$idColName = $this->getClassVar("idColName");
 			if (!$this->params[$idColName]) {
 				throw new LBoxException("Cannot delete database record whithout id specified! Can delete more records!!!");

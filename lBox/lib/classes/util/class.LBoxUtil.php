@@ -237,11 +237,16 @@ class LBoxUtil
 				if(is_dir($path .SLASH. $entry))  {
 					if ($recursive) {
 						self::emptyDirByPath($path . SLASH . $entry, $recursive);
-//LBoxFirePHP::warn("adresar ". $path .SLASH. $entry ." smazan");
 					}
 					continue;
 				}
-				unlink($path .SLASH. $entry);
+				if(!unlink($path .SLASH. $entry)) {
+					throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_FILE_CANNOT_DELETE);
+				}
+/*LBoxFirePHP::warn($path .SLASH. $entry ." ODSTRANEN");
+if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstractrecord/xtusers_employees_positions/collections/ad4bec8f6e8768c0ffda5cfff5093893.cache") {
+	die("presne ted");
+}*/
 			}
 			$dir->close();
 		}
@@ -274,8 +279,10 @@ class LBoxUtil
 					}
 					self::removeDirByPath("$path/$entry", true);
 				}
-				if (!unlink("$path/$entry")) {
-					throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_FILE_CANNOT_DELETE);
+				if (file_exists("$path". SLASH ."$entry")) {
+					if (!unlink("$path". SLASH ."$entry")) {
+						throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_FILE_CANNOT_DELETE);
+					}
 				}
 			}
 			$d->close();
