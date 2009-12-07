@@ -10,6 +10,18 @@ abstract class ProcessorRecordEdit extends LBoxFormProcessor
 	 */
 	protected $classNameRecord	= "";
 	
+	/**
+	 * ignored controls names
+	 * @var array
+	 */
+	protected $ignoredControls		= array();
+	
+	/**
+	 * nove vytvoreny/ulozeny record
+	 * @var AbstractRecordLBox
+	 */
+	protected $recordSaved;
+	
 	public function process() {
 		try {
 			if (strlen($classNameRecord = $this->classNameRecord) < 1) {
@@ -17,6 +29,9 @@ abstract class ProcessorRecordEdit extends LBoxFormProcessor
 			}
 			$record		= $this->getRecord();
 			foreach ($this->form->getControls() as $control) {
+				if (is_numeric(array_search($control->getName(), $this->ignoredControls))) {
+					continue;
+				}
 				if ($control instanceof LBoxFormControlMultiple) continue;
 				if ($control instanceof LBoxFormControlSpamDefense) continue;
 				if ($control->getName() == eval("return $classNameRecord::\$idColName;")) continue;
@@ -47,6 +62,9 @@ abstract class ProcessorRecordEdit extends LBoxFormProcessor
 		try {
 			$controls			= $this->form->getControls();
 			$classNameRecord	= $this->classNameRecord;
+			if ($this->recordSaved instanceof $classNameRecord) {
+				return $this->recordSaved;
+			}
 			$idColName			= eval("return $classNameRecord::\$idColName;");
 			$classNameRecords	= eval("return $classNameRecord::\$itemsType;");
 			if (array_key_exists("filter_by", $controls)) {
@@ -55,10 +73,10 @@ abstract class ProcessorRecordEdit extends LBoxFormProcessor
 					if ($records->count() < 1) {
 						throw new LBoxExceptionFormProcessor("Record not found!");
 					}
-					return $records->current();
+					return $this->recordSaved = $records->current();
 				}
 			}
-			return new $classNameRecord(strlen($this->form->getControlByName($idColName)->getValue()) > 0 ? $this->form->getControlByName($idColName)->getValue() : NULL);
+			return $this->recordSaved = new $classNameRecord(strlen($this->form->getControlByName($idColName)->getValue()) > 0 ? $this->form->getControlByName($idColName)->getValue() : NULL);
 		}
 		catch (Exception $e) {
 			throw $e;

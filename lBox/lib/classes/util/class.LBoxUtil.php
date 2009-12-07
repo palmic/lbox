@@ -453,7 +453,9 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 			if (count($paramsNew) > 0) {
 				$paramsNewString	= ":". implode("/", $paramsNew);
 			}
-			return $urlWithoutParams . $paramsNewString;
+			$out	= $urlWithoutParams . $paramsNewString;
+			$out	= str_replace("::", ":", $out);
+			return $out;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -462,12 +464,16 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 
 	/**
 	 * vrati URL s odebranim parametru podle predaneho PCRE vzoru
-	 * @param string $pattern
+	 * @param array $patterns
 	 * @param string $url
 	 * @return string
 	 */
-	public static function getURLWithoutParamsByPattern($pattern = "", $url = "") {
+	public static function getURLWithoutParamsByPattern($patterns = array(), $url = "") {
 		try {
+			// zpetna kompatibilita
+			if (is_string($patterns)) {
+				$patterns	= array($patterns);
+			}
 			$url				= strlen($url) > 0 ? $url : LBOX_REQUEST_URL;
 			$url				= str_replace("http//", "http://", strtolower($url));
 			$url				= str_replace("https//", "https://", strtolower($url));
@@ -482,27 +488,38 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 			else {
 				$urlWithoutParams	= $url;
 			}
-			if (strlen($pattern) < 1) {
-				throw new LBoxException(LBoxException::MSG_PARAM_STRING_NOTNULL, LBoxException::CODE_BAD_PARAM);
+			if (count($patterns) < 1) {
+				throw new LBoxException(LBoxException::MSG_PARAM_ARRAY_NOTNULL, LBoxException::CODE_BAD_PARAM);
 			}
 			if (count($paramsOriginal) < 1) {
 				return $url;
 			}
+			// nastavit pole vsech dosavadnich parametru
 			foreach ($paramsOriginal as $k => $paramOriginal) {
-				if (!is_numeric($matchCount = @preg_match($pattern, $paramOriginal, $matches))) {
-					throw new LBoxException("Wrong PCRE patter given, or some another error!");
-				}
-				if (strlen($paramOriginal) > 0 && $matchCount < 1) {
-					$paramsNew[]	= $paramOriginal;
-				}
+				$paramsNew[$paramOriginal]	= $paramOriginal;
+			}
+			foreach ($paramsOriginal as $k => $paramOriginal) {
 				if (strlen($paramOriginal) < 1) {
 					continue;
+				}
+				foreach ($patterns as $pattern) {
+					if (!is_numeric($matchCount = @preg_match($pattern, $paramOriginal, $matches))) {
+						throw new LBoxException("Wrong PCRE patter given, or some another error!");
+					}
+					//smaznout param
+					if (strlen($paramOriginal) < 1 || $matchCount > 0) {
+						unset($paramsNew[$paramOriginal]);
+					}
 				}
 			}
 			if (count($paramsNew) > 0) {
 				$paramsNewString	= ":". implode("/", $paramsNew);
 			}
-			return $urlWithoutParams . $paramsNewString;
+			$out	= $urlWithoutParams . $paramsNewString;
+			if (substr($out, -1) == ":") {
+				$out	= substr($out, 0, -1);
+			}
+			return $out;
 		}
 		catch(Exception $e) {
 			throw $e;
