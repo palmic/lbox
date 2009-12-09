@@ -12,13 +12,9 @@ class PhotosRecord extends AbstractRecordLBox
 	public static $idColName    	= "id";
 
 	public static $dependingRecords	= array(
-											"TextsRecordXPhotosRecords",
-											"PhotosProductsRecords",
-											"PhotosPhotogalleriesRecords",
-											"PhotosArticlesRecords",
-											"PhotosProductsDefaultRecords",
-	
 	);
+	
+	protected $isCacheOn			= false;
 	
 	/**
 	 * Nazev property s cestou k obrazkum
@@ -61,12 +57,17 @@ class PhotosRecord extends AbstractRecordLBox
 					if (!$this->params[$name]) {
 						$this->params[$name] = $this->getImgX();
 					}
-					return $this->params[$name];
+					return ($this->outputFilter instanceof LBoxOutputFilter)
+						? $this->outputFilter->prepare($name, $this->params[$name])
+						: $this->params[$name];
+					break;
 				case "size_y":
 					if (!$this->params[$name]) {
 						$this->params[$name] = $this->getImgY();
 					}
-					return $this->params[$name];
+					return ($this->outputFilter instanceof LBoxOutputFilter)
+						? $this->outputFilter->prepare($name, $this->params[$name])
+						: $this->params[$name];
 					break;
 				default:
 					return parent::__get($name);
@@ -569,6 +570,7 @@ class PhotosRecord extends AbstractRecordLBox
 				throw new LBoxExceptionFilesystem("\$size: ". LBoxExceptionFilesystem::MSG_PARAM_INT_NOTNULL, LBoxExceptionFilesystem::CODE_BAD_PARAM);
 			}
 			$pathTarget		= $this->getDirName();
+			$fileName		= strtolower($fileName);
 
 			$fileName	= $this->getFreeFileNameFrom($fileName);
 			if (!move_uploaded_file($tmpPath, "$pathTarget/$fileName")) {
