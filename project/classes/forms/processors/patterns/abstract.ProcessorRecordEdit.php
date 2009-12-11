@@ -10,18 +10,6 @@ abstract class ProcessorRecordEdit extends LBoxFormProcessor
 	 */
 	protected $classNameRecord	= "";
 	
-	/**
-	 * ignored controls names
-	 * @var array
-	 */
-	protected $ignoredControls		= array();
-	
-	/**
-	 * nove vytvoreny/ulozeny record
-	 * @var AbstractRecordLBox
-	 */
-	protected $recordSaved;
-	
 	public function process() {
 		try {
 			if (strlen($classNameRecord = $this->classNameRecord) < 1) {
@@ -29,25 +17,14 @@ abstract class ProcessorRecordEdit extends LBoxFormProcessor
 			}
 			$record		= $this->getRecord();
 			foreach ($this->form->getControls() as $control) {
-				if (is_numeric(array_search($control->getName(), $this->ignoredControls))) {
-					continue;
-				}
 				if ($control instanceof LBoxFormControlMultiple) continue;
 				if ($control instanceof LBoxFormControlSpamDefense) continue;
 				if ($control->getName() == eval("return $classNameRecord::\$idColName;")) continue;
 				if ($control->getName() == "filter_by") continue;
-				// prepinac podle typu controlu
-				switch (true) {
-					case ($control instanceof LBoxFormControlBool):
-							$value	= (int)$control->getValue();
-						break;
-					default:
-							$value	= $control->getValue();
-				}
 				$colName	= $control->getName();
-				$record	->$colName	= strlen($value) > 0 ? $value : "<<NULL>>";
+				$record	->$colName	= strlen($control->getValue()) > 0 ? $control->getValue() : "<<NULL>>";
 			}
-			$record	->store();
+			$record->store();
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -62,21 +39,20 @@ abstract class ProcessorRecordEdit extends LBoxFormProcessor
 		try {
 			$controls			= $this->form->getControls();
 			$classNameRecord	= $this->classNameRecord;
-			if ($this->recordSaved instanceof $classNameRecord) {
-				return $this->recordSaved;
-			}
 			$idColName			= eval("return $classNameRecord::\$idColName;");
 			$classNameRecords	= eval("return $classNameRecord::\$itemsType;");
 			if (array_key_exists("filter_by", $controls)) {
-				if (strlen($this->form->getControlByName($idColName)->getValue()) > 0) {
-					$records	= new $classNameRecords(array($controls["filter_by"]->getValue() => $this->form->getControlByName($idColName)->getValue()));
-					if ($records->count() < 1) {
-						throw new LBoxExceptionFormProcessor("Record not found!");
-					}
-					return $this->recordSaved = $records->current();
+				if (strlen($this->form->getControlByName("filter_by")->getValue()) > 0) {
+					$idColName	= $this->form->getControlByName("filter_by")->getValue();
 				}
 			}
-			return $this->recordSaved = new $classNameRecord(strlen($this->form->getControlByName($idColName)->getValue()) > 0 ? $this->form->getControlByName($idColName)->getValue() : NULL);
+			$records	= new $classNameRecords(array($controls["filter_by"]->getValue() => $this->form->getControlByName($idColName)->getValue()));
+			if ($records->count() > 0) {
+				return $records->current();
+			}
+			else {
+				return new $classNameRecord;
+			}
 		}
 		catch (Exception $e) {
 			throw $e;
