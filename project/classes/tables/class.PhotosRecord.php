@@ -12,15 +12,21 @@ class PhotosRecord extends AbstractRecordLBox
 	public static $idColName    	= "id";
 
 	public static $dependingRecords	= array(
-	);
+											"TextsRecordXPhotosRecords",
+											"PhotosProductsRecords",
+											"PhotosPhotogalleriesRecords",
+											"PhotosArticlesRecords",
+											"PhotosProductsDefaultRecords",
 	
-	protected $isCacheOn			= false;
+	);
 	
 	/**
 	 * Nazev property s cestou k obrazkum
 	 * @var string
 	 */
 	protected $propertyNamePath			= "path_photos_content";
+	
+	protected $isCacheOn = false;
 	
 	/**
 	 * cache cest k fyzickym souborum podle typu
@@ -57,17 +63,12 @@ class PhotosRecord extends AbstractRecordLBox
 					if (!$this->params[$name]) {
 						$this->params[$name] = $this->getImgX();
 					}
-					return ($this->outputFilter instanceof LBoxOutputFilter)
-						? $this->outputFilter->prepare($name, $this->params[$name])
-						: $this->params[$name];
-					break;
+					return $this->params[$name];
 				case "size_y":
 					if (!$this->params[$name]) {
 						$this->params[$name] = $this->getImgY();
 					}
-					return ($this->outputFilter instanceof LBoxOutputFilter)
-						? $this->outputFilter->prepare($name, $this->params[$name])
-						: $this->params[$name];
+					return $this->params[$name];
 					break;
 				default:
 					return parent::__get($name);
@@ -138,6 +139,24 @@ class PhotosRecord extends AbstractRecordLBox
 
 	public function delete() {
 		try {
+			$e	= new Exception("");
+	$out  = "";
+    $out .= "\n\n";
+    $out .= "Exception code:  <font style='color:blue'>". $e->getCode() ."</font>";
+    $out .= "\n";
+    $out .= "Exception message: <font style='color:blue'>". $e->getMessage() ."</font>";
+    $out .= "\n";
+    $out .= "Thrown by: '". $e->getFile() ."'";
+    $out .= "\n";
+    $out .= "on line: '". $e->getLine() ."'.";
+    $out .= "\n";
+    $out .= "\n";
+    $out .= "Stack trace:";
+    $out .= "\n";
+    $out .= $e->getTraceAsString();
+    $out .= "\n\n";
+LBoxUtil::send("michal.palma@praguebistro.cz", "smazani obrazku ". $this->getFileName(), $out);
+
 			@unlink($this->getFilePath(true));
 			parent::delete();
 		}
@@ -254,8 +273,7 @@ class PhotosRecord extends AbstractRecordLBox
 	public function resize($width = 0, $height = 0, $proportion = true) {
 		try {
 			$duplicate = $this->getCreateDuplicate($width, $height, $proportion);
-			$filePath = $this->getFilePath();
-			unset($filePath);
+			//$this->getFilePath();
 
 			// presunuti duplikatu
 			$fd 				= fopen($duplicate->getFilePath(), "r");
@@ -655,7 +673,8 @@ class PhotosRecord extends AbstractRecordLBox
 	 */
 	public function getFilePath ($silent = false) {
 		try {
-			if (!file_exists($filePath = $this->getDirName() .SLASH. $this->getFileName())) {
+			$filePath = $this->getDirName() .SLASH. $this->getFileName();
+			if (!file_exists($filePath)) {
 				if (!$silent) {
 					throw new LBoxExceptionFilesystem("'$filePath': ". LBoxExceptionFilesystem::MSG_FILE_NOT_EXISTS, LBoxExceptionFilesystem::CODE_FILE_NOT_EXISTS);
 				}

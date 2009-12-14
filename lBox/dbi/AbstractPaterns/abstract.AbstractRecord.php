@@ -482,6 +482,9 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 	 */
 	public function __set($name, $value) {
 		try {
+			if (is_object($value)) {
+				throw new Exception("\$value cannot be object!");
+			}
 			$idColName 			= $this->getClassVar("idColName");
 			$passwordColNames	= $this->getClassVar("passwordColNames", true);
 
