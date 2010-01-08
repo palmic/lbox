@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * root stranka vsech stranek projektu Prazska vodka s vyjimkou Stranky pro age check
 * @author Michal Palma <palmic@email.cz>
