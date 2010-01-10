@@ -14,7 +14,9 @@ class LBoxFilesCombineJS extends LBoxFilesCombine
 	
 	public function compress($input) {
 		try {
-			return LBoxJSMinPlus::minify($input);
+			/* odstraneno kvuli x problemum s timto kompresorem
+			return LBoxJSMinPlus::minify($input);*/
+			return LBoxJSMin::minify($input);
 		}
 		catch (Exception $e) {
 			throw $e;

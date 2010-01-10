@@ -61,7 +61,7 @@ abstract class LBoxFilesCombine
 					throw new LBoxExceptionFilesystem("$file: ". LBoxExceptionFilesystem::MSG_FILE_NOT_EXISTS, LBoxExceptionFilesystem::CODE_FILE_NOT_EXISTS);
 				}
 				$aLastModifieds[] = filemtime($file);
-				$sCode .= file_get_contents($file);
+				$sCode .= file_get_contents($file) ."\n";
          	}
 	        // sort dates, newest first
 	        rsort($aLastModifieds);
