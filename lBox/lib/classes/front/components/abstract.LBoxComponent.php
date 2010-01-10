@@ -369,6 +369,44 @@ abstract class LBoxComponent
 			throw $e;
 		}
 	}
+	
+	/**
+	* kombinuje externi JS do jednoho verzovaneho a nahrazuje v hlavickach jejich includy
+	* @param string $input
+	* @return string
+	*/
+	protected function combineJS($input = "") {
+		try {
+			if (!LBoxConfigSystem::getInstance()->getParamByPath("output/js_combine")) {
+				return $input;
+			}
+			$out		= $input;
+			$template	= '<script type="text/javascript" src="<src>"></script>';
+			$reg		= $template;
+			$reg		= str_ireplace("/", '\\/', $reg);
+			$reg		= str_ireplace("<src>", '(.[^>]*)', $reg);
+			$reg		= "/$reg/si";
+			$files	= array();
+			$ret = preg_match_all($reg, $out, $regs);
+			foreach ($regs[1] as $reg) {
+				$files[]	= $reg;
+			}
+			if (count($files) > 0) {
+				$i	= 0;
+				foreach ($regs[0] as $reg) {
+					$replace	= $i < 1 ? str_ireplace("<src>", LBoxFilesCombineJS::getInstance()->combine($files), $template) : "";
+//LBoxFirePHP::log($reg);
+//LBoxFirePHP::warn($replace);
+					$out = str_replace($reg, $replace, $out);
+					$i++;
+				}
+			}
+			return $out;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
 
 	/**
 	 * getter attributu TAL
