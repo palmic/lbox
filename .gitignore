@@ -5,6 +5,7 @@
 lBox/documents*
 project/.cache*
 project/.tal_compiled*
+project/js/combined*
 project/filespace*
 project/import*
 # project/documents/material*
