@@ -105,6 +105,7 @@
 		<remove_coments>0</remove_coments>
 		<compression>0</compression>
 		<js_combine>1</js_combine>
+		<js_compress>1</js_compress>
 	</output>
 	<multilang>
 		<default_language>cs</default_language>

@@ -72,7 +72,8 @@ abstract class LBoxFilesCombine
 		    // cache the data
 		    if (!file_exists($destinationFile)) {
 //LBoxFirePHP::warn("$destinationFile zatim NEexistuje - vytvarim novy");
-				$sCode	= "/*merged from files: ". implode($files, ",\n") ."*/". $this->compress($sCode);
+				$sCode	= LBoxConfigSystem::getInstance()->getParamByPath("output/js_compress") ? $this->compress($sCode) : $sCode;
+		    	$sCode	= "/*merged from files: ". implode($files, ",\n") ."*/". $sCode;
 		    	$fo	= fopen($destinationFile, "w");
 		    	fwrite($fo, $sCode);
 		    	fclose($fo);
