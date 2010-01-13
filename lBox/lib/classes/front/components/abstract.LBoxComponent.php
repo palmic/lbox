@@ -377,8 +377,15 @@ abstract class LBoxComponent
 	*/
 	protected function combineJS($input = "") {
 		try {
-			if (!LBoxConfigSystem::getInstance()->getParamByPath("output/js_combine")) {
-				return $input;
+			switch (LBoxConfigSystem::getInstance()->getParamByPath("output/js_combine")) {
+				case 0:
+					return $input;
+				break;
+				case -1:
+					if (LBOX_REQUEST_IP == "127.0.0.1") {
+						return $input;
+					}
+				break;
 			}
 			$out		= $input;
 			$template	= '<script type="text/javascript" src="<src>"></script>';
@@ -409,7 +416,7 @@ abstract class LBoxComponent
 	}
 
 	/**
-	 * getter attributu TAL
+	 * getter TAL objektu
 	 * @return PHPTAL
 	 */
 	protected function getTAL() {

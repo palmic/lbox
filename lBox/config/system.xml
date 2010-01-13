@@ -104,8 +104,8 @@
 		</paging>
 		<remove_coments>0</remove_coments>
 		<compression>0</compression>
-		<js_combine>1</js_combine>
-		<js_compress>1</js_compress>
+		<js_combine>-1</js_combine><!-- pokud -1, bude provadeno POUZE na ostrem serveru -->
+		<js_compress>1</js_compress><!-- pokud -1, bude provadeno POUZE na ostrem serveru -->
 	</output>
 	<multilang>
 		<default_language>cs</default_language>
@@ -119,6 +119,6 @@
 	</paging>
 	<debug>
 		<components>0</components>
-		<exceptions>-1</exceptions>
+		<exceptions>-1</exceptions><!-- pokud -1, bude provadeno POUZE LOKALNE -->
 	</debug>
 </system>
