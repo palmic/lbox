@@ -1276,7 +1276,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system
 	 * @return AbstractRecords
 	 * @throws Exception
 	 */
-	public function getChildren() {
+	public function getChildren($order = false) {
 		try {
 			$tableName		= $this->getClassVar("tableName");
 			if (!$isTree = $this->isTree()) {
@@ -1293,7 +1293,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system
 //var_dump($this->params[$idColName] .": getChildren");
 			
 			$filter 		= array($pidColName => $id, $bidColName => $bId);
-			$order			= array($lftColName => 1);
+			$order			= $order ? $order : array($lftColName => 1);
 			$children		= new $itemsType($filter, $order);
 			$children		->setIsTree($this->isTree());
 			return $children;
