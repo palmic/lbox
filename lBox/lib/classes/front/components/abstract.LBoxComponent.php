@@ -297,6 +297,9 @@ abstract class LBoxComponent
 				// $out 	= nl2br($out) ."<hr />\n\n";
 				$out 	= "<!--$out-->";
 			}
+			
+			$out	= $this->combineJS($out);
+			
 			return $out;
 		}
 		catch (Exception $e) {
@@ -388,13 +391,24 @@ abstract class LBoxComponent
 				break;
 			}
 			$out		= $input;
+
+			// parseout html header
+			$regHeader	= "<head((\s+\w+(\s*=\s*(?:\".*?\"|'.*?'|[^'\">\s]+))?)+\s*|\s*)>(.*)<\/head>";
+			$retHeader	= preg_match_all("/$regHeader/si", $out, $regsHeader);
+			$header		= reset(reset($regsHeader));
+			// once combined code check
+			if (strpos($header, str_replace(LBOX_PATH_PROJECT, "", LBoxFilesCombineJS::getInstance()->getPathDestination()))) {
+				return $input;
+			}
+
+			// parseout javascripts from header
 			$template	= '<script type="text/javascript" src="<src>"></script>';
 			$reg		= $template;
 			$reg		= str_ireplace("/", '\\/', $reg);
 			$reg		= str_ireplace("<src>", '(.[^>]*)', $reg);
 			$reg		= "/$reg/si";
 			$files	= array();
-			$ret = preg_match_all($reg, $out, $regs);
+			$ret = preg_match_all($reg, $header, $regs);
 			foreach ($regs[1] as $reg) {
 				$files[]	= $reg;
 			}

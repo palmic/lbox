@@ -102,7 +102,7 @@ abstract class LBoxFilesCombine
 	* returns destination path
 	* @return string
 	*/
-	protected function getPathDestination() {
+	public function getPathDestination() {
 		try {
 			$out	= $this->destination;
 			$out	= str_ireplace("<cache>", LBOX_PATH_CACHE, $out);

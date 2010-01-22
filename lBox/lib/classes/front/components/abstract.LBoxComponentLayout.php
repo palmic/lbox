@@ -26,7 +26,6 @@ abstract class LBoxComponentLayout extends LBoxComponent
 				return $out;
 			}
 			$out 	= $this->removeComents($out);
-			$out	= $this->combineJS($out);
 			$out	= $this->compress($out);
 			return $out;
 		}

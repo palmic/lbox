@@ -81,9 +81,9 @@ abstract class AbstractRecordLBox extends AbstractRecord implements OutputItem
 	 * pretizeno o predavani output filteru
 	 * @return AbstractRecords
 	 */
-	public function getChildren($order = false) {
+	public function getChildren() {
 		try {
-			$children	= parent::getChildren($order);
+			$children	= parent::getChildren();
 			if ($this->outputFilter instanceof LBoxOutputFilter) {
 				if ($children instanceof AbstractRecordsLBox ||
 					$children instanceof AbstractRecordsTreeLBox) {
