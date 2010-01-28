@@ -131,7 +131,7 @@ abstract class LBoxPagingIterator implements Iterator
 							return $this->getPageMax();
 						break;
 					default:
-							return (int)$matches[2];
+						return (int)$matches[2];
 				}
 			}
 		}
@@ -157,7 +157,7 @@ abstract class LBoxPagingIterator implements Iterator
 	}
 
 	/**
-	 * vraci cislo aktualni stranky
+	 * vraci cislo posledni stranky
 	 * @return int
 	 */
 	public function getPageMax() {
