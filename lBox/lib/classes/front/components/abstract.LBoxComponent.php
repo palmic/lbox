@@ -323,11 +323,9 @@ abstract class LBoxComponent
 			$bodyNew	= $body = reset(reset($regsBody));
 			switch (LBoxConfigSystem::getInstance()->getParamByPath("output/remove_coments")) {
 				case -1:
-					if (LBOX_REQUEST_IP == "127.0.0.1") {
-							foreach ((array)$patterns as $pattern => $replacement) {
-								$out	= preg_replace($pattern, "", $bodyNew);
-							}
-						}
+					if (LBOX_REQUEST_IP != "127.0.0.1") {
+						$bodyNew	= preg_replace($pattern, "", $bodyNew);
+					}
 					break;
 				case 0:
 					break;
@@ -354,7 +352,7 @@ abstract class LBoxComponent
 			$out		= $input;
 			switch (LBoxConfigSystem::getInstance()->getParamByPath("output/compression")) {
 				case -1:
-						if (LBOX_REQUEST_IP == "127.0.0.1") {
+						if (LBOX_REQUEST_IP != "127.0.0.1") {
 							$out	= preg_replace($pattern, " ", $out);
 						}
 					break;
