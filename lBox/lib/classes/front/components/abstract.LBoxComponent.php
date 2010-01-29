@@ -314,24 +314,28 @@ abstract class LBoxComponent
 	 */
 	protected function removeComents($input = "") {
 		try {
-			$patterns["<!--[^\[].*-->"] = "";
 			$out		= $input;
+			
+			$pattern	= "/<!--(.|\s)*?-->/";
+			// parseout html header
+			$regBody	= "<body((\s+\w+(\s*=\s*(?:\".*?\"|'.*?'|[^'\">\s]+))?)+\s*|\s*)>(.*)<\/body>";
+			$retBody	= preg_match_all("/$regBody/si", $out, $regsBody);
+			$bodyNew	= $body = reset(reset($regsBody));
 			switch (LBoxConfigSystem::getInstance()->getParamByPath("output/remove_coments")) {
 				case -1:
 					if (LBOX_REQUEST_IP == "127.0.0.1") {
 							foreach ((array)$patterns as $pattern => $replacement) {
-								$out	= ereg_replace($pattern, $replacement, $out);
+								$out	= preg_replace($pattern, "", $bodyNew);
 							}
 						}
 					break;
 				case 0:
 					break;
 				case 1:
-						foreach ((array)$patterns as $pattern => $replacement) {
-							$out	= ereg_replace($pattern, $replacement, $out);
-						}
+						$bodyNew	= preg_replace($pattern, "", $bodyNew);
 					break;
 			}
+			$out	= str_replace($body, $bodyNew, $out);
 			return $out;
 		}
 		catch (Exception $e) {
@@ -346,24 +350,18 @@ abstract class LBoxComponent
 	 */
 	protected function compress($input = "") {
 		try {
-			$patterns[">([[:space:]])+<"] 	= ">\\1<";
-			$patterns["([[:space:]])+"] 	= "\\1";
-			$patterns["[\r\n\v\f]"] 		= "";
-			$out							= $input;
+			$pattern	= "/[\n\r|\r\n|\n|\r|\t| ]+/";
+			$out		= $input;
 			switch (LBoxConfigSystem::getInstance()->getParamByPath("output/compression")) {
 				case -1:
 						if (LBOX_REQUEST_IP == "127.0.0.1") {
-							foreach ((array)$patterns as $pattern => $replacement) {
-								$out	= ereg_replace($pattern, $replacement, $out);
-							}
+							$out	= preg_replace($pattern, " ", $out);
 						}
 					break;
 				case 0:
 					break;
 				case 1:
-						foreach ((array)$patterns as $pattern => $replacement) {
-							$out	= ereg_replace($pattern, $replacement, $out);
-						}
+						$out	= preg_replace($pattern, " ", $out);
 					break;
 			}
 			return $out;
