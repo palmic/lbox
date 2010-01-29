@@ -11,6 +11,9 @@ class OutputFilterPagingPages extends LBoxOutputFilter
 		try {
 			// staticke gettery
 			switch ($name) {
+				case "has_more_pages":
+						$value	= ($this->instance->getPageMax() > 1);
+					break;
 				case "page_current":
 						$value	= $this->instance->getPageByNumber($this->instance->getPaging()->getPageNumberCurrent());
 					break;
