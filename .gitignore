@@ -10,6 +10,7 @@ project/filespace*
 project/import*
 # project/documents/material*
 project/documents/doc/html*
+*error.log*
 *~
 
 # blokovani verzovani dat metanodu atd.
