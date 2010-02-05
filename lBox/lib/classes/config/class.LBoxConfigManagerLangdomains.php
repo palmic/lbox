@@ -51,7 +51,40 @@ class LBoxConfigManagerLangdomains extends LBoxConfigManager
 			if (!$node = $this->findNodeByContent(trim($domain), $this->getConfigInstance()->getRootIterator(), true)) {
 				throw new LBoxExceptionProperty(LBoxExceptionProperty::MSG_PROPERTY_LANGDOMAIN_NOT_FOUND ." Tryed to find domain = '$domain'", LBoxExceptionProperty::CODE_PROPERTY_LANGDOMAIN_NOT_FOUND);
 			}
-			return $node->lang;
+			// find prior lng
+			if (count($lngs = explode(",", $node->lang)) > 0) {
+				foreach ($this->getClientLanguages() as $clientLanguage) {
+					foreach ($lngs as $lng) {
+						if (strtolower(trim($lng)) == strtolower(trim($clientLanguage))) {
+//LBoxFirePHP::log("Language by client browser choosed: ". strtolower(trim($lng)));
+							return strtolower(trim($lng));
+						}
+					}
+				}
+				// prior lng not found - choose first as default
+				return strtolower(trim(reset($lngs)));
+			}
+			else {
+				return trim($node->lang);
+			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * vraci accepted jazyku prohlizece podle jeho nastaveni
+	 * @return array
+	 */
+	protected function getClientLanguages() {
+		try {
+			$out	= array();
+			foreach (explode(",", $_SERVER["HTTP_ACCEPT_LANGUAGE"]) as $lngAccepted) {
+				$lng			= trim(reset(explode(";", $lngAccepted)));
+				$out[$lng]		= $lng;
+			}
+			return $out;
 		}
 		catch (Exception $e) {
 			throw $e;
