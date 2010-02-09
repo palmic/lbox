@@ -330,7 +330,7 @@ abstract class LBoxComponent
 				case 0:
 					break;
 				case 1:
-						$bodyNew	= preg_replace($pattern, "", $bodyNew);
+					$bodyNew	= preg_replace($pattern, "", $bodyNew);
 					break;
 			}
 			$out	= str_replace($body, $bodyNew, $out);
@@ -397,7 +397,7 @@ abstract class LBoxComponent
 				return $input;
 			}
 
-			// parseout javascripts from header
+			// get header javascripts
 			$template	= '<script type="text/javascript" src="<src>"></script>';
 			$reg		= $template;
 			$reg		= str_ireplace("/", '\\/', $reg);
@@ -405,17 +405,20 @@ abstract class LBoxComponent
 			$reg		= "/$reg/si";
 			$files	= array();
 			$ret = preg_match_all($reg, $header, $regs);
-			foreach ($regs[1] as $reg) {
+			foreach ($regs[1] as $k => $reg) {
 				// only local files
-				if (!preg_match("/^http(s)?:/", $reg)) {
-					$files[]	= $reg;
+				if (preg_match("/^http(s)?:/", $reg)) {
+					unset($regs[0][$k]);
+					unset($regs[1][$k]);
+					continue;
 				}
+				$files[]	= $reg;
 			}
 //LBoxFirePHP::log($files);
 			if (count($files) > 0) {
-				$i	= 0;
+				$i	= 1;
 				foreach ($regs[0] as $reg) {
-					$replace	= $i < 1 ? str_ireplace("<src>", LBoxFilesCombineJS::getInstance()->combine($files), $template) : "";
+					$replace	= $i == count($regs[0]) ? str_ireplace("<src>", LBoxFilesCombineJS::getInstance()->combine($files), $template) : "";
 //LBoxFirePHP::log($reg);
 //LBoxFirePHP::warn($replace);
 					$out = str_replace($reg, $replace, $out);

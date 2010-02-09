@@ -48,6 +48,7 @@ abstract class LBoxFilesCombine
 			if (count($files) < 1) {
 				throw new LBoxException(LBoxException::MSG_PARAM_ARRAY_NOTNULL, LBoxException::CODE_BAD_PARAM);
 			}
+			
 			$sDocRoot		= $_SERVER['DOCUMENT_ROOT'];
 			$destination	= $this->getPathDestination();
 		    LBoxUtil::createDirByPath($destination);
