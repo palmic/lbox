@@ -406,8 +406,12 @@ abstract class LBoxComponent
 			$files	= array();
 			$ret = preg_match_all($reg, $header, $regs);
 			foreach ($regs[1] as $reg) {
-				$files[]	= $reg;
+				// only local files
+				if (!preg_match("/^http(s)?:/", $reg)) {
+					$files[]	= $reg;
+				}
 			}
+//LBoxFirePHP::log($files);
 			if (count($files) > 0) {
 				$i	= 0;
 				foreach ($regs[0] as $reg) {
