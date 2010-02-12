@@ -45,8 +45,12 @@ abstract class ProcessorRecordEdit extends LBoxFormProcessor
 				if (strlen($this->form->getControlByName("filter_by")->getValue()) > 0) {
 					$idColName	= $this->form->getControlByName("filter_by")->getValue();
 				}
+				$filterBy	= $controls["filter_by"]->getValue();
 			}
-			$records	= new $classNameRecords(array($controls["filter_by"]->getValue() => $this->form->getControlByName($idColName)->getValue()));
+			else {
+				$filterBy	= $idColName;
+			}
+			$records	= new $classNameRecords(array($filterBy => $this->form->getControlByName($idColName)->getValue()));
 			if ($records->count() > 0) {
 				return $records->current();
 			}
