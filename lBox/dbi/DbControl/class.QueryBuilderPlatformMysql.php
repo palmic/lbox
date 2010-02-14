@@ -104,6 +104,144 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 		}
 	}
 	
+	public function getDoesTableExists($table, $database = "") {
+		try {
+			if (strlen($database) < 1) {
+				throw new DbControlException(DbControlException::MSG_PARAM_STRING_NOTNULL, DbControlException::CODE_BAD_PARAM);
+			}
+			return "SELECT table_name
+						FROM information_schema.tables
+							WHERE table_schema = ". $this->getValueWrapped($database) ."
+							AND table_name = ". $this->getValueWrapped($table);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	public function getCreateTable($table, $columns = array(), $attributes = array()) {
+		try {
+			$qt	= $this->getQuotesTableName();
+			$qc	= $this->getQuotesColumnName();
+			
+			$cols	= "";
+			foreach ($columns as $column) {
+				$type		= "";
+				// type switch
+				if (strlen($column["type"]) > 0) {
+					switch ($column["type"]) {
+						case "int":
+								$type	= "int";
+							break;
+						case "shorttext":
+								$type	= "varchar(255)";
+							break;
+						case "longtext":
+						case "richtext":
+								$type	= "text";
+							break;
+						default:
+								$type	= "text";
+					}
+				}
+				else {
+					$type	= "text";
+				}
+				$type	 = " $type";
+				// NOT NULL default on
+				if (!array_key_exists("notnull", $column)) {
+					$column["notnull"]	= true;
+				}
+				// NOT NULL
+				$notNull = $column["notnull"] ? " NOT NULL" : "";
+				// AUTOINCREMENT
+				$autoincrement = $column["autoincrement"] ? " AUTO_INCREMENT" : "";
+				// default value
+				$default = strlen($column["default"]) > 0 ? " DEFAULT ". $this->getValueWrapped($column["default"]) : "";
+				$cols	.= strlen($cols) > 0 ? ",\n" : "";
+				$cols	.= reset($qc) . $column["name"] . end($qc) . $type . $notNull . $autoincrement . $default;
+			}
+			
+			$attribsInner	= "";
+			$attribsOuter	= "";
+			foreach ($attributes as $name => $value) {
+				switch ($name) {
+					case "pk":
+							$attribsInner	.= strlen($attribsInner) > 0 ? ",\n" : "";
+							$attribsInner 	.= "PRIMARY KEY (". reset($qc) . $value . end($qc) .")";
+						break;
+					default:
+						throw new DbControlException("Unrecognized table attribute $name!");
+				}
+			}
+			$attribsInner	= strlen($attribsInner) > 0 ? ", $attribsInner" : "";
+			
+			$out	= "CREATE TABLE  ". reset($qt) . $table . end($qt) ." (
+						$cols
+					  $attribsInner
+					) $attribsOuter";
+
+			return $out;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	public function getAddColumns($table, $columns = array()) {
+		try {
+			$qt	= $this->getQuotesTableName();
+			$qc	= $this->getQuotesColumnName();
+			$cols	= "";
+			foreach ($columns as $column) {
+				$type		= "";
+				// type switch
+				if (strlen($column["type"]) > 0) {
+					switch ($column["type"]) {
+						case "int":
+								$type	= "int";
+							break;
+						case "shorttext":
+								$type	= "varchar(255)";
+							break;
+						case "longtext":
+						case "richtext":
+								$type	= "text";
+							break;
+						default:
+								$type	= "text";
+					}
+				}
+				else {
+					$type	= "text";
+				}
+				$type	 = " $type";
+				$comment = " COMMENT 'added ". date('Y-m-d H:i:s') ."'";
+				// NOT NULL default on
+				if (!array_key_exists("notnull", $column)) {
+					$column["notnull"]	= true;
+				}
+				// NOT NULL
+				$notNull = $column["notnull"] ? " NOT NULL" : "";
+				// AUTOINCREMENT
+				$autoincrement = $column["autoincrement"] ? " AUTO_INCREMENT" : "";
+				// default value
+				$default = strlen($column["default"]) > 0 ? " DEFAULT ". $this->getValueWrapped($column["default"]) : "";
+				$cols	.= strlen($cols) > 0 ? ",\n" : "";
+				$cols	.= "ADD COLUMN ". reset($qc) . $column["name"] . end($qc) . $type . $notNull . $autoincrement . $default . $comment;
+			}
+			
+			$out	= "ALTER TABLE  ". reset($qt) . $table . end($qt) ."
+						$cols
+						";
+						
+			return $out;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
 	protected function getSelect($table, $what = "*", QueryBuilderWhere $where = NULL, $limit = array(), $groupBy = array(), $orderBy = array()) {
 		if (strlen($table) < 1) {
 			throw new DbControlException("Ilegal parameter table. Must be NOT-NULL string.");

@@ -81,7 +81,33 @@ abstract class QueryBuilderPlatform
 	 * @param array $orderBy
 	 */
 	public abstract function getSelectMaxColumns($table, $what = array(), QueryBuilderWhere $where = NULL, $groupBy = array(), $orderBy = array());
+	
+	/**
+	 * vraci dotaz na existenci tabulky v databazi podle schematu
+	 * @param string $table
+	 * @param string $schema
+	 * @return string
+	 */
+	public abstract function getDoesTableExists($table, $database = "");
     
+	/**
+	 * vraci SQL pro vytvoreni tabulky v databazi
+	 * @param string $table
+	 * @param array $columns array("name"=>"<colname>", "type"=>"int|shorttext|longtext|richtext". "notnull" => <bool default true>,
+	 * 								"autoincrement" => bool default false, "default" => <default value>)
+	 * @param array $attributes array("pk" => <primary key colname>)
+	 * @return string
+	 */
+	public abstract function getCreateTable($table, $columns = array(), $attributes = array());
+	
+	/**
+	 * vraci SQL pro pridani sloupcu do tabulky
+	 * @param string $table
+	 * @param array $columns
+	 * @return string
+	 */
+	public abstract function getAddColumns($table, $columns = array());
+	
 	/**
 	 * vraci datum zformatovane podle standardniho datetime typu konkretni databaze
 	 * @param int $timeStamp

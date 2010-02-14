@@ -16,9 +16,9 @@ class LBoxMetanodeInt extends LBoxMetanode
 	public function getContent() {
 		try {
 			if (strlen($content = parent::getContent()) > 0) {
-				if (!is_numeric($content)) {
+				/*if (!is_numeric($content)) {
 					throw new LBoxExceptionMetanodes(LBoxExceptionMetanodes::MSG_NODECONTENT_NOT_NUMERIC, LBoxExceptionMetanodes::CODE_NODECONTENT_NOT_NUMERIC);
-				}
+				}*/
 				return (int)$content;
 			}
 		}

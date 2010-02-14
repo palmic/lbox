@@ -156,7 +156,26 @@ abstract class AbstractRecord implements Iterator
 	 * @var array
 	 */
 	private $cacheClassVars = array();
-
+	
+	/**
+	 * cache var flag
+	 * @var bool
+	 */
+	public static $doesTableExistsInDatabase;
+	
+	/**
+	 * attributes definition for data/structure modification manipulations
+	 * array(	"name"=>"<COLNAME>",
+	 * 			"type"=>"int|shorttext|longtext|richtext",
+	 * 			"notnull"=>bool default true,
+	 * 			"autoincrement"=>bool default false,
+	 * 			"visibility"=>"public|protected" ,
+	 * 			"default"=>"",
+	 * )
+	 * @var array
+	 */
+	protected static $attributes	=	array(array());
+	
 	//== constructors ====================================================================
 
 	/**
@@ -182,6 +201,9 @@ abstract class AbstractRecord implements Iterator
 				$this->loaded		= true;
 			}
 			if (!$this->loaded) {
+				if (!$this->doesTableExistsInDatabase()) {
+					$this->createTable();
+				}
 				if ($this->isInDatabase()) {
 					$this->load();
 				}
@@ -196,6 +218,7 @@ abstract class AbstractRecord implements Iterator
 	//== destructors ====================================================================
 
 	public function __destruct() {
+		// check empty instance creating in AbstractRecords::getDbResult() before autosave set!
 	}
 
 	//== cache functions ===============================================================
@@ -765,6 +788,19 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 				throw new LBoxException("Query \n$sql\n returned more than one record. Could not be handled by AbstractRecord child. Use AbstractRecord<b>s</b> child, or be more specific set values!");
 			}
 			$this->params = $result->get("*");
+			
+			// check defined columns
+			$attributes		= $this->getClassVar("attributes");
+			$createColumns	= array();
+			foreach ($attributes as $attribute) {
+				if (count($attribute) < 1) continue;
+				if (!array_key_exists($attribute["name"], $this->params)) {
+					$createColumns[]	= $attribute["name"];
+				}
+			}
+			if (count($createColumns) > 0) {
+				$this->addColumns($createColumns);
+			}
 		}
 		catch(Exception $e) {
 			throw $e;
@@ -773,7 +809,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 		$this->setSynchronized(true);
 		$this->loaded			= true;
 	}
-
+	
 	/**
 	 * delete Database record
 	 */
@@ -1172,6 +1208,27 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 		}
 	}
 
+	/**
+	 * child class static variable setter
+	 * @param string $varname - Name of child class static variable
+	 * @param $value - value
+	 */
+	public function setClassVar($varName, $value) {
+		if (!is_string($varName)) {
+			throw new LBoxException("Bad parameter varName, must be string!");
+		}
+		$value = is_null($value) ? "NULL" : $value;
+		$value = is_bool($value) ? ($value ? "true" : "false") : $value;
+		$value = strlen($value) > 0 ? $value : '""';
+		try {
+			$className = get_class($this);
+			return $ret = eval("return $className::\$$varName = $value;");
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
 	/**
 	 * returns WHERE instance created from $this->params
 	 * @return QueryBuilderWhere
@@ -1947,6 +2004,110 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system
 			throw $e;
 		}
 	}
-}
+	
+	/**
+	* ckecks if table exists in database yet
+	* @return bool
+	* @throws Exception
+	*/
+	protected function doesTableExistsInDatabase() {
+		try {
+			if (is_bool($this->getClassVar("doesTableExistsInDatabase", true))) {
+				return $this->getClassVar("doesTableExistsInDatabase");
+			}
+			if (strlen($this->getClassVar("dbName", true)) > 0) {
+				$schema	= $this->getClassVar("dbName");
+			}
+			else {
+				$dbSelector	= new DbSelector();
+				$schema	= $dbSelector->getTaskSchema(self::$task);
+			}
+			
+			$value	= $this->getDb()->initiateQuery($this->getQueryBuilder()->getDoesTableExists($this->getClassVar("tableName"), $schema))->getNumRows() > 0;
 
+			return $this->setClassVar("doesTableExistsInDatabase", $value);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * table created flag
+	 * @var bool
+	 */
+	protected $tableCreated = false;
+	
+	/**
+	* creates database table by attributes
+	* @throws Exception
+	*/
+	protected function createTable() {
+		try {
+			if ($this->doesTableExistsInDatabase()) {
+				return;
+			}
+			$attributes	= $this->getClassVar("attributes");
+			if (count(current($attributes)) < 1) {
+				throw new LBoxException("Attributes not set - cannot automaticaly create database table!"); 
+			}
+			$type			= get_class($this);
+			$tableName		= $this->getClassVar("tableName");
+			$idColName		= $this->getClassVar("idColName");
+LBoxFirePHP::log("creating table '$tableName'");
+			foreach ($attributes as $attribute) {
+				switch (true) {
+					case ($attribute["name"] == $idColName):
+							throw new LBoxException("Primary colname definition found in '$tableName' - it's not allowed, PK properties must be stricty generated!");
+						break;
+					/*case is_numeric(array_search($attribute["name"], self::$treeColNames)):
+							throw new LBoxException($attribute["name"] ." is registered as tree colname and cannot be defined as param in '$type'!");
+						break;*/
+				}
+			}
+			// tree sloupce definujeme do attributes - tim definujeme tree strukturu recordu
+			/*if ($this->isTree()) {
+				$treeColNames	= self::$treeColNames;
+				array_reverse($treeColNames);
+				foreach (self::$treeColNames as $treeColName) {
+					array_unshift($attributes, array("name"=>$treeColName, "type"=>"int", "visibility"=>"protected"));
+				}
+			}*/
+			array_unshift($attributes, array("name"=>$idColName, "type"=>"int", "notnull" => true, "autoincrement" => true, "visibility"=>"protected"));
+			$this->getDb()->initiateQuery($this->getQueryBuilder()->getCreateTable($tableName, $attributes, array("pk" => "$idColName")));
+			$this->setClassVar("doesTableExistsInDatabase", true);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * adds columns by $columns - columns must be defined in $atttributes
+	 * @param array $columns
+	 * @throws Exception
+	 */
+	protected function addColumns($columns = array()) {
+		try {
+			$tableName	= $this->getClassVar("tableName");
+			$attributes	= $this->getClassVar("attributes");
+			$cols		= array();
+LBoxFirePHP::log("adding columns into '$tableName': ". implode(", ", $columns));
+			foreach ($columns as $column) {
+				foreach ($attributes as $attribute) {
+					if ($attribute["name"] == $column) {
+						$cols[]	= $attribute;
+					}
+				}
+			}
+			$this->getDb()->initiateQuery($this->getQueryBuilder()->getAddColumns($tableName, $cols));
+			
+			$this->resetCache();
+			$this->isCacheSynchronized	= false;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+}
 ?>

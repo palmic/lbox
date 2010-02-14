@@ -97,6 +97,33 @@ class QueryBuilderPlatformMssql extends QueryBuilderPlatform
 		}
 	}
 	
+	public function getDoesTableExists($table, $database = "") {
+		try {
+			throw new DbControlException( "getDoesTableExists() is not implemented yet!");
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	public function getCreateTable($table, $columns = array(), $attributes = array()) {
+		try {
+			throw new DbControlException( "getCreateTable() is not implemented yet!");
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	public function getAddColumns($table, $columns = array()) {
+		try {
+			throw new DbControlException( "getAddColumns() is not implemented yet!");
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
 	protected function getSelect($table, $what = "*", QueryBuilderWhere $where = NULL, $limit = array(), $groupBy = array(), $orderBy = array()) {
 		if (strlen($table) < 1) {
 			throw new DbControlException("Ilegal parameter table. Must be NOT-NULL string.");

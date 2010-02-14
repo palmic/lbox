@@ -3,7 +3,7 @@ require("lBox/lib/loader.php");
 
 session_start();
 if (substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip')) {
-	ob_start("ob_gzhandler");
+	ob_start();
 }
 else ob_start();
 

@@ -7,18 +7,11 @@
 	</head>
     <body>
         <h1 tal:content="SELF/page/heading" />
-		<table border="1">
-			<caption>Count: ${records/count}</caption>
-			<thead>
-				<tr>
-					<th tal:repeat="column records/current">${repeat/column/key}</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr tal:repeat="record records">
-					<td tal:repeat="column record">${column}</td>
-				</tr>
-			</tbody>
-		</table>
+        <table tal:condition="records/count" border="1" style="width:800px;">
+        	<tr tal:repeat="record records">
+        		<td tal:repeat="column record" tal:content="structure column" />
+        	</tr>
+        </table>
+        <p tal:condition="not: records/count">Records jsou prazdne</p>
     </body>
 </html>

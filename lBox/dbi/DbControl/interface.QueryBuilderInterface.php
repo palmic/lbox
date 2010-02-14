@@ -75,6 +75,31 @@ interface QueryBuilderInterface
 	public function getSelectMaxColumns($table, $what = array(), QueryBuilderWhere $where = NULL, $groupBy = array(), $orderBy = array());
 
 	/**
+	 * vraci select na zjisteni jestli tabulka v databazi existuje
+	 * @param string $table
+	 * @param string $database
+	 * @return string
+	 */
+	public function getDoesTableExists($table, $database = "");
+
+	/**
+	 * vraci SQL na vytvoreni tabulky
+	 * @param string $table
+	 * @param array $columns
+	 * @param array $attributes
+	 * @return string
+	 */
+	public function getCreateTable($table, $columns = array(), $attributes = array());
+
+	/**
+	 * vraci select na pridani sloupcu do tabulky
+	 * @param array $table
+	 * @param array $columns
+	 * @return string
+	 */
+	public function getAddColumns($table, $columns = array());
+
+	/**
 	 * returns database name quotes - array("quote before", "quote after")
 	 * @return array
 	 */

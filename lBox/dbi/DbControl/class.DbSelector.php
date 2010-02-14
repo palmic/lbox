@@ -167,7 +167,7 @@ class DbSelector
     * Getter for default schema assigned for received task
     * @return String
     */
-    private function getTaskSchema(/*string*/ $task) {
+    public function getTaskSchema(/*string*/ $task) {
         if (!is_string($task)) {
             throw new DbControlException("Ilegal parameter task. Must be string.");
         }

@@ -680,6 +680,9 @@ var_dump($this->getSQL() .": neni valid");*/
 				$pidColName		= $treeColNames[2];
 				$tableName 		= eval("return $itemType::\$tableName;");
 				
+				// force create table if not exists
+				$foo	= new $itemType;
+				
 				$whereCount		= clone $this->getWhere();
 
 				if ($this->isTree()) {

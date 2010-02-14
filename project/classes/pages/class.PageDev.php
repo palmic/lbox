@@ -11,9 +11,9 @@ class PageDev extends PageDefault
 //DbControl::$debug = true;
 		try {
 			parent::executePrepend($TAL);
-			//$iterator		= new AccesNotViewersRecords(false, false, array(0, 65));
-			$iterator		= new LBoxPagingIteratorRecords("AccesNotViewersRecords", 10, false, false, array(0, 65));
-			$TAL->records	= $iterator;
+			$record	= new TestRecord();
+			$record->store();
+			$TAL->records	= new TestRecords();
 		}
 		catch (Exception $e) {
 			throw $e;

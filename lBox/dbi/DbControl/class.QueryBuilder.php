@@ -85,6 +85,32 @@ class QueryBuilder implements QueryBuilderInterface
 		}
 	}
 
+	public function getDoesTableExists($table, $database = "") {
+		try {
+			return $this->getQueryBuilderPlatform()->getDoesTableExists($table, $database);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	public function getCreateTable($table, $columns = array(), $attributes = array()) {
+		try {
+			return $this->getQueryBuilderPlatform()->getCreateTable($table, $columns, $attributes);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	public function getAddColumns($table, $columns = array()) {
+		try {
+			return $this->getQueryBuilderPlatform()->getAddColumns($table, $columns);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
 
 	public function getQuotesDatabaseName() {
 		return $this->getQueryBuilderPlatform()->getQuotesDatabaseName();
