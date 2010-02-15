@@ -51,7 +51,7 @@ class OutputFilterPage extends LBoxOutputFilter
 			case "title_menu":
 					return strlen($this->instance->getParamDirect("title")) > 0 ?
 							$this->instance->getParamDirect("title") :
-							$this->prepare("heading", $this->instance->getParamDirect("heading"));
+							(strlen($this->instance->name_menu) > 0 ? $this->instance->name_menu : $this->prepare("heading", $this->instance->getParamDirect("heading")));
 				break;
 			case "nameMenu":
 			case "name_menu":
