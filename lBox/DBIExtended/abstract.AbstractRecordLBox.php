@@ -98,6 +98,27 @@ abstract class AbstractRecordLBox extends AbstractRecord implements OutputItem
 	}
 
 	/**
+	 * pretizeno o predavani output filteru
+	 * @return AbstractRecords
+	 */
+	public function getParent() {
+		try {
+			if ($parent = parent::getParent()) {
+				if ($this->outputFilter instanceof LBoxOutputFilter) {
+					$ofClass	= $this->outputFilter;
+					if ($parent instanceof AbstractRecordLBox) {
+						$parent->setOutputFilter(new $ofClass($parent));
+					}
+				}
+			}
+			return $parent;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
 	 * getter for unfiltered param
 	 * @param string $name 
 	 * @return mixed
