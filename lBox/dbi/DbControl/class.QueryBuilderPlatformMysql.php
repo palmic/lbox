@@ -162,6 +162,7 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 				$cols	.= reset($qc) . $column["name"] . end($qc) . $type . $notNull . $autoincrement . $default;
 			}
 			
+			$comment = " COMMENT = 'created ". date('Y-m-d H:i:s') ."'";
 			$attribsInner	= "";
 			$attribsOuter	= "";
 			foreach ($attributes as $name => $value) {
@@ -179,7 +180,8 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 			$out	= "CREATE TABLE  ". reset($qt) . $table . end($qt) ." (
 						$cols
 					  $attribsInner
-					) $attribsOuter";
+					) $attribsOuter
+					  $comment";
 
 			return $out;
 		}

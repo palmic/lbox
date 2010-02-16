@@ -159,9 +159,9 @@ abstract class AbstractRecord implements Iterator
 	
 	/**
 	 * cache var flag
-	 * @var bool
+	 * @var array
 	 */
-	public static $doesTableExistsInDatabase;
+	public static $doesTableExistsInDatabaseByTypes;
 	
 	/**
 	 * attributes definition for data/structure modification manipulations
@@ -1209,27 +1209,6 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 	}
 
 	/**
-	 * child class static variable setter
-	 * @param string $varname - Name of child class static variable
-	 * @param $value - value
-	 */
-	public function setClassVar($varName, $value) {
-		if (!is_string($varName)) {
-			throw new LBoxException("Bad parameter varName, must be string!");
-		}
-		$value = is_null($value) ? "NULL" : $value;
-		$value = is_bool($value) ? ($value ? "true" : "false") : $value;
-		$value = strlen($value) > 0 ? $value : '""';
-		try {
-			$className = get_class($this);
-			return $ret = eval("return $className::\$$varName = $value;");
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-	
-	/**
 	 * returns WHERE instance created from $this->params
 	 * @return QueryBuilderWhere
 	 */
@@ -2012,8 +1991,8 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system
 	*/
 	protected function doesTableExistsInDatabase() {
 		try {
-			if (is_bool($this->getClassVar("doesTableExistsInDatabase", true))) {
-				return $this->getClassVar("doesTableExistsInDatabase");
+			if (is_bool(self::$doesTableExistsInDatabaseByTypes[$className])) {
+				return self::$doesTableExistsInDatabaseByTypes[$className];
 			}
 			if (strlen($this->getClassVar("dbName", true)) > 0) {
 				$schema	= $this->getClassVar("dbName");
@@ -2022,10 +2001,9 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system
 				$dbSelector	= new DbSelector();
 				$schema	= $dbSelector->getTaskSchema(self::$task);
 			}
-			
 			$value	= $this->getDb()->initiateQuery($this->getQueryBuilder()->getDoesTableExists($this->getClassVar("tableName"), $schema))->getNumRows() > 0;
-
-			return $this->setClassVar("doesTableExistsInDatabase", $value);
+			$className	= get_class($this);
+			return self::$doesTableExistsInDatabaseByTypes[$className] = $value;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -2075,7 +2053,7 @@ LBoxFirePHP::log("creating table '$tableName'");
 			}*/
 			array_unshift($attributes, array("name"=>$idColName, "type"=>"int", "notnull" => true, "autoincrement" => true, "visibility"=>"protected"));
 			$this->getDb()->initiateQuery($this->getQueryBuilder()->getCreateTable($tableName, $attributes, array("pk" => "$idColName")));
-			$this->setClassVar("doesTableExistsInDatabase", true);
+			self::$doesTableExistsInDatabaseByTypes[$className]	= true;
 		}
 		catch (Exception $e) {
 			throw $e;
