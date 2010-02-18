@@ -2027,7 +2027,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system
 			}
 			$attributes	= $this->getClassVar("attributes");
 			if (count(current($attributes)) < 1) {
-				throw new LBoxException("Attributes not set - cannot automaticaly create database table!"); 
+				throw new LBoxException(get_class($this) ." - Attributes not set - cannot automaticaly create database table!"); 
 			}
 			$type			= get_class($this);
 			$tableName		= $this->getClassVar("tableName");
@@ -2036,7 +2036,7 @@ LBoxFirePHP::log("creating table '$tableName'");
 			foreach ($attributes as $attribute) {
 				switch (true) {
 					case ($attribute["name"] == $idColName):
-							throw new LBoxException("Primary colname definition found in '$tableName' - it's not allowed, PK properties must be stricty generated!");
+							throw new LBoxException(get_class($this) ." - Primary colname definition found in '$tableName' - it's not allowed, PK properties must be stricty generated!");
 						break;
 					/*case is_numeric(array_search($attribute["name"], self::$treeColNames)):
 							throw new LBoxException($attribute["name"] ." is registered as tree colname and cannot be defined as param in '$type'!");
