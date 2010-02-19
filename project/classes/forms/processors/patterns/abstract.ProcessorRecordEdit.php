@@ -59,12 +59,12 @@ abstract class ProcessorRecordEdit extends LBoxFormProcessor
 				if ($control->getName() == "filter_by") continue;
 				if ($control->getName() == "photo_delete")	{
 					if ($control->getValue()) {
-						$this->getRecord()->deletePhoto();
+						$record->deletePhoto();
 					}
 					continue;
 				}
 				if ($control->getName() == "photo")	{
-					if ($control->getValueFiles()) {
+					if (($control instanceof LBoxFormControlFile) && $control->getValueFiles()) {
 						$record->ref_photo	= $this->getUploadedImageByControl($control)->id;
 					}
 					continue;
