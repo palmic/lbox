@@ -57,6 +57,18 @@ abstract class ProcessorRecordEdit extends LBoxFormProcessor
 				if ($control instanceof LBoxFormControlSpamDefense) continue;
 				if ($control->getName() == eval("return $classNameRecord::\$idColName;")) continue;
 				if ($control->getName() == "filter_by") continue;
+				if ($control->getName() == "photo_delete")	{
+					if ($control->getValue()) {
+						$this->getRecord()->deletePhoto();
+					}
+					continue;
+				}
+				if ($control->getName() == "photo")	{
+					if ($control->getValueFiles()) {
+						$record->ref_photo	= $this->getUploadedImageByControl($control)->id;
+					}
+					continue;
+				}
 				$colName	= $control->getName();
 				$record	->$colName	= strlen($control->getValue()) > 0 ? $control->getValue() : "<<NULL>>";
 			}
