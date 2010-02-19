@@ -131,7 +131,7 @@ abstract class QueryBuilderPlatform
 			throw $e;
 		}
 	}
-	
+
 	/**
      * validuje hodnotu podle syntaxe konkretniho DB enginu
      * @param mixed $value
