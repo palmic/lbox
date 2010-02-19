@@ -16,6 +16,12 @@ abstract class ProcessorRecordEdit extends LBoxFormProcessor
 	 */
 	protected $record;
 	
+	/**
+	 * typ recordu photos
+	 * @var string
+	 */
+	protected $classNamePhotosRecord	= "PhotosRecord";
+	
 	public function process() {
 		try {
 			if (strlen($classNameRecord = $this->classNameRecord) < 1) {
@@ -66,6 +72,36 @@ abstract class ProcessorRecordEdit extends LBoxFormProcessor
 			}
 			else {
 				return $this->record = new $classNameRecord;
+			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * vytvori a vrati photos record podle predaneho file controlu
+	 * @param LBoxFormControlFile $control
+	 * @return PhotosRecord
+	 */
+	protected function getUploadedImageByControl(LBoxFormControlFile $control) {
+		try {
+			$classNamePhotosRecord	= $this->classNamePhotosRecord;
+			$dataFilesPhoto			= $control->getValueFiles();
+			if ($dataFilesPhoto["size"] > 0) {
+				$photo	= new $classNamePhotosRecord();
+				if (!($photo instanceof PhotosRecord)) {
+					throw new LBoxExceptionFormProcessor("Image record of wrong type!");
+				}
+				$photo	->saveUploadedFile($dataFilesPhoto["tmp_name"], $dataFilesPhoto["name"], $dataFilesPhoto["size"]);
+				if (	LBoxConfigManagerProperties::getPropertyContentByName("img_sizes_content_shop_item_x") > 0
+					&&	LBoxConfigManagerProperties::getPropertyContentByName("img_sizes_content_shop_item_y")) {
+						$photo	->resize(	LBoxConfigManagerProperties::getPropertyContentByName("img_sizes_content_shop_item_x"),
+											LBoxConfigManagerProperties::getPropertyContentByName("img_sizes_content_shop_item_y"),
+											false);
+				}
+				$photo	->store();
+				return $photo;
 			}
 		}
 		catch (Exception $e) {
