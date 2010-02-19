@@ -10,6 +10,12 @@ abstract class ProcessorRecordEdit extends LBoxFormProcessor
 	 */
 	protected $classNameRecord	= "";
 	
+	/**
+	 * cache var
+	 * @var AbstractRecordLBox
+	 */
+	protected $record;
+	
 	public function process() {
 		try {
 			if (strlen($classNameRecord = $this->classNameRecord) < 1) {
@@ -30,13 +36,16 @@ abstract class ProcessorRecordEdit extends LBoxFormProcessor
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * getter na relevantni record
 	 * @return AbstractRecordLBox
 	 */
 	protected function getRecord() {
 		try {
+			if ($this->record instanceof AbstractRecordLBox) {
+				return $this->record;
+			}
 			$controls			= $this->form->getControls();
 			$classNameRecord	= $this->classNameRecord;
 			$idColName			= eval("return $classNameRecord::\$idColName;");
@@ -50,12 +59,13 @@ abstract class ProcessorRecordEdit extends LBoxFormProcessor
 			else {
 				$filterBy	= $idColName;
 			}
-			$records	= new $classNameRecords(array($filterBy => $this->form->getControlByName($idColName)->getValue()));
+			$filter		= array($filterBy => $this->form->getControlByName($idColName)->getValue());
+			$records	= new $classNameRecords($filter);
 			if ($records->count() > 0) {
-				return $records->current();
+				return $this->record = $records->current();
 			}
 			else {
-				return new $classNameRecord;
+				return $this->record = new $classNameRecord;
 			}
 		}
 		catch (Exception $e) {
