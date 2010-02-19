@@ -13,7 +13,15 @@ class PhotosRecord extends AbstractRecordLBox
 
 	public static $dependingRecords	= array(
 	);
-	
+
+	protected static $attributes	=	array(
+											array("name"=>"filename", "type"=>"shorttext", "notnull" => true),
+											array("name"=>"ext", "type"=>"shorttext", "notnull" => true),
+											array("name"=>"size_x", "type"=>"int", "notnull" => true),
+											array("name"=>"size_y", "type"=>"int", "notnull" => true),
+											array("name"=>"size", "type"=>"int", "notnull" => false, "default"=> "NULL"),
+											array("name"=>"ref_photogallery", "type"=>"int", "notnull" => false, "default"=> "NULL"),
+											);
 	/**
 	 * Nazev property s cestou k obrazkum
 	 * @var string
@@ -45,6 +53,24 @@ class PhotosRecord extends AbstractRecordLBox
 	 * @var PhotosRecord
 	 */
 	protected $thumbnail;
+	
+	/**
+	 * pretizeno o nastaveni tree structure
+	 */
+	public function __construct($id = NULL, $loaded = false) {
+		try {
+			// set tree structure
+			$treeColNames	= self::$treeColNames;
+			$treeColNames	= array_reverse(self::$treeColNames);
+			foreach ($treeColNames as $treeColName) {
+				array_unshift(self::$attributes, array("name"=>$treeColName, "type"=>"int"));
+			}
+			parent::__construct($id, $loaded);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
 	
 	/**
 	 * OutputItem interface method
