@@ -12,12 +12,6 @@ class PhotosRecord extends AbstractRecordLBox
 	public static $idColName    	= "id";
 
 	public static $dependingRecords	= array(
-											"TextsRecordXPhotosRecords",
-											"PhotosProductsRecords",
-											"PhotosPhotogalleriesRecords",
-											"PhotosArticlesRecords",
-											"PhotosProductsDefaultRecords",
-	
 	);
 	
 	/**
@@ -155,7 +149,6 @@ class PhotosRecord extends AbstractRecordLBox
     $out .= "\n";
     $out .= $e->getTraceAsString();
     $out .= "\n\n";
-LBoxUtil::send("michal.palma@praguebistro.cz", "smazani obrazku ". $this->getFileName(), $out);
 
 			@unlink($this->getFilePath(true));
 			parent::delete();
