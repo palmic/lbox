@@ -20,7 +20,31 @@ abstract class ProcessorRecordEdit extends LBoxFormProcessor
 	 * typ recordu photos
 	 * @var string
 	 */
-	protected $classNamePhotosRecord	= "PhotosRecord";
+	protected $classNamePhotosRecord				= "PhotosRecord";
+	
+	/**
+	 * name of property to set uploaded image size x
+	 * @var string
+	 */
+	protected $propertyNameUploadedPhotoSizeX		= "img_sizes_content_x";
+	
+	/**
+	 * name of property to set uploaded image size y
+	 * @var string
+	 */
+	protected $propertyNameUploadedPhotoSizeY		= "img_sizes_content_y";
+	
+	/**
+	 * keep uploaded image proportions or not
+	 * @var bool
+	 */
+	protected $uploadedPhotoResizeKeepProportions	= false;
+	
+	/**
+	 * uploaded image resize type - resize | limit
+	 * @var string
+	 */
+	protected $uploadedPhotoResizeType				= "resize";
 	
 	public function process() {
 		try {
@@ -94,11 +118,22 @@ abstract class ProcessorRecordEdit extends LBoxFormProcessor
 					throw new LBoxExceptionFormProcessor("Image record of wrong type!");
 				}
 				$photo	->saveUploadedFile($dataFilesPhoto["tmp_name"], $dataFilesPhoto["name"], $dataFilesPhoto["size"]);
-				if (	LBoxConfigManagerProperties::getPropertyContentByName("img_sizes_content_shop_item_x") > 0
-					&&	LBoxConfigManagerProperties::getPropertyContentByName("img_sizes_content_shop_item_y")) {
-						$photo	->resize(	LBoxConfigManagerProperties::getPropertyContentByName("img_sizes_content_shop_item_x"),
-											LBoxConfigManagerProperties::getPropertyContentByName("img_sizes_content_shop_item_y"),
-											false);
+				if (	LBoxConfigManagerProperties::gpcn($this->propertyNameUploadedPhotoSizeX) > 0
+					&&	LBoxConfigManagerProperties::gpcn($this->propertyNameUploadedPhotoSizeY)) {
+						switch ($this->uploadedPhotoResizeType) {
+							case "resize":
+									$photo	->resize(	LBoxConfigManagerProperties::gpcn($this->propertyNameUploadedPhotoSizeX),
+														LBoxConfigManagerProperties::gpcn($this->propertyNameUploadedPhotoSizeY),
+														$this->uploadedPhotoResizeKeepProportions);
+								break;
+							case "limit":
+									$photo	->limitSize(
+														LBoxConfigManagerProperties::gpcn($this->propertyNameUploadedPhotoSizeX) > LBoxConfigManagerProperties::gpcn($this->propertyNameUploadedPhotoSizeY)
+														? LBoxConfigManagerProperties::gpcn($this->propertyNameUploadedPhotoSizeX)
+														: LBoxConfigManagerProperties::gpcn($this->propertyNameUploadedPhotoSizeY)
+														);
+								break;
+						}
 				}
 				$photo	->store();
 				return $photo;
