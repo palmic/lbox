@@ -11,6 +11,9 @@ class OutputFilterDiscussion extends OutputFilterComponent
 	public function prepare($name = "", $value = NULL) {
 		try {
 			switch ($name) {
+				case "createdDate":
+					return date("j.n. Y", $this->instance->created);
+					break;
 				case "url":
 					if ($this->instance->getParamDirect("type") != "post") {
 						return $this->getDiscussionPageUrl();

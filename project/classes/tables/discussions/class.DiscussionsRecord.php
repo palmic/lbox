@@ -16,7 +16,6 @@ class DiscussionsRecord extends AbstractRecordLBox
 	
 	public static $dependingRecords	= array(
 											"DiscussionsPostsRecords",
-											"DiscussionPostsListRecords",
 	);
 
 /**
@@ -31,14 +30,14 @@ class DiscussionsRecord extends AbstractRecordLBox
  */
 	protected static $attributes	=	array(
 											array("name"=>"pageId", "type"=>"int", "notnull" => true, "visibility"=>"protected"),
-											array("name"=>"urlParam", "type"=>"int", "notnull" => true, "visibility"=>"protected"),
+											array("name"=>"urlParam", "type"=>"shorttext", "notnull" => true, "visibility"=>"protected"),
 											array("name"=>"created", "type"=>"int", "notnull" => true, "visibility"=>"protected"),
-											array("name"=>"type", "type"=>"int", "notnull" => true, "visibility"=>"protected"),
-											array("name"=>"title", "type"=>"int", "notnull" => true, "visibility"=>"protected"),
-											array("name"=>"email", "type"=>"int", "notnull" => true, "visibility"=>"protected"),
-											array("name"=>"www", "type"=>"int", "notnull" => true, "visibility"=>"protected"),
-											array("name"=>"body", "type"=>"int", "notnull" => true, "visibility"=>"protected"),
-											array("name"=>"nick", "type"=>"int", "notnull" => true, "visibility"=>"protected"),
+											array("name"=>"type", "type"=>"shorttext", "notnull" => true, "visibility"=>"protected"),
+											array("name"=>"title", "type"=>"shorttext", "notnull" => true, "visibility"=>"protected"),
+											array("name"=>"email", "type"=>"shorttext", "notnull" => true, "visibility"=>"protected"),
+											array("name"=>"www", "type"=>"shorttext", "notnull" => true, "visibility"=>"protected"),
+											array("name"=>"body", "type"=>"longtext", "notnull" => true, "visibility"=>"protected"),
+											array("name"=>"nick", "type"=>"shorttext", "notnull" => true, "visibility"=>"protected"),
 											array("name"=>"ref_acces", "type"=>"int", "notnull" => true, "visibility"=>"protected"),
 											);
 	
@@ -79,7 +78,7 @@ class DiscussionsRecord extends AbstractRecordLBox
 	public function store() {
 		try {
 			if (!$this->params["created"]) {
-				$this->params["created"] = date("Y-m-d H:i:s");
+				$this->params["created"] = time();
 			}
 			if (!$this->params["type"]) {
 				$this->params["type"] = "discussion";

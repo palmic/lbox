@@ -10,7 +10,6 @@ class DiscussionsPostsRecord extends DiscussionsRecord
 {
 	public static $dependingRecords	= array(
 											"DiscussionsRecords",
-											"DiscussionPostsListRecords",
 	);
 	
 	/**
