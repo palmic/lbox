@@ -319,7 +319,7 @@ INSERT INTO `xtusers` (`id`,`nick`,`ref_xtRole`,`password`,`created`,`name`,`sur
  (1,'palmic',5,'b3b4d2dbedc99fe843fd3dedb02f086f','2008-09-21 12:23:15','','','michal.palma@gmail.com','',NULL,NULL,NULL,NULL,1,1,'7005f23d64560fcac780f4e28dee1f3b'),
  (2,'zuzka',6,'76dad8045cbdda90b165e6c2b7c47961','2009-07-24 15:54:39','Zuzka','Svobodová','zuzana.svobodova@praguebistro.cz',NULL,NULL,NULL,NULL,NULL,1,0,'6e67a7ec60ce45d847837aaaee0ec2ab'),
  (3,'ondra',6,'47e53c8527863a978365301ac02a80dc','2009-07-24 15:54:39','Ondřej','Bach','ondrej.bach@praguebistro.cz',NULL,NULL,NULL,NULL,NULL,1,0,NULL),
- (4,'zdenda',6,'955db0b81ef1989b4a4dfeae8061a9a6','2009-07-24 15:54:39',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,NULL);
+ (4,'zdenda',6,'b8662d5fd0b74be56da560c01d37d739','2009-07-24 15:54:39',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,0,NULL);
 /*!40000 ALTER TABLE `xtusers` ENABLE KEYS */;
 
 
