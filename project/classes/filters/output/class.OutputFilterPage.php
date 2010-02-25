@@ -67,7 +67,7 @@ class OutputFilterPage extends LBoxOutputFilter
 				break;
 			case "description":
 			case "keywords":
-					return strlen($value) ? $value : "";
+					return (string)$value;
 				break;
 			case "isCurrent":
 					return ($this->instance->url == LBoxFront::getPage()->url);
