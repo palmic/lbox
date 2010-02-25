@@ -749,10 +749,12 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 	public function load() {
 		try {
 			if ($this->loaded) {
+				$this->checkAttributesColumnsExists();
 				return;
 			}
 			$this->loadFromCache();
 			if ($this->loaded) {
+				$this->checkAttributesColumnsExists();
 				return;
 			}
 			
@@ -788,19 +790,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 				throw new LBoxException("Query \n$sql\n returned more than one record. Could not be handled by AbstractRecord child. Use AbstractRecord<b>s</b> child, or be more specific set values!");
 			}
 			$this->params = $result->get("*");
-			
-			// check defined columns
-			$attributes		= $this->getClassVar("attributes");
-			$createColumns	= array();
-			foreach ($attributes as $attribute) {
-				if (count($attribute) < 1) continue;
-				if (!array_key_exists($attribute["name"], $this->params)) {
-					$createColumns[]	= $attribute["name"];
-				}
-			}
-			if (count($createColumns) > 0) {
-				$this->addColumns($createColumns);
-			}
+			$this->checkAttributesColumnsExists();
 		}
 		catch(Exception $e) {
 			throw $e;
@@ -2076,12 +2066,38 @@ LBoxFirePHP::log("adding columns into '$tableName': ". implode(", ", $columns));
 					if ($attribute["name"] == $column) {
 						$cols[]	= $attribute;
 					}
+					// write empty param for checkAttributesColumnsExists checking
+					$this->params[$column] = "";
 				}
 			}
 			$this->getDb()->initiateQuery($this->getQueryBuilder()->getAddColumns($tableName, $cols));
 			
 			$this->resetCache();
 			$this->isCacheSynchronized	= false;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * adds missing columns into database table by attributes
+	 * @throws Exception
+	 */
+	protected function checkAttributesColumnsExists() {
+		try {
+			// check defined columns
+			$attributes		= $this->getClassVar("attributes");
+			$createColumns	= array();
+			foreach ($attributes as $attribute) {
+				if (count($attribute) < 1) continue;
+				if (!array_key_exists($attribute["name"], $this->params)) {
+					$createColumns[]	= $attribute["name"];
+				}
+			}
+			if (count($createColumns) > 0) {
+				$this->addColumns($createColumns);
+			}
 		}
 		catch (Exception $e) {
 			throw $e;
