@@ -231,7 +231,7 @@ DbControl::$debug	= false;*/
 				throw new LBoxExceptionPage(LBoxExceptionPage::MSG_PARAM_STRING_NOTNULL, LBoxExceptionPage::CODE_BAD_PARAM);
 			}
 			$pattern	= LBoxConfigManagerProperties::getPropertyContentByName($propertyName);
-			$pattern	= str_ireplace("<url_param>", "(\w+)", $pattern);
+			$pattern	= str_ireplace("<url_param>", "([-\w]+)", $pattern);
 			foreach (LBoxFront::getUrlParamsArray() as $param) {
 				if (preg_match("/$pattern/", $param, $matches)) {
 					return $matches[1];
