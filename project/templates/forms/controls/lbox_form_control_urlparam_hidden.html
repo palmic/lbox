@@ -1,0 +1,8 @@
+<div class="control" id="control-${id}" tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
+	<input 	class="hidden" type="hidden" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]"
+			tal:attributes="value SELF/getValue | SELF/getDefault; maxlength SELF/getLengthMax | default; size SELF/getLengthMax | default; disabled SELF/getDisabled" />
+	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
+		<div tal:condition="exists: exceptions/17001">URL není vyplněna</div>
+		<div tal:condition="exists: exceptions/17010">URL vygenerována z názvu už je použita</div>
+	</div>
+</div>
