@@ -9,7 +9,8 @@ class LBoxFormValidatorNumberPositive extends LBoxFormValidatorNumber
 			// puvodni cheking (hodnota = cislo)
 			parent::validate($control);
 			
-			if ($control->getValue() < 1) {
+			if (strlen($control->getValue()) > 0)
+			if ($control->getValue() <= 0) {
 				throw new LBoxExceptionFormValidator(	LBoxExceptionFormValidator::MSG_FORM_VALIDATION_CONTROL_NOT_NUMBER_POSITIVE,
 														LBoxExceptionFormValidator::CODE_FORM_VALIDATION_CONTROL_NOT_NUMBER_POSITIVE);
 			}
