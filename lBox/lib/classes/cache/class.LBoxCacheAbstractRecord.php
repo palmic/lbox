@@ -53,11 +53,11 @@ class LBoxCacheAbstractRecord extends LBoxCache
 	public function clearCache() {
 		try {
 			$this->reset();
-			if (file_exists($this->getFilePath())) {
-				$path	= $this->getFilePath();
-				if (!is_dir($this->getFilePath())) {
-					$path	= dirname($this->getFilePath());
-				}
+			$path	= $this->getFilePath();
+			if (!is_dir($path)) {
+				$path	= dirname($this->getFilePath());
+			}
+			if (file_exists($path)) {
 				LBoxUtil::removeDirByPath($path, true);
 /*XXX if (strstr($path, "/windows/E/www/timesheets/project/.cache/abstractrecord/xtusers_employees_positions")) {
 	LBoxFirePHP::warn("MAZU ". $path);

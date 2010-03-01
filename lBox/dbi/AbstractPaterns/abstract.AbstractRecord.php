@@ -381,6 +381,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 	public function resetCache() {
 		try {
 			$this				->resetRelevantCache();
+			$this				->resetCollectionsCache();
 			if (!$this->isInCache()) {
 				return;
 			}
@@ -396,9 +397,23 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 	 * @var array
 	 */
 	private static $cacheRecordsCurrentlyClearing	= array();
-	
+
 	/**
-	 * resets my records cache
+	 * resets my collections cache
+	 */
+	protected function resetCollectionsCache() {
+		try {
+			$tableName		= $this->getClassVar("tableName");
+			$hashedID		= md5($id);
+			LBoxCacheAbstractRecord::getInstance("$tableName/collections/$hashedID.cache")->clearCache();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * resets depending records cache
 	 */
 	protected function resetRelevantCache() {
 		try {
@@ -729,7 +744,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 					$this->params[$idColName]	= $vals[$idColName];
 				}
 				$sql	= $this->getQueryBuilder()->getInsert($tableName, $vals);
-				$this	->resetRelevantCache();
+				$this	->resetCache();
 			}
 // var_dump(__CLASS__ ."::". __LINE__ .": ". $sql);
 			$this->getDb()->initiateQuery($sql);
