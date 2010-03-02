@@ -223,7 +223,7 @@ DbControl::$debug	= false;*/
 
 	protected function getURLParamByPatterProperty($propertyName = "") {
 		try {
-			return LBoxUtil::getURLParamByPatternProperty();
+			return LBoxUtil::getURLParamByPatternProperty($propertyName);
  		}
 		catch (Exception $e) {
 			throw $e;
