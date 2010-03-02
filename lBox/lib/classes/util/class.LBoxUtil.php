@@ -610,7 +610,7 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 	 * getter na prvni URL param
 	 * @return string
 	 */
-	public static function getURLParamByPatterProperty($propertyName = "") {
+	public static function getURLParamByPatternProperty($propertyName = "") {
 		try {
 			if (strlen($propertyName) < 1) {
 				throw new LBoxExceptionPage(LBoxExceptionPage::MSG_PARAM_STRING_NOTNULL, LBoxExceptionPage::CODE_BAD_PARAM);

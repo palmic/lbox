@@ -106,7 +106,7 @@ abstract class PageAdminRecord extends PageDefault
 	protected function getRecordURLParam() {
 		try {
 			if (strlen($this->propertyNamePatternURLParam) > 0) {
-				return LBoxUtil::getURLParamByPatterProperty($this->propertyNamePatternURLParam);
+				return LBoxUtil::getURLParamByPatternProperty($this->propertyNamePatternURLParam);
 			}
 			else {
 				foreach (LBoxFront::getUrlParamsArray() as $param) {
@@ -121,7 +121,7 @@ abstract class PageAdminRecord extends PageDefault
 
 	protected function getURLParamByPatterProperty($propertyName = "") {
 		try {
-			return LBoxUtil::getURLParamByPatterProperty($propertyName);
+			return LBoxUtil::getURLParamByPatternProperty($propertyName);
  		}
 		catch (Exception $e) {
 			throw $e;
