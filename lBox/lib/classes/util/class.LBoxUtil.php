@@ -605,5 +605,27 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 			throw $e;
 		}
 	}
+
+	/**
+	 * getter na prvni URL param
+	 * @return string
+	 */
+	public static function getURLParamByPatterProperty($propertyName = "") {
+		try {
+			if (strlen($propertyName) < 1) {
+				throw new LBoxExceptionPage(LBoxExceptionPage::MSG_PARAM_STRING_NOTNULL, LBoxExceptionPage::CODE_BAD_PARAM);
+			}
+			$pattern	= LBoxConfigManagerProperties::getPropertyContentByName($propertyName);
+			$pattern	= str_ireplace("<url_param>", "([-\w]+)", $pattern);
+			foreach (LBoxFront::getUrlParamsArray() as $param) {
+				if (preg_match("/$pattern/", $param, $matches)) {
+					return $matches[1];
+				}
+			}
+ 		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
 }
 ?>

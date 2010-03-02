@@ -107,5 +107,14 @@ abstract class PageAdminRecord extends PageDefault
 			throw $e;
 		}
 	}
+
+	protected function getURLParamByPatterProperty($propertyName = "") {
+		try {
+			return LBoxUtil::getURLParamByPatterProperty();
+ 		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
 }
 ?>
