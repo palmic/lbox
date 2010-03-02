@@ -20,6 +20,12 @@ abstract class PageAdminRecord extends PageDefault
 	protected $colNameURLParam 				= "";
 
 	/**
+	 * nazev property s reg exp patternem pro rozpoznani URL param recordu
+	 * @var string
+	 */
+	protected $propertyNamePatternURLParam 	= "";
+	
+	/**
 	 * Record OF type
 	 * @var string
 	 */
@@ -99,8 +105,13 @@ abstract class PageAdminRecord extends PageDefault
 	 */
 	protected function getRecordURLParam() {
 		try {
-			foreach (LBoxFront::getUrlParamsArray() as $param) {
-				return $param;
+			if (strlen($this->propertyNamePatternURLParam) > 0) {
+				return LBoxUtil::getURLParamByPatterProperty($this->propertyNamePatternURLParam);
+			}
+			else {
+				foreach (LBoxFront::getUrlParamsArray() as $param) {
+					return $param;
+				}
 			}
 		}
 		catch (Exception $e) {
@@ -110,7 +121,7 @@ abstract class PageAdminRecord extends PageDefault
 
 	protected function getURLParamByPatterProperty($propertyName = "") {
 		try {
-			return LBoxUtil::getURLParamByPatterProperty();
+			return LBoxUtil::getURLParamByPatterProperty($propertyName);
  		}
 		catch (Exception $e) {
 			throw $e;
