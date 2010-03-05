@@ -113,7 +113,9 @@ class LBoxFront extends LBox
 					throw new LBoxExceptionFront(LBoxExceptionFront::MSG_INVALID_REMOTE_IP, LBoxExceptionFront::CODE_INVALID_REMOTE_IP);
 				}
 			}
-
+			// reloadovat persisted location pokud je
+			self::reloadPersistentLocationXT();
+			
 			// logout if is to
 			if (self::isToLogout()) {
 				$loginGroup				= strlen(self::getPageCfg()->xt) > 0 ? self::getPageCfg()->xt : 0;
@@ -309,7 +311,25 @@ class LBoxFront extends LBox
 			catch (LBoxExceptionConfigComponent $e) {
 				throw $e;
 			}
+			$_SESSION["LBox"]["LBoxFront"]["persistentLocationXT"]	= LBOX_REQUEST_URL;
 			self::reload($pageAdminXT->url);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * reloaduje po zalogovani URL ze ktere bylo reloadovano na login URL
+	 */
+	protected static function reloadPersistentLocationXT() {
+		try {
+			if (LBoxXTProject::isLogged()) {
+				if (strlen($url = $_SESSION["LBox"]["LBoxFront"]["persistentLocationXT"]) > 0) {
+					unset($_SESSION["LBox"]["LBoxFront"]["persistentLocationXT"]);
+					self::reload($url);
+				}
+			}
 		}
 		catch (Exception $e) {
 			throw $e;
