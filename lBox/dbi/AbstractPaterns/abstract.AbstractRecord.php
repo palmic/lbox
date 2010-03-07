@@ -2118,5 +2118,13 @@ LBoxFirePHP::log("adding columns into '$tableName': ". implode(", ", $columns));
 			throw $e;
 		}
 	}
+	
+	/**
+	 * getter na attributy
+	 * @return array
+	 */
+	public function getAttributes() {
+		return $this->getClassVar("attributes");
+	}
 }
 ?>

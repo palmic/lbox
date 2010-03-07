@@ -1,0 +1,8 @@
+MetaRecords
+-------------
+
+napsat:
+ - LBoxMetaRecord::__toString()
+ - ProcessorMetaRecordXTToEdit
+ 
+ - ... a pokracovat testovanim formulare na vlozeni noveho recordu

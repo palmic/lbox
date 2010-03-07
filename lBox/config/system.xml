@@ -62,6 +62,14 @@
 			<url>/api/metanodes/v0.01/</url>
 		</api>
 	</metanodes>
+	<metarecords>
+		<templates>
+			<path>$project/templates/metarecords</path>
+		</templates>
+		<api>
+			<url>/api/metarecords/v0.01/</url>
+		</api>
+	</metarecords>
 	<layouts>
 		<classes>
 			<default>LayoutDefault</default>
