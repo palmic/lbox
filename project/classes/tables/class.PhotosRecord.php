@@ -469,8 +469,8 @@ class PhotosRecord extends AbstractRecordLBox
 			imagedestroy($piece);
 
 			$this->resource	= NULL;
-			$this->params["size_x"]	= $this->getImgX();
-			$this->params["size_y"]	= $this->getImgY();
+			$this->__set("size_x", $this->getImgX());
+			$this->__set("size_y", $this->getImgY());
 			$this->store();
 		}
 		catch (Exception $e) {
