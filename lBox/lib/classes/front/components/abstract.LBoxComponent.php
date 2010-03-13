@@ -1095,7 +1095,7 @@ abstract class LBoxComponent
 	*/
 	protected function getMetanodeByCallName($callname = "") {
 		try {
-			LBoxFirePHP::log($callname);
+			//LBoxFirePHP::log($callname);
 			
 			if (array_key_exists($callname, $this->metanodesByCallnames) && $this->metanodesByCallnames[$callname] instanceof LBoxMetanode) {
 				// dalsi instance metanodu v komponente / strance zobrazime uz jen pasivni

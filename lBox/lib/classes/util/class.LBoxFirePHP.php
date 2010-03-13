@@ -10,7 +10,10 @@ class LBoxFirePHP
 {
 	public static function log($message = "") {
 		try {
-			return FirePHP::getInstance(true)->log($message);
+			$trace=debug_backtrace();
+			$calledFile	= $trace[0]["file"];
+			$calledLine	= $trace[0]["line"];
+			return FirePHP::getInstance(true)->log("$message ($calledFile:$calledL)");
 		}
 		catch(Exception $e) {
 			throw $e;

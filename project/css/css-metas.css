@@ -1,0 +1,10 @@
+@media screen,projection {
+	.metarecord form .control				{ background: #f1f1f1 none; color: #00000; line-height: 2; padding: 5px 5px 10px; }
+	.metarecord form .control label .label,
+	.metarecord form .control label .text,
+	.metarecord form .control label .wsw		{ display: block; width: 720px !important; }
+	.metarecord form .control label .label	{ font-size: 100%; font-weight: bold; }
+	.metarecord form .control-hidden			{ display: none; }
+
+	.yui-toolbar-titlebar h2 a				{ visibility: hidden; }
+}

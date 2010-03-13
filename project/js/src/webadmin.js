@@ -1,11 +1,14 @@
+var forms			= new Array();
 var containers		= new Array();
 var nodes			= new Array();
 var editors			= new Array();
+var metaRecordsRTEs	= new Array();
+var fields			= new Array();
 var dialogs			= new Array();
 var klCancels		= new Array();
 var klSaves			= new Array();
 var resizes			= new Array();
-// Define various event handlers for Dialog
+/* Define various event handlers for Dialog*/
 var handleSubmit = function() {
 	if (editors[this.form.id]) {
 		editors[this.form.id].saveHTML();
@@ -15,7 +18,7 @@ var handleSubmit = function() {
 var handleCancel = function() {
 	this.cancel();
 };
-var handleSuccessContent = function(o) {
+var handleSuccessContentMetanode = function(o) {
     var json = o.responseText.substring(o.responseText.indexOf('{'), o.responseText.lastIndexOf('}') + 1);
     var data = eval('(' + json + ')');
 	if (data.Exception) {
@@ -34,7 +37,7 @@ var handleSuccessContent = function(o) {
 	    editors[form.id].setEditorHTML(data.Results.content);
 	}
 	nodes[form.id].innerHTML	= data.Results.content;
-	// recreate resize onto reloaded metanode
+	/* recreate resize onto reloaded metanode*/
 	if (resizesAllowed) {
 	    resizes[form.id] = new YAHOO.util.Resize(nodes[form.id], {
 			    proxy: true,
@@ -75,7 +78,16 @@ var handleSuccessResize = function(o) {
 		}
 	}
 };
-var handleFailure = function(o) {
+var handleFailureMetanode = function(o) {
+    var json = o.responseText.substring(o.responseText.indexOf('{'), o.responseText.lastIndexOf('}') + 1);
+    var data = eval('(' + json + ')');
+	alert('communication failure!\n\nStatus:\n'+ data.Results.status);
+};
+var handleSuccessContentMetarecord = function(o){
+	var json = o.responseText.substring(o.responseText.indexOf('{'), o.responseText.lastIndexOf('}') + 1);
+	alert(json);
+}
+var handleFailureMetarecord = function(o) {
     var json = o.responseText.substring(o.responseText.indexOf('{'), o.responseText.lastIndexOf('}') + 1);
     var data = eval('(' + json + ')');
 	alert('communication failure!\n\nStatus:\n'+ data.Results.status);
@@ -89,93 +101,23 @@ var handleResize = function(o) {
 	var lngR		= YAHOO.util.Selector.query('.lng input', formR, true).value;
 	var styleR		= 'width:'+ this.getProxyEl().style.width +';height:'+ this.getProxyEl().style.height +';';
 	var resizeData	= 'style[type]='+typeR+'&style[seq]='+seqR+'&style[caller_id]='+callerIDR+'&style[caller_type]='+callerTypeR+'&style[lng]='+lngR+'&style[content]='+styleR;
-	var request 	= YAHOO.util.Connect.asyncRequest('POST', formR.action, {success:handleSuccessResize, failure: handleFailure, argument: ['foo','bar']}, resizeData);
+	var request 	= YAHOO.util.Connect.asyncRequest('POST', formR.action, {success:handleSuccessResize, failure: handleFailureMetanode, argument: ['foo','bar']}, resizeData);
 };
-
-function metanodes_attach() {
-	YAHOO.util.Dom.addClass(document.body, 'yui-skin-sam');
-	var forms		= YAHOO.util.Selector.query('.metanode form');
-	var dialog;
-	var formID;
-	var dialogForm;
-	var dialogBtns;
-	var field;
-	var editor;
-	var submit;
-	var keyListener;
-	var klSave;
-	var klCancel;
-    var Dom = YAHOO.util.Dom;
-	var Event = YAHOO.util.Event;
-	for(i in forms) {
-		dialog	= YAHOO.util.Selector.query('.dialog', forms[i], true);
-		if (!dialog) {
-			continue;
-		}
-		dialogForm				= forms[i];
-		field 					= YAHOO.util.Selector.query('.wsw', forms[i], true);
-		submit 					= YAHOO.util.Selector.query('input.submit', forms[i], true);
-		containers[forms[i].id]	= YAHOO.util.Dom.getAncestorByClassName(forms[i], 'metanode');
-		nodes[forms[i].id]		= YAHOO.util.Selector.query('.content', YAHOO.util.Dom.getAncestorByClassName(forms[i], 'metanode'), true);
-		nodes[forms[i].id].style.minHeight	= '20px';
-		forms[i].style.display	= 'block';
-		submit.disabled			= false;
-
-		// Instantiate the Dialogs
-		dialogs[forms[i].id] = new YAHOO.widget.Dialog(dialogForm, 
-					{ width: "725px",
-					  fixedcenter : true,
-					  y : 20,
-					  modal : true,
-					  visible : false,
-					  draggable: true
-					 });
-		//set up buttons for the Dialog and wire them
-		//up to our handlers:
-		dialogBtns = [ { text:"Save", 
-							handler:handleSubmit },
-						  { text:"Cancel", 
-							handler:handleCancel,
-							isDefault:true } ];
-		dialogs[forms[i].id].cfg.queueProperty("buttons", dialogBtns);
-
-		// attach dialog cancel to Esc
-		klCancels[forms[i].id] = new YAHOO.util.KeyListener(dialogs[forms[i].id].id, 	{ 	keys:27 },  							
-															{	fn:dialogs[forms[i].id].cancel,
-																scope:dialogs[forms[i].id],
-																correctScope:true } );
-		//klCancels[forms[i].id].enable();
-		dialogs[forms[i].id].cfg.queueProperty("keylisteners", klCancels[forms[i].id]);
-
-		/* nechodi
-		// attach dialog save and close to ctrl+s
-		klSaves[forms[i].id] = new YAHOO.util.KeyListener(forms[i], 	{ 	ctrl:true, keys:83 }, 
-													   					{ 	fn:dialogs[forms[i].id].submit, 
-														 					scope:dialogs[forms[i].id],
-														 					correctScope:true } );
-		//dialogs[forms[i].id].cfg.queueProperty("keylisteners", klSaves[forms[i].id]);*/
-
-		// attach dialog handlers
-		dialogs[forms[i].id].callback.success = handleSuccessContent;
-		dialogs[forms[i].id].callback.failure = handleFailure;
-
-		YAHOO.util.Event.addListener(nodes[forms[i].id], "dblclick", dialogs[forms[i].id].show, dialogs[forms[i].id], true);
-
-		submit.disabled			= true;
-		submit.style.display	= 'none';
-		
-		// init richtext editors
+/**
+ * init richtext editors
+ */
+var renderRTE = function(field, form) {
+		/* init richtext editors */
 	    var state = 'off';
 
-		if (YAHOO.util.Dom.hasClass(containers[forms[i].id], 'metanode-richtext')) {
-			editors[forms[i].id] = new YAHOO.widget.Editor(field.id, { 
-				dompath: true, //Turns on the bar at the bottom 
-				animate: false, //Animates the opening, closing and moving of Editor windows
+			editors[form.id] = new YAHOO.widget.Editor(field, { 
+				dompath: true, /*Turns on the bar at the bottom*/ 
+				animate: false, /*Animates the opening, closing and moving of Editor windows*/
 				autoHeight: false,
 				focusAtStart: true,
 				width: '724px', height: '300px'
 			});
-			editors[forms[i].id].on('toolbarLoaded', function() {
+			editors[form.id].on('toolbarLoaded', function() {
 			        var codeConfig = { type: 'push', label: 'Edit HTML Code', value: 'editcode' };
 			        this.toolbar.addButtonToGroup(codeConfig, 'insertitem');
 
@@ -226,33 +168,129 @@ function metanodes_attach() {
 			
 			            this.addClass('editor-hidden');
 			        }, this, true);
-			}, editors[forms[i].id], true);
-			editors[forms[i].id].render();
+			}, editors[form.id], true);
+			editors[form.id].render();
 			
-			//RTE needs a little love to work in in a Dialog that can be 
-			//shown and hidden; we let it know that it's being
-			//shown/hidden so that it can recover from these actions:
-			dialogs[forms[i].id].showEvent.subscribe(editors[forms[i].id].show, editors[forms[i].id], true);
-			dialogs[forms[i].id].hideEvent.subscribe(editors[forms[i].id].hide, editors[forms[i].id], true);
+			/*RTE needs a little love to work in in a Dialog that can be 
+			shown and hidden; we let it know that it's being
+			shown/hidden so that it can recover from these actions:*/
+			dialogs[form.id].showEvent.subscribe(editors[form.id].show, editors[form.id], true);
+			dialogs[form.id].hideEvent.subscribe(editors[form.id].hide, editors[form.id], true);
+}
+
+function metanodes_attach() {
+	YAHOO.util.Dom.addClass(document.body, 'yui-skin-sam');
+		forms		= YAHOO.util.Selector.query('.lbox-meta form');
+	var dialog;
+	var formID;
+	var dialogForm;
+	var dialogBtns;
+	var editor;
+	var submit;
+	var keyListener;
+	var klSave;
+	var klCancel;
+    var Dom = YAHOO.util.Dom;
+	var Event = YAHOO.util.Event;
+	for(i in forms) {
+		dialog	= YAHOO.util.Selector.query('.dialog', forms[i], true);
+		if (!dialog) {
+			continue;
+		}
+		dialogForm				= forms[i];
+		fields[forms[i].id] 	= YAHOO.util.Selector.query('.wsw', forms[i], true);
+		submit 					= YAHOO.util.Selector.query('input.submit', forms[i], true);
+		containers[forms[i].id]	= YAHOO.util.Dom.getAncestorByClassName(forms[i], 'lbox-meta');
+		nodes[forms[i].id]		= YAHOO.util.Selector.query('.lbox-meta-content', containers[forms[i].id], true);
+		nodes[forms[i].id].style.minHeight	= '20px';
+		forms[i].style.display	= 'block';
+		submit.disabled			= false;
+
+		/*Instantiate the Dialogs*/
+		dialogs[forms[i].id] = new YAHOO.widget.Dialog(dialogForm, 
+					{ width: "750px",
+					  fixedcenter : true,
+					  y : 20,
+					  modal : true,
+					  visible : false,
+					  draggable: true
+					 });
+		/*set up buttons for the Dialog and wire them
+		up to our handlers:*/
+		dialogBtns = [ { text:"Save", 
+							handler:handleSubmit },
+						  { text:"Cancel", 
+							handler:handleCancel,
+							isDefault:true } ];
+		dialogs[forms[i].id].cfg.queueProperty("buttons", dialogBtns);
+
+		/* set dialog visual properties */
+		if (YAHOO.util.Dom.hasClass(containers[forms[i].id], 'metarecord')) {
+			forms[i].style.height	= (document.documentElement.clientHeight-(document.documentElement.clientHeight/30))+'px';
+			forms[i].style.overflow	= 'scroll';
 		}
 
-		// render dialog
+		/* attach dialog cancel to Esc */
+		klCancels[forms[i].id] = new YAHOO.util.KeyListener(dialogs[forms[i].id].id, 	{ 	keys:27 },  							
+															{	fn:dialogs[forms[i].id].cancel,
+																scope:dialogs[forms[i].id],
+																correctScope:true } );
+		/* klCancels[forms[i].id].enable(); */
+		dialogs[forms[i].id].cfg.queueProperty("keylisteners", klCancels[forms[i].id]);
+
+		/* nechodi
+		// attach dialog save and close to ctrl+s
+		klSaves[forms[i].id] = new YAHOO.util.KeyListener(forms[i], 	{ 	ctrl:true, keys:83 }, 
+													   					{ 	fn:dialogs[forms[i].id].submit, 
+														 					scope:dialogs[forms[i].id],
+														 					correctScope:true } );
+		//dialogs[forms[i].id].cfg.queueProperty("keylisteners", klSaves[forms[i].id]);*/
+
+		YAHOO.util.Event.addListener(nodes[forms[i].id], "dblclick", dialogs[forms[i].id].show, dialogs[forms[i].id], true);
+
+		submit.disabled			= true;
+		submit.style.display	= 'none';
+		
+		/* attach RTEs */
+		if (YAHOO.util.Dom.hasClass(containers[forms[i].id], 'metanode-richtext')) {
+			/* attach dialog handlers */
+			dialogs[forms[i].id].callback.success = handleSuccessContentMetanode;
+			dialogs[forms[i].id].callback.failure = handleFailureMetanode;
+			renderRTE(fields[forms[i].id].id, forms[i]);
+		}
+		else if (YAHOO.util.Dom.hasClass(containers[forms[i].id], 'metarecord')) {
+			/* attach dialog handlers */
+			dialogs[forms[i].id].callback.success = handleSuccessContentMetarecord;
+			dialogs[forms[i].id].callback.failure = handleSuccessContentMetarecord;
+			/* load all metarecord's RTEs */
+			metaRecordsRTEs[forms[i].id]	= YAHOO.util.Selector.query('.wsw .wsw', forms[i]);
+			for (rtesi in metaRecordsRTEs[forms[i].id]) {
+				renderRTE(metaRecordsRTEs[forms[i].id][rtesi].id, forms[i]);
+			}
+		}
+
+		/* render dialog*/
 		dialogs[forms[i].id].render();
 		
-		nodes[forms[i].id].style.border	= '1px dashed #ff0000';
-		nodes[forms[i].id].style.cursor	= 'pointer';
-
-		// attach resize
-		if (resizesAllowed) {
-			nodes[forms[i].id].style.overflow	= 'hidden';
-			resizes[forms[i].id] = new YAHOO.util.Resize(nodes[forms[i].id], {
-			    proxy: true,
-			    status: true,
-			    animate: true,
-			    animateDuration: .3,
-			    animateEasing: YAHOO.util.Easing.easeBoth
-			});
-			resizes[forms[i].id].on('endResize', handleResize);
+		/* attach resize*/
+		if (!YAHOO.util.Dom.hasClass(containers[forms[i].id], 'metarecord')) {
+			if (resizesAllowed) {
+				nodes[forms[i].id].style.overflow	= 'hidden';
+				resizes[forms[i].id] = new YAHOO.util.Resize(nodes[forms[i].id], {
+				    proxy: true,
+				    status: true,
+				    animate: true,
+				    animateDuration: .3,
+				    animateEasing: YAHOO.util.Easing.easeBoth
+				});
+				resizes[forms[i].id].on('endResize', handleResize);
+			}
+			nodes[forms[i].id].style.border	= '1px dashed #ff0000';
+			nodes[forms[i].id].style.cursor	= 'pointer';
+		}
+		else {
+			nodes[forms[i].id].style.border	= '1px dotted #ff0000';
+			nodes[forms[i].id].style.cursor	= 'pointer';
 		}
 	}
 }
