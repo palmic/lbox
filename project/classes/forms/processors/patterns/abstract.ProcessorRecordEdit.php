@@ -46,6 +46,12 @@ abstract class ProcessorRecordEdit extends LBoxFormProcessor
 	 */
 	protected $uploadedPhotoResizeType				= "resize";
 	
+	/**
+	 * ignored controls names
+	 * @var array
+	 */
+	protected $controlsIgnore						= array();
+	
 	public function process() {
 		try {
 			if (strlen($classNameRecord = $this->classNameRecord) < 1) {
@@ -57,6 +63,7 @@ abstract class ProcessorRecordEdit extends LBoxFormProcessor
 				if ($control instanceof LBoxFormControlSpamDefense) continue;
 				if ($control->getName() == eval("return $classNameRecord::\$idColName;")) continue;
 				if ($control->getName() == "filter_by") continue;
+				if (is_numeric(array_search($control->getName(), $this->controlsIgnore))) continue;
 				if ($control->getName() == "photo_delete")	{
 					if ($control->getValue()) {
 						$record->deletePhoto();
