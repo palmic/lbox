@@ -1,0 +1,17 @@
+<div class="control" id="control-${id}" tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
+	<label for="${id}"><span class="label">${SELF/getLabel} <tal:block tal:condition="SELF/isRequired">* </tal:block></span><input 	class="file" type="file" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]" /></label>
+	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
+		<tal:block tal:repeat="exception exceptions">
+			<div>vyhozena vyjimka validatoru:
+						<font style="background: #0000ff; color: #ffffff">${exception/getFile}</font>
+			cislo: 		<font style="background: #00ff00; color: #ffffff">${exception/getCode}</font>
+			s hlaskou: 	<font style="background: #ff0000; color: #ffffff">${exception/getMessage}</font>
+			</div>
+		</tal:block>
+	</div>
+	<!--div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
+		<div tal:condition="exists: exceptions/17001">Prosím vložte zip archiv s fotkami fotogalerie.</div>
+		<div tal:condition="exists: exceptions/17007">Tento název fotogalerie už je použit, prosím přejmenujte zip archiv.</div>
+		<div tal:condition="exists: exceptions/17014">Formát souboru s fotkami nemá platný formát, akceptován je pouze zip archiv.</div>
+	</div-->
+</div>
