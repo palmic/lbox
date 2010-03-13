@@ -9,14 +9,14 @@ if ((!LBoxXTDBFree::isLogged(XT_GROUP)) && (!LBoxXTProject::isLoggedAdmin(XT_GRO
 }
 
 // firePHP debug
-//LBoxFirePHP::table($_POST, 'POST data debug');
+LBoxFirePHP::table($_POST, 'POST data debug');
 
 try {
 	//////////////////////////////////////////////////////////////////////
 	//	saving data
 	//////////////////////////////////////////////////////////////////////
 
-	die(__FILE__);
+	die(json_encode($_POST));
 	
 	if (count($_POST) > 1) {
 		throw new LBoxException("API awaits array with only one node!");

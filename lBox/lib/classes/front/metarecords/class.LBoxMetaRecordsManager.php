@@ -85,7 +85,7 @@ class LBoxMetaRecordsManager extends LBox
 			$subCtrls["type"]			= new LBoxFormControlFillHidden("type", "", $rType);
 				$subCtrls["type"]			->setTemplateFileName("metarecord_hidden.html");
 			$subCtrls["id"]				= new LBoxFormControlFillHidden("id", "", is_object($type) ? $type->$idColName : "");
-				$subCtrls["type"]			->setTemplateFileName("metarecord_hidden.html");
+				$subCtrls["id"]				->setTemplateFileName("metarecord_hidden.html");
 			
 	/*protected static $attributes	=	array(
 											array("name"=>"ref_type", "type"=>"int", "notnull" => true, "default"=>"", "visibility"=>"protected"),
@@ -119,6 +119,9 @@ class LBoxMetaRecordsManager extends LBox
 				$subCtrls[$attName]	->addFilter(new LBoxFormFilterTrim);
 				$subCtrls[$attName]	->addFilter(new $filterType);
 				$subCtrls[$attName]	->addValidator(new $validatorType);
+				if ($attribute["required"]) {
+					$subCtrls[$attName]->setRequired(true);
+				}
 			}
 
 			// vlozime ho do dialog boxu pro JS GUI
