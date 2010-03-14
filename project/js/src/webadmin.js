@@ -11,7 +11,9 @@ var resizes			= new Array();
 /* Define various event handlers for Dialog*/
 var handleSubmit = function() {
 	if (editors[this.form.id]) {
-		editors[this.form.id].saveHTML();
+		for (i in editors[this.form.id]) {
+			editors[this.form.id][i].saveHTML();
+		}
 	}
 	this.submit();
 };
@@ -34,7 +36,9 @@ var handleSuccessContentMetanode = function(o) {
 	var nodeInstances		= YAHOO.util.Selector.query('.metanode-'+data_caller_id+'-'+data_seq);
 	var nodeContent;
 	if (editors[form.id]) {
-	    editors[form.id].setEditorHTML(data.Results.content);
+		for (i in editors[form.id]) {
+		    editors[form.id][i].setEditorHTML(data.Results.content);
+		}
 	}
 	nodes[form.id].innerHTML	= data.Results.content;
 	/* recreate resize onto reloaded metanode*/
@@ -85,7 +89,42 @@ var handleFailureMetanode = function(o) {
 };
 var handleSuccessContentMetarecord = function(o){
 	var json = o.responseText.substring(o.responseText.indexOf('{'), o.responseText.lastIndexOf('}') + 1);
+    var data = eval('(' + json + ')');
+	if (data.id == null) {var id = '';} else {var id = data.id;}
+	/* delete previous errors */
+	var errors	= YAHOO.util.Selector.query('.control label .error', document.getElementById('frm-metarecord-'+data.type+'-'+id));
+	for (i in errors) {
+		errors[i].parentNode.removeChild(errors[i]);
+	}
+	
+	/* global exception */
+	if (data.Exception) {
+		alert('Error '+ data.Exception.code +': '+ data.Exception.message);
+		return;
+	}
+	/* control validation errors */
+	else if (data.invalidControls) {
+		var controls= new Array();
+		var labels	= new Array();
+		var infoElms = new Array(), codeElms = new Array(), msgElms = new Array(), traceElms = new Array();
+		for (i in data.invalidControls) {
+			if (data.invalidControls[i]) {
+				controls[i] = document.getElementById('control-frm-metarecord-'+data.type+'-'+id+'-ctrl-'+i);
+				labels[i]	= YAHOO.util.Selector.query('label', controls[i], true);
+				for (y in data.invalidControls[i]['invalidations']) {
+					infoElms[i] = new YAHOO.util.Element(document.createElement('div'));infoElms[i].addClass('error');
+					codeElms[i] = new YAHOO.util.Element(document.createElement('div'));codeElms[i].appendChild(document.createTextNode(y));
+					msgElms[i]	= new YAHOO.util.Element(document.createElement('div'));msgElms[i].appendChild(document.createTextNode(data.invalidControls[i]['invalidations'][y]));
+					codeElms[i].addClass('code');codeElms[i].appendTo(infoElms[i]);
+					msgElms[i].addClass('message');msgElms[i].appendTo(infoElms[i]);
+					infoElms[i].appendTo(YAHOO.util.Selector.query('label', controls[i], true));
+				}
+			}
+		}
+		return;
+	}
 	alert(json);
+//TODO
 }
 var handleFailureMetarecord = function(o) {
     var json = o.responseText.substring(o.responseText.indexOf('{'), o.responseText.lastIndexOf('}') + 1);
@@ -109,15 +148,25 @@ var handleResize = function(o) {
 var renderRTE = function(field, form) {
 		/* init richtext editors */
 	    var state = 'off';
-
-			editors[form.id] = new YAHOO.widget.Editor(field, { 
+		if (YAHOO.util.Dom.getAncestorByClassName(form, 'metanode')) {
+			var v_focusAtStart = true;
+		}
+		else {
+			var v_focusAtStart = false;
+		}
+			if (!editors[form.id]) {
+				editors[form.id]	= new Array();
+			}
+			editors[form.id][field.id] = new YAHOO.widget.Editor(field.id, { 
 				dompath: true, /*Turns on the bar at the bottom*/ 
 				animate: false, /*Animates the opening, closing and moving of Editor windows*/
 				autoHeight: false,
-				focusAtStart: true,
-				width: '724px', height: '300px'
+				focusAtStart: v_focusAtStart,
+				width: '724px', height: '300px',
+				filterWord: true,
+				ptags: true
 			});
-			editors[form.id].on('toolbarLoaded', function() {
+			editors[form.id][field.id].on('toolbarLoaded', function() {
 			        var codeConfig = { type: 'push', label: 'Edit HTML Code', value: 'editcode' };
 			        this.toolbar.addButtonToGroup(codeConfig, 'insertitem');
 
@@ -168,14 +217,13 @@ var renderRTE = function(field, form) {
 			
 			            this.addClass('editor-hidden');
 			        }, this, true);
-			}, editors[form.id], true);
-			editors[form.id].render();
-			
+			}, editors[form.id][field.id], true);
+			editors[form.id][field.id].render();
 			/*RTE needs a little love to work in in a Dialog that can be 
 			shown and hidden; we let it know that it's being
 			shown/hidden so that it can recover from these actions:*/
-			dialogs[form.id].showEvent.subscribe(editors[form.id].show, editors[form.id], true);
-			dialogs[form.id].hideEvent.subscribe(editors[form.id].hide, editors[form.id], true);
+			dialogs[form.id].showEvent.subscribe(editors[form.id][field.id].show, editors[form.id][field.id], true);
+			dialogs[form.id].hideEvent.subscribe(editors[form.id][field.id].hide, editors[form.id][field.id], true);
 }
 
 function metanodes_attach() {
@@ -205,6 +253,12 @@ function metanodes_attach() {
 		nodes[forms[i].id].style.minHeight	= '20px';
 		forms[i].style.display	= 'block';
 		submit.disabled			= false;
+		if (YAHOO.util.Dom.hasClass(containers[forms[i].id], 'metarecord')) {
+			var v_hideaftersubmit	= false;
+		}
+		else {
+			var v_hideaftersubmit	= true;
+		}
 
 		/*Instantiate the Dialogs*/
 		dialogs[forms[i].id] = new YAHOO.widget.Dialog(dialogForm, 
@@ -213,7 +267,8 @@ function metanodes_attach() {
 					  y : 20,
 					  modal : true,
 					  visible : false,
-					  draggable: true
+					  draggable: true,
+					  hideaftersubmit: v_hideaftersubmit
 					 });
 		/*set up buttons for the Dialog and wire them
 		up to our handlers:*/
@@ -256,7 +311,7 @@ function metanodes_attach() {
 			/* attach dialog handlers */
 			dialogs[forms[i].id].callback.success = handleSuccessContentMetanode;
 			dialogs[forms[i].id].callback.failure = handleFailureMetanode;
-			renderRTE(fields[forms[i].id].id, forms[i]);
+			renderRTE(fields[forms[i].id], forms[i]);
 		}
 		else if (YAHOO.util.Dom.hasClass(containers[forms[i].id], 'metarecord')) {
 			/* attach dialog handlers */
@@ -265,7 +320,7 @@ function metanodes_attach() {
 			/* load all metarecord's RTEs */
 			metaRecordsRTEs[forms[i].id]	= YAHOO.util.Selector.query('.wsw .wsw', forms[i]);
 			for (rtesi in metaRecordsRTEs[forms[i].id]) {
-				renderRTE(metaRecordsRTEs[forms[i].id][rtesi].id, forms[i]);
+				renderRTE(metaRecordsRTEs[forms[i].id][rtesi], forms[i]);
 			}
 		}
 
