@@ -123,8 +123,27 @@ var handleSuccessContentMetarecord = function(o){
 		}
 		return;
 	}
-	alert(json);
-//TODO
+	/* clone the first node into our new one */
+	var metarecordFirst	= YAHOO.util.Selector.query('.metarecords-'+data.Data.type+' .metarecord', document, true);
+	var metarecordClone	= new YAHOO.util.Element(metarecordFirst.cloneNode(true));
+	/* insert clone before first one */
+	YAHOO.util.Dom.insertBefore(metarecordClone, metarecordFirst);
+	/* get height and set it to 0 */
+	var cloneRegion 	= YAHOO.util.Dom.getRegion(metarecordClone);
+	var cloneHeight 	= cloneRegion.bottom-cloneRegion.top;
+	metarecordClone.setStyle('height', '0');
+	/* set clone properties */
+	var metarecordNode;
+	for (i in data.Data) {
+		if (metarecordNode = YAHOO.util.Dom.getElementsByClassName('metarecord-node-'+i, false, metarecordClone)[0]) {
+			metarecordNode.innerHTML	= data.Data[i];
+		}
+	}
+	/* close dialog */
+	dialogs['frm-metarecord-'+data.Data['type']+'-'+id].cancel();
+	/* animate-in new list node */
+	var myAnim 			= new YAHOO.util.Anim(metarecordClone, {height: { to: cloneHeight}}, 1, YAHOO.util.Easing.easeOut);
+	myAnim.animate();
 }
 var handleFailureMetarecord = function(o) {
     var json = o.responseText.substring(o.responseText.indexOf('{'), o.responseText.lastIndexOf('}') + 1);

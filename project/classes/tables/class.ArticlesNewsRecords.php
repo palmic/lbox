@@ -15,7 +15,7 @@ class ArticlesNewsRecords extends ArticlesRecords
 			$itemType 	= $this->getClassVar("itemType");
 			$articlesTypesNewsName	= eval("return $itemType::\$articlesTypesNewsName;");
 			$articlesTypes	= new ArticlesTypesRecords(array("name" => $articlesTypesNewsName));
-			$filter["ref_articleType"] = $articlesTypes->current()->id;
+			$filter["ref_type"] = $articlesTypes->current()->id;
 			parent::__construct($filter, $order, $limit, $whereAdd);
 		}
 		catch (Exception $e) {

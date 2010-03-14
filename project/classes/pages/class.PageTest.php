@@ -35,5 +35,18 @@ class PageTest extends PageRecordsList
 			throw $e;
 		}
 	}
+	
+	/**
+	 * getter na $classNameRecord
+	 * @return string
+	 */
+	public function getClassNameRecord() {
+		try {
+			return $this->classNameRecord;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
 }
 ?>

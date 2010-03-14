@@ -9,10 +9,12 @@
 class ArticlesTypesRecord extends AbstractRecordLBox
 {
 	public static $itemsType 		= "ArticlesTypesRecords";
-	public static $tableName    	= "articlesTypes";
+	public static $tableName    	= "articles_types";
 	public static $idColName    	= "id";
 	
 	public static $bounded1M = array("ArticlesRecords" => "ref_articleType");
+	
+	public static $dependingRecords	= array("");
 	
 	/**
 	 * OutputItem interface method

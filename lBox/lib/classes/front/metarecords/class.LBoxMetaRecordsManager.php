@@ -135,7 +135,7 @@ class LBoxMetaRecordsManager extends LBox
 			$form					->setTemplateFileName("metarecord_xt_edit.html");
 			$form->action			= LBoxConfigSystem::getInstance()->getParamByPath("metarecords/api/url");
 			$form					->addControl($ctrlDialog);
-			$form					->addProcessor(new ProcessorMetaRecordXTToEdit);
+			$form					->addProcessor(new ProcessorMetaRecordEdit);
 			$form->className		= "metarecord metarecord-$rType";
 
 			if (is_object($type)) {

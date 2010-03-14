@@ -34,7 +34,7 @@ class ArticlesNewsRecord extends ArticlesRecord
 		try {
 			$articlesTypesNewsName	= $this->getClassVar("articlesTypesNewsName");
 			$articlesTypes			= new ArticlesTypesRecords(array("name" => $articlesTypesNewsName));
-			$this->params["ref_articleType"] 	= $articlesTypes->current()->id;
+			$this->params["ref_type"] 	= $articlesTypes->current()->id;
 			parent::store();
 		}
 		catch (Exception $e) {

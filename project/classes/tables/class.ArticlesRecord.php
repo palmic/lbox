@@ -10,7 +10,7 @@ class ArticlesRecord extends AbstractRecordLBox
 {
 	public static $itemsType 		= "ArticlesRecords";
 	public static $tableName    	= "articles";
-	public static $idColName    	= "url";
+	public static $idColName    	= "id";
 
 	/**
 	 * Photo record type
@@ -41,6 +41,8 @@ class ArticlesRecord extends AbstractRecordLBox
 											array("name"=>"ref_access", "type"=>"int", "notnull" => true, "default"=>"", "visibility"=>"protected"),
 											);
 	
+	public static $dependingRecords	= array("");
+	
 	/**
 	 * cache var
 	 * @var PhotosRecord
@@ -65,9 +67,19 @@ class ArticlesRecord extends AbstractRecordLBox
 
 	public function store() {
 		try {
-			if (!$this->params["published"]) {
-				$this->params["published"] = date("Y-m-d H:i:s");
+			if (!$this->params["time_published"]) {
+				$this->params["time_published"] = time();
 			}
+			if (!is_numeric($this->params["time_published"])) {
+				$this->params["time_published"] = strtotime($this->params["time_published"]);
+			}
+			if (strlen($this->params["url_cs"]) < 1 || $this->params["url_cs"] == "<<NULL>>") {
+				$this->params["url_cs"] = LBoxUtil::getURLByNameString($this->params["heading_cs"]);
+			}
+			if (strlen($this->params["url_sk"]) < 1 || $this->params["url_sk"] == "<<NULL>>") {
+				$this->params["url_sk"] = LBoxUtil::getURLByNameString($this->params["heading_sk"]);
+			}
+			$this->params["ref_access"] = AccesRecord::getInstance()->id;
 			parent::store();
 		}
 		catch (Exception $e) {
