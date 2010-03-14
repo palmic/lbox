@@ -8,47 +8,50 @@ if ((!LBoxXTDBFree::isLogged(XT_GROUP)) && (!LBoxXTProject::isLoggedAdmin(XT_GRO
 	header("HTTP/1.1 404 Not Found");die;
 }
 
+$post	= LBoxFront::getDataPost();
+
 // firePHP debug
-LBoxFirePHP::table($_POST, 'POST data debug');
+//LBoxFirePHP::table($post, 'POST data debug');
 
 try {
 	//////////////////////////////////////////////////////////////////////
 	//	saving data
 	//////////////////////////////////////////////////////////////////////
 
-	die(json_encode($_POST));
-	
-	if (count($_POST) > 1) {
-		throw new LBoxException("API awaits array with only one node!");
-	}
 
-	foreach ($_POST as $k => $postData) {
-		switch($k) {
-			case "style":
-					$styleString	= "";
-					foreach ($postData as $propName => $propValue) {
-						$styleString .= "";
-					}
-					$returned	= saveMetanodeStylePropertiesByPostData($postData);
-				break;
-			default:
-					$returned	= saveMetanodeContentByPostData($postData);
-				break;
+	foreach ($post as $formID => $data) {
+		$typeRecord		= $data["type"];
+		$idColname		= eval("return $typeRecord::\$idColName;");
+		$form	= strlen($post[$idColname]) < 1 ? $form	= LBoxMetaRecordsManager::getForm($typeRecord) : LBoxMetaRecordsManager::getForm(new $typeRecord($data[$idColname]));
+		$form->__toString();
+		
+		$ret 						= new stdclass(); // PHP base class
+		
+		// check controls validations errors
+		$exceptions	= array(array());
+		foreach ($form->getControls() as $control) {
+//LBoxFirePHP::log("Control: ". $control->getName());
+			foreach ($control->getExceptionsValidations() as $e) {
+				$exceptions[$control->getName()]["invalidations"][$e->getCode()]= $e->getMessage();
+			}
 		}
-		echo(json_encode($returned));
+		if (count($exceptions) > 0) {
+			$ret->type				= $typeRecord;
+			$ret->id				= $data[$idColname];
+			$ret->invalidControls	= $exceptions;
+			header("HTTP/1.1 200 OK");
+			die(json_encode($ret));
+		}
 	}
 }
 catch (Exception $e) {
 		throwExceptionToFirePHP($e);
 		$ret 						= new stdclass(); // PHP base class
+		
 		$ret->Exception				= new stdclass();
 		$ret->Exception->code	 	= $e->getCode();
 		$ret->Exception->message 	= $e->getMessage();
 		die(json_encode($ret));
-}
-
-function throwExceptionToFirePHP(Exception $e) {
-	LBoxFirePHP::throwException($e);
 }
 
 /**
@@ -83,85 +86,6 @@ function saveMetanodeContentByPostData($data = array()) {
 		$ret->Results->content = $contentProcessed; // content
 		
 		return $ret;
-	}
-	catch(Exception $e) {
-		throw $e;
-	}
-}
-
-/**
- * ulozi style metanodu podle predanych dat a vrati zpet jeji vysledny content
- * @param $data
- * @return stdclass
- */
-function saveMetanodeStylePropertiesByPostData($data = array()) {
-	try {
-		$contentRaw			= $data["content"];
-		// parsing style properties from css string into clean array for metanode setter
-		$contentRawParts		= explode(";", $contentRaw);
-		$contentProcessedParts	= array();
-		foreach ($contentRawParts as $k => $contentRawPart) {
-			if (strlen(trim($contentRawPart)) < 1) continue;
-			$contentProcessedParts[reset(explode(":", $contentRawPart))]	= end(explode(":", $contentRawPart));
-		}
-
-//LBoxFirePHP::table($contentProcessedParts, 'im about to setting metanode styles data:');
-
-		$node	= getMetanodeByPostData($data);
-		$node->setStyles($contentProcessedParts);
-		$node->store();
-
-		$contentProcessed	= $node->getStyles();
-
-		//////////////////////////////////////////////////////////////////////
-		//	return filtered data
-		//////////////////////////////////////////////////////////////////////
-		
-		$ret = new stdclass(); // PHP base class
-		$ret->Results = new stdclass();
-		$ret->Results->content_raw = $contentRaw; // raw_data
-		$ret->Results->caller_type = $data["caller_type"];
-		$ret->Results->caller_id = $data["caller_id"];
-		$ret->Results->type = $data["type"];
-		$ret->Results->seq = $data["seq"];
-		$ret->Results->lng = $data["lng"];
-		$ret->Results->status = 'OK';
-		$ret->Results->content = $contentProcessed; // content
-		
-		return $ret;
-	}
-	catch(Exception $e) {
-		throw $e;
-	}
-}
-
-/**
- * getter na motanodes podle predanych dat
- * @param array $data
- * @return LBoxMetanode
- */
-function getMetanodeByPostData($data = array()) {
-	try {
-		if (count($data) < 1) {
-			throw new LBoxException(LBoxException::MSG_PARAM_ARRAY_NOTNULL, LBoxException::CODE_BAD_PARAM);
-		}
-
-		// page metanode
-		if ($data["caller_type"] == "page") {
-			$callerConfig		= LBoxConfigManagerStructure::getInstance()->getPageById($data["caller_id"]);
-			$callerClassName	= strlen($callerConfig->class) > 0 ? $callerConfig->class : "PageDefault";
-			$caller				= new $callerClassName($callerConfig);
-		}
-		// component metanode
-		else {
-			$callerConfig	= LBoxConfigManagerComponents::getInstance()->getComponentById($data["caller_id"]);
-			$caller			= new LBoxComponentMetanodeCaller($callerConfig);
-		}
-		$node	= LBoxMetanodeManager::getNode(		$data["type"],
-													(int)$data["seq"],
-													$caller,
-													$data["lng"]);
-		return $node;
 	}
 	catch(Exception $e) {
 		throw $e;

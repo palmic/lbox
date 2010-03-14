@@ -5,6 +5,14 @@
 	.metarecord form .control label .wsw		{ display: block; width: 720px !important; }
 	.metarecord form .control label .label	{ font-size: 100%; font-weight: bold; }
 	.metarecord form .control-hidden			{ display: none; }
+	.metarecord form .control-hidden			{ display: none; }
+	.metarecord form .control label .error,
+	.metarecord form .control label .error			{ background: #ff0000 none; color: #ffffff; }
+	.metarecord form .control label .error .code,
+	.metarecord form .control label .error .message	{ display: inline; padding: 2px 5px; font-weight: bold; }
+	.metarecord form .control label .error .code	{ background: #0000ff none; }
+
+	.metanode .to-edit .dialog .control		{ background: #F2F2F2 none; }
 
 	.yui-toolbar-titlebar h2 a				{ visibility: hidden; }
 }
