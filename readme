@@ -1,8 +1,7 @@
 MetaRecords
 -------------
 
+- ... pokracovat napsanim editace existujicich nodes
+
 napsat:
- - LBoxMetaRecord::__toString()
- - ProcessorMetaRecordXTToEdit
- 
- - ... a pokracovat testovanim formulare na vlozeni noveho recordu
+ - LBoxMetaRecord::__toString()  // (uvazit jestli je to potreba, momentalne je to reseno primo v sablone s vypisem definici konkretnich css class a zavolanim getFormEdit, JS si to uz potom poresi sam)

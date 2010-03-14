@@ -1,17 +1,18 @@
 <x tal:replace="lbox:slot_start" />
 	<h1 tal:content="SELF/page/heading" />
 	<tal:block tal:content="structure SELF/getFormNewRecord" />
-    <div class="new" tal:repeat="record SELF/getRecords">
-        <h2><a href="${record/url}" title="přejít na ${record/heading}">${record/heading}</a></h2>
-        <p><img tal:condition="record/getPhoto" src="${record/getPhoto/url}" width="${record/getPhoto/size_x}" height="${record/getPhoto/size_y}" alt="${record/heading}" />
-		<tal:block tal:content="structure record/perex_raw" /></p>
-        <!--!p class="perex"><span class="date">${record/publishedDate}</span><span> | </span> 
-			<tal:block tal:replace="structure record/perex_raw" />
-			<img tal:condition="record/getPhoto" src="${record/getPhoto/url}" width="${record/getPhoto/size_x}" height="${record/getPhoto/size_y}" alt="${record/heading}" /></p-->
-		<tal:block tal:content="structure record/form_xt_edit" />
-		<tal:block tal:content="structure record/form_xt_delete" />
-        <div class="clear" />
-    </div>
+	<div class="metarecords metarecords-${SELF/getClassNameRecord}">
+	    <div class="news metarecord" tal:repeat="record SELF/getRecords">
+	        <h2><a href="#" title="přejít na ${record/heading}"><span tal:condition="lbox:xt.isLoggedAdmin" class="metarecord-node-heading_${lbox:front.getDisplayLanguage}" tal:content="record/heading" /></a></h2>
+	        <p><img tal:condition="record/getPhoto" src="${record/getPhoto/url}" width="${record/getPhoto/size_x}" height="${record/getPhoto/size_y}" alt="${record/heading}" />
+			<span tal:condition="lbox:xt.isLoggedAdmin" class="metarecord-node-perex_${lbox:front.getDisplayLanguage}" tal:content="structure record/perex_raw" /></p>
+	        <!--!p class="perex"><span class="date">${record/publishedDate}</span><span> | </span> 
+				<tal:block tal:replace="structure record/perex_raw" />
+				<img tal:condition="record/getPhoto" src="${record/getPhoto/url}" width="${record/getPhoto/size_x}" height="${record/getPhoto/size_y}" alt="${record/heading}" /></p-->
+			<tal:block tal:content="structure record/form_xt_delete" />
+	        <div class="clear" />
+	    </div>
+	</div>
 	<p tal:condition="not: SELF/getRecords/count">V systému zatím není žádný článek</p>
 	<tal:block tal:replace="structure lbox:metanode.1.richtext" />
 <x tal:replace="lbox:slot_end.content" />

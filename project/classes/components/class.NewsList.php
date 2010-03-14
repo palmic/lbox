@@ -31,7 +31,7 @@ class NewsList extends LBoxComponent
 			$pageMoreId		= LBoxConfigManagerProperties::getInstance()->getPropertyByName("ref_page_articles_news")->getContent();
 			$pageMore		= LBoxConfigManagerStructure::getPageById($pageMoreId);
 			$limit 			= $this->getListPaging();
-			$news 			= new ArticlesNewsRecords(false, array("published" => 0), array(1, $limit));
+			$news 			= new ArticlesNewsRecords(false, array("time_published" => 0), array(1, $limit));
 			$news			->setOutputFilterItemsClass("OutputFilterArticleNews");
 			$TAL->news 		= ($news->count() > 0) ? $news : false;
 			$TAL->urlMore	= $pageMore->url;

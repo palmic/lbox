@@ -13,7 +13,7 @@ class BoxLastNews extends LBoxComponent
 		try {
 			// DbControl::$debug	= true;
 			$itemsLimit	= LBoxConfigManagerProperties::getInstance()->getPropertyByName("box_last_news_limit")->getContent();
-			$order["published"]	= 0;
+			$order["time_published"]	= 0;
 			$limit				= array(0, $itemsLimit);
 			$news				= new ArticlesNewsRecords(false, $order, $limit);
 			$news4Count			= new ArticlesNewsRecords;

@@ -17,7 +17,7 @@ class PageRSSArticles extends PageRSS
 		try {
 			$itemsLimit			= LBoxConfigManagerProperties::getInstance()->getPropertyByName($this->itemsLimitConfigParamName)->getContent();
 			$className			= $this->articlesRecordsClassName;
-			$articles 			= new $className(false, array("published" => 0), array(0, $itemsLimit));
+			$articles 			= new $className(false, array("time_published" => 0), array(0, $itemsLimit));
 			$articles			->setOutputFilterItemsClass($this->articlesRecordsOutputFilterClassName);
 			$TAL->items 		= $articles;
 			$TAL->host			= LBOX_REQUEST_URL_SCHEME ."://". LBOX_REQUEST_URL_HOST;

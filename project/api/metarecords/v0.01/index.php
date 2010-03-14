@@ -23,12 +23,13 @@ try {
 		$typeRecord		= $data["type"];
 		$idColname		= eval("return $typeRecord::\$idColName;");
 		$form	= strlen($post[$idColname]) < 1 ? $form	= LBoxMetaRecordsManager::getForm($typeRecord) : LBoxMetaRecordsManager::getForm(new $typeRecord($data[$idColname]));
+		$form->setDoNotReload(true);
 		$form->__toString();
 		
 		$ret 						= new stdclass(); // PHP base class
 		
 		// check controls validations errors
-		$exceptions	= array(array());
+		$exceptions	= array();
 		foreach ($form->getControls() as $control) {
 //LBoxFirePHP::log("Control: ". $control->getName());
 			foreach ($control->getExceptionsValidations() as $e) {
@@ -39,9 +40,21 @@ try {
 			$ret->type				= $typeRecord;
 			$ret->id				= $data[$idColname];
 			$ret->invalidControls	= $exceptions;
+			$ret->status 			= "FAILED";
 			header("HTTP/1.1 200 OK");
 			die(json_encode($ret));
 		}
+
+		// sending data back
+		$ret->Results 	= new stdclass();
+		$ret->Data		= new stdclass();
+		$ret->Results->status = 'OK';
+		foreach ($form->getControls() as $control) {
+			$ctrlName	= $control->getName();
+			$ret->Data->$ctrlName	= $control->getValue();
+		}
+		header("HTTP/1.1 200 OK");
+		die(json_encode($ret));
 	}
 }
 catch (Exception $e) {
@@ -51,6 +64,7 @@ catch (Exception $e) {
 		$ret->Exception				= new stdclass();
 		$ret->Exception->code	 	= $e->getCode();
 		$ret->Exception->message 	= $e->getMessage();
+		header("HTTP/1.1 200 OK");
 		die(json_encode($ret));
 }
 
