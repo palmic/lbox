@@ -957,7 +957,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 	 * check if record is in database
 	 * @return boolean
 	 */
-	protected function isInDatabase() {
+	public function isInDatabase() {
 		try {
 			if (is_bool($this->isInDatabase)) {
 				return $this->isInDatabase;

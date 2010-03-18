@@ -29,7 +29,8 @@ class PageTest extends PageRecordsList
 	 */
 	public function getFormNewRecord() {
 		try {
-			return LBoxMetaRecordsManager::getForm($this->classNameRecord);
+			$type		= $this->classNameRecord;
+			return LBoxMetaRecordsManager::getMetaRecord(new $type);
 		}
 		catch (Exception $e) {
 			throw $e;

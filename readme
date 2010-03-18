@@ -1,7 +1,4 @@
 MetaRecords
 -------------
 
-- ... pokracovat napsanim editace existujicich nodes
-
-napsat:
- - LBoxMetaRecord::__toString()  // (uvazit jestli je to potreba, momentalne je to reseno primo v sablone s vypisem definici konkretnich css class a zavolanim getFormEdit, JS si to uz potom poresi sam)
+- ... pokracovat testovanim editace existujicich nodes a reakce javascriptu na uspesnej edit

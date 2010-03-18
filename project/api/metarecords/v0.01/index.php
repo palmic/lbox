@@ -22,7 +22,7 @@ try {
 	foreach ($post as $formID => $data) {
 		$typeRecord		= $data["type"];
 		$idColname		= eval("return $typeRecord::\$idColName;");
-		$form	= strlen($post[$idColname]) < 1 ? $form	= LBoxMetaRecordsManager::getForm($typeRecord) : LBoxMetaRecordsManager::getForm(new $typeRecord($data[$idColname]));
+		$form	= LBoxMetaRecordsManager::getMetaRecord(strlen($post[$idColname]) < 1 ? new $typeRecord : $typeRecord($idColname))->getForm();
 		$form->setDoNotReload(true);
 		$form->__toString();
 		

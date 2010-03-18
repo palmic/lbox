@@ -161,11 +161,7 @@ var handleResize = function(o) {
 	var resizeData	= 'style[type]='+typeR+'&style[seq]='+seqR+'&style[caller_id]='+callerIDR+'&style[caller_type]='+callerTypeR+'&style[lng]='+lngR+'&style[content]='+styleR;
 	var request 	= YAHOO.util.Connect.asyncRequest('POST', formR.action, {success:handleSuccessResize, failure: handleFailureMetanode, argument: ['foo','bar']}, resizeData);
 };
-/**
- * init richtext editors
- */
 var renderRTE = function(field, form) {
-		/* init richtext editors */
 	    var state = 'off';
 		if (YAHOO.util.Dom.getAncestorByClassName(form, 'metanode')) {
 			var v_focusAtStart = true;
@@ -269,7 +265,7 @@ function metanodes_attach() {
 		submit 					= YAHOO.util.Selector.query('input.submit', forms[i], true);
 		containers[forms[i].id]	= YAHOO.util.Dom.getAncestorByClassName(forms[i], 'lbox-meta');
 		nodes[forms[i].id]		= YAHOO.util.Selector.query('.lbox-meta-content', containers[forms[i].id], true);
-		nodes[forms[i].id].style.minHeight	= '20px';
+		containers[forms[i].id].style.minHeight	= '20px';
 		forms[i].style.display	= 'block';
 		submit.disabled			= false;
 		if (YAHOO.util.Dom.hasClass(containers[forms[i].id], 'metarecord')) {
@@ -320,7 +316,7 @@ function metanodes_attach() {
 														 					correctScope:true } );
 		//dialogs[forms[i].id].cfg.queueProperty("keylisteners", klSaves[forms[i].id]);*/
 
-		YAHOO.util.Event.addListener(nodes[forms[i].id], "dblclick", dialogs[forms[i].id].show, dialogs[forms[i].id], true);
+		YAHOO.util.Event.addListener(containers[forms[i].id], "dblclick", dialogs[forms[i].id].show, dialogs[forms[i].id], true);
 
 		submit.disabled			= true;
 		submit.style.display	= 'none';
@@ -346,8 +342,8 @@ function metanodes_attach() {
 		/* render dialog*/
 		dialogs[forms[i].id].render();
 		
-		/* attach resize*/
-		if (!YAHOO.util.Dom.hasClass(containers[forms[i].id], 'metarecord')) {
+		/* attach resize on metanodes only */
+		if (nodes[forms[i].id]) {
 			if (resizesAllowed) {
 				nodes[forms[i].id].style.overflow	= 'hidden';
 				resizes[forms[i].id] = new YAHOO.util.Resize(nodes[forms[i].id], {
@@ -359,12 +355,12 @@ function metanodes_attach() {
 				});
 				resizes[forms[i].id].on('endResize', handleResize);
 			}
-			nodes[forms[i].id].style.border	= '1px dashed #ff0000';
-			nodes[forms[i].id].style.cursor	= 'pointer';
+			containers[forms[i].id].style.border	= '1px dashed #ff0000';
+			containers[forms[i].id].style.cursor	= 'pointer';
 		}
 		else {
-			nodes[forms[i].id].style.border	= '1px dotted #ff0000';
-			nodes[forms[i].id].style.cursor	= 'pointer';
+			containers[forms[i].id].style.border	= '1px dotted #ff0000';
+			containers[forms[i].id].style.cursor	= 'pointer';
 		}
 	}
 }

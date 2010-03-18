@@ -1,0 +1,15 @@
+<tal:block tal:condition="lbox:xt.isLoggedAdmin">
+	<tal:block tal:condition="SELF/isRecordInDatabase">
+		<noscript>
+			<div>Je třeba aktivovat javascript!</div>
+		</noscript>
+		<tal:block tal:content="structure SELF/getForm" />
+	</tal:block>
+	<div class="lbox-meta metarecord" tal:condition="not: SELF/isRecordInDatabase">
+		<div class="lbox-meta-content">vložit nový</div>
+		<noscript>
+			<div>Je třeba aktivovat javascript!</div>
+		</noscript>
+		<tal:block tal:content="structure SELF/getForm" />
+	</div>
+</tal:block>
