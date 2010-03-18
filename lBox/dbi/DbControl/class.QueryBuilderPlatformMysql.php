@@ -27,7 +27,7 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 		$out			= "DELETE FROM $table \n$whereString";
 		return $out;
 	}
-	
+
 	public function getUpdate(/*string*/ $table, /*array*/ $values, QueryBuilderWhere $where = NULL) {
 		try {
 			if (strlen($table) < 1) {
@@ -82,7 +82,7 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 			throw $e;
 		}
 	}
-	
+
 	public function getSelectMaxColumns($table, $what = array(), QueryBuilderWhere $where = NULL, $groupBy = array(), $orderBy = array()) {
 		try {
 			if (!is_array($what)) {
@@ -103,7 +103,7 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 			throw $e;
 		}
 	}
-	
+
 	public function getDoesTableExists($table, $database = "") {
 		try {
 			if (strlen($database) < 1) {
@@ -118,12 +118,12 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 			throw $e;
 		}
 	}
-	
+
 	public function getCreateTable($table, $columns = array(), $attributes = array()) {
 		try {
 			$qt	= $this->getQuotesTableName();
 			$qc	= $this->getQuotesColumnName();
-			
+
 			$cols	= "";
 			foreach ($columns as $column) {
 				$type		= "";
@@ -161,7 +161,7 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 				$cols	.= strlen($cols) > 0 ? ",\n" : "";
 				$cols	.= reset($qc) . $column["name"] . end($qc) . $type . $notNull . $autoincrement . $default;
 			}
-			
+
 			$comment = " COMMENT = 'created ". date('Y-m-d H:i:s') ."'";
 			$attribsInner	= "";
 			$attribsOuter	= "";
@@ -176,7 +176,7 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 				}
 			}
 			$attribsInner	= strlen($attribsInner) > 0 ? ", $attribsInner" : "";
-			
+
 			$out	= "CREATE TABLE  ". reset($qt) . $table . end($qt) ." (
 						$cols
 					  $attribsInner
@@ -189,7 +189,7 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 			throw $e;
 		}
 	}
-	
+
 	public function getAddColumns($table, $columns = array()) {
 		try {
 			$qt	= $this->getQuotesTableName();
@@ -232,11 +232,11 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 				$cols	.= strlen($cols) > 0 ? ",\n" : "";
 				$cols	.= "ADD COLUMN ". reset($qc) . $column["name"] . end($qc) . $type . $notNull . $autoincrement . $default . $comment;
 			}
-			
+
 			$out	= "ALTER TABLE  ". reset($qt) . $table . end($qt) ."
 						$cols
 						";
-						
+
 			return $out;
 		}
 		catch (Exception $e) {
@@ -261,7 +261,7 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 			throw new DbControlException("Ilegal parameter groupBy. Must be array.");
 		}
 		$whereString	= $where instanceof QueryBuilderWhere ? $this->getWhereStringByObject($where) : "";
-		
+
 		// groupByString
 		$groupByString	= "";
 		if (count($groupBy) < 1) {
@@ -350,7 +350,7 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 					}
 					$whereString	.= strlen($whereString) > 0 ? " $glue " : "";
 					$whereString	.= reset(self::getQuotesColumnName()) . $columnName . end(self::getQuotesColumnName()) . $comparisonValue;
-				}				
+				}
 			}
 		}
 
@@ -401,7 +401,7 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 		}
 		return date("Y-m-d H:i:s", $timeStamp);
     }
-    
+
 	public function getQuotesDatabaseName() {
 		return array("`", "`");
 	}
@@ -419,9 +419,9 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 	}
 
 	protected function escapeString($string = "") {
-		if (ini_get("magic_quotes_gpc") == 1 || strtolower(ini_get("magic_quotes_gpc")) == "on") {
+		/*if (ini_get("magic_quotes_gpc") == 1 || strtolower(ini_get("magic_quotes_gpc")) == "on") {
 			return $string;
-		}
+		}*/
 		return mysql_escape_string($string);
 	}
 }
