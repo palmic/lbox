@@ -110,7 +110,7 @@ abstract class PageRecordsList extends PageDefault
 	 */
 	public function getRecords() {
 		try {
-			if ($this->records instanceof AbstractRecords) {
+			if ($this->records instanceof AbstractRecords || $this->records instanceof LBoxPagingIterator) {
 				return $this->records;
 			}
 			if (strlen($this->classNameRecord) < 1) {
@@ -118,7 +118,7 @@ abstract class PageRecordsList extends PageDefault
 			}
 			$classNameRecords		= eval("return ". $this->classNameRecord ."::\$itemsType;");
 			if (is_numeric($this->pageItems) && $this->pageItems > 0) {
-				$this->records = new LBoxPagingIteratorRecords($classNameRecords, $this->pageItems, $this->classNameRecordOutputFilter, $this->filter, $this->orderBy, $this->limit, $this->where);
+				$this->records 	= new LBoxPagingIteratorRecords($classNameRecords, $this->pageItems, $this->classNameRecordOutputFilter, $this->filter, $this->orderBy, $this->limit, $this->where);
 			}
 			else {
 				$this->records			= new $classNameRecords($this->filter, $this->orderBy, $this->limit, $this->where);
