@@ -32,7 +32,7 @@ abstract class OutputFilterRecordEditableByAdmin extends OutputFilterRecord
 						return $this->getFormXTToEdit();
 					break;
 				case "form_xt_edit":
-						LBoxMetaRecordsManager::getForm($this->instance);
+						return LBoxMetaRecordsManager::getMetaRecord($this->instance);
 					break;
 				case "form_xt_delete":
 						return $this->getFormXTDelete();
