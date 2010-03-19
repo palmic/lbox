@@ -957,7 +957,7 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 	 * check if record is in database
 	 * @return boolean
 	 */
-	protected function isInDatabase() {
+	public function isInDatabase() {
 		try {
 			if (is_bool($this->isInDatabase)) {
 				return $this->isInDatabase;
@@ -2117,6 +2117,14 @@ LBoxFirePHP::log("adding columns into '$tableName': ". implode(", ", $columns));
 		catch (Exception $e) {
 			throw $e;
 		}
+	}
+	
+	/**
+	 * getter na attributy
+	 * @return array
+	 */
+	public function getAttributes() {
+		return $this->getClassVar("attributes");
 	}
 }
 ?>
