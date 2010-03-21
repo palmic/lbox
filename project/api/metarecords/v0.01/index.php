@@ -8,7 +8,8 @@ if ((!LBoxXTDBFree::isLogged(XT_GROUP)) && (!LBoxXTProject::isLoggedAdmin(XT_GRO
 	header("HTTP/1.1 404 Not Found");die;
 }
 
-$post	= LBoxFront::getDataPost();
+$post			= LBoxFront::getDataPost();
+$postFormData	= current($post);
 
 // firePHP debug
 //LBoxFirePHP::table($post, 'POST data debug');
@@ -22,7 +23,8 @@ try {
 	foreach ($post as $formID => $data) {
 		$typeRecord		= $data["type"];
 		$idColname		= eval("return $typeRecord::\$idColName;");
-		$form	= LBoxMetaRecordsManager::getMetaRecord(strlen($post[$idColname]) < 1 ? new $typeRecord : $typeRecord($idColname))->getForm();
+		$record			= strlen($postFormData[$idColname]) < 1 ? new $typeRecord : new $typeRecord($postFormData[$idColname]);
+		$form	= LBoxMetaRecordsManager::getMetaRecord($record)->getForm();
 		$form->setDoNotReload(true);
 		$form->__toString();
 		
@@ -58,7 +60,7 @@ try {
 	}
 }
 catch (Exception $e) {
-		throwExceptionToFirePHP($e);
+		LBoxFirePHP::throwException($e);
 		$ret 						= new stdclass(); // PHP base class
 		
 		$ret->Exception				= new stdclass();
