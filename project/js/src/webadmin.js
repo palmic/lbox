@@ -88,9 +88,10 @@ var handleFailureMetanode = function(o) {
 	alert('communication failure!\n\nStatus:\n'+ data.Results.status);
 };
 var handleSuccessContentMetarecord = function(o){
+    var mrType, mrID;
 	var json = o.responseText.substring(o.responseText.indexOf('{'), o.responseText.lastIndexOf('}') + 1);
     var data = eval('(' + json + ')');
-	if (data.id == null) {var id = '';} else {var id = data.id;}
+	if (data.Data.id == null) {var id = '';} else {var id = data.Data.id;}
 	/* delete previous errors */
 	var errors	= YAHOO.util.Selector.query('.control label .error', document.getElementById('frm-metarecord-'+data.type+'-'+id));
 	for (i in errors) {
@@ -123,26 +124,46 @@ var handleSuccessContentMetarecord = function(o){
 		}
 		return;
 	}
-	/* clone the first node into our new one */
-	var metarecordFirst	= YAHOO.util.Selector.query('.metarecords-'+data.Data.type+' .metarecord', document, true);
-	var metarecordClone	= new YAHOO.util.Element(metarecordFirst.cloneNode(true));
-	/* insert clone before first one */
-	YAHOO.util.Dom.insertBefore(metarecordClone, metarecordFirst);
-	/* get height and set it to 0 */
-	var cloneRegion 	= YAHOO.util.Dom.getRegion(metarecordClone);
-	var cloneHeight 	= cloneRegion.bottom-cloneRegion.top;
-	metarecordClone.setStyle('height', '0');
+	var metarecordSaved;
+	/* check edit or add */
+	if (id.length > 0) {
+		/*edit*/
+		metarecordSaved	= new YAHOO.util.Element(document.getElementById('metarecord-'+data.Data.type+'-'+id));
+	}
+	else {
+		/* clone the first node into our new one */
+		var metarecordFirst	= YAHOO.util.Selector.query('.metarecords-'+data.Data.type+' .metarecord', document, true);
+		metarecordSaved	= new YAHOO.util.Element(metarecordFirst.cloneNode(true));
+		/* insert clone before first one */
+		YAHOO.util.Dom.insertBefore(metarecordSaved, metarecordFirst);
+		/* get height and set it to 0 */
+		var cloneRegion 	= YAHOO.util.Dom.getRegion(metarecordSaved);
+		var cloneHeight 	= cloneRegion.bottom-cloneRegion.top;
+		metarecordSaved.setStyle('height', '0');
+	}
+	
 	/* set clone properties */
 	var metarecordNode;
 	for (i in data.Data) {
-		if (metarecordNode = YAHOO.util.Dom.getElementsByClassName('metarecord-node-'+i, false, metarecordClone)[0]) {
+		if (metarecordNode = YAHOO.util.Dom.getElementsByClassName('metarecord-node-'+i, false, metarecordSaved)[0]) {
 			metarecordNode.innerHTML	= data.Data[i];
 		}
 	}
 	/* close dialog */
 	dialogs['frm-metarecord-'+data.Data['type']+'-'+id].cancel();
 	/* animate-in new list node */
-	var myAnim 			= new YAHOO.util.Anim(metarecordClone, {height: { to: cloneHeight}}, 1, YAHOO.util.Easing.easeOut);
+	if (id.length > 0) {
+		var origBGColor		= metarecordSaved.getStyle('backgroud-color');
+		if (!origBGColor) {
+			origBGColor	= '#ffffff';
+		}
+		var myAnim			= new YAHOO.util.ColorAnim(metarecordSaved, {backgroundColor: {to: '#ff0000'}}, 0.7);
+		var myAnim2 		= new YAHOO.util.ColorAnim(metarecordSaved, {backgroundColor: {to: origBGColor}}, 0.3);
+		myAnim.onComplete.subscribe(function() {myAnim2.animate();});
+	}
+	else {
+		var myAnim 			= new YAHOO.util.Anim(metarecordSaved, {height: { to: cloneHeight}}, 1, YAHOO.util.Easing.easeOut);
+	}
 	myAnim.animate();
 }
 var handleFailureMetarecord = function(o) {
@@ -255,7 +276,11 @@ function metanodes_attach() {
 	var klCancel;
     var Dom = YAHOO.util.Dom;
 	var Event = YAHOO.util.Event;
+	var mrType, mrID;
 	for(i in forms) {
+		if (containers[forms[i].id]) {
+			continue;
+		}
 		dialog	= YAHOO.util.Selector.query('.dialog', forms[i], true);
 		if (!dialog) {
 			continue;
@@ -337,6 +362,10 @@ function metanodes_attach() {
 			for (rtesi in metaRecordsRTEs[forms[i].id]) {
 				renderRTE(metaRecordsRTEs[forms[i].id][rtesi], forms[i]);
 			}
+			/* set metarecords ids */
+			mrType	= YAHOO.util.Selector.query('form.metarecord .type input', containers[forms[i].id], true).value;
+			mrID	= YAHOO.util.Selector.query('form.metarecord .id input', containers[forms[i].id], true).value;
+			containers[forms[i].id].id	= 'metarecord-'+mrType+'-'+mrID;
 		}
 
 		/* render dialog*/

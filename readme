@@ -1,4 +1,5 @@
 MetaRecords
 -------------
 
-- ... pokracovat testovanim editace existujicich nodes a reakce javascriptu na uspesnej edit
+- ... pokracovat testovanim editace existujicich nodes
+ - nasledne zaridit moznost pokrocilych referenci recordu jako ref_image => {imageRecord} a ref_{boundedRecord} => select_label_colname
