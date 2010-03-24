@@ -11,7 +11,7 @@ class PhotosRecord extends AbstractRecordLBox
 	public static $tableName    	= "photos";
 	public static $idColName    	= "id";
 
-	public static $dependingRecords	= array(
+	public static $dependingRecords	= array("",
 	);
 
 	protected static $attributes	=	array(
@@ -22,6 +22,7 @@ class PhotosRecord extends AbstractRecordLBox
 											array("name"=>"size", "type"=>"int", "notnull" => false, "default"=> "NULL"),
 											array("name"=>"ref_photogallery", "type"=>"int", "notnull" => false, "default"=> "NULL"),
 											);
+
 	/**
 	 * Nazev property s cestou k obrazkum
 	 * @var string
