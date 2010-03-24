@@ -18,10 +18,7 @@ class OutputFilterPhotoGalleryImage extends LBoxOutputFilter
 			$virtPath	= LBoxConfigSystem::getInstance()->getParamByPath("photogallery/output/path_virtual");
 			switch ($name) {
 				case "url":
-					$urlGallery	= $this->instance->getGallery()->getParamDirect("url");
-					$fileName	= $this->instance->getFileName();
-					$url 		= "$virtPath/$urlGallery/$fileName";
-					$value 		= $url;
+					$value 	= str_replace(LBOX_PATH_PROJECT, "", $this->getPath());
 					break;
 				case "name":
 					if (strlen($value) < 1) {
@@ -42,6 +39,47 @@ class OutputFilterPhotoGalleryImage extends LBoxOutputFilter
 				default:
 			}
 			return $value;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	protected function getPath() {
+		try {
+			$pathGallery	= LBoxConfigManagerProperties::gpcn("path_photos_photogalleries");
+			$pathGallery	= str_replace("<project>", LBOX_PATH_PROJECT, $pathGallery);
+			$pathGallery	= str_replace("<photogallery_name>", $this->getPhotogallery()->name, $pathGallery);
+			$pathGallery	= str_replace("<photogallery_url>", $this->getPhotogallery()->getParamDirect("url"), $pathGallery);
+			
+			$fileName		= $this->instance->getParamDirect("filename");
+			$ext			= $this->instance->getParamDirect("ext");
+			return LBoxUtil::fixPathSlashes("$pathGallery/$fileName.$ext");
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * cache var
+	 * @var array
+	 */
+	protected static $pathsPhotogalleries	= array();
+	
+	/**
+	 * getter na cestu k fotkam fotogallerie podle fotky
+	 * @param PhotosRecord $photo
+	 */
+	protected function getPhotogallery() {
+		try {
+			$phGID	= $this->instance->getParamDirect("ref_photogallery");
+			if (strlen(self::$pathsPhotogalleries[$phGID]) > 0) {
+				return self::$pathsPhotogalleries[$phGID];
+			}
+			self::$pathsPhotogalleries[$phGID]	= new PhotogalleriesRecord($phGID);
+			self::$pathsPhotogalleries[$phGID]	->setOutputFilter(new OutputFilterPhotoGallery(self::$pathsPhotogalleries[$phGID]));
+			return self::$pathsPhotogalleries[$phGID];
 		}
 		catch (Exception $e) {
 			throw $e;
