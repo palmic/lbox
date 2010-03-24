@@ -13,22 +13,14 @@ class PhotosRecord extends AbstractRecordLBox
 
 	public static $dependingRecords	= array(
 	);
-
-	protected static $attributes	=	array(
-											array("name"=>"filename", "type"=>"shorttext", "notnull" => true),
-											array("name"=>"ext", "type"=>"shorttext", "notnull" => true),
-											array("name"=>"size_x", "type"=>"int", "notnull" => true),
-											array("name"=>"size_y", "type"=>"int", "notnull" => true),
-											array("name"=>"size", "type"=>"int", "notnull" => false, "default"=> "NULL"),
-											array("name"=>"ref_photogallery", "type"=>"int", "notnull" => false, "default"=> "NULL"),
-											);
+	
+	protected $isCacheOn			= false;
+	
 	/**
 	 * Nazev property s cestou k obrazkum
 	 * @var string
 	 */
 	protected $propertyNamePath			= "path_photos_content";
-	
-	protected $isCacheOn = false;
 	
 	/**
 	 * cache cest k fyzickym souborum podle typu
@@ -55,24 +47,6 @@ class PhotosRecord extends AbstractRecordLBox
 	protected $thumbnail;
 	
 	/**
-	 * pretizeno o nastaveni tree structure
-	 */
-	public function __construct($id = NULL, $loaded = false) {
-		try {
-			// set tree structure
-			$treeColNames	= self::$treeColNames;
-			$treeColNames	= array_reverse(self::$treeColNames);
-			foreach ($treeColNames as $treeColName) {
-				array_unshift(self::$attributes, array("name"=>$treeColName, "type"=>"int"));
-			}
-			parent::__construct($id, $loaded);
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-	
-	/**
 	 * OutputItem interface method
 	 * @throws LBoxException
 	 */
@@ -83,12 +57,17 @@ class PhotosRecord extends AbstractRecordLBox
 					if (!$this->params[$name]) {
 						$this->params[$name] = $this->getImgX();
 					}
-					return $this->params[$name];
+					return ($this->outputFilter instanceof LBoxOutputFilter)
+						? $this->outputFilter->prepare($name, $this->params[$name])
+						: $this->params[$name];
+					break;
 				case "size_y":
 					if (!$this->params[$name]) {
 						$this->params[$name] = $this->getImgY();
 					}
-					return $this->params[$name];
+					return ($this->outputFilter instanceof LBoxOutputFilter)
+						? $this->outputFilter->prepare($name, $this->params[$name])
+						: $this->params[$name];
 					break;
 				default:
 					return parent::__get($name);
@@ -159,23 +138,6 @@ class PhotosRecord extends AbstractRecordLBox
 
 	public function delete() {
 		try {
-			$e	= new Exception("");
-	$out  = "";
-    $out .= "\n\n";
-    $out .= "Exception code:  <font style='color:blue'>". $e->getCode() ."</font>";
-    $out .= "\n";
-    $out .= "Exception message: <font style='color:blue'>". $e->getMessage() ."</font>";
-    $out .= "\n";
-    $out .= "Thrown by: '". $e->getFile() ."'";
-    $out .= "\n";
-    $out .= "on line: '". $e->getLine() ."'.";
-    $out .= "\n";
-    $out .= "\n";
-    $out .= "Stack trace:";
-    $out .= "\n";
-    $out .= $e->getTraceAsString();
-    $out .= "\n\n";
-
 			@unlink($this->getFilePath(true));
 			parent::delete();
 		}
@@ -292,7 +254,8 @@ class PhotosRecord extends AbstractRecordLBox
 	public function resize($width = 0, $height = 0, $proportion = true) {
 		try {
 			$duplicate = $this->getCreateDuplicate($width, $height, $proportion);
-			//$this->getFilePath();
+			$filePath = $this->getFilePath();
+			unset($filePath);
 
 			// presunuti duplikatu
 			$fd 				= fopen($duplicate->getFilePath(), "r");
@@ -469,8 +432,8 @@ class PhotosRecord extends AbstractRecordLBox
 			imagedestroy($piece);
 
 			$this->resource	= NULL;
-			$this->params["size_x"]	= $this->getImgX();
-			$this->params["size_y"]	= $this->getImgY();
+			$this->__set("size_x", $this->getImgX());
+			$this->__set("size_y", $this->getImgY());
 			$this->store();
 		}
 		catch (Exception $e) {
@@ -692,8 +655,7 @@ class PhotosRecord extends AbstractRecordLBox
 	 */
 	public function getFilePath ($silent = false) {
 		try {
-			$filePath = $this->getDirName() .SLASH. $this->getFileName();
-			if (!file_exists($filePath)) {
+			if (!file_exists($filePath = $this->getDirName() .SLASH. $this->getFileName())) {
 				if (!$silent) {
 					throw new LBoxExceptionFilesystem("'$filePath': ". LBoxExceptionFilesystem::MSG_FILE_NOT_EXISTS, LBoxExceptionFilesystem::CODE_FILE_NOT_EXISTS);
 				}
