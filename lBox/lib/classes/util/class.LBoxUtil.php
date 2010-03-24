@@ -174,7 +174,7 @@ class LBoxUtil
 	 */
 	public static function fixFileName ($filename = "") {
 		try {
-			return preg_replace("/[\W_\.]/", "-", $filename);
+			return preg_replace("/[^\w\.]/", "-", $filename);
 		}
 		catch (Exception $e) {
 			throw $e;
