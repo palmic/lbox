@@ -174,9 +174,7 @@ class LBoxUtil
 	 */
 	public static function fixFileName ($filename = "") {
 		try {
-			$filename	= ereg_replace("[^[:alnum:]_.]", "-", 	$filename);
-			//$filename	= ereg_replace("(-+)", "-", 			$filename);
-			return $filename;
+			return self::getURLByNameString($filename);
 		}
 		catch (Exception $e) {
 			throw $e;
