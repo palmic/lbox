@@ -174,7 +174,7 @@ class LBoxUtil
 	 */
 	public static function fixFileName ($filename = "") {
 		try {
-			return self::getURLByNameString($filename);
+			return preg_replace("/[\W_\.]/", "-", $filename);
 		}
 		catch (Exception $e) {
 			throw $e;
