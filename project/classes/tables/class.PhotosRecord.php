@@ -13,15 +13,21 @@ class PhotosRecord extends AbstractRecordLBox
 
 	public static $dependingRecords	= array(
 	);
-	
-	protected $isCacheOn			= false;
-	
+
+	protected static $attributes	=	array(
+											array("name"=>"filename", "type"=>"shorttext", "notnull" => true),
+											array("name"=>"ext", "type"=>"shorttext", "notnull" => true),
+											array("name"=>"size_x", "type"=>"int", "notnull" => true),
+											array("name"=>"size_y", "type"=>"int", "notnull" => true),
+											array("name"=>"size", "type"=>"int", "notnull" => false, "default"=> "NULL"),
+											array("name"=>"ref_photogallery", "type"=>"int", "notnull" => false, "default"=> "NULL"),
+											);
 	/**
 	 * Nazev property s cestou k obrazkum
 	 * @var string
 	 */
 	protected $propertyNamePath			= "path_photos_content";
-	
+
 	/**
 	 * cache cest k fyzickym souborum podle typu
 	 * @var array
@@ -33,7 +39,7 @@ class PhotosRecord extends AbstractRecordLBox
 	 * @var FrontPhotogalleriesRecord
 	 */
 	protected $photogalleryReferenced;
-	
+
 	/**
 	 * php resource obrazku pro zpracovavani
 	 * @var resource
@@ -45,7 +51,25 @@ class PhotosRecord extends AbstractRecordLBox
 	 * @var PhotosRecord
 	 */
 	protected $thumbnail;
-	
+
+	/**
+	 * pretizeno o nastaveni tree structure
+	 */
+	public function __construct($id = NULL, $loaded = false) {
+		try {
+			// set tree structure
+			$treeColNames	= self::$treeColNames;
+			$treeColNames	= array_reverse(self::$treeColNames);
+			foreach ($treeColNames as $treeColName) {
+				array_unshift(self::$attributes, array("name"=>$treeColName, "type"=>"int"));
+			}
+			parent::__construct($id, $loaded);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
 	/**
 	 * OutputItem interface method
 	 * @throws LBoxException
@@ -92,7 +116,7 @@ class PhotosRecord extends AbstractRecordLBox
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * synonym to __get() just for comfort in special cases
 	 */
@@ -128,7 +152,7 @@ class PhotosRecord extends AbstractRecordLBox
 			if (!is_numeric($this->params["ref_photogallery"])) {
 				$this->params["ref_photogallery"] = "<<NULL>>";
 			}
-			
+
 			parent::store();
 		}
 		catch (Exception $e) {
@@ -194,7 +218,7 @@ class PhotosRecord extends AbstractRecordLBox
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * vytvori nahled obrazku a priradi ho ve stromu pod obrazek
 	 * @param int $width
@@ -329,12 +353,12 @@ class PhotosRecord extends AbstractRecordLBox
 			if (strlen($ext) < 1) {
 				$ext = $this->get("ext");
 			}
-			
+
 			//filename
 			$thumbFilespaceName = strtolower($this->filename).'_'.$width.'x'.$height.'.'.strtolower($ext);
 			$thumbFilespaceName = $this->getFreeFileNameFrom($thumbFilespaceName);
 			$thumbFilespaceDest = $this->getDirName() ."/". $thumbFilespaceName;
-				
+
 			//resampling
 			$imgParent = $this->getImgResource();
 			$imgThumb = imagecreatetruecolor($width, $height);
@@ -547,7 +571,7 @@ class PhotosRecord extends AbstractRecordLBox
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * Ulozi uploadovany soubor do filesystemu
 	 * @param string $tmpPath
@@ -714,7 +738,7 @@ class PhotosRecord extends AbstractRecordLBox
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * Vytvori adresar podle predane cesty
 	 * @param string $path
@@ -747,7 +771,7 @@ class PhotosRecord extends AbstractRecordLBox
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * vraci jmeno souboru s extension
 	 * @return string
