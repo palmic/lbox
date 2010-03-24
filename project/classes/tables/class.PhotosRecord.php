@@ -37,7 +37,7 @@ class PhotosRecord extends AbstractRecordLBox
 
 	/**
 	 * cache var
-	 * @var FrontPhotogalleriesRecord
+	 * @var PhotogalleriesRecord
 	 */
 	protected $photogalleryReferenced;
 
@@ -717,16 +717,16 @@ class PhotosRecord extends AbstractRecordLBox
 
 	/**
 	 * getter na relevantni fotogalerii pokud nejaka je
-	 * @return FrontPhotogalleriesRecord
+	 * @return PhotogalleriesRecord
 	 */
 	public function getPhotogallery() {
 		try {
-			if ($this->photogalleryReferenced instanceof FrontPhotogalleriesRecord) {
+			if ($this->photogalleryReferenced instanceof PhotogalleriesRecord) {
 				return $this->photogalleryReferenced;
 			}
 			if (is_numeric($this->params["ref_photogallery"])) {
-				$this->photogalleryReferenced	= new FrontPhotogalleriesRecord($this->get("ref_photogallery"));
-				$records	= new FrontPhotogalleriesRecords(array("id" => $this->get("ref_photogallery")));
+				$this->photogalleryReferenced	= new PhotogalleriesRecord($this->get("ref_photogallery"));
+				$records	= new PhotogalleriesRecords(array("id" => $this->get("ref_photogallery")));
 				if ($records->count() < 1) {
 					throw new LBoxException("Bounded photogallery !not found!");
 				}
