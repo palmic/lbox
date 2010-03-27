@@ -174,7 +174,9 @@ class LBoxUtil
 	 */
 	public static function fixFileName ($filename = "") {
 		try {
-			return preg_replace("/[^\w\.]/", "-", $filename);
+			$filename	= ereg_replace("[^[:alnum:]_.]", "-", 	$filename);
+			//$filename	= ereg_replace("(-+)", "-", 			$filename);
+			return $filename;
 		}
 		catch (Exception $e) {
 			throw $e;

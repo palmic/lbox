@@ -96,6 +96,7 @@ abstract class OutputFilterRecordEditableByAdmin extends OutputFilterRecord
 			$idColName		= eval("return $instanceType::\$idColName;");
 			$id				= $this->instance->getParamDirect($idColName);
 			$controlID		= new LBoxFormControlFillHidden("id", "", $id);
+			$controlID		->setTemplateFileName("lbox_form_control_fill_delete_id.html");
 			$controlType	= new LBoxFormControlFillHidden("type", "", $instanceType);
 			$form			= new LBoxForm("record_xt_delete_$id", "post", "", "delete");
 			$form			->setTemplateFileName("lbox_form_xt_btn_delete.html");

@@ -171,6 +171,7 @@ abstract class AbstractRecord implements Iterator
 	 * 			"autoincrement"=>bool default false,
 	 * 			"visibility"=>"public|protected" ,
 	 * 			"default"=>"",
+	 * 			"reference" => array("type" => "item_type", "of" => "output_filter_type", "label" => "xt_select_colname", "size_resize" => array("x" => 300, "y" => 300, "proportions" => 1), "size_limit" => array("longer" => 300))
 	 * )
 	 * @var array
 	 */

@@ -1,4 +1,4 @@
-<form class="frm-delete" id="frm-${SELF/getName}" method="${SELF/getMethod}" action="" onsubmit="return (confirm('Skutečně chcete smazat ${SELF/item_name}?') ? true : false)">
+<form class="frm-delete" id="frm-${SELF/getName}" method="${SELF/getMethod}" action="" onsubmit="return (confirm('Skutečně chcete smazat tento záznam?') ? true : false)">
 	<tal:block tal:repeat="control SELF/getControls">
 		<tal:block tal:condition="not: control/isSpamDefense">
 			<tal:block tal:condition="not: control/isSubControl" tal:content="structure control" />

@@ -33,7 +33,6 @@
 
 	<property name="paging_range">5</property>
 	
-
 	<!-- odesilatel confirm mailu registrace -->
 	<property name="registration_confirm_mail_from">info@lbox.cz</property>
 	<!-- subject confirm mailu registrace -->

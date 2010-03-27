@@ -1,0 +1,7 @@
+<div tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}" class="control">
+	<label for="${id}"><span class="label">${SELF/getLabel} <tal:block tal:condition="SELF/isRequired">* </tal:block></span><input 	class="file" type="file" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]" /></label>
+	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
+		<div tal:condition="exists: exceptions/17001">Prosím vyberte obrázek</div>
+		<div tal:condition="exists: exceptions/17005">Vložený soubor není obrázek</div>
+	</div>
+</div>
