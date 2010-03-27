@@ -24,8 +24,17 @@ class ArticlesRecord extends AbstractRecordLBox
 	 */
 	protected $classNamePhotosoutputFilter	= "OutputFilterPhotoArticles";
 	
+	public static $boundedM1 = array(
+									"ArticlesTypesRecords" 	=> "ref_type",
+									);
+	
 	protected static $attributes	=	array(
-											array("name"=>"ref_type", "type"=>"int", "notnull" => true, "default"=>"", "visibility"=>"protected"),
+											array("name"=>"ref_photo", "type"=>"int", "notnull" => true,
+													"reference" => array("type" => "PhotosArticlesRecords", "of" => "OutputFilterPhotoArticles", "label" => "filename",
+														"size_resize" => array("x" => 300, "y" => 300, "proportions" => 1),
+														"size_limit" => array("longer" => 300))),
+											array("name"=>"ref_type", "type"=>"int", "notnull" => true, "default"=>"1", "required" => true, "visibility"=>"public",
+													"reference" => array("type" => "ArticlesTypesRecords", "label" => "name")),
 											array("name"=>"url_cs", "type"=>"shorttext", "notnull" => true, "default"=>""),
 											array("name"=>"url_sk", "type"=>"shorttext", "notnull" => true, "default"=>""),
 											array("name"=>"heading_cs", "type"=>"shorttext", "notnull" => true, "default"=>"", "required" => true),
@@ -37,7 +46,6 @@ class ArticlesRecord extends AbstractRecordLBox
 											array("name"=>"description_cs", "type"=>"longtext", "default"=>""),
 											array("name"=>"description_sk", "type"=>"longtext", "default"=>""),
 											array("name"=>"time_published", "type"=>"int", "notnull" => true, "default"=>""),
-											array("name"=>"ref_photo", "type"=>"int", "notnull" => true),
 											array("name"=>"ref_access", "type"=>"int", "notnull" => true, "default"=>"", "visibility"=>"protected"),
 											);
 	
@@ -109,7 +117,7 @@ class ArticlesRecord extends AbstractRecordLBox
 			if ($this->photo instanceof PhotosRecord) {
 				return $this->photo;
 			}
-			if (strlen($this->params["ref_photo"]) < 1) {
+			if (!$this->params["ref_photo"]) {
 				return NULL;
 			}
 			$classNamePhotosRecord	= $this->classNamePhotosRecord;

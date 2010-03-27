@@ -104,25 +104,9 @@ class LBoxMetaRecord extends LBox
 				$subCtrls["type"]			->setTemplateFileName("metarecord_hidden.html");
 			$subCtrls["id"]				= new LBoxFormControlFillHidden("id", "", $this->record->isInDatabase() ? $this->record->$idColName : "");
 				$subCtrls["id"]				->setTemplateFileName("metarecord_hidden.html");
-			
-	/*protected static $attributes	=	array(
-											array("name"=>"ref_type", "type"=>"int", "notnull" => true, "default"=>"", "visibility"=>"protected"),
-											array("name"=>"url_cs", "type"=>"shorttext", "notnull" => true, "default"=>""),
-											array("name"=>"url_sk", "type"=>"shorttext", "notnull" => true, "default"=>""),
-											array("name"=>"heading_cs", "type"=>"shorttext", "notnull" => true, "default"=>""),
-											array("name"=>"heading_sk", "type"=>"shorttext", "notnull" => true, "default"=>""),
-											array("name"=>"perex_cs", "type"=>"richtext", "default"=>""),
-											array("name"=>"perex_sk", "type"=>"richtext", "default"=>""),
-											array("name"=>"body_cs", "type"=>"richtext", "default"=>""),
-											array("name"=>"body_sk", "type"=>"richtext", "default"=>""),
-											array("name"=>"description_cs", "type"=>"longtext", "default"=>""),
-											array("name"=>"description_sk", "type"=>"longtext", "default"=>""),
-											array("name"=>"time_published", "type"=>"int", "notnull" => true, "default"=>""),
-											array("name"=>"ref_photo", "type"=>"int", "notnull" => true),
-											array("name"=>"ref_access", "type"=>"int", "notnull" => true, "default"=>""),
-											);*/
+			$reloadOnComplete			= false;
 				
-			// nasazet tam jednotlive record attributes
+			//nasazet tam jednotlive record attributes
 			foreach ($record->getAttributes() as $attribute) {
 				if (array_key_exists("visibility", $attribute) && $attribute["visibility"] == "protected")  {
 					continue;
@@ -130,10 +114,60 @@ class LBoxMetaRecord extends LBox
 				$attName			= $attribute["name"];
 				$default			= $attribute["default"];
 				$type				= $attribute["type"];
-				$filterType			= "LBoxFormFilterMetarecord". ucfirst($type);
 				$validatorType		= "LBoxFormValidatorMetarecord". ucfirst($type);
-				$subCtrls[$attName]	= new LBoxFormControlFill($attName, $attName, $this->record->isInDatabase() ? $this->record->$attName : $default);
-				$subCtrls[$attName]	->setTemplateFilename("metarecord_". $attribute["type"] .".html");
+				$filterType			= "LBoxFormFilterMetarecord". ucfirst($type);
+				if (array_key_exists("reference", $attribute)) {
+					switch (true) {
+						case strlen($recordRefType = $attribute["reference"]["type"]) < 1:
+								throw new LBoxExceptionMetaRecords("type: ". LBoxExceptionMetaRecords::MSG_BAD_DEFINITION_REFERENCE, LBoxExceptionMetaRecords::CODE_BAD_DEFINITION_REFERENCE);
+							break;
+						case strlen($recordRefLabel = $attribute["reference"]["label"]) < 1:
+								throw new LBoxExceptionMetaRecords("label: ". LBoxExceptionMetaRecords::MSG_BAD_DEFINITION_REFERENCE, LBoxExceptionMetaRecords::CODE_BAD_DEFINITION_REFERENCE);
+							break;
+					}
+					$testR				= new $recordRefType;
+					if ($testR instanceof AbstractRecords) {
+						$recordRefType	= eval("return $recordRefType::\$itemType;");
+					}
+					$recordsRefType		= eval("return $recordRefType::\$itemsType;");
+					$recordIDColName	= eval("return $recordRefType::\$idColName;");
+					$testR				= new $recordRefType;
+					switch (true) {
+						// image reference
+						case ($testR instanceof PhotosRecord):
+								$reloadOnComplete	= true;
+								if ($this->record->isInDatabase() && $this->record->$attName) {
+									$recordsPhotoReference	= new $recordsRefType(array($recordIDColName => $this->record->$attName));
+									if ($recordsPhotoReference->count() < 1) {
+										throw new LBoxExceptionMetaRecords(LBoxExceptionMetaRecords::MSG_BAD_DATA_REFERENCE_IMAGE, LBoxExceptionMetaRecords::CODE_BAD_DATA_REFERENCE_IMAGE);
+									}
+									$recordsPhotoReference	->setOutputFilterItemsClass(array_key_exists("of", $attribute["reference"]) ? $attribute["reference"]["of"] : "OutputFilterPhoto");
+									$subCtrls[$attName]		= new LBoxFormControlBool($attName, "delete $attName");
+									$subCtrls[$attName]		->setTemplateFileName("metarecord_photo_delete.html");
+									$subCtrls[$attName]		->photo		= $recordsPhotoReference->current();
+									$subCtrls[$attName]		->action	= "image-remove";
+								}
+								else {
+									$subCtrls[$attName]			= new LBoxFormControlFile($attName, $attName);
+									$subCtrls[$attName]		->setTemplateFilename("metarecord_photo.html");
+									$subCtrls[$attName]		->addValidator(new LBoxFormValidatorFileImage);
+									$subCtrls[$attName]	->action	= "image-add";
+								}
+							break;
+						// other references
+						default:
+							$records			= new $recordsRefType(false, array($recordRefLabel => 1));
+							$recordsIDColName	= eval("return $recordRefType::\$idColName;");
+							$optionsPrepend		= $attribute["required"] ? array() : array(" " => " ");
+							$subCtrls[$attName]	= new LBoxFormControlChooseOneFromRecords($attName, $attName, $this->record->isInDatabase() ? $this->record->$attName : $default,
+															$records, $colnameValue = $recordsIDColName, $recordRefLabel, $colnameTitle = "", $optionsPrepend);
+							$subCtrls[$attName]	->setTemplateFilename("metarecord_reference.html");
+					}
+				}
+				else {
+					$subCtrls[$attName]	= new LBoxFormControlFill($attName, $attName, $this->record->isInDatabase() ? $this->record->$attName : $default);
+					$subCtrls[$attName]	->setTemplateFilename("metarecord_". $attribute["type"] .".html");
+				}
 				$subCtrls[$attName]	->addFilter(new LBoxFormFilterTrim);
 				$subCtrls[$attName]	->addFilter(new $filterType);
 				$subCtrls[$attName]	->addValidator(new $validatorType);
@@ -141,7 +175,8 @@ class LBoxMetaRecord extends LBox
 					$subCtrls[$attName]->setRequired(true);
 				}
 			}
-
+			$subCtrls["action_reload_on_complete"]		= new LBoxFormControlFillHidden("action_reload_on_complete", "", (int)$reloadOnComplete);
+			
 			// vlozime ho do dialog boxu pro JS GUI
 			$ctrlDialog				= new LBoxFormControlMultiple("dialog", "");
 			$ctrlDialog				->setTemplateFileName("metarecord_dialog.html");

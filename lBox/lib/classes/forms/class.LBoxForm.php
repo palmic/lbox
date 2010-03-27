@@ -421,10 +421,10 @@ class LBoxForm
 	}
 
 	/**
-	 *
+	 * @param bool $forceThrow throw Exception higher or write out it into code
 	 * @return string
 	 */
-	public function __toString() {
+	public function __toString($forceThrow = false) {
 		try {
 			// pridat antispam, pokud je zapnut
 			if ($this->isAntiSpamSet()) {
@@ -436,6 +436,9 @@ class LBoxForm
 				$out	.= $this->getTAL()->execute();
 			}
 			catch (Exception $e) {
+				if ($forceThrow) {
+					throw $e;
+				}
 				// var_dump($e);
 				switch (get_class($e)) {
 					case "LBoxFormProcessor":

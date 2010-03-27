@@ -1,4 +1,4 @@
-<form style="display:none" tal:define="id string:frm-${SELF/getName}" class="${SELF/className}" id="${id}" method="${SELF/getMethod}" action="${SELF/action}">
+<form style="display:none" tal:define="id string:frm-${SELF/getName}" class="${SELF/className}" id="${id}" method="${SELF/getMethod}" action="${SELF/action}" enctype="multipart/form-data">
 		<tal:block tal:repeat="control SELF/getControls">
 			<tal:block tal:condition="not: control/isSpamDefense">
 				<tal:block tal:condition="not: control/isSubControl" tal:content="structure control" />

@@ -40,11 +40,14 @@ class LBoxFirePHP
 
 	public static function table($tableData = array(), $tableCaption = "data") {
 		try {
+			$trace=debug_backtrace();
+			$calledFile	= $trace[0]["file"];
+			$calledLine	= $trace[0]["line"];
 			$table[]   = array("key", "value");
 			foreach ($tableData as $k => $v) {
 				$table[] = array($k,$v);
 			}
-			return FirePHP::getInstance(true)->table($tableCaption, $table);
+			return FirePHP::getInstance(true)->table("$tableCaption ($calledFile:$calledLine)", $table);
 		}
 		catch(Exception $e) {
 			throw $e;

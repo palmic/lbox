@@ -8,7 +8,7 @@
 		<page id="90401" url="/dev/form-multistep/" class="PageDevFormMultistep" heading="Development form multistep" title="Development form multistep" template="_page_dev_form_multistep.html" in_menu="0" />
 	</page>
 	
-	<page id="11" url="/test/" class="PageTest" template="page_test.html" heading="test" in_menu="0" />
+	<page id="11" url="/test-metarecords/" class="PageTest" template="page_test.html" heading="test" in_menu="0" />
 	<page id="12" url="/test-metanode/" class="PageTestMetanode" template="page_testmetanode.html" heading="test" in_menu="0" />
 
 	<page id="999" url="/admin/" template="admin.html" class="PageDefault" heading="Admin" keywords="" description="" in_menu="0" xt="1" bodyid="admin">

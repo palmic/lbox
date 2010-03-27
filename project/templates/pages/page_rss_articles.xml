@@ -2,24 +2,24 @@
 <rss version="0.91">
 	<channel>
 		<image>
-			<x tal:replace="structure string:<link>${host}${SELF/getHomePageCfg/url}</link>" />
+			<X TAL:REPLACE="structure string:<link>${host}${SELF/getHomePageCfg/url}</link>" />
 			<title>${host}</title>
 			<url>${host}/img/logo.jpg</url>
 		</image>
-		<title tal:content="SELF/page/title" />
-		<x tal:replace="structure string:<link>${host}${SELF/page/url}</link>" />
-		<description tal:content="SELF/page/title">heading kanalu</description>
+		<title TAL:CONTENT="SELF/page/title" />
+		<X TAL:REPLACE="structure string:<link>${host}${SELF/page/url}</link>" />
+		<description TAL:CONTENT="SELF/page/title">heading kanalu</description>
 		<language>cs</language>
-		<item tal:repeat="item items">
-			<title tal:content="item/heading" />
-			<x tal:replace="structure string:<link>${host}${item/url}</link>" />
+		<item TAL:REPEAT="item items">
+			<title TAL:CONTENT="item/heading" />
+			<X TAL:REPLACE="structure string:<link>${host}${item/url}</link>" />
 			<description>
-				<tal:block tal:content="item/perex" />
+				<tal:block tal:CONTENT="item/perex" />
 				<tal:block tal:replace="string:"><!--(<tal:block tal:repeat="author item/multiref_author/getIterator">
 					<tal:block tal:content="string:${author/name} ${author/surname}" />
 				</tal:block>)--></tal:block>
 			</description>
-			<pubDate tal:content="item/publishedRSS" />
+			<pubDate TAL:CONTENT="item/publishedRSS" />
 		</item>
 	</channel>
 </rss>

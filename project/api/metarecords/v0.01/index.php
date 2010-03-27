@@ -23,10 +23,11 @@ try {
 	foreach ($post as $formID => $data) {
 		$typeRecord		= $data["type"];
 		$idColname		= eval("return $typeRecord::\$idColName;");
+		$flagEdit		= strlen($postFormData[$idColname]) > 0;
 		$record			= strlen($postFormData[$idColname]) < 1 ? new $typeRecord : new $typeRecord($postFormData[$idColname]);
 		$form	= LBoxMetaRecordsManager::getMetaRecord($record)->getForm();
 		$form->setDoNotReload(true);
-		$form->__toString();
+		$form->__toString($forceThrow = true);
 		
 		$ret 						= new stdclass(); // PHP base class
 		
@@ -50,11 +51,17 @@ try {
 		// sending data back
 		$ret->Results 	= new stdclass();
 		$ret->Data		= new stdclass();
+		$ret->Insert	= new stdclass();
 		$ret->Results->status = 'OK';
 		foreach ($form->getControls() as $control) {
 			$ctrlName	= $control->getName();
-			$ret->Data->$ctrlName	= $control->getValue();
+			switch (true) {
+				case ($control instanceof LBoxFormControlFile): $ret->Data->$ctrlName = ""; break;
+				default:
+					$ret->Data->$ctrlName	= strlen($vv = $form->recordProcessed->$ctrlName) > 0 ? $vv : $control->getValue();
+			}
 		}
+		$ret->Insert	= (int)!$flagEdit;
 		header("HTTP/1.1 200 OK");
 		die(json_encode($ret));
 	}
