@@ -4,13 +4,7 @@
 	<page id="901" url="/rss/" template="page_rss_articles.xml" class="PageRSSArticlesNews" title="RSS novinek" heading="RSS novinek" in_menu="0" rss="600" />
 	<page id="902" url="/404/" template="page_404.html" title="Stránka nebyla nalezena" heading="Stránka nebyla nalezena" in_menu="0" />
 	<page id="903" url="/sitemap.xml" class="PageSitemap09" template="sitemap09.xml" in_menu="0" />
-	<page id="904" url="/dev/" class="PageDev" heading="Development page" title="Development page" template="_page_dev.html" in_menu="0">
-		<page id="90401" url="/dev/form-multistep/" class="PageDevFormMultistep" heading="Development form multistep" title="Development form multistep" template="_page_dev_form_multistep.html" in_menu="0" />
-	</page>
 	
-	<page id="11" url="/test-metarecords/" class="PageTest" template="page_test.html" heading="test" in_menu="0" />
-	<page id="12" url="/test-metanode/" class="PageTestMetanode" template="page_testmetanode.html" heading="test" in_menu="0" />
-
 	<page id="999" url="/admin/" template="admin.html" class="PageDefault" heading="Admin" keywords="" description="" in_menu="0" xt="1" bodyid="admin">
 		<page id="9999" url="/admin/login/" class="PageAdminLogin" template="admin_login.html" heading="Login" in_menu="0" xt_reload_logged_xt="1:999" />
 	</page>
