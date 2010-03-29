@@ -83,7 +83,7 @@ abstract class LBoxFilesCombine
 						}
 					break;
 				}
-		    	$sCode	= "/*merged from files: ". implode($files, ",\n") ."*/". $sCode;
+		    	$sCode	= "/*merged from files: ". implode($files, ",\n") ."*/\n". $sCode;
 		    	$fo	= fopen($destinationFile, "w");
 		    	fwrite($fo, $sCode);
 		    	fclose($fo);
