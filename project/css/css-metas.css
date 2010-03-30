@@ -1,18 +1,38 @@
 @media screen,projection {
-	.metarecord .yui-panel-container form .control				{ background: #f1f1f1 none; color: #00000; line-height: 2; padding: 5px 5px 10px; }
+	.metanode																		{ /*border: 1px dashed #8BC541;*/ cursor: pointer;
+																						-moz-box-shadow: 1px 1px 4px #8BC541; -webkit-box-shadow: 1px 1px 4px #8BC541; box-shadow: 1px 1px 4px #8BC541;
+																						-webkit-border-radius: 3px;  -moz-border-radius: 3px; border-radius: 3px; }
+	.metarecord																		{ /*border: 1px dotted #25A9E0;*/ cursor: pointer;
+																						-moz-box-shadow: 1px 1px 4px #25A9E0; -webkit-box-shadow: 1px 1px 4px #25A9E0; box-shadow: 1px 1px 4px #25A9E0;
+																						-webkit-border-radius: 3px;  -moz-border-radius: 3px; border-radius: 3px; }
+	.metanode:hover,
+	.metarecord																		{ background: transparent url(/img/icons/folder-new.png) 100% 5px no-repeat; min-height: 50px !important; }
+	.metarecords .metarecord														{ background-image: none; }
+	.metanode:hover, .metarecords .metarecord:hover									{ background-image: url(/img/icons/document-edit.png); }
+	.metanode-saved, .metarecords .metarecord-saved, .metarecord-saved				{ background: transparent url(/img/icons/dialog-ok.png) 100% 5px no-repeat; min-height: 50px !important; }
+	.metanode-saved																	{ background-image: url(/img/icons/dialog-ok-apply.png); }
+	.metarecord .yui-panel-container form .control									{ background: #f1f1f1 none; color: #00000; line-height: 2; padding: 5px 5px 10px; }
 	.metarecord .yui-panel-container form .control label .label,
 	.metarecord .yui-panel-container form .control label .text,
-	.metarecord .yui-panel-container form .control label .wsw		{ display: block; width: 720px !important; }
-	.metarecord .yui-panel-container form .control label .label	{ font-size: 100%; font-weight: bold; }
-	.metarecord .yui-panel-container form .control-hidden			{ display: none; }
-	.metarecord .yui-panel-container form .control-hidden			{ display: none; }
+	.metarecord .yui-panel-container form .control label .wsw						{ display: block; width: 720px !important; }
+	.metarecord .yui-panel-container form .control label .label						{ font-size: 100%; font-weight: bold; }
+	.metarecord .yui-panel-container form .control-hidden							{ display: none; }
+	.metarecord .yui-panel-container form .control-hidden							{ display: none; }
 	.metarecord .yui-panel-container form .control label .error,
-	.metarecord .yui-panel-container form .control label .error			{ background: #ff0000 none; color: #ffffff; }
+	.metarecord .yui-panel-container form .control label .error						{ background: #ff0000 none; color: #ffffff; }
 	.metarecord .yui-panel-container form .control label .error .code,
-	.metarecord .yui-panel-container form .control label .error .message	{ display: inline; padding: 2px 5px; font-weight: bold; }
-	.metarecord .yui-panel-container form .control label .error .code	{ background: #0000ff none; }
+	.metarecord .yui-panel-container form .control label .error .message			{ display: inline; padding: 2px 5px; font-weight: bold; }
+	.metarecord .yui-panel-container form .control label .error .code				{ background: #0000ff none; }
+	
+	.lbox-meta-content
 
-	.metanode .to-edit .dialog .control		{ background: #F2F2F2 none; }
+	.metanode .yui-dialog,
+	.metanode .dialog .control		{ background: #F2F2F2 none; }
 
 	.yui-toolbar-titlebar h2 a				{ visibility: hidden; }
+
+	.yui-skin-sam .yui-toolbar-container .yui-toolbar-editcode span.yui-toolbar-icon { background: url( http://developer.yahoo.com/yui/examples/editor/assets/html_editor.gif ) 0 1px !important; left: 5px !important; }
+	.yui-skin-sam .yui-toolbar-container .yui-button-editcode-selected span.yui-toolbar-icon { background: url( http://developer.yahoo.com/yui/examples/editor/assets/html_editor.gif ) 0 1px !important; left: 5px !important; }
+	.editor-hidden { visibility: hidden; top: -9999px; left: -9999px; position: absolute; }
+	textarea { border: 0; margin: 0; padding: 0; }
 }

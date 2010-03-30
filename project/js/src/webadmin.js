@@ -55,11 +55,13 @@ var handleSuccessContentMetanode = function(o) {
 	/* change all the metanode instances content */
 	for (i in nodeInstances) {
 		nodeInstances[i].style.overflow	= 'hidden';
-		if (!YAHOO.util.Selector.query('form.to-edit', nodeInstances[i], true)) {
+		if (!YAHOO.util.Selector.query('form.metanode', nodeInstances[i], true)) {
 			nodeContent				= YAHOO.util.Selector.query('.content', nodeInstances[i], true);
 			nodeContent.innerHTML	= data.Results.content;
 		}
 	}
+	/* set meta as edited */
+	YAHOO.util.Dom.addClass(containers[form.id], 'metanode-saved');
 };
 var handleSuccessResize = function(o) {
     var json = o.responseText.substring(o.responseText.indexOf('{'), o.responseText.lastIndexOf('}') + 1);
@@ -74,7 +76,7 @@ var handleSuccessResize = function(o) {
 	var form				= document.getElementById('frm-metanode-'+data_caller_id+'-'+data_seq);
 	var nodeContent;
 	for (i in nodeInstances) {
-		if (!YAHOO.util.Selector.query('form.to-edit', nodeInstances[i], true)) {
+		if (!YAHOO.util.Selector.query('form.metanode', nodeInstances[i], true)) {
 			nodeInstances[i].style.overflow	= 'hidden';
 			nodeContent							= YAHOO.util.Selector.query('.content', nodeInstances[i], true);
 			nodeContent.style.width				= resizes[form.id].getWrapEl().style.width;
@@ -90,10 +92,10 @@ var handleFailureMetanode = function(o) {
 var handleSuccessContentMetarecord = function(o){
     var mrType, mrID;
 	var json = o.responseText.substring(o.responseText.indexOf('{'), o.responseText.lastIndexOf('}') + 1);
-	json = '(' + json + ')';
+	if (!YAHOO.lang.JSON.isSafe(json)) {window.location.reload(true);}
     var data = eval('(' + json + ')');
 	if ((!data.Data) || data.Data.id == null) {var id = '';} else {var id = data.Data.id;}
-	if (data.Insert) {var idEdit = ''} else { var idEdit = id; }
+	if (data.Insert) {var idEdit = '';} else { var idEdit = id; }
 	/* delete previous errors */
 	var errors	= YAHOO.util.Selector.query('.control label .error', document.getElementById('frm-metarecord-'+data.type+'-'+idEdit));
 	for (i in errors) {
@@ -155,12 +157,6 @@ var handleSuccessContentMetarecord = function(o){
 					delete clonnedFormsIDFields;
 				}
 			}
-			delete clonnedForms;
-			/* get height and set it to 0 */
-			var cloneRegion 	= YAHOO.util.Dom.getRegion(metarecordSaved);
-			var cloneHeight 	= cloneRegion.bottom-cloneRegion.top;
-			metarecordSaved.setStyle('height', '0');
-			delete metarecordSaved;delete json;delete data;delete labels;delete infoElms; delete msgElms;delete traceElms;
 		}
 		
 		/* set clone properties */
@@ -172,22 +168,19 @@ var handleSuccessContentMetarecord = function(o){
 		}
 		/* close dialog */
 		dialogs['frm-metarecord-'+data.Data['type']+'-'+idEdit].cancel();
-		/* check reload flag */
 		/* animate-in new list node */
-		if (!data.Insert) {
-			var origBGColor		= metarecordSaved.getStyle('backgroud-color');
-			if (!origBGColor) {
-				origBGColor	= '#ffffff';
-			}
-			var myAnim			= new YAHOO.util.ColorAnim(metarecordSaved, {backgroundColor: {to: '#ff0000'}}, 0.7);
-			var myAnim2 		= new YAHOO.util.ColorAnim(metarecordSaved, {backgroundColor: {to: origBGColor}}, 0.3);
-			myAnim.onComplete.subscribe(function() {myAnim2.animate();});
-		}
-		else {
+		if (data.Insert) {
+			/* get height and set it to 0 */
+			var cloneRegion 	= YAHOO.util.Dom.getRegion(metarecordSaved);
+			var cloneHeight 	= cloneRegion.bottom-cloneRegion.top;
+			metarecordSaved.setStyle('height', '0');
 			var myAnim 			= new YAHOO.util.Anim(metarecordSaved, {height: { to: cloneHeight}}, 1, YAHOO.util.Easing.easeOut);
+			myAnim.animate();
 		}
-		myAnim.animate();
+		/* set meta as edited */
+		metarecordSaved.addClass('metarecord-saved');
 	}
+	delete clonnedForms;delete metarecordSaved;delete json;delete data;delete labels;delete infoElms; delete msgElms;delete traceElms;
 }
 var handleFailureMetarecord = function(o) {
     var json = o.responseText.substring(o.responseText.indexOf('{'), o.responseText.lastIndexOf('}') + 1);
@@ -241,15 +234,15 @@ var renderRTE = function(field, form) {
 			                    this._setDesignMode('on');
 			                }
 			
-			                Dom.removeClass(iframe, 'editor-hidden');
-			                Dom.addClass(ta, 'editor-hidden');
+			                YAHOO.util.Dom.removeClass(iframe, 'editor-hidden');
+			                YAHOO.util.Dom.addClass(ta, 'editor-hidden');
 			                this.show();
 			                this._focusWindow();
 			            } else {
 			                state = 'on';
 			                this.cleanHTML();
-			                Dom.addClass(iframe, 'editor-hidden');
-			                Dom.removeClass(ta, 'editor-hidden');
+			                YAHOO.util.Dom.addClass(iframe, 'editor-hidden');
+			                YAHOO.util.Dom.removeClass(ta, 'editor-hidden');
 			                this.toolbar.set('disabled', true);
 			                this.toolbar.getButtonByValue('editcode').set('disabled', false);
 			                this.toolbar.selectButton('editcode');
@@ -388,8 +381,6 @@ function metanodes_attach() {
 				});
 				resizes[forms[i].id].on('endResize', handleResize);
 			}
-			containers[forms[i].id].style.border	= '1px dashed #ff0000';
-			containers[forms[i].id].style.cursor	= 'pointer';
 		}
 		else if (YAHOO.util.Dom.hasClass(containers[forms[i].id], 'metarecord')) {
 			/* attach dialog handlers */
@@ -405,13 +396,10 @@ function metanodes_attach() {
 			mrType	= YAHOO.util.Selector.query('form.metarecord .type input', containers[forms[i].id], true).value;
 			mrID	= YAHOO.util.Selector.query('form.metarecord .id input', containers[forms[i].id], true).value;
 			containers[forms[i].id].id	= 'metarecord-'+mrType+'-'+mrID;
-
-			containers[forms[i].id].style.border	= '1px dotted #ff0000';
-			containers[forms[i].id].style.cursor	= 'pointer';
 		}
 
 		/* render dialog*/
 		dialogs[forms[i].id].render();
 	}
 }
-YAHOO.util.Event.onDOMReady(metanodes_attach);
+/*YAHOO.util.Event.onDOMReady(metanodes_attach);*/

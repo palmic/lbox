@@ -75,11 +75,8 @@ class ArticlesRecord extends AbstractRecordLBox
 
 	public function store() {
 		try {
-			if (!$this->params["time_published"]) {
+			if (!$this->params["time_published"] || strtolower($this->params["time_published"]) == "<<null>>") {
 				$this->params["time_published"] = time();
-			}
-			if (!is_numeric($this->params["time_published"])) {
-				$this->params["time_published"] = strtotime($this->params["time_published"]);
 			}
 			if (strlen($this->params["url_cs"]) < 1 || $this->params["url_cs"] == "<<NULL>>") {
 				$this->params["url_cs"] = LBoxUtil::getURLByNameString($this->params["heading_cs"]);

@@ -1,44 +1,27 @@
 <tal:block tal:condition="SELF/isToShow">
-<!-- Skin CSS file -->
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/assets/skins/sam/skin.css" />
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/assets/skins/sam/button.css" />
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/container/assets/skins/sam/menu.css" />
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/container/assets/skins/sam/editor.css" />
-<style type="text/css">
-	.yui-skin-sam .yui-toolbar-container .yui-toolbar-editcode span.yui-toolbar-icon { background-image: url( http://developer.yahoo.com/yui/examples/editor/assets/html_editor.gif ); background-position: 0 1px; left: 5px; }
-	.yui-skin-sam .yui-toolbar-container .yui-button-editcode-selected span.yui-toolbar-icon { background-image: url( http://developer.yahoo.com/yui/examples/editor/assets/html_editor.gif ); background-position: 0 1px; left: 5px; }
-	.editor-hidden { visibility: hidden; top: -9999px; left: -9999px; position: absolute; }
-	textarea { border: 0; margin: 0; padding: 0; }
-</style>
-<!-- Utility Dependencies -->
-<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/yahoo-dom-event/yahoo-dom-event.js"></script> 
-<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/animation/animation-min.js"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/element/element-min.js"></script> 
-<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/button/button-min.js"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/dragdrop/dragdrop-min.js"></script>
-<!-- Needed for Menus, Buttons and Overlays used in the Toolbar -->
-<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/container/container-min.js"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/menu/menu-min.js"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/button/button-min.js"></script>
-<!-- Rich Text Editor-->
-<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/editor/editor-min.js"></script>
-<!-- Selector-->
-<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/selector/selector-min.js"></script>
-<!-- Connection manager -->
-<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/connection/connection-min.js"></script>
-<!-- Stylesheet -->
-<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/stylesheet/stylesheet-min.js"></script> 
-<!-- Source file for the Resize Utility -->
-<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/resize/resize-min.js"></script>
-<!-- Individual YUI JS files -->
-<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/json/json-min.js"></script>
-
+<!--Include YUI Loader: --> 
+<script type="text/javascript" src="/js/src/webadmin.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/yui/2.8.0r4/build/yuiloader/yuiloader-min.js"></script>
+<!-- http://developer.yahoo.com/yui/articles/hosting/?button&connection&container&dom&editor&element&event&json&MIN -->
+<script type="text/javascript">
+(function() {
+	var loader = new YAHOO.util.YUILoader({
+		base: "http://ajax.googleapis.com/ajax/libs/yui/2.8.0r4/build/",
+		require: ["button","connection","container","dom","editor","element","event","json","selector"],
+		loadOptional: false,
+		combine: true,
+		filter: "MIN",
+		allowRollup: true,
+		onSuccess: function() {metanodes_attach();}
+	});
+loader.insert();
+})();
+</script>
 <script type="text/javascript" tal:condition="SELF/isAllowedResize">/* <!-- */
 	var resizesAllowed	= true;
 /* --> */</script>
 <script type="text/javascript" tal:condition="not: SELF/isAllowedResize">/* <!-- */
 	var resizesAllowed	= false;
 /* --> */</script>
-<script type="text/javascript" src="/js/src/webadmin.js"></script>
 <link rel="stylesheet" href="/css/css-metas.css" type="text/css"/>
 </tal:block>
