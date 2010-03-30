@@ -704,8 +704,10 @@ class PhotosRecord extends AbstractRecordLBox
 			}
 			$path	= LBoxConfigManagerProperties::getPropertyContentByName($this->propertyNamePath);
 			$path	= str_ireplace("<project>", LBOX_PATH_PROJECT, $path);
-			$path	= str_ireplace("<photogallery_name>", LBoxUtil::fixFileName($this->getPhotogallery()->name), $path);
-			$path	= str_ireplace("<photogallery_url>", LBoxUtil::fixFileName($this->getPhotogallery()->getParamDirect("url")), $path);
+			if ($this->getPhotogallery()) {
+				$path	= str_ireplace("<photogallery_name>", LBoxUtil::fixFileName($this->getPhotogallery()->name), $path);
+				$path	= str_ireplace("<photogallery_url>", LBoxUtil::fixFileName($this->getPhotogallery()->getParamDirect("url")), $path);
+			}
 			$path	= str_ireplace("/", SLASH, $path);
 			$path	= str_ireplace("\\", SLASH, $path);
 			$this->createDirByPath($path);

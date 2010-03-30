@@ -1,0 +1,24 @@
+<tal:block tal:condition="SELF/isToShow">
+<!-- Individual YUI CSS files -->
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.0r4/build/assets/skins/sam/skin.css" />
+<!-- Individual YUI JS files -->
+<script type="text/javascript" src="http://yui.yahooapis.com/2.8.0r4/build/utilities/utilities.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.8.0r4/build/container/container-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.8.0r4/build/menu/menu-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.8.0r4/build/button/button-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.8.0r4/build/editor/editor-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.8.0r4/build/json/json-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.8.0r4/build/resize/resize-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.8.0r4/build/selector/selector-min.js"></script>
+
+
+
+<script type="text/javascript" tal:condition="SELF/isAllowedResize">/* <!-- */
+	var resizesAllowed	= true;
+/* --> */</script>
+<script type="text/javascript" tal:condition="not: SELF/isAllowedResize">/* <!-- */
+	var resizesAllowed	= false;
+/* --> */</script>
+<script type="text/javascript" src="/js/src/webadmin.js"></script>
+<link rel="stylesheet" href="/css/css-metas.css" type="text/css"/>
+</tal:block>

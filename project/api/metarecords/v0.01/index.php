@@ -19,7 +19,6 @@ try {
 	//	saving data
 	//////////////////////////////////////////////////////////////////////
 
-
 	foreach ($post as $formID => $data) {
 		$typeRecord		= $data["type"];
 		$idColname		= eval("return $typeRecord::\$idColName;");
@@ -58,7 +57,7 @@ try {
 			switch (true) {
 				case ($control instanceof LBoxFormControlFile): $ret->Data->$ctrlName = ""; break;
 				default:
-					$ret->Data->$ctrlName	= strlen($vv = $form->recordProcessed->$ctrlName) > 0 ? $vv : $control->getValue();
+					$ret->Data->$ctrlName	= strlen($form->recordProcessed->$ctrlName) > 0 ? $form->recordProcessed->$ctrlName : $control->getValue();
 			}
 		}
 		$ret->Insert	= (int)!$flagEdit;

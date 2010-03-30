@@ -4,8 +4,8 @@
 	<div class="metarecords metarecords-${SELF/getClassNameRecord}">
 	    <div class="news metarecord lbox-meta" tal:repeat="record SELF/getRecords">
 	        <h2><a href="#" title="přejít na ${record/heading}"><span class="metarecord-node-heading_${lbox:front.getDisplayLanguage}" tal:content="record/heading" /></a></h2>
-	        <p><img tal:condition="record/getPhoto" src="${record/getPhoto/url}" width="${record/getPhoto/size_x}" height="${record/getPhoto/size_y}" alt="${record/heading}" />
-			<span class="metarecord-node-perex_${lbox:front.getDisplayLanguage}" tal:content="structure record/perex_raw" /></p>
+	        <div><img tal:condition="record/getPhoto" src="${record/getPhoto/url}" width="${record/getPhoto/size_x}" height="${record/getPhoto/size_y}" alt="${record/heading}" />
+			<tal:block class="metarecord-node-perex_${lbox:front.getDisplayLanguage}" tal:content="structure record/perex" /></div>
 	        <!--!p class="perex"><span class="date">${record/publishedDate}</span><span> | </span> 
 				<tal:block tal:replace="structure record/perex_raw" />
 				<img tal:condition="record/getPhoto" src="${record/getPhoto/url}" width="${record/getPhoto/size_x}" height="${record/getPhoto/size_y}" alt="${record/heading}" /></p-->
