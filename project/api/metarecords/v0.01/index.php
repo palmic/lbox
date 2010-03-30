@@ -52,13 +52,24 @@ try {
 		$ret->Data		= new stdclass();
 		$ret->Insert	= new stdclass();
 		$ret->Results->status = 'OK';
-		foreach ($form->getControls() as $control) {
+		$controls		= $form->getControls();
+		foreach ($controls as $control) {
 			$ctrlName	= $control->getName();
-			switch (true) {
-				case ($control instanceof LBoxFormControlFile): $ret->Data->$ctrlName = ""; break;
-				default:
-					$ret->Data->$ctrlName	= strlen($form->recordProcessed->$ctrlName) > 0 ? $form->recordProcessed->$ctrlName : $control->getValue();
+			if (array_key_exists("action_reload_on_complete", $controls) && $controls["action_reload_on_complete"]->getValue()) {
+				$ret->Data->$ctrlName	= "";
 			}
+			else {
+				switch (true) {
+					case ($control instanceof LBoxFormControlFile): $ret->Data->$ctrlName = ""; break;
+					default:
+						$ret->Data->$ctrlName	= strlen($form->recordProcessed->$ctrlName) > 0 ? $form->recordProcessed->$ctrlName : $control->getValue();
+				}
+			}
+		}
+		if (array_key_exists("action_reload_on_complete", $controls) && $controls["action_reload_on_complete"]->getValue()) {
+			$ret->Data->action_reload_on_complete		= $controls["action_reload_on_complete"]->getValue();
+			$ret->Data->type							= $typeRecord;
+			$ret->Data->$idColname						= $form->recordProcessed->$idColname;
 		}
 		$ret->Insert	= (int)!$flagEdit;
 		header("HTTP/1.1 200 OK");

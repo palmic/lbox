@@ -102,8 +102,8 @@ class LBoxMetaRecord extends LBox
 			
 			$subCtrls["type"]			= new LBoxFormControlFillHidden("type", "", $rType);
 				$subCtrls["type"]			->setTemplateFileName("metarecord_hidden.html");
-			$subCtrls["id"]				= new LBoxFormControlFillHidden("id", "", $this->record->isInDatabase() ? $this->record->$idColName : "");
-				$subCtrls["id"]				->setTemplateFileName("metarecord_hidden.html");
+			$subCtrls[$idColName]		= new LBoxFormControlFillHidden($idColName, "", $this->record->isInDatabase() ? $this->record->$idColName : "");
+				$subCtrls[$idColName]		->setTemplateFileName("metarecord_hidden.html");
 			$reloadOnComplete			= false;
 				
 			//nasazet tam jednotlive record attributes

@@ -92,7 +92,7 @@ var handleFailureMetanode = function(o) {
 var handleSuccessContentMetarecord = function(o){
     var mrType, mrID;
 	var json = o.responseText.substring(o.responseText.indexOf('{'), o.responseText.lastIndexOf('}') + 1);
-	if (!YAHOO.lang.JSON.isSafe(json)) {window.location.reload(true);}
+	/*if (!YAHOO.lang.JSON.isSafe(json)) {window.location.reload(true);}*/
     var data = eval('(' + json + ')');
 	if ((!data.Data) || data.Data.id == null) {var id = '';} else {var id = data.Data.id;}
 	if (data.Insert) {var idEdit = '';} else { var idEdit = id; }
