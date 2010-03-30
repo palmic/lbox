@@ -1,13 +1,13 @@
 <tal:block tal:condition="SELF/isToShow">
 <!--Include YUI Loader: --> 
 <script type="text/javascript" src="/js/src/webadmin.js"></script>
+<!-- http://developer.yahoo.com/yui/articles/hosting/?animation&button&connection&container&dom&editor&element&event&json&resize&selector&MIN -->
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/yui/2.8.0r4/build/yuiloader/yuiloader-min.js"></script>
-<!-- http://developer.yahoo.com/yui/articles/hosting/?button&connection&container&dom&editor&element&event&json&MIN -->
 <script type="text/javascript">
 (function() {
 	var loader = new YAHOO.util.YUILoader({
 		base: "http://ajax.googleapis.com/ajax/libs/yui/2.8.0r4/build/",
-		require: ["button","connection","container","dom","editor","element","event","json","selector"],
+		require: ["animation","button","connection","container","dom","editor","element","event","json","resize","selector"],
 		loadOptional: false,
 		combine: true,
 		filter: "MIN",
@@ -23,5 +23,5 @@ loader.insert();
 <script type="text/javascript" tal:condition="not: SELF/isAllowedResize">/* <!-- */
 	var resizesAllowed	= false;
 /* --> */</script>
-<link rel="stylesheet" href="/css/css-metas.css" type="text/css"/>
+<link rel="stylesheet" href="/css/css-metas.css" type="text/css" />
 </tal:block>
