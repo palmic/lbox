@@ -69,7 +69,7 @@ class LBoxForm
 	 * @var bool
 	 */
 	protected $sentSucces	= false;
-	
+
 	/**
 	 * do not reload after succcesfull processing flag
 	 * @var bool
@@ -87,13 +87,13 @@ class LBoxForm
 	 * @var array
 	 */
 	protected $params	= array();
-	
+
 	/**
 	 * master formmultistep if this is subform
 	 * @var LBoxFormMultistep
 	 */
 	protected $formMultistep	= false;
-	
+
 	/**
 	 *
 	 * @param string name
@@ -145,7 +145,7 @@ class LBoxForm
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * setter pro params
 	 * @param string $name
@@ -161,7 +161,7 @@ class LBoxForm
 		}
 		$this->params[$name]	= $value;
 	}
-	
+
 	/**
 	 * @param LBoxFormControl $control
 	 * @throws LBoxExceptionForm
@@ -389,7 +389,7 @@ class LBoxForm
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * vraci celou cestu k sablone control (ovlivnenou atributem filenameTemplate instance control)
 	 * @return string
@@ -568,6 +568,13 @@ class LBoxForm
 					}
 				}
 			}
+			else {
+				//vynulovat pole a nastavit, ze byl uspesne proveden
+				foreach ($this->controls as $control) {
+					$control->setValue("");
+				}
+				$this->sentSucces	= true;
+			}
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -615,7 +622,7 @@ class LBoxForm
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * @param LBoxFormMultistep $form
 	 */
@@ -630,7 +637,7 @@ class LBoxForm
 	public function getFormMultistep() {
 		return $this->formMultistep;
 	}
-	
+
 	/**
 	 * subform flag getter
 	 * @return bool
@@ -638,7 +645,7 @@ class LBoxForm
 	public function isSubForm() {
 		return ($this->formMultistep instanceof LBoxForm);
 	}
-	
+
 	/**
 	 * @return bool
 	 */
@@ -648,7 +655,7 @@ class LBoxForm
 		}
 		return (reset($this->getFormMultistep()->getFormsSub())->getName() == $this->getName());
 	}
-	
+
 	/**
 	 * @return bool
 	 */
