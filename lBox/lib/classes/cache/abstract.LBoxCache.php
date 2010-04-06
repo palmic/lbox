@@ -375,7 +375,8 @@ else {
 				if ($i <= count(explode(SLASH, LBOX_PATH_INSTANCE_ROOT))) continue;
 				if (!is_dir($pathTMP)) {
 					if (file_exists($pathTMP)) {
-						throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_ALREADY_EXISTS, LBoxExceptionFilesystem::CODE_FILE_ALREADY_EXISTS);
+						return;
+						//throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_ALREADY_EXISTS, LBoxExceptionFilesystem::CODE_FILE_ALREADY_EXISTS);
 					}
 //if (class_exists("FirePHP")){LBoxFirePHP::error("Vytvarim adresar $pathTMP");}
 					if (!@mkdir($pathTMP)) {
