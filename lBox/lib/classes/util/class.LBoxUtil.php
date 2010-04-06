@@ -268,7 +268,8 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 			}
 			$path		= self::fixPathSlashes($path);
 			if (is_dir($path) < 1) {
-				throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_DIRECTORY_NOT_EXISTS, LBoxExceptionFilesystem::CODE_DIRECTORY_NOT_EXISTS);
+				mkdir($path);
+				//throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_DIRECTORY_NOT_EXISTS, LBoxExceptionFilesystem::CODE_DIRECTORY_NOT_EXISTS);
 			}
 			// smazat obsah adresare na 3x!
 			$d = dir($path);
@@ -281,8 +282,8 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 					self::removeDirByPath("$path/$entry", true);
 				}
 				if (file_exists("$path". SLASH ."$entry")) {
-					if (!unlink("$path". SLASH ."$entry")) {
-						throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_FILE_CANNOT_DELETE);
+					if (!@unlink("$path". SLASH ."$entry")) {
+						//throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_FILE_CANNOT_DELETE);
 					}
 				}
 			}
@@ -296,8 +297,8 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 					self::removeDirByPath("$path/$entry", true);
 				}
 				if (file_exists("$path". SLASH ."$entry")) {
-					if (!unlink("$path". SLASH ."$entry")) {
-						throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_FILE_CANNOT_DELETE);
+					if (!@unlink("$path". SLASH ."$entry")) {
+						//throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_FILE_CANNOT_DELETE);
 					}
 				}
 			}
@@ -311,12 +312,12 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 					self::removeDirByPath("$path/$entry", true);
 				}
 				if (file_exists("$path". SLASH ."$entry")) {
-					if (!unlink("$path". SLASH ."$entry")) {
-						throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_FILE_CANNOT_DELETE);
+					if (!@unlink("$path". SLASH ."$entry")) {
+						//throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_FILE_CANNOT_DELETE);
 					}
 				}
 			}
-			$d->close();
+			@$d->close();
 			if (!@rmdir($path)) {
 				//throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_DIRECTORY_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_DIRECTORY_CANNOT_DELETE);
 			}
