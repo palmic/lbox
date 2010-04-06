@@ -304,8 +304,8 @@ else {
 	 */
 	private function getFileW () {
 		try {
-			if (!$fileW	= fopen($this->getFilePath(), "w")) {
-				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_CACHE_CANNOT_OPEN_WRITE, LBoxExceptionCache::CODE_CACHE_CANNOT_OPEN_WRITE);
+			if (!$fileW	= @fopen($this->getFilePath(), "w")) {
+				//throw new LBoxExceptionCache(LBoxExceptionCache::MSG_CACHE_CANNOT_OPEN_WRITE, LBoxExceptionCache::CODE_CACHE_CANNOT_OPEN_WRITE);
 			}
 			self::$filesOpenedWrite++;
 			return $fileW;
