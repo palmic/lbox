@@ -134,12 +134,14 @@ class LBoxFormMultistep extends LBoxForm
 				$this->moveToNextStep();
 			}
 			if (!$this->wasFinishedSuccess()) {
+				if (!$this->doNotReload) {
+					$this->reset();
+				}
 				return;
 			}
 			foreach ($this->processors as $processor) {
 				$processor->process();
 			}
-			// nastavit do session uspesne odeslani a reloadovat stranku
 			if (!$this->doNotReload) {
 				$this->reset();
 			}
