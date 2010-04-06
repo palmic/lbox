@@ -236,14 +236,19 @@ else {
 			if (filesize($this->getFilePath()) < 1) {
 				return "";
 			}
-			$data	= fread($this->getFileR(), filesize($this->getFilePath()));
-			if (!$data) {
-				//throw new LBoxExceptionCache(LBoxExceptionCache::MSG_CACHE_CANNOT_READ, LBoxExceptionCache::CODE_CACHE_CANNOT_READ);
+			if ($path	= $this->getFilePath()) {
+				$data	= fread($this->getFileR(), filesize($path));
+				if (!$data) {
+					//throw new LBoxExceptionCache(LBoxExceptionCache::MSG_CACHE_CANNOT_READ, LBoxExceptionCache::CODE_CACHE_CANNOT_READ);
+				}
+				@fclose($this->fileR);unset($this->fileR);
+				$this->data	= unserialize($data);
+				$this->changed	= false;
+				return $this->data;
 			}
-			@fclose($this->fileR);unset($this->fileR);
-			$this->data	= unserialize($data);
-			$this->changed	= false;
-			return $this->data;
+			else {
+				return array();
+			}
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -330,6 +335,9 @@ else {
 			if (!is_dir(dirname($path))) {
 				$this->createDirByPath(dirname($path));
 			}
+			if (!is_dir(dirname($path))) {
+				return "";
+			}
 			return $path;
 		}
 		catch (Exception $e) {
@@ -370,9 +378,10 @@ else {
 						throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_ALREADY_EXISTS, LBoxExceptionFilesystem::CODE_FILE_ALREADY_EXISTS);
 					}
 //if (class_exists("FirePHP")){LBoxFirePHP::error("Vytvarim adresar $pathTMP");}
-					if (!mkdir($pathTMP)) {
-						throw new LBoxExceptionFilesystem(	$pathTMP .": ". LBoxExceptionFilesystem::MSG_DIRECTORY_CANNOT_CREATE,
-															LBoxExceptionFilesystem::CODE_DIRECTORY_CANNOT_CREATE);
+					if (!@mkdir($pathTMP)) {
+						return;
+						/*throw new LBoxExceptionFilesystem(	$pathTMP .": ". LBoxExceptionFilesystem::MSG_DIRECTORY_CANNOT_CREATE,
+															LBoxExceptionFilesystem::CODE_DIRECTORY_CANNOT_CREATE);*/
 					}
 				}
 			}
