@@ -240,7 +240,7 @@ else {
 			if (!$data) {
 				//throw new LBoxExceptionCache(LBoxExceptionCache::MSG_CACHE_CANNOT_READ, LBoxExceptionCache::CODE_CACHE_CANNOT_READ);
 			}
-			fclose($this->fileR);unset($this->fileR);
+			@fclose($this->fileR);unset($this->fileR);
 			$this->data	= unserialize($data);
 			$this->changed	= false;
 			return $this->data;
@@ -270,7 +270,7 @@ else {
 	}
 	LBoxFirePHP::error("VYTVARIM ". $this->getFilePath());
 }*/
-			fclose($fileW);
+			@fclose($fileW);
 		}
 		catch (Exception $e) {
 			throw $e;
