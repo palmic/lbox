@@ -281,8 +281,8 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 					self::removeDirByPath("$path/$entry", true);
 				}
 				if (file_exists("$path". SLASH ."$entry")) {
-					if (!unlink("$path". SLASH ."$entry")) {
-						throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_FILE_CANNOT_DELETE);
+					if (!@unlink("$path". SLASH ."$entry")) {
+						//throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_FILE_CANNOT_DELETE);
 					}
 				}
 			}
@@ -296,8 +296,8 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 					self::removeDirByPath("$path/$entry", true);
 				}
 				if (file_exists("$path". SLASH ."$entry")) {
-					if (!unlink("$path". SLASH ."$entry")) {
-						throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_FILE_CANNOT_DELETE);
+					if (!@unlink("$path". SLASH ."$entry")) {
+						//throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_FILE_CANNOT_DELETE);
 					}
 				}
 			}
@@ -311,8 +311,8 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 					self::removeDirByPath("$path/$entry", true);
 				}
 				if (file_exists("$path". SLASH ."$entry")) {
-					if (!unlink("$path". SLASH ."$entry")) {
-						throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_FILE_CANNOT_DELETE);
+					if (!@unlink("$path". SLASH ."$entry")) {
+						//throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_FILE_CANNOT_DELETE);
 					}
 				}
 			}
