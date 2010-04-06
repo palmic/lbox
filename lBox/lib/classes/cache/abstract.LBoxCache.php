@@ -261,8 +261,8 @@ else {
 				return;
 			}
 			$fileW	= $this->getFileW();
-			if (!fwrite($fileW, serialize($this->data))) {
-				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_CACHE_CANNOT_WRITE, LBoxExceptionCache::CODE_CACHE_CANNOT_WRITE);
+			if (!@fwrite($fileW, serialize($this->data))) {
+				//throw new LBoxExceptionCache(LBoxExceptionCache::MSG_CACHE_CANNOT_WRITE, LBoxExceptionCache::CODE_CACHE_CANNOT_WRITE);
 			}
 /*XXX if (strstr($this->getFilePath(), "/windows/E/www/timesheets/project/.cache/abstractrecord/xtusers_employees_positions")) {
 	if ($this->getFilePath() == "/windows/E/www/timesheets/project/.cache/abstractrecord/xtusers_employees_positions/collections/ad4bec8f6e8768c0ffda5cfff5093893.cache") {

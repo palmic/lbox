@@ -141,12 +141,7 @@ class LBoxFormMultistep extends LBoxForm
 			}
 			// nastavit do session uspesne odeslani a reloadovat stranku
 			if (!$this->doNotReload) {
-				if (strtolower($this->method)	== "post") {
-					$_SESSION["LBox"]["Forms"][$this->getName()]["step"]	= 1;
-					$_SESSION["LBox"]["Forms"][$this->getName()]["steps"]	= array();
-					$_SESSION["LBox"]["Forms"][$this->getName()]["succes"]	= true;
-					LBoxFront::reload();
-				}
+				$this->reset();
 			}
 		}
 		catch (Exception $e) {
