@@ -342,7 +342,7 @@ LBoxFirePHP::table($this->styles, basename(__FILE__) ."::". __LINE__.': ' . 'met
 			$this->form->action			= LBoxConfigSystem::getInstance()->getParamByPath("metanodes/api/url");
 			$this->form					->addControl($ctrlDialog);
 			$this->form					->addProcessor(new ProcessorMetanodeXTToEdit);
-			$this->form->className		= "metanode";
+			$this->form->className		= "to-edit";
 
 			$this->form					->addControl($ctrlType);
 			$this->form					->addControl($ctrlSeq);

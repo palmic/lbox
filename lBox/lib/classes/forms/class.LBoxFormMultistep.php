@@ -2,6 +2,12 @@
 class LBoxFormMultistep extends LBoxForm
 {
 	/**
+	 * cache var
+	 * @var bool
+	 */
+	protected $wasFinishedSuccess;
+	
+	/**
 	 * subforms array
  	 * @var array
 	 */
@@ -128,20 +134,25 @@ class LBoxFormMultistep extends LBoxForm
 				$this->moveToPreviousStep();
 				LBoxFront::reload();
 			}
+			// zjistime, jestli nejsme na dalsim kroku pro zpracovani ve stavu do not reload
+			$isLastStep	= ($this->subForms[$this->getStepCurrent()+1] instanceof LBoxForm) ? false : true;
 			// pokud byl subform odeslan a uspesne zpracovan, posouvame se na dalsi krok
 			$this->getCurrentForm()->__toString();
+			// v pripade ze plati $this->doNotReload a jsme na zprocessovanem poslednim kroku
+			if ($this->doNotReload && $this->wasFinishedSuccess()) {
+				foreach ($this->processors as $processor) {
+					$processor->process();
+				}
+				$this->reset();
+				return;
+			}
 			if ($this->getCurrentForm()->wasSentSucces()) {
 				$this->moveToNextStep();
 			}
-			if (!$this->wasFinishedSuccess()) {
-				return;
-			}
-			foreach ($this->processors as $processor) {
-				$processor->process();
-			}
-			// nastavit do session uspesne odeslani a reloadovat stranku
-			if (!$this->doNotReload) {
-				$this->reset();
+			if ($this->wasFinishedSuccess()) {
+				foreach ($this->processors as $processor) {
+					$processor->process();
+				}
 			}
 		}
 		catch (Exception $e) {
@@ -211,8 +222,11 @@ class LBoxFormMultistep extends LBoxForm
 	 */
 	public function wasFinishedSuccess() {
 		try {
+			if (is_bool($this->wasFinishedSuccess)) {
+				return $this->wasFinishedSuccess;
+			}
 			if ($this->subForms[$this->getStepCurrent()+1] instanceof LBoxForm) return false;
-			return $this->getCurrentForm()->wasSentSucces();
+			return $this->wasFinishedSuccess = $this->getCurrentForm()->wasSentSucces();
 		}
 		catch (Exception $e) {
 			throw $e;
