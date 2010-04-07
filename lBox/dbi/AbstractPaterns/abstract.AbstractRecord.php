@@ -748,7 +748,26 @@ var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCa
 				$this	->resetCache();
 			}
 // var_dump(__CLASS__ ."::". __LINE__ .": ". $sql);
-			$this->getDb()->initiateQuery($sql);
+			try {
+				$this->getDb()->initiateQuery($sql);
+			}
+			catch (Exception $e) {
+				switch ($e->getCode()) {
+					case 1062:
+							try {
+								$this->getDb()->initiateQuery($sql);
+							}
+							catch (Exception $e) {
+								switch ($e->getCode()) {
+									case 1062:
+											try {
+												$this->getDb()->initiateQuery($sql);
+											}
+											catch (Exception $e) {throw $e;}
+										break; default: throw $e; }
+							}
+						break; default: throw $e; }
+			}
 			$this->isInDatabase	= true;
 		}
 		catch(Exception $e) {
