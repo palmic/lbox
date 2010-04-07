@@ -37,7 +37,7 @@ class CalendarDZONE {
 
 		//
 
-		if ( $p_type=='UK' ) {
+		/*if ( $p_type=='UK' ) {
 		
 			$this->holidays[] = new Holiday("New Years Day", $this->get_timestamp("2005-01-03"));
 			$this->holidays[] = new Holiday("Good Friday", $this->get_timestamp("2005-03-25"));
@@ -113,7 +113,7 @@ class CalendarDZONE {
 		$this->holidays[] = new Holiday("Christmas ShutDown", $this->get_timestamp("2009-12-30"));
 		$this->holidays[] = new Holiday("Christmas ShutDown", $this->get_timestamp("2009-12-31"));
 
-
+*/
 
 		//go fill array to enable fast searches
 		foreach ( $this->holidays as $holiday_date ) {
