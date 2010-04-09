@@ -90,6 +90,14 @@ class LBoxFront extends LBox
 			// init acces
 			AccesRecord::getInstance();
 			
+			// cache
+			LBoxUtil::createDirByPath(LBoxConfigSystem::getInstance()->getParamByPath("output/cache/path"));
+			$cacheOptions = array(
+			    "cacheDir" => LBoxConfigSystem::getInstance()->getParamByPath("output/cache/path") . SLASH,
+			    "lifeTime" => LBoxConfigSystem::getInstance()->getParamByPath("output/cache/expiration")
+			);
+			$Cache_Lite = new Cache_Lite($cacheOptions);
+			
 			$content		= self::getRequestContent();
 
 			echo $content;

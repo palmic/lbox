@@ -159,6 +159,10 @@ try {
 	require("lbox.phptal.php");
 
 	LBoxUtil::createDirByPath(PHPTAL_PHP_CODE_DESTINATION);
+
+	// cache lite load
+	define("LBOX_PATH_CHACHELITE", LBOX_PATH_CORE . $slash ."cachelite" . $slash ."Cache_Lite-1.7.8");
+	require(LBOX_PATH_CHACHELITE . $slash . "Lite.php");
 }
 catch (Exception $e) {
 	echo "<hr />";
