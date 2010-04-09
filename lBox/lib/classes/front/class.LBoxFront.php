@@ -86,21 +86,37 @@ class LBoxFront extends LBox
 		try {
 			// starting timer
 			LBoxTimer::getInstance();
-			
+
 			// init acces
 			AccesRecord::getInstance();
-			
 			// cache
-			LBoxUtil::createDirByPath(LBoxConfigSystem::getInstance()->getParamByPath("output/cache/path"));
-			$cacheOptions = array(
-			    "cacheDir" => LBoxConfigSystem::getInstance()->getParamByPath("output/cache/path") . SLASH,
-			    "lifeTime" => LBoxConfigSystem::getInstance()->getParamByPath("output/cache/expiration")
-			);
-			$Cache_Lite = new Cache_Lite($cacheOptions);
+			if (LBoxConfigManagerProperties::gpcn("cache_front")) {
+				$cacheID	= LBOX_REQUEST_URL;
+				$cacheGroup	= LBoxXTProject::isLogged() ? LBoxXTProject::getUserXTRecord()->id : "notlogged";
+				LBoxUtil::createDirByPath(LBoxConfigSystem::getInstance()->getParamByPath("output/cache/path"));
+				$cacheOptions = array(
+				    "cacheDir" => LBoxConfigSystem::getInstance()->getParamByPath("output/cache/path") . SLASH,
+				    "lifeTime" => LBoxConfigSystem::getInstance()->getParamByPath("output/cache/expiration")
+				);
+				$Cache_Lite = new Cache_Lite($cacheOptions);
+				if (count(self::getDataPost()) < 1) {
+					if ($cachedContent	= $Cache_Lite->get($cacheID, $cacheGroup)) {
+LBoxFirePHP::log("cache loaded");
+						// send last modification header
+						header("Last-Modified: ".gmdate("D, d M Y H:i:s", $Cache_Lite->lastModified())." GMT");
+						echo $cachedContent;
+						return;
+					}
+				}
+LBoxFirePHP::log("cache NOT loaded");
+			}
 			
-			$content		= self::getRequestContent();
-
+			$content	= self::getRequestContent();
+			
 			echo $content;
+			if (LBoxConfigManagerProperties::gpcn("cache_front")) {
+				$Cache_Lite	->save($content, $cacheID, $cacheGroup);
+			}
 		}
 		catch (Exception $e) {
 			throw $e;

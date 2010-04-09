@@ -92,7 +92,7 @@
 	</emails>
 	<output>
 		<cache>
-			<expiration>3600</expiration>
+			<expiration>86400</expiration>
 			<path>$project/.cache/front</path>
 		</cache>
 		<tal>
