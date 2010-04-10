@@ -54,7 +54,7 @@ function __autoload ($className)
 	GLOBAL $paths, $pathsIgnore;
 	try {
 		$debug = false;
-		
+
 		LBoxLoader::getInstance($paths, $pathsIgnore)->debug = $debug;
 		LBoxLoader::getInstance()->load($className);
 	}
@@ -100,7 +100,7 @@ $urlArrayParts = explode(":", $urlArray["path"]);
     }
   }
   unset($_GET["{QUERY_STRING}"]);
-  
+
 try {
 	DEFINE("LBOX_REQUEST_URL", 				$url);
 	DEFINE("LBOX_REQUEST_URL_VIRTUAL", 		LBoxUtil::fixURLSlash($urlArrayParts[0]));
@@ -109,7 +109,7 @@ try {
 	DEFINE("LBOX_REQUEST_URL_PATH", 		strlen(LBOX_REQUEST_URL_PARAMS) > 0 ? LBOX_REQUEST_URL_VIRTUAL .":". LBOX_REQUEST_URL_PARAMS : LBOX_REQUEST_URL_VIRTUAL); // virtual:params
 	DEFINE("LBOX_REQUEST_URL_SCHEME", 		$scheme);
 	DEFINE("LBOX_REQUEST_URL_HOST", 		array_key_exists("HTTP_HOST", $_SERVER) ? $_SERVER['HTTP_HOST'] : "");
-	
+
 	DEFINE("LBOX_REQUEST_IP", 				array_key_exists("HTTP_HOST", $_SERVER) ? 	$_SERVER["REMOTE_ADDR"] : "");
 	DEFINE("LBOX_REQUEST_IP_MY",			array_key_exists("SERVER_ADDR", $_SERVER) ? 	$_SERVER["SERVER_ADDR"] : "");
 	DEFINE("LBOX_REQUEST_AGENT",			array_key_exists("HTTP_USER_AGENT", $_SERVER) ? $_SERVER["HTTP_USER_AGENT"] : "");
@@ -120,7 +120,7 @@ try {
 	LBoxLoaderConfig::getInstance($pathsConfig);
 	// nastavit DbControl config file cestu
 	DbCfg::$cfgFilepath = LBoxLoaderConfig::getInstance()->getPathOf("db");
-	
+
 	// pokud nemame pearovsky firePHP pouzivame lokani LBOXovy
 	@include("FirePHPCore/fb.php");
 	if (!class_exists("FirePHP")) {
@@ -128,8 +128,8 @@ try {
 	}
 	// disable firePHP on remote mashines (enabled on localhost only!!!)
 	if (LBOX_REQUEST_IP != LBOX_REQUEST_IP_MY) {
-		FirePHP::getInstance(true)->setEnabled(false);
-		FB::setEnabled(false);
+		//FirePHP::getInstance(true)->setEnabled(false);
+		//FB::setEnabled(false);
 	}
 	$firePHPOptions = array('maxObjectDepth' => 10,
                  			'maxArrayDepth' => 20,
@@ -147,7 +147,7 @@ try {
 	if (!@constant("PHPTAL_VERSION")) {
 		define("LBOX_PATH_PHPTAL", LBOX_PATH_CORE . $slash ."TAL". $slash ."PHPTAL-1.2.1");
 		define("LBOX_PATH_PHPTAL_GETTEXTTRANSLATOR", LBOX_PATH_PHPTAL . $slash ."PHPTAL");
-		
+
 		require(LBOX_PATH_PHPTAL . $slash ."PHPTAL.php");
 	}
 	else {
@@ -157,7 +157,7 @@ try {
 	// TAL translator service to extend the standard
 	require (LBOX_PATH_PHPTAL_GETTEXTTRANSLATOR . $slash ."GetTextTranslator.php");
 	require("lbox.phptal.php");
-	
+
 	LBoxUtil::createDirByPath(PHPTAL_PHP_CODE_DESTINATION);
 }
 catch (Exception $e) {
@@ -175,7 +175,7 @@ catch (Exception $e) {
 	echo "<br />";
 	echo nl2br($e->getTraceAsString());
 	echo "<hr />";
-	
+
 	exit;
 }
 

@@ -19,7 +19,6 @@ class LBoxException extends Exception
 	const MSG_PARAM_ARRAY_NOTNULL 				= "must be NOT-NULL array!";
 	const MSG_PARAM_INT_NOTNULL 				= "must be integer > 0!";
 	const MSG_PARAM_INSTANCE_CONCRETE			= "must be concrete class instance!";
-	const MSG_PARAM_UNSPECIFIED_PARAM_ERROR		= "unspecified param error!";
 	
 	const MSG_PARAM_INT 						= "must be integer!";
 	const MSG_PARAM_BOOL 						= "must be boolean!";
