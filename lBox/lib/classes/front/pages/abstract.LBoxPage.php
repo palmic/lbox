@@ -68,23 +68,5 @@ abstract class LBoxPage extends LBoxComponent
 			throw $e;
 		}
 	}
-
-	/**
-	 * pretizeno o automaticke vytvareni sablony z defaultni
-	 * @return string
-	 */
-	protected function getTemplatePath() {
-		try {
-			$pathTemplate	= parent::getTemplatePath();
-			if (!file_exists($pathTemplate)) {
-				$srcPath	= LBoxConfigSystem::getInstance()->getParamByPath("pages/templates/path") .SLASH. LBoxConfigSystem::getInstance()->getParamByPath("pages/templates/default");
-				LBoxUtil::copyFile($srcPath, $pathTemplate);
-			}
-			return $pathTemplate;
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
 }
 ?>
