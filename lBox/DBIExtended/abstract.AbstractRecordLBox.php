@@ -21,6 +21,9 @@ abstract class AbstractRecordLBox extends AbstractRecord implements OutputItem
 	 */
 	public function __get($name = "") {
 		try {
+			// do inform front cache manager that this record type data hapen to be used at this URL
+			LBoxCacheManagerFront::getInstance()->addRecordType(get_class($this));
+			
 			$value = $this->getParamDirect($name);
 			// multilang get
 			if (($name != "*") && (!array_key_exists($name, $this->params))) {
@@ -140,5 +143,31 @@ abstract class AbstractRecordLBox extends AbstractRecord implements OutputItem
 	public function setOutputFilter(LBoxOutputFilter $outputFilter) {
 		$this->outputFilter = $outputFilter;
 	}	
+
+	/**
+	 * pretizeno o mazani front cache
+	 */
+	public function clearCache() {
+		try {
+			LBoxCacheManagerFront::getInstance()->cleanByRecordType(get_class($this));
+			return parent::clearCache;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * pretizeno o mazani front cache
+	 */
+	public function resetCache() {
+		try {
+			LBoxCacheManagerFront::getInstance()->cleanByRecordType(get_class($this));
+			return parent::resetCache();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
 }
 ?>

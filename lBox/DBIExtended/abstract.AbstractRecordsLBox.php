@@ -31,6 +31,9 @@ abstract class AbstractRecordsLBox extends AbstractRecords
 	 */
 	public function current() {
 		try {
+			// do inform front cache manager that this record type data hapen to be used at this URL
+			LBoxCacheManagerFront::getInstance()->addRecordType($this->getClassVar("itemType"));
+			
 			if (!($record = parent::current()) instanceof AbstractRecord) {
 				return $record;
 			}
@@ -43,6 +46,32 @@ abstract class AbstractRecordsLBox extends AbstractRecords
 				$record->setOutputFilter($filter);
 			}
 			return $record;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * pretizeno o mazani front cache
+	 */
+	protected function resetCache() {
+		try {
+			LBoxCacheManagerFront::getInstance()->cleanByRecordType($this->getClassVar("itemType"));
+			return parent::resetCache();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * pretizeno o mazani front cache
+	 */
+	public function clearCache() {
+		try {
+			LBoxCacheManagerFront::getInstance()->cleanByRecordType($this->getClassVar("itemType"));
+			return parent::clearCache();
 		}
 		catch (Exception $e) {
 			throw $e;
