@@ -92,13 +92,14 @@ class LBoxCacheManagerFront
 	/**
 	 * vymaze cache stranky podle predaneho id, nebo current stranky pokud zadne ID predano nebylo
 	 * @param int $pageID
+	 * @param bool $forceCleanForAllXTUsers
 	 */
-	public function cleanByPageID($pageID = "") {
+	public function cleanByPageID($pageID = "", $forceCleanForAllXTUsers = false) {
 		try {
 			if (strlen($pageID) < 1) {$pageID = LBoxFront::getPage()->config->id;}
 			foreach ($this->recordTypes as $url => $recordType) {
 				if ($recordType["pageid"] == $pageID) {
-					$this->cleanURLData($url);
+					$this->cleanURLData($url, $forceCleanForAllXTUsers);
 				}
 			}
 		}
@@ -110,8 +111,9 @@ class LBoxCacheManagerFront
 	/**
 	 * vymaze cache data konkretni URL pricemz si sam zkontroluje, jestli ma byt stranka na teto URL promazana jen pro momentalne zalogovaneho uzivatele
 	 * @param string $url
+	 * @param bool $forceCleanForAllXTUsers
 	 */
-	public function cleanURLData($url = "") {
+	public function cleanURLData($url = "", $forceCleanForAllXTUsers = false) {
 		try {
 			if (strlen($url) < 1) {
 				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_PARAM_STRING_NOTNULL, LBoxExceptionCache::CODE_BAD_PARAM);
@@ -121,7 +123,7 @@ class LBoxCacheManagerFront
 			}
 
 			$config	= LBoxConfigManagerStructure::getInstance()->getPageById($this->recordTypes[$url]["pageid"]);
-			if ((!LBoxXTProject::isLoggedAdmin(XT_GROUP ? XT_GROUP : NULL)) && $config->cache_recordsdata_by_xtuser) {
+			if ((!$forceCleanForAllXTUsers) && (!LBoxXTProject::isLoggedAdmin(XT_GROUP ? XT_GROUP : NULL)) && $config->cache_recordsdata_by_xtuser) {
 				LBoxCacheFront::getInstance()->removeConcrete(LBoxCacheFront::getCacheID(), $url);
 			}
 			else {
