@@ -93,7 +93,7 @@
 	<output>
 		<cache>
 			<expiration>86400</expiration>
-			<path>$project/.cache/front</path>
+			<path>$cache/front</path>
 		</cache>
 		<tal>
 			<PHPTAL_FORCE_REPARSE>0</PHPTAL_FORCE_REPARSE>
