@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <properties>
 	<property name="log_access">1</property><!-- prepinatelny atribut, ktery prepina logovani pristupu do databaze -->
+	<property name="cache_front">1</property><!-- prepinatec zapinajici cachovani front dat -->
 	
 	<property name="web_title">lbox.cz</property><!-- title webu pouzivany na homepage a v ostatnich strankach dynamicky ve vzorech -->
 	<property name="page_title_pattern">$page_title &lt; $properties_web_title</property><!-- vzor titlu stranky -->
@@ -48,7 +49,7 @@
 
 
 	<!-- seznam IDs stranek na kterych bude povolen resize oddelenych mezerou. all znaci vsechny -->
-	<property name="metanodes_allow_resize_pages"></property>
+	<property name="metanodes_allow_resize_pages">all</property>
 	<!-- seznam IDs roli pro ktere budou metanodes zakazane oddelenych carkou - napriklad: 5,6 -->
 	<property name="metanodes_forbidden_xtroles"></property>
 </properties>
