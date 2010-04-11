@@ -49,7 +49,7 @@
 
 
 	<!-- seznam IDs stranek na kterych bude povolen resize oddelenych mezerou. all znaci vsechny -->
-	<property name="metanodes_allow_resize_pages"></property>
+	<property name="metanodes_allow_resize_pages">all</property>
 	<!-- seznam IDs roli pro ktere budou metanodes zakazane oddelenych carkou - napriklad: 5,6 -->
 	<property name="metanodes_forbidden_xtroles"></property>
 </properties>
