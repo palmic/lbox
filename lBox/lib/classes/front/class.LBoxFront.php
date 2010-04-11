@@ -86,13 +86,36 @@ class LBoxFront extends LBox
 		try {
 			// starting timer
 			LBoxTimer::getInstance();
-			
+
 			// init acces
 			AccesRecord::getInstance();
-			
-			$content		= self::getRequestContent();
 
+			// caching
+			if (!LBoxXTProject::isLoggedAdmin()) {
+				if (count(self::getDataPost()) < 1 && LBoxConfigManagerProperties::gpcn("cache_front")) {
+					if (LBoxCacheManagerFront::getInstance()->doesCacheExists()) {
+LBoxFirePHP::log("cache loaded");
+						// send last modification header
+						header("Last-Modified: ".gmdate("D, d M Y H:i:s", LBoxCacheManagerFront::getInstance()->getLastCacheModificationTime())." GMT");
+						echo LBoxCacheManagerFront::getInstance()->getData();
+						LBoxCacheManagerFront::getInstance()->__destruct();
+						return;
+					}
+				}
+			}
+			$content	= self::getRequestContent();
 			echo $content;
+			
+			if (!LBoxXTProject::isLoggedAdmin()) {
+				if (count(self::getDataPost()) < 1 && LBoxConfigManagerProperties::gpcn("cache_front")) {
+					// vystup z nenalezenych URL neukladame - mohlo by umoznit snadno zahltit cache!
+					if (self::getPageCfg()->id	!= LBoxConfigSystem::getInstance()->getParamByPath("pages/page404")) {
+						LBoxCacheManagerFront::getInstance()->saveData($content);
+LBoxFirePHP::log("cache stored");
+					}
+				}
+			}
+			LBoxCacheManagerFront::getInstance()->__destruct();
 		}
 		catch (Exception $e) {
 			throw $e;

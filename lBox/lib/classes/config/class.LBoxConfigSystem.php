@@ -59,6 +59,7 @@ class LBoxConfigSystem extends LBoxConfig
 			// replace meta words
 			$value = str_replace("\$system", 	LBOX_PATH_CORE, 	$value);
 			$value = str_replace("\$project", 	LBOX_PATH_PROJECT, 	$value);
+			$value = str_replace("\$cache", 	LBOX_PATH_CACHE, 	$value);
 			return self::$paramsByPaths[$path] = trim($value);
 		}
 	}

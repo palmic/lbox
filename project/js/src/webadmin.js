@@ -56,7 +56,7 @@ var handleSuccessContentMetanode = function(o) {
 	for (i in nodeInstances) {
 		nodeInstances[i].style.overflow	= 'hidden';
 		if (!YAHOO.util.Selector.query('form.metanode', nodeInstances[i], true)) {
-			nodeContent				= YAHOO.util.Selector.query('.content', nodeInstances[i], true);
+			nodeContent				= YAHOO.util.Selector.query('.lbox-meta-content', nodeInstances[i], true);
 			nodeContent.innerHTML	= data.Results.content;
 		}
 	}
@@ -78,7 +78,7 @@ var handleSuccessResize = function(o) {
 	for (i in nodeInstances) {
 		if (!YAHOO.util.Selector.query('form.metanode', nodeInstances[i], true)) {
 			nodeInstances[i].style.overflow	= 'hidden';
-			nodeContent							= YAHOO.util.Selector.query('.content', nodeInstances[i], true);
+			nodeContent							= YAHOO.util.Selector.query('.lbox-meta-content', nodeInstances[i], true);
 			nodeContent.style.width				= resizes[form.id].getWrapEl().style.width;
 			nodeContent.style.height			= resizes[form.id].getWrapEl().style.height;
 		}
