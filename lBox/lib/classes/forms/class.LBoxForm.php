@@ -121,6 +121,8 @@ class LBoxForm
 				unset($_SESSION["LBox"]["Forms"][$this->getName()]["succes"]);
 				$this->sentSucces	= true;
 			}
+			// pridame form do indexace front cache manageru k aktualni URL
+			LBoxCacheManagerFront::getInstance()->addFormUsed($this);
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -160,6 +162,31 @@ class LBoxForm
 			throw new LBoxExceptionFormControl(LBoxExceptionFormControl::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormControl::CODE_BAD_PARAM);
 		}
 		$this->params[$name]	= $value;
+	}
+
+	/**
+	 * vrati jestli byl odeslan konkretni form
+	 * @param string $name
+	 * @return bool
+	 */
+	public static function wasFormSentByName($name = "") {
+		try {
+			if (strlen($name) < 1) {
+				throw new LBoxExceptionForm(LBoxExceptionForm::MSG_PARAM_STRING_NOTNULL, LBoxExceptionForm::CODE_BAD_PARAM);
+			}
+			$out	= false;
+			// check session
+			switch (true) {
+				case (array_key_exists($name, $_SESSION["LBox"]["Forms"]) && $_SESSION["LBox"]["Forms"][$name]["succes"]):
+				case (array_key_exists($name, self::$forms) && (self::$forms[$name]->wasSentSucces() || self::$forms[$name]->wasSent())):
+					$out	= true;
+				break;
+			}
+			return $out;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
 	}
 
 	/**

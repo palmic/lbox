@@ -14,7 +14,7 @@ class LBoxCacheManagerFront
 	 * @var LBoxCacheData
 	 */
 	private static $cache;
-	
+
 	/**
 	 * pole indexujici vztah URLs a recordu array(url => array(record1, record2.....))
 	 * @var array
@@ -26,7 +26,7 @@ class LBoxCacheManagerFront
 	 * @var array
 	 */
 	protected $uRLsByrecordTypes	= array();
-	
+
 	/**
 	 * flag pro vypnuti naslouchani v pripadech, kdy nechceme logovat vazby URLs a records types (nutne pro API)
 	 * @var bool
@@ -58,18 +58,49 @@ class LBoxCacheManagerFront
 			if ($this->listeningOff) {
 				return;
 			}
-			if (array_key_exists($type, (array)$this->recordTypes[LBOX_REQUEST_URL]["types"])) {
-				return;
-			}
 			if ($type == AccesRecord) return;
-			$this->recordTypes[LBOX_REQUEST_URL]["types"][$type]	= $type;
-			$this->recordTypes[LBOX_REQUEST_URL]["pageid"]			= LBoxFront::getPage()->config->id;
+			$this->recordTypes[LBOX_REQUEST_URL]["recordtypes"][$type]	= $type;
+			$this->recordTypes[LBOX_REQUEST_URL]["pageid"]				= LBoxFront::getPage()->config->id;
 		}
 		catch (Exception $e) {
 			throw $e;
 		}
 	}
 
+	/**
+	 * prida form do indexace k aktualni URL
+	 * @param LBoxForm $form
+	 */
+	public function addFormUsed(LBoxForm $form) {
+		try {
+			if ($this->listeningOff) {
+				return;
+			}
+			$this->recordTypes[LBOX_REQUEST_URL]["forms"][$form->getName()]	= $form->getName();
+			$this->recordTypes[LBOX_REQUEST_URL]["pageid"]					= LBoxFront::getPage()->config->id;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * vrati true, pokud byl na teto strance aktualne odeslan formular - pouzivano pri zjitovani jestli se ma tato URL nacist z cache
+	 * @return bool
+	 */
+	public function wasFormSentNow() {
+		try {
+			foreach ((array)$this->recordTypes[LBOX_REQUEST_URL]["forms"] as $formName) {
+				if (LBoxForm::wasFormSentByName($formName)) {
+					return true;
+				}
+			}
+			return false;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
 	/**
 	 * vycisti cache relevantni k danemu typu recordu
 	 * @param string $type
@@ -218,7 +249,7 @@ class LBoxCacheManagerFront
 			}
 			$this->uRLsByrecordTypes[$type]	= array();
 			foreach ($this->recordTypes as $url => $recordInfo) {
-				foreach ((array)$recordInfo["types"] as $recordType) {
+				foreach ((array)$recordInfo["recordtypes"] as $recordType) {
 					$this->uRLsByrecordTypes[$recordType][]	= $url;
 				}
 			}
@@ -251,7 +282,7 @@ class LBoxCacheManagerFront
 
 	/**
 	 * @return LBoxCacheLoader
-	 * @throws LBoxCacheManagerFront
+	 * @return LBoxCacheManagerFront
 	 */
 	public static function getInstance () {
 		$className 	= __CLASS__;
@@ -275,7 +306,6 @@ class LBoxCacheManagerFront
 	public function __destruct() {
 		try {
 			if ($this->destructed) return;
-LBoxFirePHP::table((array)$this->recordTypes[LBOX_REQUEST_URL], "records types URL: ". LBOX_REQUEST_URL);
 			// ulozeni cache
 			$this->getCache()->saveDataDirect(serialize($this->recordTypes));
 			$this->destructed = true;

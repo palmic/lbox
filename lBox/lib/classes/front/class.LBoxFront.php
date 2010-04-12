@@ -91,7 +91,7 @@ class LBoxFront extends LBox
 			AccesRecord::getInstance();
 
 			// caching
-			if (!LBoxXTProject::isLoggedAdmin()) {
+			if ((!LBoxXTProject::isLoggedAdmin()) && (!LBoxCacheManagerFront::getInstance()->wasFormSentNow())) {
 				if (count(self::getDataPost()) < 1 && LBoxConfigManagerProperties::gpcn("cache_front")) {
 					if (LBoxCacheManagerFront::getInstance()->doesCacheExists()) {
 LBoxFirePHP::log("cache loaded");
@@ -106,7 +106,7 @@ LBoxFirePHP::log("cache loaded");
 			$content	= self::getRequestContent();
 			echo $content;
 			
-			if (!LBoxXTProject::isLoggedAdmin()) {
+			if ((!LBoxXTProject::isLoggedAdmin()) && (!LBoxCacheManagerFront::getInstance()->wasFormSentNow())) {
 				if (count(self::getDataPost()) < 1 && LBoxConfigManagerProperties::gpcn("cache_front")) {
 					// vystup z nenalezenych URL neukladame - mohlo by umoznit snadno zahltit cache!
 					if (self::getPageCfg()->id	!= LBoxConfigSystem::getInstance()->getParamByPath("pages/page404")) {
