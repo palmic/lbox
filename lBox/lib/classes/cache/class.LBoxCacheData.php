@@ -15,6 +15,8 @@ class LBoxCacheData extends LBoxCache2
 	 */
 	private $autosave	= false;
 	
+	protected $hashedDirectoryLevel = 0;
+	
 	public function setAutoSave($value = true) {
 		try {
 			$this->autosave	= $value;
@@ -29,7 +31,7 @@ class LBoxCacheData extends LBoxCache2
 			if (!is_int($time) || $time < 1) {
 				throw new LBoxExceptionCache("\$time: ". LBoxExceptionCache::MSG_PARAM_INT, LBoxExceptionCache::CODE_BAD_PARAM);
 			}
-			self::$lifeTime	= $time;
+			$this->lifeTime	= $time;
 		}
 		catch (Exception $e) {
 			throw $e;

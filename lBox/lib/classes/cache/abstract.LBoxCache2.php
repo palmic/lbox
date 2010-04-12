@@ -15,13 +15,13 @@ class LBoxCache2
 	 * zivotnost cache
 	 * @var int
 	 */
-	protected static $lifeTime = 3600;
+	protected $lifeTime = 3600;
 	
 	/**
 	 * see http://pear.php.net/manual/en/package.caching.cache-lite.cache-lite.cache-lite.php
 	 * @var int
 	 */
-	protected static $hashedDirectoryLevel = 2;
+	protected $hashedDirectoryLevel = 2;
 	
 	/**
 	 * cache data ID (see Cache_Lite)
@@ -323,7 +323,7 @@ class LBoxCache2
 	 */
 	public function getDataDirect () {
 		try {
-//LBoxFirePHP::warn("vracim data z cache group = '". $this->group ."' id = '".$this->id."'");
+LBoxFirePHP::warn("vracim data z cache group = '". $this->group ."' id = '".$this->id."'");
 			if (!$data = $this->getCache()->get($this->id, $this->group ? $this->group : NULL)) {
 				return "";
 			}
@@ -395,8 +395,8 @@ class LBoxCache2
 			self::createDirByPath($dir);
 			$cacheOptions = array(
 			    "cacheDir" 				=> $dir,
-			    "lifeTime" 				=> self::$lifeTime,
-			    "hashedDirectoryLevel"	=> self::$hashedDirectoryLevel,
+			    "lifeTime" 				=> $this->lifeTime,
+			    "hashedDirectoryLevel"	=> $this->hashedDirectoryLevel,
 			);
 			$this->cache	= new Cache_Lite($cacheOptions);
 			return $this->cache;

@@ -30,7 +30,6 @@ class LBoxCacheFront extends LBoxCache2
 			if (strlen($xtUserID) < 1) 	{ $xtUserID = self::getCacheID(); }
 			$id		= $xtUserID;
 			$group	= $url;
-			self::$lifeTime	= LBoxConfigSystem::getInstance()->getParamByPath("output/cache/expiration");
 
 			$className 	= __CLASS__;
 			try {
@@ -50,13 +49,23 @@ class LBoxCacheFront extends LBoxCache2
 		}
 	}
 	
+	protected function __construct($id = "", $group = "") {
+		try {
+			parent::__construct($id, $group);
+			$this->lifeTime	= LBoxConfigSystem::getInstance()->getParamByPath("output/cache/expiration");
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
 	/**
 	 * vraci cache id podle momentalne (ne)zalogovaneho uzivatele
 	 * @return string
 	 */
 	public static function getCacheID() {
 		try {
-			return LBoxXTProject::isLogged(XT_GROUP ? XT_GROUP : NULL) ? ("xtu". LBoxXTProject::getUserXTRecord(XT_GROUP ? XT_GROUP : NULL)->id) : "notlogged";			
+			return LBoxXTProject::isLogged() ? ("xtu". LBoxXTProject::getUserXTRecord()->id) : "notlogged";			
 		}
 		catch (Exception $e) {
 			throw $e;
