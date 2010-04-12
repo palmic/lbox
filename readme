@@ -1,9 +1,34 @@
-pokracovat na front cache:
+Vytvoreni noveho projektu:
 --------------------------------------------------
 
- vymyslet inteligentni mazani cache viz https://palmic.basecamphq.com/projects/2314904/todo_lists
- 
+1. domena / fileprostor / konfigurace
+--------------------------
+1.1 - vytvoreni
+ - nakopirovat do fileprostoru projektu
+ - vytvorit na serveru domenu / subdomenu smerujici do fileprostoru projektu
+ - v project/config/langdomains.xml nastavit tuto domenu a jeji jazyk 
+    - '.localhost' byva z domeny pri porovnavani automaticky odstranovano, proto bude v configu 'lbox.cz' fungovat jak na domene 'lbox.cz', tak na 'lbox.localhost.cz'
+1.2 - prava
+ - nastavit prava pro zapis uzivateli pod kterym bezi php na adresare:
+     - / (pro exceptions logy)
+     - project/.cache/*  (cache)
+     - project/.tal_compiled/* (kompilace templates)
+     - project/.data/* (data metanodes)
+     - project/classes/* (system tam kopiruje pripadne neexistujici classy z defautnich)
+     - project/templates/* (system tam kopiruje pripadne neexistujici templates z defautnich)
+     - project/js/combined/* (pro pripadne mergovani javascriptu - mozne zapnout v systemovem config.xml)
+1.3 - zakladni konfigurace
+ - podle jazykove mutace webu je nutno zvolit nazvy konfiguracnich souboru project/config/properties.<lang>.xml a project/config/structure.<lang>.xml
+   - pro ceskou mutaci plati napriklad properties.cs.xml a structure.cs.xml
+   - jednotne nastaveni globalne pro vsechny jazyky je properties.xml a structure.xml
+   - priotita je vzdy vyssi pro nastaveni konkretniho jazyku - az potom se bere globalni 
 
- - cache by se mela uchovavat podle zobrazene URL (pouze bez post dat)
- - cache by mela byt volitelne mazana pouze pro zalogovaneho XTUsera
-   - definovat na konkretni URL - structure.xml
+2. databaze (momentalne otestovano pro MSSQL, MySQL - kde je normalne provozovano)
+ - PRO PRIPAD PROVOZU BEZ DATABAZE NUTNO PRENOUT log_access v properties.xml na 0
+ - nastaveni databazoveho pripojeni v pripade pouzivani databaze je v project/config/db.xml
+ - !DO DATABAZE SE PRISTUPUJE VYHRADNE PRES objekty typu AbstractRecord a AbstractRecords zadne manualni psani SQL neni z duvodu konzistence povoleno! 
+
+3. stranky / komponenty / layout
+3.1 - stranky
+ - nastavit zakladni sablonu stranky project/templates/pages/default.html - ostatni neexistujici z ni budou automaticky duplikovany
+ - v project/config/structure.<lang>.xml nastavit strukturu webu
