@@ -156,7 +156,7 @@ class LBoxCacheManagerFront
 			}
 
 			$config	= LBoxConfigManagerStructure::getInstance()->getPageById($this->recordTypes[$url]["pageid"]);
-			if ((!$forceCleanForAllXTUsers) && (!LBoxXTProject::isLoggedAdmin(XT_GROUP ? XT_GROUP : NULL)) && $config->cache_recordsdata_by_xtuser) {
+			if ((!$forceCleanForAllXTUsers) && (!LBoxXTProject::isLoggedAdmin()) && $config->cache_recordsdata_by_xtuser) {
 				LBoxCacheFront::getInstance()->removeConcrete(LBoxCacheFront::getCacheID(), $url);
 			}
 			else {
