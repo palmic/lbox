@@ -104,15 +104,16 @@ class LBoxCacheManagerFront
 	/**
 	 * vycisti cache relevantni k danemu typu recordu
 	 * @param string $type
+	 * @param bool $forceCleanForAllXTUsers
 	 */
-	public function cleanByRecordType($type = "") {
+	public function cleanByRecordType($type = "", $forceCleanForAllXTUsers = false) {
 		try {
 			if (strlen($type) < 1) {
 				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_PARAM_STRING_NOTNULL, LBoxExceptionCache::CODE_BAD_PARAM);
 			}
 			if ($type == "AccesRecord") return;
 			foreach ($this->getURLsByRecordType($type) as $url) {
-				$this->cleanURLData($url);
+				$this->cleanURLData($url, $forceCleanForAllXTUsers);
 			}
 		}
 		catch (Exception $e) {
