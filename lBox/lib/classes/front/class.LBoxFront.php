@@ -90,32 +90,40 @@ class LBoxFront extends LBox
 			// init acces
 			AccesRecord::getInstance();
 
+			self::executeInit();
+
 			// caching
-			if ((!LBoxXTProject::isLoggedAdmin()) && (!LBoxCacheManagerFront::getInstance()->wasFormSentNow())) {
-				if (count(self::getDataPost()) < 1 && LBoxConfigManagerProperties::gpcn("cache_front")) {
-					if (LBoxCacheManagerFront::getInstance()->doesCacheExists()) {
+//var_dump(LBoxCacheManagerFront::getInstance()->wasFormSentNow());die;
+			if (self::getPage()->showConnivance()) {
+				if ((!LBoxXTProject::isLoggedAdmin()) && (!LBoxCacheManagerFront::getInstance()->wasFormSentNow())) {
+					if (count(self::getDataPost()) < 1 && LBoxConfigManagerProperties::gpcn("cache_front")) {
+						if (LBoxCacheManagerFront::getInstance()->doesCacheExists()) {
 LBoxFirePHP::log("cache loaded");
-						// send last modification header
-						header("Last-Modified: ".gmdate("D, d M Y H:i:s", LBoxCacheManagerFront::getInstance()->getLastCacheModificationTime())." GMT");
-						echo LBoxCacheManagerFront::getInstance()->getData();
-						LBoxCacheManagerFront::getInstance()->__destruct();
-						return;
+							// send last modification header
+							header("Last-Modified: ".gmdate("D, d M Y H:i:s", LBoxCacheManagerFront::getInstance()->getLastCacheModificationTime())." GMT");
+							echo LBoxCacheManagerFront::getInstance()->getData();
+							LBoxCacheManagerFront::getInstance()->__destruct();
+							return;
+						}
 					}
 				}
-			}
-			$content	= self::getRequestContent();
-			echo $content;
-			
-			if ((!LBoxXTProject::isLoggedAdmin()) && (!LBoxCacheManagerFront::getInstance()->wasFormSentNow())) {
-				if (count(self::getDataPost()) < 1 && LBoxConfigManagerProperties::gpcn("cache_front")) {
-					// vystup z nenalezenych URL neukladame - mohlo by umoznit snadno zahltit cache!
-					if (self::getPageCfg()->id	!= LBoxConfigSystem::getInstance()->getParamByPath("pages/page404")) {
-						LBoxCacheManagerFront::getInstance()->saveData($content);
+				$content	= self::getRequestContent();
+				echo $content;
+				
+				if ((!LBoxXTProject::isLoggedAdmin()) && (!LBoxCacheManagerFront::getInstance()->wasFormSentNow())) {
+					if (count(self::getDataPost()) < 1 && LBoxConfigManagerProperties::gpcn("cache_front")) {
+						// vystup z nenalezenych URL neukladame - mohlo by umoznit snadno zahltit cache!
+						if (self::getPageCfg()->id	!= LBoxConfigSystem::getInstance()->getParamByPath("pages/page404")) {
+							LBoxCacheManagerFront::getInstance()->saveData($content);
 LBoxFirePHP::log("cache stored");
+						}
 					}
 				}
+				LBoxCacheManagerFront::getInstance()->__destruct();
 			}
-			LBoxCacheManagerFront::getInstance()->__destruct();
+			else {
+				echo self::getRequestContent();
+			}
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -128,6 +136,18 @@ LBoxFirePHP::log("cache stored");
 	 * @throws LBoxException
 	 */
 	protected static function getRequestContent() {
+		try {
+			return trim(self::getPage()->getContent());
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * procedury provadene pred praci s cachi
+	 */
+	protected static function executeInit() {
 		try {
 			$pageCfg = self::getPageCfg();
 
@@ -187,8 +207,10 @@ LBoxFirePHP::log("cache stored");
 				if (LBoxXTProject::isLogged($reloadParamPartsLogged[0])) {
 					LBoxFront::reloadLogged();
 				}
-			}
-			return trim(self::getPage()->getContent());
+			}			
+
+			// prodlouzit init volani procedury do tridy aktualni stranky
+			self::getPage()->executeInit();
 		}
 		catch (Exception $e) {
 			throw $e;

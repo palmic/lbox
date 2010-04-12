@@ -323,6 +323,7 @@ class LBoxCache2
 	 */
 	public function getDataDirect () {
 		try {
+//LBoxFirePHP::warn("vracim data z cache group = '". $this->group ."' id = '".$this->id."'");
 			if (!$data = $this->getCache()->get($this->id, $this->group ? $this->group : NULL)) {
 				return "";
 			}

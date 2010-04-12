@@ -21,7 +21,7 @@ class LBoxCacheFront extends LBoxCache2
 	 * pretizeno o automaticke definovani cache ID a group (id = url, group = ID momentalne prihlaseneho uzivatele)
 	 * @param $url
 	 * @param $xtUserID
-	 * @return LBoxCacheLoader
+	 * @return LBoxCacheFront
 	 * @throws LBoxExceptionCache
 	 */
 	public static function getInstance($url = "", $xtUserID = "") {

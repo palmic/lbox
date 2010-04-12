@@ -94,6 +94,7 @@ class LBoxCacheManagerFront
 				if (LBoxForm::wasFormSentByName($formName)) {
 					return true;
 				}
+//LBoxFirePHP::error("$formName nebyl odeslan!");
 			}
 			return false;
 		}
@@ -282,7 +283,6 @@ class LBoxCacheManagerFront
 	protected static $instance;
 
 	/**
-	 * @return LBoxCacheLoader
 	 * @return LBoxCacheManagerFront
 	 */
 	public static function getInstance () {
