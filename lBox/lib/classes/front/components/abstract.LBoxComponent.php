@@ -113,8 +113,19 @@ abstract class LBoxComponent
 	}
 
 	/**
+	 * vola se pred ziskavanim obsahu frontem - vyuziva se k proceduram, ktere se musi provest pred manipulaci s cachi
+	 * @throws Exception
+	 */
+	public function executeInit() {
+		try {
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * vola se pred executePrepend - vyuziva se k nastaveni default OutPutFilteru podrazenych abstraktnich typu
-	 * @param PHPTAL $TAL
 	 * @throws Exception
 	 */
 	protected function executeStart() {
@@ -254,7 +265,7 @@ abstract class LBoxComponent
 			$templateFileName	= $this->getTemplateFileName();
 
 			// prepend
-			$this->executeStart($this->getTAL());
+			$this->executeStart();
 			$this->executePrepend($this->getTAL());
 
 			try {

@@ -175,10 +175,12 @@ class LBoxForm
 				throw new LBoxExceptionForm(LBoxExceptionForm::MSG_PARAM_STRING_NOTNULL, LBoxExceptionForm::CODE_BAD_PARAM);
 			}
 			$out	= false;
-			// check session
+			
+			// check session and real data
 			switch (true) {
-				case (array_key_exists($name, $_SESSION["LBox"]["Forms"]) && $_SESSION["LBox"]["Forms"][$name]["succes"]):
-				case (array_key_exists($name, self::$forms) && (self::$forms[$name]->wasSentSucces() || self::$forms[$name]->wasSent())):
+				case (array_key_exists($name, (array)$_SESSION["LBox"]["Forms"]) && $_SESSION["LBox"]["Forms"][$name]["succes"]):
+				case (array_key_exists($name, (array)self::$forms) && (self::$forms[$name]->wasSentSucces() || self::$forms[$name]->wasSent())):
+				case (array_key_exists($name, (array)LBoxFront::getDataGet()) || array_key_exists($name, (array)LBoxFront::getDataPost()) || array_key_exists($name, (array)LBoxFront::getDataFiles())):
 					$out	= true;
 				break;
 			}
