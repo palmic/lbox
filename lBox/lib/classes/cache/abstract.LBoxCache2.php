@@ -18,6 +18,12 @@ class LBoxCache2
 	protected static $lifeTime = 3600;
 	
 	/**
+	 * see http://pear.php.net/manual/en/package.caching.cache-lite.cache-lite.cache-lite.php
+	 * @var int
+	 */
+	protected static $hashedDirectoryLevel = 2;
+	
+	/**
 	 * cache data ID (see Cache_Lite)
 	 * @var string
 	 */
@@ -387,8 +393,9 @@ class LBoxCache2
 			$dir	=  substr($dir, -1) == SLASH ? $dir : $dir . SLASH;
 			self::createDirByPath($dir);
 			$cacheOptions = array(
-			    "cacheDir" => $dir,
-			    "lifeTime" => self::$lifeTime
+			    "cacheDir" 				=> $dir,
+			    "lifeTime" 				=> self::$lifeTime,
+			    "hashedDirectoryLevel"	=> self::$hashedDirectoryLevel,
 			);
 			$this->cache	= new Cache_Lite($cacheOptions);
 			return $this->cache;
