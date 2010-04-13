@@ -59,8 +59,9 @@ class LBoxCacheManagerFront
 				return;
 			}
 			if ($type == AccesRecord) return;
-			$this->recordTypes[LBOX_REQUEST_URL]["recordtypes"][$type]	= $type;
-			$this->recordTypes[LBOX_REQUEST_URL]["pageid"]				= LBoxFront::getPage()->config->id;
+			$url	= (substr(LBOX_REQUEST_URL, -1) == "/") ? LBOX_REQUEST_URL : LBOX_REQUEST_URL . "/";
+			$this->recordTypes[$url]["recordtypes"][$type]	= $type;
+			$this->recordTypes[$url]["pageid"]				= LBoxFront::getPage()->config->id;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -76,8 +77,9 @@ class LBoxCacheManagerFront
 			if ($this->listeningOff) {
 				return;
 			}
-			$this->recordTypes[LBOX_REQUEST_URL]["forms"][$form->getName()]	= $form->getName();
-			$this->recordTypes[LBOX_REQUEST_URL]["pageid"]					= LBoxFront::getPage()->config->id;
+			$url	= (substr(LBOX_REQUEST_URL, -1) == "/") ? LBOX_REQUEST_URL : LBOX_REQUEST_URL . "/";
+			$this->recordTypes[$url]["forms"][$form->getName()]	= $form->getName();
+			$this->recordTypes[$url]["pageid"]					= LBoxFront::getPage()->config->id;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -90,7 +92,8 @@ class LBoxCacheManagerFront
 	 */
 	public function wasFormSentNow() {
 		try {
-			foreach ((array)$this->recordTypes[LBOX_REQUEST_URL]["forms"] as $formName) {
+			$url	= (substr(LBOX_REQUEST_URL, -1) == "/") ? LBOX_REQUEST_URL : LBOX_REQUEST_URL . "/";
+			foreach ((array)$this->recordTypes[$url]["forms"] as $formName) {
 				if (LBoxForm::wasFormSentByName($formName)) {
 					return true;
 				}
@@ -109,6 +112,10 @@ class LBoxCacheManagerFront
 	 */
 	public function cleanByRecordType($type = "", $forceCleanForAllXTUsers = false) {
 		try {
+LBoxFirePHP::log("mazu cache recordu '$type'");
+			if ($this->listeningOff) {
+				return;
+			}
 			if (strlen($type) < 1) {
 				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_PARAM_STRING_NOTNULL, LBoxExceptionCache::CODE_BAD_PARAM);
 			}
@@ -162,7 +169,6 @@ class LBoxCacheManagerFront
 			else {
 				LBoxCacheFront::getInstance()->cleanConcrete($url);
 			}
-			unset($this->recordTypes[$url]);
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -222,7 +228,7 @@ class LBoxCacheManagerFront
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * LBoxCacheFront alias
 	 * @return int
@@ -235,7 +241,7 @@ class LBoxCacheManagerFront
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * vrati vsechny URL indexovane s predanym typem
 	 * @param string $type
@@ -297,13 +303,13 @@ class LBoxCacheManagerFront
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * flag
 	 * @var bool
 	 */
 	protected $destructed = false;
-	
+
 	public function __destruct() {
 		try {
 			if ($this->destructed) return;

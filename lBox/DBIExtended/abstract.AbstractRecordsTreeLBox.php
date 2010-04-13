@@ -14,6 +14,21 @@ abstract class AbstractRecordsTreeLBox extends AbstractRecordsTree
 	protected $outputFilterClass;
 
 	/**
+	 * overloaded with front cache logic
+	 */
+	public function __construct($filter = false, $order = false, $limit = false, QueryBuilderWhere $whereAdd = NULL) {
+		try {
+			// do inform front cache manager that this record type data hapen to be used at this URL
+			LBoxCacheManagerFront::getInstance()->addRecordType($this->getClassVar("itemType"));
+			
+			return parent::__construct($filter, $order, $limit, $whereAdd);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
 	 * Set items OutputFilter class
 	 * @param string $outputFilterClass
 	 */
@@ -31,9 +46,6 @@ abstract class AbstractRecordsTreeLBox extends AbstractRecordsTree
 	 */
 	public function current() {
 		try {
-			// do inform front cache manager that this record type data hapen to be used at this URL
-			LBoxCacheManagerFront::getInstance()->addRecordType($this->getClassVar("itemType"));
-			
 			if (!($record = parent::current()) instanceof AbstractRecord) {
 				return $record;
 			}

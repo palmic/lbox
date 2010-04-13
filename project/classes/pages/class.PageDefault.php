@@ -6,8 +6,17 @@
  * @version 1.0
  * @since 2007-12-08
  */
-class PageDefault extends PageProject
+class PageDefault extends PageNonstopCity
 {
+	public function executeInit() {
+		try {
+			parent::executeInit();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
 	protected function executeStart() {
 		try {
 			parent::executeStart();

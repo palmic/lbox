@@ -8,6 +8,12 @@
  */
 class LBoxCacheFront extends LBoxCache2
 {
+	/**
+	 * pokud je nastaveno, trida naklada pouze s daty tohoto uzivatele bez ohledu na to, kdo je momentalne zalogovan
+	 * @var int
+	 */
+	protected static $xTUserIDForce;
+	
 	protected function getDir () {
 		try {
 			return LBoxConfigSystem::getInstance()->getParamByPath("output/cache/path");
@@ -65,7 +71,30 @@ class LBoxCacheFront extends LBoxCache2
 	 */
 	public static function getCacheID() {
 		try {
-			return LBoxXTProject::isLogged() ? ("xtu". LBoxXTProject::getUserXTRecord()->id) : "notlogged";			
+			switch (true) {
+				case (is_numeric(self::$xTUserIDForce) && (self::$xTUserIDForce > 0)):
+						return self::getCacheIDByXTUserID(self::$xTUserIDForce);
+					break;
+				case LBoxXTProject::isLogged():
+						return self::getCacheIDByXTUserID(LBoxXTProject::getUserXTRecord()->id);
+					break;
+				default:
+					return self::getCacheIDByXTUserID();
+			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * vraci cache id podle predaneho ID uzivatele
+	 * @param int $xtUserID
+	 * @return string
+	 */
+	public static function getCacheIDByXTUserID($xtUserID = "") {
+		try {
+			return $xtUserID ? ("xtu". $xtUserID) : "notlogged";			
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -79,6 +108,25 @@ class LBoxCacheFront extends LBoxCache2
 	public static function getCacheGroup() {
 		try {
 			return LBOX_REQUEST_URL;			
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * vraci cache group podle momentalni URL
+	 * @return int
+	 */
+	public static function setXTUserIDForce($id = 0) {
+		try {
+			if ($id instanceof XTUsersRecord) {
+				$id	= $id->id;
+			}
+			if ((!is_numeric($id)) || ($id < 1)) {
+				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_PARAM_INT_NOTNULL, LBoxExceptionCache::CODE_BAD_PARAM);
+			}
+			self::$xTUserIDForce	= $id;			
 		}
 		catch (Exception $e) {
 			throw $e;

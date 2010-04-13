@@ -65,6 +65,12 @@ class LBoxCache2
 	 */
 	protected static $filesOpenedWrite	= 0;
 
+	/**
+     * Cache_Lite Umask for hashed directory structure
+	 * @var int
+	 */
+	protected static $_hashedDirectoryUmask	= 0777;
+
 	protected static $instance;
 
 	/**
@@ -172,6 +178,7 @@ class LBoxCache2
 			if (!$this->getCache()->remove($id, $group)) {
 				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_CACHE_CANNOT_WRITE, LBoxExceptionCache::CODE_CACHE_CANNOT_WRITE);
 			}
+LBoxFirePHP::warn("cache smazana: \$id='$id', \$group='$group'");
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -188,6 +195,7 @@ class LBoxCache2
 			if (!$this->getCache()->clean($group, $mode)) {
 				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_CACHE_CANNOT_WRITE, LBoxExceptionCache::CODE_CACHE_CANNOT_WRITE);
 			}
+LBoxFirePHP::warn("cache smazana: \$group='$group'");
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -323,7 +331,7 @@ class LBoxCache2
 	 */
 	public function getDataDirect () {
 		try {
-LBoxFirePHP::warn("vracim data z cache group = '". $this->group ."' id = '".$this->id."'");
+LBoxFirePHP::log("vracim data z cache group = '". $this->group ."' id = '".$this->id."'");
 			if (!$data = $this->getCache()->get($this->id, $this->group ? $this->group : NULL)) {
 				return "";
 			}
@@ -399,6 +407,7 @@ LBoxFirePHP::warn("vracim data z cache group = '". $this->group ."' id = '".$thi
 			    "hashedDirectoryLevel"	=> $this->hashedDirectoryLevel,
 			);
 			$this->cache	= new Cache_Lite($cacheOptions);
+			$this->cache	->_hashedDirectoryUmask	= self::$_hashedDirectoryUmask;
 			return $this->cache;
 		}
 		catch (Exception $e) {
