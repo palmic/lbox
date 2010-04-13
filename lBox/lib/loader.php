@@ -128,8 +128,8 @@ try {
 	}
 	// disable firePHP on remote mashines (enabled on localhost only!!!)
 	if (LBOX_REQUEST_IP != LBOX_REQUEST_IP_MY) {
-		//FirePHP::getInstance(true)->setEnabled(false);
-		//FB::setEnabled(false);
+		FirePHP::getInstance(true)->setEnabled(false);
+		FB::setEnabled(false);
 	}
 	$firePHPOptions = array('maxObjectDepth' => 10,
                  			'maxArrayDepth' => 20,

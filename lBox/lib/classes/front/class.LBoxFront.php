@@ -17,13 +17,13 @@ class LBoxFront extends LBox
 	 * @var LBoxPage
 	 */
 	protected static $page;
-
+	
 	/**
 	 * cache var
 	 * @var string
 	 */
 	protected static $displayLanguage = "";
-
+	
 	public static $HTTP = array (
 	100 => "HTTP/1.1 100 Continue",
 	101 => "HTTP/1.1 101 Switching Protocols",
@@ -71,13 +71,13 @@ class LBoxFront extends LBox
 	 * @var string
 	 */
 	protected static $urlParamNameLogout	= "logout";
-
+	
 	/**
 	 * logout URL param name
 	 * @var string
 	 */
 	protected static $urlParamNameLogoutDBFree	= "logout-dbfree";
-
+	
 	/**
 	 * spousti zobrazeni pozadovane stranky
 	 * @throws LBoxException
@@ -97,36 +97,42 @@ LBoxFirePHP::error("asdasd");
 //die;*/
 			// caching
 //var_dump(LBoxCacheManagerFront::getInstance()->wasFormSentNow());die;
-			//if (self::getPage()->showConnivance()) {
-				if ((!LBoxXTProject::isLoggedAdmin()) && (!LBoxCacheManagerFront::getInstance()->wasFormSentNow())) {
-					if (count(self::getDataPost()) < 1 && LBoxConfigManagerProperties::gpcn("cache_front")) {
-						if (LBoxCacheManagerFront::getInstance()->doesCacheExists()) {
-LBoxFirePHP::log("cache loaded");
-							// send last modification header
-							header("Last-Modified: ".gmdate("D, d M Y H:i:s", LBoxCacheManagerFront::getInstance()->getLastCacheModificationTime())." GMT");
-							echo LBoxCacheManagerFront::getInstance()->getData();
-							LBoxCacheManagerFront::getInstance()->__destruct();
-							return;
+			if (self::getPage()->showConnivance()) {
+				if (!self::getPageCfg()->cache_off) {
+					if ((!LBoxXTProject::isLoggedAdmin()) && (!LBoxCacheManagerFront::getInstance()->wasFormSentNow())) {
+						if (count(self::getDataPost()) < 1 && LBoxConfigManagerProperties::gpcn("cache_front")) {
+							if (LBoxCacheManagerFront::getInstance()->doesCacheExists()) {
+LBoxFirePHP::warn("cache loaded");
+								// send last modification header
+								header("Last-Modified: ".gmdate("D, d M Y H:i:s", LBoxCacheManagerFront::getInstance()->getLastCacheModificationTime())." GMT");
+								echo LBoxCacheManagerFront::getInstance()->getData();
+								LBoxCacheManagerFront::getInstance()->__destruct();
+								return;
+							}
 						}
 					}
-				}
-				$content	= self::getRequestContent();
-				echo $content;
-
-				if ((!LBoxXTProject::isLoggedAdmin()) && (!LBoxCacheManagerFront::getInstance()->wasFormSentNow())) {
-					if (count(self::getDataPost()) < 1 && LBoxConfigManagerProperties::gpcn("cache_front")) {
-						// vystup z nenalezenych URL neukladame - mohlo by umoznit snadno zahltit cache!
-						if (self::getPageCfg()->id	!= LBoxConfigSystem::getInstance()->getParamByPath("pages/page404")) {
-							LBoxCacheManagerFront::getInstance()->saveData($content);
-LBoxFirePHP::log("cache stored");
+					$content	= self::getRequestContent();
+					echo $content;
+					
+					if ((!LBoxXTProject::isLoggedAdmin()) && (!LBoxCacheManagerFront::getInstance()->wasFormSentNow())) {
+						if (count(self::getDataPost()) < 1 && LBoxConfigManagerProperties::gpcn("cache_front")) {
+							// vystup z nenalezenych URL neukladame - mohlo by umoznit snadno zahltit cache!
+							if (self::getPageCfg()->id	!= LBoxConfigSystem::getInstance()->getParamByPath("pages/page404")) {
+								LBoxCacheManagerFront::getInstance()->saveData($content);
+LBoxFirePHP::warn("cache stored");
+							}
 						}
 					}
+					LBoxCacheManagerFront::getInstance()->__destruct();
 				}
-				LBoxCacheManagerFront::getInstance()->__destruct();
-			/*}
+				else {
+					echo self::getRequestContent();
+LBoxFirePHP::warn("cache VYPNUTA");
+				}
+			}
 			else {
 				echo self::getRequestContent();
-			}*/
+			}
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -161,7 +167,7 @@ LBoxFirePHP::log("cache stored");
 			}
 			// reloadovat persisted location pokud je
 			self::reloadPersistentLocationXT();
-
+			
 			// logout if is to
 			if (self::isToLogout()) {
 				$loginGroup				= strlen(self::getPageCfg()->xt) > 0 ? self::getPageCfg()->xt : 0;
@@ -171,7 +177,7 @@ LBoxFirePHP::log("cache stored");
 				$loginGroup				= strlen(self::getPageCfg()->xt) > 0 ? self::getPageCfg()->xt : 0;
 				self::logoutDBFree($loginGroup);
 			}
-
+			
 			// xt
 			if ($pageCfg->xt) {
 				if (!LBoxXTProject::isLogged($pageCfg->xt)) {
@@ -210,7 +216,7 @@ LBoxFirePHP::log("cache stored");
 				if (LBoxXTProject::isLogged($reloadParamPartsLogged[0])) {
 					LBoxFront::reloadLogged();
 				}
-			}
+			}			
 
 			// prodlouzit init volani procedury do tridy aktualni stranky
 			self::getPage()->executeInit();
@@ -271,7 +277,7 @@ LBoxFirePHP::log("cache stored");
 			}
 			$className 		= self::getPageCfg()->getClassName();
 			$pageInstance 	= new $className(self::getPageCfg());
-
+				
 			if ((!$pageInstance instanceof LBoxPage) && (!$pageInstance instanceof PageList)) {
 				throw new LBoxExceptionFront(LBoxExceptionFront::MSG_PAGE_BAD_TYPE, LBoxExceptionFront::CODE_PAGE_BAD_TYPE);
 			}
@@ -366,7 +372,7 @@ LBoxFirePHP::log("cache stored");
 			throw $e;
 		}
 	}
-
+	
 	/**
 	 * reloaduje po zalogovani URL ze ktere bylo reloadovano na login URL
 	 */
@@ -475,7 +481,7 @@ LBoxFirePHP::log("cache stored");
 			throw $e;
 		}
 	}
-
+	
 	/**
 	 * Vraci string z URL za : pokud nejaky je
 	 * @return string
@@ -634,7 +640,7 @@ LBoxFirePHP::log("cache stored");
 			throw $e;
 		}
 	}
-
+	
 	/**
 	 * vraci jestli je predany lang momentalne zobrazeny
 	 * @param string $lang
@@ -665,7 +671,7 @@ LBoxFirePHP::log("cache stored");
 			throw $e;
 		}
 	}
-
+	
 	/**
 	* logout client user from DB-free login
 	* @param int $loginGroup login group to logout
@@ -679,7 +685,7 @@ LBoxFirePHP::log("cache stored");
 			throw $e;
 		}
 	}
-
+	
 	/**
 	* @return bool
 	*/
@@ -713,7 +719,7 @@ LBoxFirePHP::log("cache stored");
 			throw $e;
 		}
 	}
-
+	
 	/**
 	 * getter na public URL param pro logout
 	 * @return string

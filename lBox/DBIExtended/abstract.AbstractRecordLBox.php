@@ -14,6 +14,21 @@ abstract class AbstractRecordLBox extends AbstractRecord implements OutputItem
 	protected $outputFilter;
 
 	/**
+	 * overloaded with front cache logic
+	 */
+	public function __construct($id = NULL, $loaded = false) {
+		try {
+			// do inform front cache manager that this record type data hapen to be used at this URL
+			LBoxCacheManagerFront::getInstance()->addRecordType(get_class($this));
+			
+			return parent::__construct($id, $loaded);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
 	 * getter for filtered param
 	 * @param string $name
 	 * @return mixed
@@ -21,9 +36,6 @@ abstract class AbstractRecordLBox extends AbstractRecord implements OutputItem
 	 */
 	public function __get($name = "") {
 		try {
-			// do inform front cache manager that this record type data hapen to be used at this URL
-			LBoxCacheManagerFront::getInstance()->addRecordType(get_class($this));
-			
 			$value = $this->getParamDirect($name);
 			// multilang get
 			if (($name != "*") && (!array_key_exists($name, $this->params))) {
