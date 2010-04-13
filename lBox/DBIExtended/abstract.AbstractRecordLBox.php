@@ -150,7 +150,7 @@ abstract class AbstractRecordLBox extends AbstractRecord implements OutputItem
 	public function clearCache() {
 		try {
 			LBoxCacheManagerFront::getInstance()->cleanByRecordType(get_class($this));
-			return parent::clearCache;
+			return parent::clearCache();
 		}
 		catch (Exception $e) {
 			throw $e;
