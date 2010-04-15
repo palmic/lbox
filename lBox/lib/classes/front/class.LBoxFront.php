@@ -91,13 +91,10 @@ class LBoxFront extends LBox
 			AccesRecord::getInstance();
 
 			self::executeInit();
-/*var_dump("zalogovan: ". (int)LBoxXTProject::isLogged());
-LBoxCacheManagerFront::getInstance()->getData();
-LBoxFirePHP::error("asdasd");
-//die;*/
 			// caching
 //var_dump(LBoxCacheManagerFront::getInstance()->wasFormSentNow());die;
-			if (self::getPage()->showConnivance()) {
+			//if (self::getPage()->showConnivance()) {
+//LBoxFirePHP::table($_SERVER, "_SERVER");				
 				if (!self::getPageCfg()->cache_off) {
 					if ((!LBoxXTProject::isLoggedAdmin()) && (!LBoxCacheManagerFront::getInstance()->wasFormSentNow())) {
 						if (count(self::getDataPost()) < 1 && LBoxConfigManagerProperties::gpcn("cache_front")) {
@@ -129,10 +126,10 @@ LBoxFirePHP::warn("cache stored");
 					echo self::getRequestContent();
 LBoxFirePHP::warn("cache VYPNUTA");
 				}
-			}
+			/*}
 			else {
 				echo self::getRequestContent();
-			}
+			}*/
 		}
 		catch (Exception $e) {
 			throw $e;

@@ -140,7 +140,7 @@ class LBoxCache2
 	 */
 	public function reset () {
 		try {
-			$this->remove();
+			$this->removeConcrete();
 			$this->data	= array();
 			$this->changed	= true;
 		}
@@ -157,7 +157,7 @@ class LBoxCache2
 	 */
 	public function clean ($groupOnly = true, $mode = "ingroup") {
 		try {
-			$this->clean($groupOnly ? $this->group : false, $mode);
+			$this->cleanConcrete($groupOnly ? $this->group : false, $mode);
 			$this->data	= array();
 			$this->changed	= true;
 		}
@@ -175,7 +175,7 @@ class LBoxCache2
 		try {
 			if (strlen($id) < 1) {$id = $this->id;}
 			if (strlen($group) < 1) {$group = $this->group;}
-			if (!$this->getCache()->remove($id, $group)) {
+			if (!$this->getCache()->remove($id, $group, true)) {
 				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_CACHE_CANNOT_WRITE, LBoxExceptionCache::CODE_CACHE_CANNOT_WRITE);
 			}
 LBoxFirePHP::warn("cache smazana: \$id='$id', \$group='$group'");

@@ -107,7 +107,11 @@ class LBoxCacheFront extends LBoxCache2
 	 */
 	public static function getCacheGroup() {
 		try {
-			return LBOX_REQUEST_URL;			
+			$url	= (substr(LBOX_REQUEST_URL, -1) == "/") ? LBOX_REQUEST_URL : LBOX_REQUEST_URL . "/";
+			$url	= str_replace("?/", "/", $url);
+			$url	= str_replace("//", "/", $url);
+			
+			return $url;			
 		}
 		catch (Exception $e) {
 			throw $e;
