@@ -22,7 +22,10 @@ class LBoxFirePHP
 
 	public static function warn($message = "") {
 		try {
-			return FirePHP::getInstance(true)->warn($message);
+			$trace=debug_backtrace();
+			$calledFile	= $trace[0]["file"];
+			$calledLine	= $trace[0]["line"];
+			return FirePHP::getInstance(true)->warn("$message ($calledFile:$calledLine)");
 		}
 		catch(Exception $e) {
 			throw $e;

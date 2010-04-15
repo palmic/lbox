@@ -60,6 +60,8 @@ class LBoxCacheManagerFront
 			}
 			if ($type == AccesRecord) return;
 			$url	= (substr(LBOX_REQUEST_URL, -1) == "/") ? LBOX_REQUEST_URL : LBOX_REQUEST_URL . "/";
+			$url	= str_replace("?/", "/", $url);
+			$url	= str_replace("//", "/", $url);
 			$this->recordTypes[$url]["recordtypes"][$type]	= $type;
 			$this->recordTypes[$url]["pageid"]				= LBoxFront::getPage()->config->id;
 		}
@@ -78,6 +80,8 @@ class LBoxCacheManagerFront
 				return;
 			}
 			$url	= (substr(LBOX_REQUEST_URL, -1) == "/") ? LBOX_REQUEST_URL : LBOX_REQUEST_URL . "/";
+			$url	= str_replace("?/", "/", $url);
+			$url	= str_replace("//", "/", $url);
 			$this->recordTypes[$url]["forms"][$form->getName()]	= $form->getName();
 			$this->recordTypes[$url]["pageid"]					= LBoxFront::getPage()->config->id;
 		}
@@ -93,6 +97,8 @@ class LBoxCacheManagerFront
 	public function wasFormSentNow() {
 		try {
 			$url	= (substr(LBOX_REQUEST_URL, -1) == "/") ? LBOX_REQUEST_URL : LBOX_REQUEST_URL . "/";
+			$url	= str_replace("?/", "/", $url);
+			$url	= str_replace("//", "/", $url);
 			foreach ((array)$this->recordTypes[$url]["forms"] as $formName) {
 				if (LBoxForm::wasFormSentByName($formName)) {
 					return true;
@@ -112,7 +118,6 @@ class LBoxCacheManagerFront
 	 */
 	public function cleanByRecordType($type = "", $forceCleanForAllXTUsers = false) {
 		try {
-LBoxFirePHP::log("mazu cache recordu '$type'");
 			if ($this->listeningOff) {
 				return;
 			}
@@ -228,7 +233,7 @@ LBoxFirePHP::log("mazu cache recordu '$type'");
 			throw $e;
 		}
 	}
-
+	
 	/**
 	 * LBoxCacheFront alias
 	 * @return int
@@ -241,7 +246,7 @@ LBoxFirePHP::log("mazu cache recordu '$type'");
 			throw $e;
 		}
 	}
-
+	
 	/**
 	 * vrati vsechny URL indexovane s predanym typem
 	 * @param string $type
@@ -303,13 +308,13 @@ LBoxFirePHP::log("mazu cache recordu '$type'");
 			throw $e;
 		}
 	}
-
+	
 	/**
 	 * flag
 	 * @var bool
 	 */
 	protected $destructed = false;
-
+	
 	public function __destruct() {
 		try {
 			if ($this->destructed) return;
