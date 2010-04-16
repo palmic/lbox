@@ -991,6 +991,15 @@ DROP TABLE IF EXISTS `performance_urls_base`;
 DROP VIEW IF EXISTS `performance_urls_base`;
 CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `performance_urls_base` AS select `acces`.`url` AS `url`,avg(`acces`.`time_execution`) AS `time_execution_avg`,sum(`acces`.`time_execution`) AS `time_execution_sum`,round(avg(`acces`.`queries`),2) AS `queries_avg`,sum(`acces`.`queries`) AS `queries_sum`,count(0) AS `hits`,min(`acces`.`time`) AS `first_hit`,max(`acces`.`time`) AS `last_hit` from `acces` where (`acces`.`time_execution` is not null) group by `acces`.`url` order by avg(`acces`.`time_execution`) desc;
 
+create view performance_cache as 
+SELECT date(time) as datum, dayname(time) as den,
+count(*) as pristupu, sum(queries) as queries_sum, count(distinct ref_xtuser) as loginu,
+avg(`time_execution`) as cas_generovani_avg,
+sum(`cache_read`) as cache_read_sum,
+sum(`cache_write`) as cache_write_sum,
+sum(`memory`) as memory_sum
+FROM `acces`
+group by datum
 
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
