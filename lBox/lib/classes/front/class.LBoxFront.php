@@ -90,6 +90,9 @@ class LBoxFront extends LBox
 			// init acces
 			AccesRecord::getInstance();
 
+			if (self::getPageCfg()->cache_off) {
+				LBoxCacheManagerFront::getInstance()->switchListeningOff();
+			}
 			self::executeInit();
 			// caching
 //var_dump(LBoxCacheManagerFront::getInstance()->wasFormSentNow());die;
