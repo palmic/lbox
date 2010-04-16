@@ -14,8 +14,6 @@ class LBoxCacheFront extends LBoxCache2
 	 */
 	protected static $xTUserIDForce;
 	
-	protected $lifeTime = 25200;
-	
 	protected function getDir () {
 		try {
 			return LBoxConfigSystem::getInstance()->getParamByPath("output/cache/path");
