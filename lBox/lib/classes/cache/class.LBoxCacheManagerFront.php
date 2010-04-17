@@ -169,10 +169,50 @@ class LBoxCacheManagerFront
 
 			$config	= LBoxConfigManagerStructure::getInstance()->getPageById($this->recordTypes[$url]["pageid"]);
 			if ((!$forceCleanForAllXTUsers) && (!LBoxXTProject::isLoggedAdmin()) && $config->cache_recordsdata_by_xtuser) {
-				LBoxCacheFront::getInstance()->removeConcrete(LBoxCacheFront::getCacheID(), $url);
+				LBoxCacheFront::getInstance("", "", $this->isPageCachedByXTUserByURL($url))->removeConcrete(LBoxCacheFront::getCacheID(), $url);
 			}
 			else {
-				LBoxCacheFront::getInstance()->cleanConcrete($url);
+				if ($this->isPageCachedByXTUserByURL($url)) {
+					LBoxCacheFront::getInstance("", "", $this->isPageCachedByXTUserByURL($url))->cleanConcrete($url);
+				}
+				else {
+					LBoxCacheFront::getInstance("", "", $this->isPageCachedByXTUserByURL($url))->removeConcrete();
+				}
+			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * vrati, jestli je stranka cachovana pro kazdeho XTUsera zvlast 
+	 * @param bool
+	 */
+	protected function isPageCachedByXTUserByURL($url = "") {
+		try {
+			return (bool)$this->getPageCFGByURL($url)->cache_recordsdata_by_xtuser;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	/**
+	 * vrati instanci configu stranky podle URL
+	 * @param string $url
+	 * @return LBoxConfigItemStructure
+	 */
+	protected function getPageCFGByURL($url = "") {
+		try {
+			if (strlen($url) < 1) {
+				$url	= (substr(LBOX_REQUEST_URL, -1) == "/") ? LBOX_REQUEST_URL : LBOX_REQUEST_URL . "/";
+				$url	= str_replace("?/", "/", $url);
+				$url	= str_replace("//", "/", $url);
+			}
+			foreach ($this->recordTypes as $urlC => $recordType) {
+				if ($urlC	= $url) {
+					return LBoxConfigManagerStructure::getInstance()->getPageById($recordType["pageid"]);
+				}
 			}
 		}
 		catch (Exception $e) {
@@ -198,7 +238,7 @@ class LBoxCacheManagerFront
 	 */
 	public function getData() {
 		try {
-			return LBoxCacheFront::getInstance()->getDataDirect();
+			return LBoxCacheFront::getInstance("", "", $this->isPageCachedByXTUserByURL())->getDataDirect();
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -214,7 +254,7 @@ class LBoxCacheManagerFront
 			if (!is_string($data)) {
 				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_PARAM_STRING_NOTNULL, LBoxExceptionCache::CODE_BAD_PARAM);
 			}
-			LBoxCacheFront::getInstance()->saveDataDirect($data);
+			LBoxCacheFront::getInstance("", "", $this->isPageCachedByXTUserByURL())->saveDataDirect($data);
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -222,12 +262,21 @@ class LBoxCacheManagerFront
 	}
 
 	/**
+	 * cache var
+	 * @var bool
+	 */
+	protected $doesCacheExists;
+	
+	/**
 	 * LBoxCacheFront alias
 	 * @return bool
 	 */
 	public function doesCacheExists() {
 		try {
-			return LBoxCacheFront::getInstance()->doesCacheExists();
+			if (is_bool($this->doesCacheExists)) {
+				return $this->doesCacheExists;
+			}
+			return $this->doesCacheExists = LBoxCacheFront::getInstance("", "", $this->isPageCachedByXTUserByURL())->doesCacheExists();
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -240,7 +289,7 @@ class LBoxCacheManagerFront
 	 */
 	public function getLastCacheModificationTime() {
 		try {
-			return LBoxCacheFront::getInstance()->getLastCacheModificationTime();
+			return LBoxCacheFront::getInstance("", "", $this->isPageCachedByXTUserByURL())->getLastCacheModificationTime();
 		}
 		catch (Exception $e) {
 			throw $e;

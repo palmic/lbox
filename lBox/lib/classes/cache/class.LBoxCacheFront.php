@@ -25,17 +25,24 @@ class LBoxCacheFront extends LBoxCache2
 
 	/**
 	 * pretizeno o automaticke definovani cache ID a group (id = url, group = ID momentalne prihlaseneho uzivatele)
-	 * @param $url
-	 * @param $xtUserID
+	 * @param string $url
+	 * @param int $xtUserID
+	 * @param bool $isCachedByXTUser
 	 * @return LBoxCacheFront
 	 * @throws LBoxExceptionCache
 	 */
-	public static function getInstance($url = "", $xtUserID = "") {
+	public static function getInstance($url = "", $xtUserID = "", $isCachedByXTUser = true) {
 		try {
 			if (strlen($url) < 1) 		{ $url 		= self::getCacheGroup(); }
 			if (strlen($xtUserID) < 1) 	{ $xtUserID = self::getCacheID(); }
-			$id		= $xtUserID;
-			$group	= $url;
+			if ($isCachedByXTUser) {
+				$id		= $xtUserID;
+				$group	= $url;
+			}
+			else {
+				$id		= $url;
+				$group	= NULL;
+			}
 
 			$className 	= __CLASS__;
 			try {
