@@ -209,8 +209,8 @@ class LBoxCacheManagerFront
 				$url	= str_replace("?/", "/", $url);
 				$url	= str_replace("//", "/", $url);
 			}
-			foreach ($this->recordTypes as $urlC => $recordType) {
-				if ($urlC	= $url) {
+			foreach ($this->recordTypes as $urlKey => $recordType) {
+				if (((string)$urlKey) === $url) {
 					return LBoxConfigManagerStructure::getInstance()->getPageById($recordType["pageid"]);
 				}
 			}
