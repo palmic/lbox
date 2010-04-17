@@ -21,7 +21,7 @@ class LBoxCache2
 	 * see http://pear.php.net/manual/en/package.caching.cache-lite.cache-lite.cache-lite.php
 	 * @var int
 	 */
-	protected $hashedDirectoryLevel = 2;
+	protected $hashedDirectoryLevel = 1;
 	
 	/**
 	 * cache data ID (see Cache_Lite)
@@ -326,17 +326,26 @@ LBoxFirePHP::warn("cache smazana: \$group='$group'");
 	}
 
 	/**
+	 * cache var
+	 * @var string
+	 */
+	protected $dataDirect;
+
+	/**
 	 * vraci surova nacachovana data
 	 * @return string
 	 */
 	public function getDataDirect () {
 		try {
+			if (is_string($this->dataDirect)) {
+				return $this->dataDirect;
+			}
 LBoxFirePHP::log("vracim data z cache group = '". $this->group ."' id = '".$this->id."'");
 			if (!$data = $this->getCache()->get($this->id, $this->group ? $this->group : NULL)) {
-				return "";
+				return $this->dataDirect = "";
 			}
 			self::$filesOpenedRead++;
-			return $data;
+			return $this->dataDirect = $data;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -369,6 +378,7 @@ LBoxFirePHP::log("vracim data z cache group = '". $this->group ."' id = '".$this
 			if (!$this->getCache()->save($data, $this->id, $this->group ? $this->group : NULL)) {
 				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_CACHE_CANNOT_WRITE, LBoxExceptionCache::CODE_CACHE_CANNOT_WRITE);
 			}
+			$this->dataDirect = NULL;
 		}
 		catch (Exception $e) {
 			throw $e;

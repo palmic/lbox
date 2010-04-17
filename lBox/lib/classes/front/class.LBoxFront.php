@@ -102,11 +102,11 @@ class LBoxFront extends LBox
 					if ((!LBoxXTProject::isLoggedAdmin()) && (!LBoxCacheManagerFront::getInstance()->wasFormSentNow())) {
 						if (count(self::getDataPost()) < 1 && LBoxConfigManagerProperties::gpcn("cache_front")) {
 							if (LBoxCacheManagerFront::getInstance()->doesCacheExists()) {
-LBoxFirePHP::warn("cache loaded");
 								// send last modification header
 								header("Last-Modified: ".gmdate("D, d M Y H:i:s", LBoxCacheManagerFront::getInstance()->getLastCacheModificationTime())." GMT");
 								echo LBoxCacheManagerFront::getInstance()->getData();
 								LBoxCacheManagerFront::getInstance()->__destruct();
+LBoxFirePHP::warn("cache loaded in ". LBoxTimer::getInstance()->getTimeOfLife() . "s");
 								return;
 							}
 						}
@@ -119,7 +119,7 @@ LBoxFirePHP::warn("cache loaded");
 							// vystup z nenalezenych URL neukladame - mohlo by umoznit snadno zahltit cache!
 							if (self::getPageCfg()->id	!= LBoxConfigSystem::getInstance()->getParamByPath("pages/page404")) {
 								LBoxCacheManagerFront::getInstance()->saveData($content);
-LBoxFirePHP::warn("cache stored");
+LBoxFirePHP::warn("cache stored in ". LBoxTimer::getInstance()->getTimeOfLife() . "s");
 							}
 						}
 					}
