@@ -379,8 +379,9 @@ class LBoxCacheManagerFront
 	protected function __construct() {
 		try {
 			// nacteni dat z cache do pameti
-			$this->recordTypes	= unserialize($this->getCache()->getDataDirect());
-LBoxFirePHP::table((array)$this->recordTypes, "data v cachi indexovani URLs vs records types");
+			$this->recordTypes	= (array)unserialize($this->getCache()->getDataDirect());
+			ksort($this->recordTypes);
+LBoxFirePHP::table($this->recordTypes, "data v cachi indexovani URLs vs records types (". count($this->recordTypes) .")");
 		}
 		catch (Exception $e) {
 			throw $e;
