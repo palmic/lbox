@@ -6,28 +6,35 @@
  * @version 1.0
  * @date 2008-10-02
  */
-class LBoxCacheAbstractRecord extends LBoxCache
+class LBoxCacheAbstractRecord extends LBoxCache2
 {
-	protected static $filePath	= "abstractrecord/";
-	
-	protected $fileName	= "";
+	protected static $instances = array();
 
-	protected static $instances;
+	protected function getDir () {
+		try {
+			return LBoxConfigSystem::getInstance()->getParamByPath("records/cache/path");
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
 
 	/**
+	 * @param string $id
+	 * @param string $group
 	 * @return LBoxCacheAbstractRecord
 	 * @throws LBoxExceptionCache
 	 */
-	public static function getInstance ($fileName	= "") {
+	public static function getInstance ($id	= "", $group = "") {
 		$className 	= __CLASS__;
 		try {
-			$filePath	= self::$filePath . $fileName;
-			$key		= md5($filePath);
-			if (!array_key_exists($key, (array)self::$instances) || (!self::$instances[$key] instanceof $className)) {
-				self::$instances[$key] = new $className;
+			$gk	= md5($group);$gid	= md5($id);
+			if (array_key_exists($gk, self::$instances) && array_key_exists($gid, self::$instances[$gk])) {
+				if (self::$instances[$gk][$gid] instanceof $className) {
+					return self::$instances[$gk][$gid];
+				}
 			}
-			self::$instances[$key]->setFileName($filePath);
-			return self::$instances[$key];
+			return self::$instances[$gk][$gid] = new $className($id, $group);
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -35,43 +42,24 @@ class LBoxCacheAbstractRecord extends LBoxCache
 	}
 	
 	/**
-	 * AbstractRecord data getter
-	 * @return array
+	 * pretizeno bez kontroly id
+	 * @param string $id
+	 * @param string $group
 	 */
-	public function getData	() {
-		try {
-			return (array)parent::getData();
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
+	protected function __construct($id = "", $group = "") {
+		$this->id		=	 $id;
+		$this->group	=	 $group;
 	}
-	
+
 	/**
-	 * clear all cache data
+	 * pretizeno o vynechani disabled records
+	 * @param bool $groupOnly
+	 * @param string $mode
 	 */
-	public function clearCache() {
+	public function clean($groupOnly = true, $mode = "ingroup") {
 		try {
-			$this->reset();
-			$path	= $this->getFilePath();
-			if (!is_dir($path)) {
-				$path	= dirname($this->getFilePath());
-			}
-			if (file_exists($path)) {
-				LBoxUtil::removeDirByPath($path, true);
-/*XXX if (strstr($path, "/windows/E/www/timesheets/project/.cache/abstractrecord/xtusers_employees_positions")) {
-	LBoxFirePHP::warn("MAZU ". $path);
-}*/
-			}
-/*echo "<hr>";
-var_dump("v adresari '$path' zbylo:");
-$dir	= dir($path);
-while (false !== ($entry = $dir->read())) {
-var_dump($path .SLASH. $entry);
-}
-$dir->close();
-echo "<hr>";
-self::$uz = true;*/
+			if ($this->group == "acces") return;
+			parent::clean($groupOnly, $mode);
 		}
 		catch (Exception $e) {
 			throw $e;

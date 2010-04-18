@@ -3,11 +3,8 @@ DEFINE("XT_GROUP", 1);
 require("../../../../lBox/lib/loader.php");
 session_start();
 
-// switch LBCMF lsitening off
-LBoxCacheManagerFront::getInstance()->switchListeningOff(true);
-
 // check xt session
-if (!LBoxXTProject::isLoggedAdmin(XT_GROUP)) {
+if ((!LBoxXTDBFree::isLogged(XT_GROUP)) && (!LBoxXTProject::isLoggedAdmin(XT_GROUP))) {
 	header("HTTP/1.1 404 Not Found");die;
 }
 
@@ -19,6 +16,8 @@ try {
 	//	saving data
 	//////////////////////////////////////////////////////////////////////
 
+	LBoxCacheManagerFront::getInstance()->switchListeningOff();
+	
 	if (count($_POST) > 1) {
 		throw new LBoxException("API awaits array with only one node!");
 	}
@@ -45,7 +44,6 @@ catch (Exception $e) {
 		$ret->Exception				= new stdclass();
 		$ret->Exception->code	 	= $e->getCode();
 		$ret->Exception->message 	= $e->getMessage();
-		header("HTTP/1.1 200 OK");
 		die(json_encode($ret));
 }
 
@@ -151,7 +149,7 @@ function getMetanodeByPostData($data = array()) {
 		// page metanode
 		if ($data["caller_type"] == "page") {
 			$callerConfig		= LBoxConfigManagerStructure::getInstance()->getPageById($data["caller_id"]);
-			$callerClassName	= $callerConfig->class;
+			$callerClassName	= strlen($callerConfig->class) > 0 ? $callerConfig->class : "PageDefault";
 			$caller				= new $callerClassName($callerConfig);
 		}
 		// component metanode

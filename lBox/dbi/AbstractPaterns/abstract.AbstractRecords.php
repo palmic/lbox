@@ -164,12 +164,7 @@ abstract class AbstractRecords implements Iterator
 			if (is_bool($this->isInCache)) {
 				return $this->isInCache;
 			}
-/*$itemType 		= $this->getClassVar("itemType");
-$id				= $this->getSQL();
-var_dump("$itemType:: je '$id' v cachi?");
-//var_dump($this->getCacheFileName());
-var_dump(LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCacheExists());*/
-			return $this->isInCache = LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->doesCacheExists();
+			return $this->isInCache = LBoxCacheAbstractRecord::getInstance($this->getSQL(), $this->getCacheGroup())->doesCacheExists();
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -190,7 +185,7 @@ echo "<br />\n";*/
 			$itemType 		= $this->getClassVar("itemType");
 			$className		= get_class($this);
 			$idColName  	= eval("return $itemType::\$idColName;");
-			if (count($data = LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->getData()) > 0) {
+			if (count($data = LBoxCacheAbstractRecord::getInstance($this->getSQL(), $this->getCacheGroup())->getData()) > 0) {
 				if (array_key_exists("system_istree", $data)) {
 					self::$isTree[$className]	= (bool)$data["system_istree"];
 				}
@@ -305,7 +300,7 @@ echo "<br />\n";*/
 			if (count($this->cacheData) > 0) {
 				return $this->cacheData;
 			}
-			return $this->cacheData = LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->getData();
+			return $this->cacheData = LBoxCacheAbstractRecord::getInstance($this->getSQL(), $this->getCacheGroup())->getData();
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -313,7 +308,6 @@ echo "<br />\n";*/
 	}
 
 	/**
-	 * Optimalizovano cyklovani cachi:lBox/dbi/AbstractPaterns/abstract.AbstractRecords.php
 	 * stores data to cache
 	 */
 	protected function storeToCache() {
@@ -323,13 +317,12 @@ echo "<br />\n";*/
 			}
 			if (!$this->isCacheOn()) return;
 			if ($this->isCacheSynchronized) return;
-			//if ($this->isCacheSynchronized) return;
-//var_dump("ukladam cache: ". $this->getCacheFileName());flush();
+
 			if (is_bool($this->isTree())) {
-				LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->system_istree	= (int)$this->isTree();
+				LBoxCacheAbstractRecord::getInstance($this->getSQL(), $this->getCacheGroup())->system_istree	= (int)$this->isTree();
 			}
-			LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->sql	= $this->getSQL();
-			LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->saveCachedData();
+			LBoxCacheAbstractRecord::getInstance($this->getSQL(), $this->getCacheGroup())->sql	= $this->getSQL();
+			LBoxCacheAbstractRecord::getInstance($this->getSQL(), $this->getCacheGroup())->saveCachedData();
 			$this->isCacheSynchronized	= true;
 		}
 		catch (Exception $e) {
@@ -357,7 +350,7 @@ echo "<br />\n";*/
 			$itemType 					= $this->getClassVar("itemType");
 			$idColName  				= eval("return $itemType::\$idColName;");
 			$id							= $this->cacheLastKeyStored+1;
-			LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->$id	= $data;
+			LBoxCacheAbstractRecord::getInstance($this->getSQL(), $this->getCacheGroup())->$id	= $data;
 			$this->isCacheSynchronized	= false;
 			$this->cacheLastKeyStored	++;
 		}
@@ -372,7 +365,7 @@ echo "<br />\n";*/
 	protected function resetCache() {
 		try {
 //throw new Exception(__FUNCTION__);
-			LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->reset();
+			LBoxCacheAbstractRecord::getInstance($this->getSQL(), $this->getCacheGroup())->reset();
 			$this->isCacheSynchronized	= false;
 		}
 		catch (Exception $e) {
@@ -386,7 +379,7 @@ echo "<br />\n";*/
 	public function clearCache() {
 		try {
 //throw new Exception(__FUNCTION__);
-			LBoxCacheAbstractRecord::getInstance($this->getCacheFileName())->clearCache();
+			LBoxCacheAbstractRecord::getInstance(NULL, $this->getCacheGroup())->clean();
 			$this->isCacheSynchronized	= false;
 		}
 		catch (Exception $e) {
@@ -395,15 +388,13 @@ echo "<br />\n";*/
 	}
 	
 	/**
-	 * returns cache filename
+	 * returns cache group
 	 * @return string
 	 */
-	protected function getCacheFileName() {
+	protected function getCacheGroup() {
 		try {
-			$itemType 		= $this->getClassVar("itemType");
-			$tableName  	= eval("return $itemType::\$tableName;");
-			$hashedID		= md5($this->getSQL());
-			return "$tableName/collections/$hashedID.cache";
+			$itemType 	= $this->getClassVar("itemType");
+			return		eval("return $itemType::\$tableName;");
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -511,9 +502,6 @@ var_dump($this->getSQL() .": neni valid");*/
 			/*if (!is_a(@current($this->records), $itemType)) {
 				$this->loadNext();
 			}*/
-			if (!is_a($this->records[$this->key+1], $itemType)) {
-				$this->storeToCache();
-			}
 			return current($this->records);
 		}
 		catch (Exception $e) {

@@ -19,7 +19,7 @@ class LBoxCacheManagerFront
 	 * pole indexujici vztah URLs a recordu array(url => array(record1, record2.....))
 	 * @var array
 	 */
-	protected $recordTypes	= array();
+	protected $recordTypes;
 
 	/**
 	 * cache var
@@ -118,15 +118,25 @@ class LBoxCacheManagerFront
 	 */
 	public function cleanByRecordType($type = "", $forceCleanForAllXTUsers = false) {
 		try {
-			if ($this->listeningOff) {
-				return;
-			}
 			if (strlen($type) < 1) {
 				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_PARAM_STRING_NOTNULL, LBoxExceptionCache::CODE_BAD_PARAM);
 			}
 			if ($type == "AccesRecord") return;
 			foreach ($this->getURLsByRecordType($type) as $url) {
-				$this->cleanURLData($url, $forceCleanForAllXTUsers);
+				try {
+					$this->cleanURLData($url, $forceCleanForAllXTUsers);
+				}
+				catch (Exception $e) {
+/*if (is_numeric(strpos(LBOX_REQUEST_URL_HOST, "beta.")) || is_numeric(strpos(LBOX_REQUEST_URL_HOST, "localhost."))) {
+	throw $e;
+}*/
+					if ($e->getCode() == 3005) {
+						NULL;
+					}
+					else {
+						throw $e;
+					}
+				}
 			}
 		}
 		catch (Exception $e) {
@@ -142,7 +152,10 @@ class LBoxCacheManagerFront
 	public function cleanByPageID($pageID = "", $forceCleanForAllXTUsers = false) {
 		try {
 			if (strlen($pageID) < 1) {$pageID = LBoxFront::getPage()->config->id;}
-			foreach ($this->recordTypes as $url => $recordType) {
+			foreach ((array)$this->recordTypes as $url => $recordType) {
+				if (!$url) {
+					continue;
+				}
 				if ($recordType["pageid"] == $pageID) {
 					$this->cleanURLData($url, $forceCleanForAllXTUsers);
 				}
@@ -163,7 +176,7 @@ class LBoxCacheManagerFront
 			if (strlen($url) < 1) {
 				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_PARAM_STRING_NOTNULL, LBoxExceptionCache::CODE_BAD_PARAM);
 			}
-			if (!array_key_exists($url, $this->recordTypes)) {
+			if (!array_key_exists($url, (array)$this->recordTypes)) {
 				return;
 			}
 
@@ -212,7 +225,7 @@ class LBoxCacheManagerFront
 			}
 			// vycistime URL od parametru a hostu
 			$url		= preg_replace("/".LBOX_REQUEST_URL_SCHEME.":(\/+)/", "", $url);
-			$url		= str_replace(LBOX_REQUEST_URL_HOST, "", $url);
+			$url		= substr($url, strpos($url, "/"));
 			$url		= preg_replace("/(\?|\:)(.+)/", "", $url);
 			
 			return LBoxConfigManagerStructure::getInstance()->getPageByUrl($url);
@@ -227,7 +240,7 @@ class LBoxCacheManagerFront
 	 */
 	public function reset() {
 		try {
-			$this->recordTypes	= array(array());
+			$this->recordTypes	= array();
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -312,7 +325,10 @@ class LBoxCacheManagerFront
 				return $this->uRLsByrecordTypes[$type];
 			}
 			$this->uRLsByrecordTypes[$type]	= array();
-			foreach ($this->recordTypes as $url => $recordInfo) {
+			foreach ((array)$this->recordTypes as $url => $recordInfo) {
+				if (!$url) {
+					continue;
+				}
 				foreach ((array)$recordInfo["recordtypes"] as $recordType) {
 					$this->uRLsByrecordTypes[$recordType][]	= $url;
 				}
