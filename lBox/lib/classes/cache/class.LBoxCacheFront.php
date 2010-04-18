@@ -43,7 +43,6 @@ class LBoxCacheFront extends LBoxCache2
 				$id		= $url;
 				$group	= NULL;
 			}
-
 			$className 	= __CLASS__;
 			try {
 				if (self::$instance instanceof $className) {

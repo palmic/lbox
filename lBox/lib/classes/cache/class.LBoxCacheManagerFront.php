@@ -168,7 +168,7 @@ class LBoxCacheManagerFront
 			}
 
 			$config	= LBoxConfigManagerStructure::getInstance()->getPageById($this->recordTypes[$url]["pageid"]);
-			if ((!$forceCleanForAllXTUsers) && (!LBoxXTProject::isLoggedAdmin()) && $config->cache_recordsdata_by_xtuser) {
+			if ((!$forceCleanForAllXTUsers) && (!LBoxXTProject::isLoggedAdmin()) && $config->cache_by_xtuser) {
 				LBoxCacheFront::getInstance("", "", $this->isPageCachedByXTUserByURL($url))->removeConcrete(LBoxCacheFront::getCacheID(), $url);
 			}
 			else {
@@ -191,12 +191,13 @@ class LBoxCacheManagerFront
 	 */
 	protected function isPageCachedByXTUserByURL($url = "") {
 		try {
-			return (bool)$this->getPageCFGByURL($url)->cache_recordsdata_by_xtuser;
+			return (bool)$this->getPageCFGByURL($url)->cache_by_xtuser;
 		}
 		catch (Exception $e) {
 			throw $e;
 		}
 	}
+
 	/**
 	 * vrati instanci configu stranky podle URL
 	 * @param string $url
@@ -209,11 +210,12 @@ class LBoxCacheManagerFront
 				$url	= str_replace("?/", "/", $url);
 				$url	= str_replace("//", "/", $url);
 			}
-			foreach ($this->recordTypes as $urlKey => $recordType) {
-				if (((string)$urlKey) === $url) {
-					return LBoxConfigManagerStructure::getInstance()->getPageById($recordType["pageid"]);
-				}
-			}
+			// vycistime URL od parametru a hostu
+			$url		= preg_replace("/".LBOX_REQUEST_URL_SCHEME.":(\/+)/", "", $url);
+			$url		= str_replace(LBOX_REQUEST_URL_HOST, "", $url);
+			$url		= preg_replace("/(\?|\:)(.+)/", "", $url);
+			
+			return LBoxConfigManagerStructure::getInstance()->getPageByUrl($url);
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -334,6 +336,27 @@ class LBoxCacheManagerFront
 			self::$cache	= LBoxCacheData::getInstance("front", "", LBoxConfigSystem::getInstance()->getParamByPath("output/cache/path"));
 			self::$cache	->setAutoSave(false);
 			return self::$cache;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * vraci, jestli je cache na aktualni strance zapnuta
+	 * @return bool
+	 */
+	public function isCacheON() {
+		try {
+			switch (true) {
+				case (!LBoxConfigManagerProperties::gpcn("cache_front")):
+				case LBoxFront::getPage()->cache_off:
+				case (LBoxFront::getPage()->cache_only_notlogged && LBoxXTProject::isLogged()):
+						return false;
+					break;
+				default:
+					return true;
+			}
 		}
 		catch (Exception $e) {
 			throw $e;
