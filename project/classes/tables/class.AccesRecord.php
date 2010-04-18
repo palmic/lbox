@@ -4,7 +4,6 @@
 * @author Michal Palma <palmic@email.cz>
 * @package LBox
 * @version 1.0
-
 * @since 2007-12-08
 */
 class AccesRecord extends AbstractRecordLBox
@@ -12,8 +11,16 @@ class AccesRecord extends AbstractRecordLBox
 	public static $itemsType 		= "AccesRecords";
 	public static $tableName    	= "acces";
 	public static $idColName    	= "id";
-
-	public static $dependingRecords	= array("");
+	
+	public static $dependingRecords	= array(
+/*	"CasinoGamesAccessRecord",
+	"CreditTransfersRecord",
+	"InquiriesOptionsResponsesRecord",
+	"LBoxShopingCartsXTUsersRecord",
+	"LBoxShopingOrdersItemsXTUsersRecord",
+	"LBoxShopingNCCartsXTUsersRecord",
+	"TokensAccesRecord",*/
+	);
 	
 	/**
 	 * @var AccesRecord
@@ -29,9 +36,10 @@ class AccesRecord extends AbstractRecordLBox
 	}
 
 	/**
+	 * @param bool $forceDoNotCheckLogin
 	 * Pozor! pouziva se jako singleton presto ze ma public constructor - kuli dedicnosti
 	 */
-	public function __construct() {
+	public function __construct($forceDoNotCheckLogin = false) {
 		$className	= __CLASS__;
 		if (AccesRecord::$instance instanceof $className) {
 			//throw new LBoxExceptionFront(LBoxExceptionFront::MSG_ACCES_MULTIPLE_INSTANCES, LBoxExceptionFront::CODE_ACCES_MULTIPLE_INSTANCES);
@@ -41,7 +49,7 @@ class AccesRecord extends AbstractRecordLBox
 		$this->params["url"] 				= LBOX_REQUEST_URL;
 		$this->params["referer"] 			= LBOX_REQUEST_REFERER;
 		$this->params["agent"] 				= LBOX_REQUEST_AGENT;
-		if (LBoxXT::isLogged()) {
+		if ((!$forceDoNotCheckLogin) && LBoxXT::isLogged()) {
 			$this->params["ref_xtuser"]		= LBoxXT::getUserXTRecord()->id;
 		}
 		
@@ -53,13 +61,14 @@ class AccesRecord extends AbstractRecordLBox
 	public function isCacheOn() {return false;}
 	
 	/**
+	 * @param bool $forceDoNotCheckLogin
 	 * @return AccesRecord
 	 * @throws Exception
 	 */
-	public static function getInstance() {
+	public static function getInstance($forceDoNotCheckLogin = false) {
 		try {
 			if (!self::$instance instanceof AccesRecord) {
-				self::$instance = new AccesRecord;
+				self::$instance = new AccesRecord($forceDoNotCheckLogin);
 				self::$instance	->store();
 			}
 			return self::$instance;

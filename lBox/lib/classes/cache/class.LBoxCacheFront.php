@@ -14,6 +14,8 @@ class LBoxCacheFront extends LBoxCache2
 	 */
 	protected static $xTUserIDForce;
 	
+	protected static $instances = array();
+
 	protected function getDir () {
 		try {
 			return LBoxConfigSystem::getInstance()->getParamByPath("output/cache/path");
@@ -45,12 +47,13 @@ class LBoxCacheFront extends LBoxCache2
 			}
 			$className 	= __CLASS__;
 			try {
-				if (self::$instance instanceof $className) {
-					if (self::$instance->id	== $id && self::$instance->group == $group) {
-						return self::$instance;
+				$gk	= md5($group);$gid	= md5($id);
+				if (array_key_exists($gk, self::$instances) && array_key_exists($gid, self::$instances[$gk])) {
+					if (self::$instances[$gk][$gid] instanceof $className) {
+						return self::$instances[$gk][$gid];
 					}
 				}
-				return self::$instance = new $className($id, $group);
+				return self::$instances[$gk][$gid] = new $className($id, $group);
 			}
 			catch (Exception $e) {
 				throw $e;

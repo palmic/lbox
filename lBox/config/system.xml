@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <system>
+	<records>
+		<cache>
+			<expiration>604800</expiration>
+			<path>$cache/records</path>
+		</cache>
+	</records>
 	<photogallery>
 		<import>
 			<path_virtual>/gallery_import_images</path_virtual>

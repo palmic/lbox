@@ -12,7 +12,7 @@ require_once(LBOX_PATH_CORE_CLASSES . SLASH ."exceptions". SLASH ."class.LBoxExc
 class LBoxCache2
 {
 	/**
-	 * zivotnost cache
+	 * defaultni zivotnost cache
 	 * @var int
 	 */
 	protected $lifeTime = 3600;
@@ -71,7 +71,7 @@ class LBoxCache2
 	 */
 	protected static $_hashedDirectoryUmask	= 0777;
 
-	protected static $instance;
+	protected static $instances = array();
 
 	/**
 	 * @return LBoxCacheLoader
@@ -80,12 +80,13 @@ class LBoxCache2
 	public static function getInstance ($id	= "", $group = "") {
 		$className 	= __CLASS__;
 		try {
-			if (self::$instance instanceof $className) {
-				if (self::$instance->id	== $id && self::$instance->group == $group) {
-					return self::$instance;
+			$gk	= md5($group);$gid	= md5($id);
+			if (array_key_exists($gk, self::$instances) && array_key_exists($gid, self::$instances[$gk])) {
+				if (self::$instances[$gk][$gid] instanceof $className) {
+					return self::$instances[$gk][$gid];
 				}
 			}
-			return self::$instance = new $className($id, $group);
+			return self::$instances[$gk][$gid] = new $className($id, $group);
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -313,12 +314,12 @@ LBoxFirePHP::warn("cache smazana: \$group='$group'");
 	 * @return array
 	 * @throws LBoxExceptionCache
 	 */
-	protected function getData () {
+	public function getData () {
 		try {
 			if (count($this->data) > 0) {
 				return $this->data;
 			}
-			return is_array($data = $this->getDataDirect()) ? ((array)unserialize($data)) : $data;
+			return $this->data = (array)(($data = $this->getDataDirect()) ? unserialize($data) : $data);
 		}
 		catch (Exception $e) {
 			throw $e;

@@ -17,6 +17,8 @@ class LBoxCacheData extends LBoxCache2
 	
 	protected $hashedDirectoryLevel = 0;
 	
+	protected static $instances = array();
+
 	public function setAutoSave($value = true) {
 		try {
 			$this->autosave	= $value;
@@ -74,19 +76,20 @@ class LBoxCacheData extends LBoxCache2
 	 * @return LBoxCacheData
 	 * @throws LBoxExceptionCache
 	 */
-	public static function getInstance ($id	= "", $group = "", $path = LBOX_PATH_CACHE) {
+	public static function getInstance ($id	= "", $group = "", $path) {
 		$className 	= __CLASS__;
 		try {
+			$gk	= md5($group);$gid	= md5($id);
+			if (array_key_exists($gk, self::$instances) && array_key_exists($gid, self::$instances[$gk])) {
+				if (self::$instances[$gk][$gid] instanceof $className) {
+					return self::$instances[$gk][$gid];
+				}
+			}
 			if (array_key_exists($id, self::$ids)) {
 				throw new LBoxExceptionCache("'$id': This ID is already used!");
 			}
 			self::$ids[$id]	= $id;
-			if (self::$instance instanceof $className) {
-				if (self::$instance->id	== $id && self::$instance->group == $group && self::$instance->path == $path) {
-					return self::$instance;
-				}
-			}
-			return self::$instance = new $className($id, $group, $path);
+			return self::$instances[$gk][$gid] = new $className($id, $group, $path);
 		}
 		catch (Exception $e) {
 			throw $e;

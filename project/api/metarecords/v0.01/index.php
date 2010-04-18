@@ -19,6 +19,8 @@ try {
 	//	saving data
 	//////////////////////////////////////////////////////////////////////
 
+	LBoxCacheManagerFront::getInstance()->switchListeningOff();
+
 	foreach ($post as $formID => $data) {
 		$typeRecord		= $data["type"];
 		$idColname		= eval("return $typeRecord::\$idColName;");
