@@ -16,6 +16,7 @@ try {
 	//	saving data
 	//////////////////////////////////////////////////////////////////////
 
+	header("HTTP/1.1 200 OK");
 	LBoxCacheManagerFront::getInstance()->switchListeningOff();
 	
 	if (count($_POST) > 1) {
