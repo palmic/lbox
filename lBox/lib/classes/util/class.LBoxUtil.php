@@ -174,9 +174,7 @@ class LBoxUtil
 	 */
 	public static function fixFileName ($filename = "") {
 		try {
-			$filename	= ereg_replace("[^[:alnum:]_.]", "-", 	$filename);
-			//$filename	= ereg_replace("(-+)", "-", 			$filename);
-			return $filename;
+			return preg_replace("/[^\w\.]/", "-", $filename);
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -268,24 +266,7 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 			}
 			$path		= self::fixPathSlashes($path);
 			if (is_dir($path) < 1) {
-				mkdir($path);
-				//throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_DIRECTORY_NOT_EXISTS, LBoxExceptionFilesystem::CODE_DIRECTORY_NOT_EXISTS);
-			}
-			// smazat obsah adresare na 3x!
-			$d = dir($path);
-			while (false !== ($entry = $d->read())) {
-				if($entry == '.' || $entry == '..') continue;
-				if (is_dir("$path/$entry")) {
-					if (!$withSubDirs) {
-						throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_DIRECTORY_CONTAINS_SUBDIRS, LBoxExceptionFilesystem::CODE_DIRECTORY_CONTAINS_SUBDIRS);
-					}
-					self::removeDirByPath("$path/$entry", true);
-				}
-				if (file_exists("$path". SLASH ."$entry")) {
-					if (!@unlink("$path". SLASH ."$entry")) {
-						//throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_FILE_CANNOT_DELETE);
-					}
-				}
+				throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_DIRECTORY_NOT_EXISTS, LBoxExceptionFilesystem::CODE_DIRECTORY_NOT_EXISTS);
 			}
 			$d = dir($path);
 			while (false !== ($entry = $d->read())) {
@@ -297,29 +278,14 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 					self::removeDirByPath("$path/$entry", true);
 				}
 				if (file_exists("$path". SLASH ."$entry")) {
-					if (!@unlink("$path". SLASH ."$entry")) {
-						//throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_FILE_CANNOT_DELETE);
+					if (!unlink("$path". SLASH ."$entry")) {
+						throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_FILE_CANNOT_DELETE);
 					}
 				}
 			}
-			$d = dir($path);
-			while (false !== ($entry = $d->read())) {
-				if($entry == '.' || $entry == '..') continue;
-				if (is_dir("$path/$entry")) {
-					if (!$withSubDirs) {
-						throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_DIRECTORY_CONTAINS_SUBDIRS, LBoxExceptionFilesystem::CODE_DIRECTORY_CONTAINS_SUBDIRS);
-					}
-					self::removeDirByPath("$path/$entry", true);
-				}
-				if (file_exists("$path". SLASH ."$entry")) {
-					if (!@unlink("$path". SLASH ."$entry")) {
-						//throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_FILE_CANNOT_DELETE);
-					}
-				}
-			}
-			@$d->close();
-			if (!@rmdir($path)) {
-				//throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_DIRECTORY_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_DIRECTORY_CANNOT_DELETE);
+			$d->close();
+			if (!rmdir($path)) {
+				throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_DIRECTORY_CANNOT_DELETE, LBoxExceptionFilesystem::CODE_DIRECTORY_CANNOT_DELETE);
 			}
 		}
 		catch (Exception $e) {
@@ -655,6 +621,79 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 				}
 			}
  		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * zkopiruje zdrojovy kod tridy do tridy nove, pokud uz neexistuje
+	 * @param string $sourceClassName
+	 * @param string $targetClassName
+	 */
+	public static function copyClassTo($sourceClassName = "", $targetClassName = "") {
+		try {
+			if (strlen($sourceClassName) < 1) {
+				throw new LBoxExceptionClasses("\$sourceClassName: ". LBoxExceptionClasses::MSG_PARAM_STRING_NOTNULL, LBoxExceptionClasses::CODE_BAD_PARAM);
+			}
+			if (strlen($targetClassName) < 1) {
+				throw new LBoxExceptionClasses("\$targetClassName: ". LBoxExceptionClasses::MSG_PARAM_STRING_NOTNULL, LBoxExceptionClasses::CODE_BAD_PARAM);
+			}
+			if (class_exists($targetClassName)) {
+				throw new LBoxExceptionClasses("$targetClassName: ". LBoxExceptionClasses::MSG_TARGET_CLASS_EXISTS, LBoxExceptionClasses::CODE_TARGET_CLASS_EXISTS);
+			}
+			if (!class_exists($sourceClassName)) {
+				throw new LBoxExceptionClasses("$sourceClassName: ". LBoxExceptionClasses::MSG_SOURCE_CLASS_NOT_EXISTS, LBoxExceptionClasses::CODE_SOURCE_CLASS_NOT_EXISTS);
+			}
+			$srcClassPath	= LBoxLoader::getInstance()->getFoundTypePath($sourceClassName);
+			$trgtClassPath	= str_replace($sourceClassName, $targetClassName, $srcClassPath);
+			if (file_exists($trgtClassPath)) {
+				throw new LBoxExceptionClasses("$trgtClassPath: ". LBoxExceptionFilesystem::MSG_FILE_ALREADY_EXISTS, LBoxExceptionFilesystem::CODE_FILE_ALREADY_EXISTS);
+			}
+			$sourceSRCClass		= fread($fs = fopen($srcClassPath, "r"), filesize($srcClassPath));
+			$sourceTRGTClass	= $sourceSRCClass;
+			$sourceTRGTClass 	= preg_replace("/class(\s+)$sourceClassName/i", "class $targetClassName", $sourceTRGTClass);
+			$sourceTRGTClass 	= preg_replace("/\@since(\s+)(\d{4}-\d{2}-\d{2})/i", "@since ". date("Y-m-d"), $sourceTRGTClass);
+			$sourceTRGTClass 	= preg_replace("/\/\*\*(\s*)\n(\s*)\*(\s*)([\w ]+)/", "/**\n * Automaticaly duplicated class from $sourceClassName", $sourceTRGTClass);
+			if (!$ft = fopen($trgtClassPath, "w+")) {
+				throw new LBoxExceptionFilesystem("$trgtClassPath: ". LBoxExceptionFilesystem::MSG_FILE_CANNOT_OPEN, LBoxExceptionFilesystem::CODE_FILE_CANNOT_OPEN);
+			}
+			if (!fwrite($ft, $sourceTRGTClass)) {
+				throw new LBoxExceptionFilesystem("$trgtClassPath: ". LBoxExceptionFilesystem::MSG_FILE_CANNOT_WRITE, LBoxExceptionFilesystem::CODE_FILE_CANNOT_WRITE);
+			}
+			@fclose($fs);@fclose($ft);
+			include $trgtClassPath;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * kopiruje soubory
+	 * @param string $sourceFilePath
+	 * @param string $targetFilePath
+	 */
+	public static function copyFile($sourceFilePath = "", $targetFilePath = "") {
+		try {
+			if (strlen($sourceFilePath) < 1) {
+				throw new LBoxExceptionFilesystem("\$sourceFilePath: ". LBoxExceptionFilesystem::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFilesystem::CODE_BAD_PARAM);
+			}
+			if (strlen($targetFilePath) < 1) {
+				throw new LBoxExceptionFilesystem("\$targetFilePath: ". LBoxExceptionFilesystem::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFilesystem::CODE_BAD_PARAM);
+			}
+			if (!file_exists($sourceFilePath)) {
+				throw new LBoxExceptionFilesystem("$sourceFilePath: ". LBoxExceptionFilesystem::MSG_FILE_NOT_EXISTS, LBoxExceptionFilesystem::CODE_FILE_NOT_EXISTS);
+			}
+			if (file_exists($targetFilePath)) {
+				throw new LBoxExceptionFilesystem("$targetFilePath: ". LBoxExceptionFilesystem::MSG_FILE_ALREADY_EXISTS, LBoxExceptionFilesystem::CODE_FILE_ALREADY_EXISTS);
+			}
+			$sourceFilePath	= self::fixPathSlashes($sourceFilePath);
+			$targetFilePath	= self::fixPathSlashes($targetFilePath);
+			if (!copy($sourceFilePath, $targetFilePath)) {
+				throw new LBoxExceptionFilesystem("$sourceFilePath => $targetFilePath: ". LBoxExceptionFilesystem::MSG_FILE_CANNOT_WRITE, LBoxExceptionFilesystem::CODE_FILE_CANNOT_WRITE);
+			}
+		}
 		catch (Exception $e) {
 			throw $e;
 		}
