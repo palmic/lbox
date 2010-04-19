@@ -6,7 +6,7 @@
  * @version 1.0
  * @since 2007-12-08
  */
-class PageDefault extends PageNonstopCity
+class PageDefault extends PageProject
 {
 	public function executeInit() {
 		try {
