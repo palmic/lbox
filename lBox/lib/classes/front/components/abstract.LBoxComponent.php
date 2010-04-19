@@ -123,9 +123,10 @@ abstract class LBoxComponent
 			throw $e;
 		}
 	}
-
+	
 	/**
 	 * vola se pred executePrepend - vyuziva se k nastaveni default OutPutFilteru podrazenych abstraktnich typu
+	 * @param PHPTAL $TAL
 	 * @throws Exception
 	 */
 	protected function executeStart() {
@@ -265,7 +266,7 @@ abstract class LBoxComponent
 			$templateFileName	= $this->getTemplateFileName();
 
 			// prepend
-			$this->executeStart();
+			$this->executeStart($this->getTAL());
 			$this->executePrepend($this->getTAL());
 
 			try {
@@ -448,20 +449,39 @@ abstract class LBoxComponent
 	 * @return PHPTAL
 	 */
 	protected function getTAL() {
-		if (!$this->TAL instanceof PHPTAL) {
-			$this->TAL = new PHPTAL(LBoxUtil::fixPathSlashes($this->templatePath ."/". $this->getTemplateFileName()));
+		try {
+			$pathTemplate	= LBoxUtil::fixPathSlashes($this->getTemplatePath());
+			if (!$this->TAL instanceof PHPTAL) {
+				$this->TAL = new PHPTAL($pathTemplate);
+			}
+			$translator	= new LBoxTranslator($pathTemplate);
+			// zajistit existenci ciloveho adresare PHP kodu pro TAL:
+			$phptalPhpCodeDestination	= LBoxUtil::fixPathSlashes(LBoxConfigSystem::getInstance()->getParamByPath("output/tal/PHPTAL_PHP_CODE_DESTINATION"));
+			LBoxUtil::createDirByPath($phptalPhpCodeDestination);
+			$this->TAL->setTranslator($translator);
+			$this->TAL->setForceReparse(LBoxConfigSystem::getInstance()->getParamByPath("output/tal/PHPTAL_FORCE_REPARSE"));
+			$this->TAL->setPhpCodeDestination($phptalPhpCodeDestination);
+			$this->TAL->SELF = $this;
+			return $this->TAL;
 		}
-		$translator	= new LBoxTranslator(LBoxUtil::fixPathSlashes($this->templatePath ."/". $this->getTemplateFileName()));
-		// zajistit existenci ciloveho adresare PHP kodu pro TAL:
-		$phptalPhpCodeDestination	= LBoxUtil::fixPathSlashes(LBoxConfigSystem::getInstance()->getParamByPath("output/tal/PHPTAL_PHP_CODE_DESTINATION"));
-		LBoxUtil::createDirByPath($phptalPhpCodeDestination);
-		$this->TAL->setTranslator($translator);
-		$this->TAL->setForceReparse(LBoxConfigSystem::getInstance()->getParamByPath("output/tal/PHPTAL_FORCE_REPARSE"));
-		$this->TAL->setPhpCodeDestination($phptalPhpCodeDestination);
-		$this->TAL->SELF = $this;
-		return $this->TAL;
+		catch (Exception $e) {
+			throw $e;
+		}
 	}
 	
+	/**
+	 * getter na cestu k sablone
+	 * @return string
+	 */
+	protected function getTemplatePath() {
+		try {
+			return LBoxUtil::fixPathSlashes($this->templatePath ."/". $this->getTemplateFileName());
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
 	/**
 	 * getter nazvu souboru se sablonou
 	 * @return string
@@ -1106,7 +1126,7 @@ abstract class LBoxComponent
 	*/
 	protected function getMetanodeByCallName($callname = "") {
 		try {
-			LBoxFirePHP::log($callname);
+			//LBoxFirePHP::log($callname);
 			
 			if (array_key_exists($callname, $this->metanodesByCallnames) && $this->metanodesByCallnames[$callname] instanceof LBoxMetanode) {
 				// dalsi instance metanodu v komponente / strance zobrazime uz jen pasivni

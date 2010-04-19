@@ -67,6 +67,12 @@ class LBoxLoader
 	protected $foundTypesInPaths		= array();
 
 	/**
+	 * found types paths cache
+	 * @var array
+	 */
+	protected static $typesPaths				= array();
+
+	/**
 	 * debug verbose
 	 * @var bool
 	 */
@@ -93,12 +99,35 @@ class LBoxLoader
 	}
 
 	/**
+	 * returns path of already found type
+	 * @return string
+	 */
+	public function getFoundTypePath($type = "") {
+		try {
+			if (strlen($type) < 1) {
+				throw new LBoxExceptionLoader("\$type: ". LBoxExceptionLoader::MSG_PARAM_STRING_NOTNULL, LBoxExceptionLoader::CODE_BAD_PARAM);
+			}
+			$this->load($type);
+			if (!array_key_exists($type, self::$typesPaths)) {
+				throw new LBoxExceptionLoader("$type: ". LBoxExceptionLoader::MSG_TYPE_NOT_FOUND, LBoxExceptionLoader::CODE_TYPE_NOT_FOUND);
+			}
+			return self::$typesPaths[$type];
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * nacte pozadovany typ
 	 * @param string 	$type type to load
 	 * @throws LBoxExceptionLoader
 	 */
 	public function load($type = "") {
 		try {
+			if (array_key_exists($type, self::$typesPaths)) {
+				return;
+			}
 			// nalezeno v cachi
 			if ($value	= LBoxCacheLoader::getInstance()->$type) {
 				if ($this->debug) {
@@ -111,6 +140,7 @@ class LBoxLoader
 						// throw new LBoxExceptionLoader("'$type' ". LBoxExceptionLoader::MSG_TYPE_LOAD_ERROR ." Path '$value'", LBoxExceptionLoader::CODE_TYPE_LOAD_ERROR);
 					}
 					else {
+						self::$typesPaths[$type] = $value;
 						return;
 					}
 				}
@@ -147,6 +177,7 @@ class LBoxLoader
 					}
 					else {
 						LBoxCacheLoader::getInstance()->$type	= $foundPath;
+						self::$typesPaths[$type]				= $foundPath;
 						return;
 					}
 				}

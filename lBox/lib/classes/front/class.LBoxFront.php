@@ -277,6 +277,9 @@ LBoxFirePHP::warn("cache VYPNUTA");
 				return self::$page;
 			}
 			$className 		= self::getPageCfg()->getClassName();
+			if (!class_exists($className)) {
+				LBoxUtil::copyClassTo(LBoxConfigSystem::getInstance()->getParamByPath("pages/classes/default"), $className);
+			}
 			$pageInstance 	= new $className(self::getPageCfg());
 				
 			if ((!$pageInstance instanceof LBoxPage) && (!$pageInstance instanceof PageList)) {
@@ -288,7 +291,7 @@ LBoxFirePHP::warn("cache VYPNUTA");
 			throw $e;
 		}
 	}
-
+	
 	/**
 	 * zasle header() podle predaneho statusu
 	 * @param int $status
