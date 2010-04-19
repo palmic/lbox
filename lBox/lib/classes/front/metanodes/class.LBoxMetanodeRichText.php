@@ -21,6 +21,11 @@ class LBoxMetanodeRichText extends LBoxMetanodeString
 			if (ini_get("magic_quotes_gpc")) {
 				$content	= stripslashes($content);
 			}
+			if (function_exists("mb_convert_encoding") && function_exists("mb_convert_encoding")) {
+				if (mb_detect_encoding($content) != "UTF-8") {
+					$content	= mb_convert_encoding  ($content,  "UTF-8");
+				}
+			}
 			if (class_exists("tidy")) {
 				$tidyConfig = array('indent' => true,
 									'output-xml' => false,
