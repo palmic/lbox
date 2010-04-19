@@ -446,7 +446,7 @@ LBoxFirePHP::log(basename(__FILE__) ."::". __LINE__.': ' . 'storing the data of 
 				case $this->caller instanceof LBoxPage:
 						// pro stranku mazeme veskerou cache stranky
 						LBoxCacheManagerFront::getInstance()->cleanByPageID($this->caller->config->id, true);
-					break;
+						break;
 				default:
 						// pro komponentu mazeme veskerou cache
 						LBoxCacheFront::getInstance()->cleanConcrete();

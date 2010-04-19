@@ -179,7 +179,7 @@ class LBoxCacheManagerFront
 			if (!array_key_exists($url, (array)$this->recordTypes)) {
 				return;
 			}
-
+			
 			$config	= LBoxConfigManagerStructure::getInstance()->getPageById($this->recordTypes[$url]["pageid"]);
 			if ((!$forceCleanForAllXTUsers) && (!LBoxXTProject::isLoggedAdmin()) && $config->cache_by_xtuser) {
 				LBoxCacheFront::getInstance("", "", $this->isPageCachedByXTUserByURL($url))->removeConcrete(LBoxCacheFront::getCacheID(), $url);
@@ -189,7 +189,7 @@ class LBoxCacheManagerFront
 					LBoxCacheFront::getInstance("", "", $this->isPageCachedByXTUserByURL($url))->cleanConcrete($url);
 				}
 				else {
-					LBoxCacheFront::getInstance("", "", $this->isPageCachedByXTUserByURL($url))->removeConcrete();
+					LBoxCacheFront::getInstance($url, LBoxXTProject::getUserXTRecord()->id, $this->isPageCachedByXTUserByURL($url))->removeConcrete();
 				}
 			}
 		}
