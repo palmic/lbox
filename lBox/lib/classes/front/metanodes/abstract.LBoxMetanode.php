@@ -441,6 +441,18 @@ LBoxFirePHP::log(basename(__FILE__) ."::". __LINE__.': ' . 'storing the data of 
 //LBoxFirePHP::log(basename(__FILE__) ."::". __LINE__.': ' . "saving styles done");
 				}
 			}
+			// smazat front cache
+			switch (true) {
+				case $this->caller instanceof LBoxPage:
+						// pro stranku mazeme veskerou cache stranky
+						LBoxCacheManagerFront::getInstance()->cleanByPageID($this->caller->config->id, true);
+						break;
+				default:
+						// pro komponentu mazeme veskerou cache
+						LBoxCacheFront::getInstance()->cleanConcrete();
+						LBoxCacheManagerFront::getInstance()->reset();
+						LBoxCacheManagerFront::getInstance()->__destruct();
+			}
 		}
 		catch(Exception $e) {
 			throw $e;
