@@ -189,7 +189,7 @@ class LBoxCacheManagerFront
 					LBoxCacheFront::getInstance("", "", $this->isPageCachedByXTUserByURL($url))->cleanConcrete($url);
 				}
 				else {
-					LBoxCacheFront::getInstance($url, LBoxXTProject::getUserXTRecord()->id, $this->isPageCachedByXTUserByURL($url))->removeConcrete();
+					LBoxCacheFront::getInstance($url, LBoxCacheFront::getCacheID(), $this->isPageCachedByXTUserByURL($url))->removeConcrete();
 				}
 			}
 		}
