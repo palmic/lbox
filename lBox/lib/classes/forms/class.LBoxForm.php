@@ -178,7 +178,6 @@ class LBoxForm
 			
 			// check session and real data
 			switch (true) {
-				case (array_key_exists($name, (array)$_SESSION["LBox"]["Forms"]) && $_SESSION["LBox"]["Forms"][$name]["succes"]):
 				case (array_key_exists($name, (array)self::$forms) && (self::$forms[$name]->wasSentSucces() || self::$forms[$name]->wasSent())):
 				case (array_key_exists($name, (array)LBoxFront::getDataGet()) || array_key_exists($name, (array)LBoxFront::getDataPost()) || array_key_exists($name, (array)LBoxFront::getDataFiles())):
 					$out	= true;
