@@ -13,8 +13,8 @@ class InquiriesOptionsRecord extends AbstractRecordLBox
 	public static $idColName    	= "id";
 
 	public static $boundedM1 		= array("InquiriesRecords" 		=> "ref_inquiry");
-	public static $dependingRecords	= array("InquiriesOptionsResponsesRecords", "InquiriesResponsesRecords");
-	
+	public static $dependingRecords	= array("InquiriesOptionsResponsesRecord", "InquiriesSummariesRecord");
+		
 	/**
 	 * cache variables
 	 */
