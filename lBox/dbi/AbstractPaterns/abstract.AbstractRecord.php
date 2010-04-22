@@ -1295,7 +1295,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 	 * @return AbstractRecords
 	 * @throws Exception
 	 */
-	public function getChildren() {
+	public function getChildren($filter = false, $order = false, $limit = false, QueryBuilderWhere $whereAdd = NULL) {
 		try {
 			$tableName		= $this->getClassVar("tableName");
 			if (!$isTree = $this->isTree()) {
@@ -1311,9 +1311,10 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			$bId			= $this->get($bidColName);
 //var_dump($this->params[$idColName] .": getChildren");
 			
-			$filter 		= array($pidColName => $id, $bidColName => $bId);
-			$order			= array($lftColName => 1);
-			$children		= new $itemsType($filter, $order);
+			$filter[$pidColName]	= $id;
+			$filter[$bidColName]	= $bId;
+			$order			= (is_array($order) && (count($order) > 0)) ? $order : array($lftColName => 1);
+			$children		= new $itemsType($filter, $order, $limit, $whereAdd);
 			$children		->setIsTree($this->isTree());
 			return $children;
 		}
