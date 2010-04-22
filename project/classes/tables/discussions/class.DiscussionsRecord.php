@@ -42,6 +42,12 @@ class DiscussionsRecord extends AbstractRecordLBox
 											);
 	
 	/**
+	 * cache var
+	 * @var DiscussionsRecords
+	 */
+	protected $children;
+	
+	/**
 	 * pretizeno o nastaveni tree structure
 	 */
 	public function __construct($id = NULL, $loaded = false) {
@@ -99,6 +105,24 @@ class DiscussionsRecord extends AbstractRecordLBox
 	public function getAcces() {
 		try {
 			return $this->getBoundedM1Instance("AccesRecords")->current();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * getter na potomky, ktere budou v prvni urovni prispevku serazeny sestupne
+	 * @return DiscussionsRecords
+	 */
+	public function getChildren() {
+		try {
+			if ($this->children instanceof DiscussionsRecords) {
+				return $this->children;
+			}
+			$treeColNames	= $this->getClassVar("treeColNames");
+			$this->children = parent::getChildren(false, $this->hasParent() ? array($treeColNames[0] => 1) : array($treeColNames[0] => 0));
+			return $this->children;
 		}
 		catch (Exception $e) {
 			throw $e;
