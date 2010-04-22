@@ -341,7 +341,7 @@ LBoxFirePHP::warn("cache smazana: \$group='$group'");
 			if (is_string($this->dataDirect)) {
 				return $this->dataDirect;
 			}
-LBoxFirePHP::log("vracim data z cache group = '". $this->group ."' id = '".$this->id."'");
+//LBoxFirePHP::log("vracim data z cache group = '". $this->group ."' id = '".$this->id."'");
 			if (!$data = $this->getCache()->get($this->id, $this->group ? $this->group : NULL)) {
 				return $this->dataDirect = "";
 			}
@@ -361,7 +361,6 @@ LBoxFirePHP::log("vracim data z cache group = '". $this->group ."' id = '".$this
 		try {
 			if (!$this->changed) return;
 			$this->saveDataDirect(serialize($this->data));
-			self::$filesOpenedWrite++;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -380,6 +379,7 @@ LBoxFirePHP::log("vracim data z cache group = '". $this->group ."' id = '".$this
 				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_CACHE_CANNOT_WRITE, LBoxExceptionCache::CODE_CACHE_CANNOT_WRITE);
 			}
 			$this->dataDirect = NULL;
+			self::$filesOpenedWrite++;
 		}
 		catch (Exception $e) {
 			throw $e;
