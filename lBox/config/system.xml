@@ -114,7 +114,7 @@
 		</paging>
 		<remove_coments>0</remove_coments><!-- pokud -1, bude provadeno POUZE na ostrem serveru -->
 		<compression>0</compression><!-- pokud -1, bude provadeno POUZE na ostrem serveru -->
-		<js_combine>1</js_combine><!-- pokud -1, bude provadeno POUZE na ostrem serveru -->
+		<js_combine>0</js_combine><!-- pokud -1, bude provadeno POUZE na ostrem serveru -->
 		<js_compress>0</js_compress><!-- pokud -1, bude provadeno POUZE na ostrem serveru -->
 	</output>
 	<multilang>

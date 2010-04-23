@@ -3,6 +3,8 @@ DEFINE("XT_GROUP", 1);
 require("../../../../lBox/lib/loader.php");
 session_start();
 
+LBoxCacheManagerFront::getInstance()->switchListeningOff();
+
 // check xt session
 if ((!LBoxXTDBFree::isLogged(XT_GROUP)) && (!LBoxXTProject::isLoggedAdmin(XT_GROUP))) {
 	header("HTTP/1.1 404 Not Found");die;
@@ -16,9 +18,6 @@ try {
 	//	saving data
 	//////////////////////////////////////////////////////////////////////
 
-	header("HTTP/1.1 200 OK");
-	LBoxCacheManagerFront::getInstance()->switchListeningOff();
-	
 	if (count($_POST) > 1) {
 		throw new LBoxException("API awaits array with only one node!");
 	}
@@ -36,6 +35,7 @@ try {
 					$returned	= saveMetanodeContentByPostData($postData);
 				break;
 		}
+		header("HTTP/1.1 200 OK");
 		echo(json_encode($returned));
 	}
 }
@@ -45,6 +45,7 @@ catch (Exception $e) {
 		$ret->Exception				= new stdclass();
 		$ret->Exception->code	 	= $e->getCode();
 		$ret->Exception->message 	= $e->getMessage();
+		header("HTTP/1.1 200 OK");
 		die(json_encode($ret));
 }
 

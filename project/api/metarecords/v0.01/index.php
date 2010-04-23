@@ -3,6 +3,8 @@ DEFINE("XT_GROUP", 1);
 require("../../../../lBox/lib/loader.php");
 session_start();
 
+LBoxCacheManagerFront::getInstance()->switchListeningOff();
+
 // check xt session
 if ((!LBoxXTDBFree::isLogged(XT_GROUP)) && (!LBoxXTProject::isLoggedAdmin(XT_GROUP))) {
 	header("HTTP/1.1 404 Not Found");die;
@@ -18,8 +20,6 @@ try {
 	//////////////////////////////////////////////////////////////////////
 	//	saving data
 	//////////////////////////////////////////////////////////////////////
-
-	LBoxCacheManagerFront::getInstance()->switchListeningOff();
 
 	foreach ($post as $formID => $data) {
 		$typeRecord		= $data["type"];

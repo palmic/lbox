@@ -646,6 +646,19 @@ LBoxFirePHP::warn("cache VYPNUTA");
 	}
 	
 	/**
+	 * display language setter - jen pro zvlastni pripady jako je moznost prohledavani konfiguraci nativne skrze jine jazyky nez je momentalne zobrazeny jazyk si front voli sam na zaklade request informaci!!!!
+	 * @param string $lng
+	 */
+	public static function setDisplayLanguage($lng	= "cs") {
+		try {
+			self::$displayLanguage = $lng;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
 	 * vraci jestli je predany lang momentalne zobrazeny
 	 * @param string $lang
 	 * @return bool
