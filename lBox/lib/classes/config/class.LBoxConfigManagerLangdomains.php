@@ -92,7 +92,7 @@ class LBoxConfigManagerLangdomains extends LBoxConfigManager
 	}
 
 	/**
-	 * getter jazyka podle domeny
+	 * getter na vsechny langdomains
 	 * @return string
 	 * @throws LBoxException
 	 */

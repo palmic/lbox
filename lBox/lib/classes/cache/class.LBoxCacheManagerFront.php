@@ -228,7 +228,21 @@ class LBoxCacheManagerFront
 			$url		= substr($url, strpos($url, "/"));
 			$url		= preg_replace("/(\?|\:)(.+)/", "", $url);
 			
-			return LBoxConfigManagerStructure::getInstance()->getPageByUrl($url);
+			$displayLanguage	= LBoxFront::getDisplayLanguage();
+			foreach (LBoxConfigManagerLangdomains::getInstance()->getLangsDomains() as $lang => $domain) {
+				try {
+					LBoxFront::setDisplayLanguage($lang);
+					$configItemStructure	= LBoxConfigManagerStructure::getInstance()->getPageByUrl($url);
+					if ($configItemStructure instanceof LBoxConfigItemStructure) {
+						break;
+					}
+				}
+				catch (Exception $e) {
+					$exception	= $e;
+				}
+			}
+			LBoxFront::setDisplayLanguage($displayLanguage);
+			return $configItemStructure;
 		}
 		catch (Exception $e) {
 			throw $e;
