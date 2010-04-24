@@ -132,6 +132,7 @@ abstract class LBoxComponent
 	protected function executeStart() {
 		try {
 			$this->config->setOutputFilter(new OutputFilterComponent($this->config));
+			$this->addUsageToCache();
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -1157,6 +1158,18 @@ abstract class LBoxComponent
 	public function getMetanode($id, $type = "") {
 		try {
 			return $this->getMetanodeByCallName("metanode_". $id ."_". $type);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * zaindexuje sam sebe ve front cachi jako pouzity na aktualni strance
+	 */
+	protected function addUsageToCache() {
+		try {
+			LBoxCacheManagerFront::getInstance()->addComponentUsed($this);
 		}
 		catch (Exception $e) {
 			throw $e;

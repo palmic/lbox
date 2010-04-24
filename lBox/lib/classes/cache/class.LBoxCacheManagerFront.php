@@ -22,12 +22,6 @@ class LBoxCacheManagerFront
 	protected $recordTypes;
 
 	/**
-	 * cache var
-	 * @var array
-	 */
-	protected $uRLsByrecordTypes	= array();
-
-	/**
 	 * flag pro vypnuti naslouchani v pripadech, kdy nechceme logovat vazby URLs a records types (nutne pro API)
 	 * @var bool
 	 */
@@ -40,6 +34,27 @@ class LBoxCacheManagerFront
 	public function switchListeningOff($value = true) {
 		try {
 			$this->listeningOff	= (bool)$value;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * prida form do indexace k aktualni URL
+	 * @param mixed $component
+	 */
+	public function addComponentUsed($component) {
+		try {
+			if ($this->listeningOff) {
+				return;
+			}
+			$componentID	= ($component instanceof LBoxComponent) ? $component->id : $component;
+			$url	= (substr(LBOX_REQUEST_URL, -1) == "/") ? LBOX_REQUEST_URL : LBOX_REQUEST_URL . "/";
+			$url	= str_replace("?/", "/", $url);
+			$url	= str_replace("//", "/", $url);
+			$this->recordTypes[$url]["components"][$componentID]	= $componentID;
+			$this->recordTypes[$url]["pageid"]							= LBoxFront::getPage()->config->id;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -111,6 +126,29 @@ class LBoxCacheManagerFront
 			throw $e;
 		}
 	}
+	
+	/**
+	 * vycisti cache relevantni k danemu typu recordu
+	 * @param mixed $component
+	 * @param bool $forceCleanForAllXTUsers
+	 */
+	public function cleanByComponent($component, $forceCleanForAllXTUsers = false) {
+		try {
+			$componentID	= ($component instanceof LBoxComponent) ? $component->id : $component;
+			foreach ((array)$this->recordTypes as $url => $recordInfo) {
+				if (!$url) {continue;}
+				foreach ((array)$recordInfo["components"] as $componentAdded) {
+					if ($componentAdded == $component) {
+						$this->cleanURLData($url, $forceCleanForAllXTUsers);
+					}
+				}
+			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
 	/**
 	 * vycisti cache relevantni k danemu typu recordu
 	 * @param string $type
@@ -122,19 +160,24 @@ class LBoxCacheManagerFront
 				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_PARAM_STRING_NOTNULL, LBoxExceptionCache::CODE_BAD_PARAM);
 			}
 			if ($type == "AccesRecord") return;
-			foreach ($this->getURLsByRecordType($type) as $url) {
-				try {
-					$this->cleanURLData($url, $forceCleanForAllXTUsers);
-				}
-				catch (Exception $e) {
+			foreach ((array)$this->recordTypes as $url => $recordInfo) {
+				if (!$url) {continue;}
+				foreach ((array)$recordInfo["recordtypes"] as $recordType) {
+					if ($recordType == $type) {
+						try {
+							$this->cleanURLData($url, $forceCleanForAllXTUsers);
+						}
+						catch (Exception $e) {
 /*if (is_numeric(strpos(LBOX_REQUEST_URL_HOST, "beta.")) || is_numeric(strpos(LBOX_REQUEST_URL_HOST, "localhost."))) {
 	throw $e;
 }*/
-					if ($e->getCode() == 3005) {
-						NULL;
-					}
-					else {
-						throw $e;
+							if ($e->getCode() == 3005) {
+								NULL;
+							}
+							else {
+								throw $e;
+							}
+						}
 					}
 				}
 			}
@@ -325,35 +368,6 @@ class LBoxCacheManagerFront
 		}
 	}
 	
-	/**
-	 * vrati vsechny URL indexovane s predanym typem
-	 * @param string $type
-	 * @return array
-	 */
-	protected function getURLsByRecordType($type = "") {
-		try {
-			if (strlen($type) < 1) {
-				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_PARAM_STRING_NOTNULL, LBoxExceptionCache::CODE_BAD_PARAM);
-			}
-			if (array_key_exists($type, $this->uRLsByrecordTypes) && count($this->uRLsByrecordTypes[$type]) > 0) {
-				return $this->uRLsByrecordTypes[$type];
-			}
-			$this->uRLsByrecordTypes[$type]	= array();
-			foreach ((array)$this->recordTypes as $url => $recordInfo) {
-				if (!$url) {
-					continue;
-				}
-				foreach ((array)$recordInfo["recordtypes"] as $recordType) {
-					$this->uRLsByrecordTypes[$recordType][]	= $url;
-				}
-			}
-			return $this->uRLsByrecordTypes[$type];
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-
 	/**
 	 * getter na instanci cache
 	 * @return LBoxCacheData

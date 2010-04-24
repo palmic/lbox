@@ -86,5 +86,17 @@ abstract class LBoxPage extends LBoxComponent
 			throw $e;
 		}
 	}
+
+	/**
+	 * pretizeno - stranka samozrejme sama sebe k sobe indexovat nebude 
+	 */
+	protected function addUsageToCache() {
+		try {
+			//NULL
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
 }
 ?>
