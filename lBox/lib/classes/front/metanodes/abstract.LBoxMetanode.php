@@ -444,14 +444,12 @@ LBoxFirePHP::log(basename(__FILE__) ."::". __LINE__.': ' . 'storing the data of 
 			// smazat front cache
 			switch (true) {
 				case $this->caller instanceof LBoxPage:
-						// pro stranku mazeme veskerou cache stranky
+						// pro stranku mazeme veskere cache URLs teto stranky
 						LBoxCacheManagerFront::getInstance()->cleanByPageID($this->caller->config->id, true);
 						break;
 				default:
-						// pro komponentu mazeme veskerou cache
-						LBoxCacheFront::getInstance()->cleanConcrete();
-						LBoxCacheManagerFront::getInstance()->reset();
-						LBoxCacheManagerFront::getInstance()->__destruct();
+						// pro komponentu se smazou veskere URLs cache, kde byla komponenta pouzite
+						LBoxCacheManagerFront::getInstance()->cleanByComponent($this->caller->config->id, true);
 			}
 		}
 		catch(Exception $e) {
