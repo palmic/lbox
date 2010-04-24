@@ -99,7 +99,7 @@ class LBoxFront extends LBox
 			//if (self::getPage()->showConnivance()) {
 //LBoxFirePHP::table($_SERVER, "_SERVER");				
 				if (LBoxCacheManagerFront::getInstance()->isCacheON()) {
-					if ((!LBoxXTProject::isLoggedAdmin()) && (!LBoxCacheManagerFront::getInstance()->wasFormSentNow())) {
+					if ((!LBoxXTProject::isLoggedSuperAdmin()) && (!LBoxCacheManagerFront::getInstance()->wasFormSentNow())) {
 						if (count(self::getDataPost()) < 1) {
 							if (LBoxCacheManagerFront::getInstance()->doesCacheExists()) {
 								// send last modification header
@@ -115,7 +115,7 @@ LBoxFirePHP::warn("cache loaded in ". LBoxTimer::getInstance()->getTimeOfLife() 
 					$content	= self::getRequestContent();
 					echo $content;
 					
-					if ((!LBoxXTProject::isLoggedAdmin()) && (!LBoxCacheManagerFront::getInstance()->wasFormSentNow())) {
+					if ((!LBoxXTProject::isLoggedSuperAdmin()) && (!LBoxCacheManagerFront::getInstance()->wasFormSentNow())) {
 						if (count(self::getDataPost()) < 1) {
 							// vystup z nenalezenych URL neukladame - mohlo by umoznit snadno zahltit cache!
 							if (self::getPageCfg()->id	!= LBoxConfigSystem::getInstance()->getParamByPath("pages/page404")) {
