@@ -179,7 +179,7 @@ class LBoxCache2
 			if (!$this->getCache()->remove($id, $group, true)) {
 				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_CACHE_CANNOT_WRITE, LBoxExceptionCache::CODE_CACHE_CANNOT_WRITE);
 			}
-LBoxFirePHP::warn("cache smazana: \$id='$id', \$group='$group'");
+LBoxFirePHP::warn("cache smazana: \$id='$id', \$group='$group' \$dir='". $this->getDir() ."'");
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -196,7 +196,7 @@ LBoxFirePHP::warn("cache smazana: \$id='$id', \$group='$group'");
 			if (!$this->getCache()->clean($group, $mode)) {
 				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_CACHE_CANNOT_WRITE, LBoxExceptionCache::CODE_CACHE_CANNOT_WRITE);
 			}
-LBoxFirePHP::warn("cache smazana: \$group='$group'");
+LBoxFirePHP::warn("cache smazana: \$group='$group' \$dir='". $this->getDir() ."'");
 		}
 		catch (Exception $e) {
 			throw $e;
