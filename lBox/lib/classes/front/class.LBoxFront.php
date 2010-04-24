@@ -119,8 +119,14 @@ LBoxFirePHP::warn("cache loaded in ". LBoxTimer::getInstance()->getTimeOfLife() 
 						if (count(self::getDataPost()) < 1) {
 							// vystup z nenalezenych URL neukladame - mohlo by umoznit snadno zahltit cache!
 							if (self::getPageCfg()->id	!= LBoxConfigSystem::getInstance()->getParamByPath("pages/page404")) {
-								LBoxCacheManagerFront::getInstance()->saveData($content);
+								//kontrola jestli vystup neni jen vypis exception
+								if (strlen(strip_tags($content)) > 0) {
+									LBoxCacheManagerFront::getInstance()->saveData($content);
 LBoxFirePHP::warn("cache stored in ". LBoxTimer::getInstance()->getTimeOfLife() . "s");
+								}
+								else {
+LBoxFirePHP::error("cache NOT stored because output suppose to contain only exception message!");
+								}
 							}
 						}
 					}
