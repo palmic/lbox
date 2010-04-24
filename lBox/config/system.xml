@@ -3,7 +3,7 @@
 	<records>
 		<cache>
 			<expiration>604800</expiration>
-			<path>$cache/records</path>
+			<path>$cache/tables</path>
 		</cache>
 	</records>
 	<photogallery>

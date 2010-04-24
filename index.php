@@ -7,7 +7,7 @@ if (substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip')) {
 }
 else ob_start();
 
-//DbControl::$debug = true;
+//DbControl::$debug = "firephp";
 //LBoxCache::$debug = true;
 
 //LBoxLoaderConfig::getInstance()->debug = true;

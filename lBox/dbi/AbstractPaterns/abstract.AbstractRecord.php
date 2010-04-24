@@ -266,10 +266,10 @@ abstract class AbstractRecord implements Iterator
 			if (!array_key_exists($this->getClassVar("idColName"), $this->params) || strlen($this->params[$this->getClassVar("idColName")]) < 1) {
 				return false;
 			}
-			if (!LBoxCacheAbstractRecord::getInstance($this->params[$this->getClassVar("idColName")], $this->getCacheGroup())->doesCacheExists()) {
+			if (!LBoxCacheAbstractRecord::getInstance($this->getClassVar("tableName"), $this->params[$this->getClassVar("idColName")], self::getCacheGroup())->doesCacheExists()) {
 				return $this->isInCache = false;
 			}
-			return $this->isInCache = (count(LBoxCacheAbstractRecord::getInstance($this->params[$this->getClassVar("idColName")], $this->getCacheGroup())->getData()) > 0);
+			return $this->isInCache = (count(LBoxCacheAbstractRecord::getInstance($this->getClassVar("tableName"), $this->params[$this->getClassVar("idColName")], self::getCacheGroup())->getData()) > 0);
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -297,7 +297,7 @@ abstract class AbstractRecord implements Iterator
 			}
 //var_dump("loaduju z cache");
 			$idColName	= $this->getClassVar("idColName");
-			if (count($data = LBoxCacheAbstractRecord::getInstance($this->params[$this->getClassVar("idColName")], $this->getCacheGroup())->getData()) > 0) {
+			if (count($data = LBoxCacheAbstractRecord::getInstance($this->getClassVar("tableName"), $this->params[$this->getClassVar("idColName")], self::getCacheGroup())->getData()) > 0) {
 				if ($data[$idColName] == $this->params[$idColName]) {
 					if (array_key_exists("systemrecord_haschildren", $data)) {
 						$this->hasChildren	= (bool)$data["systemrecord_haschildren"];
@@ -334,14 +334,14 @@ abstract class AbstractRecord implements Iterator
 //$idColName	= $this->getClassVar("idColName");
 //var_dump(get_class($this) .":: '". $this->params[$idColName] ."' ukladam do cache");
 			foreach ($this->params as $key => $value) {
-				LBoxCacheAbstractRecord::getInstance($this->params[$this->getClassVar("idColName")], $this->getCacheGroup())->$key	= $value;
+				LBoxCacheAbstractRecord::getInstance($this->getClassVar("tableName"), $this->params[$this->getClassVar("idColName")], self::getCacheGroup())->$key	= $value;
 			}
-			LBoxCacheAbstractRecord::getInstance($this->params[$this->getClassVar("idColName")], $this->getCacheGroup())->sql	= $this->getQueryBuilder()->getSelectColumns($this->getClassVar("tableName"), array(), $this->getWhere());
-			LBoxCacheAbstractRecord::getInstance($this->params[$this->getClassVar("idColName")], $this->getCacheGroup())->systemrecord_istree	= (int)$this->isTree();
+			LBoxCacheAbstractRecord::getInstance($this->getClassVar("tableName"), $this->params[$this->getClassVar("idColName")], self::getCacheGroup())->sql	= $this->getQueryBuilder()->getSelectColumns($this->getClassVar("tableName"), array(), $this->getWhere());
+			LBoxCacheAbstractRecord::getInstance($this->getClassVar("tableName"), $this->params[$this->getClassVar("idColName")], self::getCacheGroup())->systemrecord_istree	= (int)$this->isTree();
 			if ($this->isTree()) {
-				LBoxCacheAbstractRecord::getInstance($this->params[$this->getClassVar("idColName")], $this->getCacheGroup())->systemrecord_haschildren	= (int)$this->hasChildren();
+				LBoxCacheAbstractRecord::getInstance($this->getClassVar("tableName"), $this->params[$this->getClassVar("idColName")], self::getCacheGroup())->systemrecord_haschildren	= (int)$this->hasChildren();
 			}
-			LBoxCacheAbstractRecord::getInstance($this->params[$this->getClassVar("idColName")], $this->getCacheGroup())->saveCachedData();
+			LBoxCacheAbstractRecord::getInstance($this->getClassVar("tableName"), $this->params[$this->getClassVar("idColName")], self::getCacheGroup())->saveCachedData();
 			$this->isCacheSynchronized	= true;
 		}
 		catch (Exception $e) {
@@ -354,7 +354,13 @@ abstract class AbstractRecord implements Iterator
 	 */
 	public function clearCache() {
 		try {
-			LBoxCacheAbstractRecord::getInstance($this->params[$this->getClassVar("idColName")], $this->getCacheGroup())->clean();
+			LBoxCacheAbstractRecord::getInstance($this->getClassVar("tableName"), $this->params[$this->getClassVar("idColName")], self::getCacheGroup())->clean();
+
+			// smazat zaroven i collections cache
+			$itemsType			= $this->getClassVar("itemsType");
+			$cacheGroupItems	= eval("return $itemsType::getCacheGroup();");
+			LBoxCacheAbstractRecord::getInstance($this->getClassVar("tableName"), $this->params[$this->getClassVar("idColName")], $cacheGroupItems)->clean();
+
 			$this				->resetRelevantCache();
 		}
 		catch (Exception $e) {
@@ -368,9 +374,12 @@ abstract class AbstractRecord implements Iterator
 	public function resetCache() {
 		try {
 			$this->resetRelevantCache();
-			$this->clearCache();
-			/*XXX jelikoz Cache_Lite neumoznuje rozdelovat cache sloziteji nez podle id, group,
-			neni mozne mazat pouze cache konkretniho recordu + collections jako driv a ponechat pri tom ostatni jednotlive records*/
+			LBoxCacheAbstractRecord::getInstance($this->getClassVar("tableName"), $this->params[$this->getClassVar("idColName")], self::getCacheGroup())->reset();
+
+			// smazat zaroven i collections cache
+			$itemsType			= $this->getClassVar("itemsType");
+			$cacheGroupItems	= eval("return $itemsType::getCacheGroup();");
+			LBoxCacheAbstractRecord::getInstance($this->getClassVar("tableName"), $this->params[$this->getClassVar("idColName")], $cacheGroupItems)->clean();
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -389,9 +398,6 @@ abstract class AbstractRecord implements Iterator
 	protected function resetRelevantCache() {
 		try {
 			$myClass			= get_class($this);
-			/*$itemsType			= $this->getClassVar("itemsType");
-			$itemsInstance		= new $itemsType;
-			$itemsInstance		->clearCache();*/
 			$dependingRecords	= $this->getClassVar("dependingRecords", true);
 			foreach ((array)$dependingRecords as $dependingRecord) {
 				if (strlen($dependingRecord) < 1) continue;
@@ -420,9 +426,9 @@ abstract class AbstractRecord implements Iterator
 	 * returns cache group
 	 * @return string
 	 */
-	protected function getCacheGroup() {
+	public static function getCacheGroup() {
 		try {
-			return $this->getClassVar("tableName");
+			return "records";
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -1249,7 +1255,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 				throw new LBoxException("Table '$tableName' seems not to be tree!");
 			}
 			if ($this->isInCache()) {
-				$data	= LBoxCacheAbstractRecord::getInstance($this->params[$this->getClassVar("idColName")], $this->getCacheGroup())->getData();
+				$data	= LBoxCacheAbstractRecord::getInstance($this->getClassVar("tableName"), $this->params[$this->getClassVar("idColName")], self::getCacheGroup())->getData();
 				if (is_numeric($cacheValue = $data["systemrecord_haschildren"])) {
 					return $this->hasChildren = (bool)$cacheValue;
 				}
@@ -1942,7 +1948,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 				return self::$isTree[$className];
 			}
 			if ($this->isInCache()) {
-				$data	= LBoxCacheAbstractRecord::getInstance($this->params[$this->getClassVar("idColName")], $this->getCacheGroup())->getData();
+				$data	= LBoxCacheAbstractRecord::getInstance($this->getClassVar("tableName"), $this->params[$this->getClassVar("idColName")], self::getCacheGroup())->getData();
 				if (is_numeric($cacheValue = $data["systemrecord_istree"])) {
 					return self::$isTree[$className] = (bool)$cacheValue;
 				}

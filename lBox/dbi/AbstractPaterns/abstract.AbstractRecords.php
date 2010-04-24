@@ -164,7 +164,7 @@ abstract class AbstractRecords implements Iterator
 			if (is_bool($this->isInCache)) {
 				return $this->isInCache;
 			}
-			return $this->isInCache = LBoxCacheAbstractRecord::getInstance($this->getSQL(), $this->getCacheGroup())->doesCacheExists();
+			return $this->isInCache = LBoxCacheAbstractRecord::getInstance($this->getTableName(), $this->getSQL(), self::getCacheGroup())->doesCacheExists();
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -185,7 +185,7 @@ echo "<br />\n";*/
 			$itemType 		= $this->getClassVar("itemType");
 			$className		= get_class($this);
 			$idColName  	= eval("return $itemType::\$idColName;");
-			if (count($data = LBoxCacheAbstractRecord::getInstance($this->getSQL(), $this->getCacheGroup())->getData()) > 0) {
+			if (count($data = LBoxCacheAbstractRecord::getInstance($this->getTableName(), $this->getSQL(), self::getCacheGroup())->getData()) > 0) {
 				if (array_key_exists("system_istree", $data)) {
 					self::$isTree[$className]	= (bool)$data["system_istree"];
 				}
@@ -300,7 +300,7 @@ echo "<br />\n";*/
 			if (count($this->cacheData) > 0) {
 				return $this->cacheData;
 			}
-			return $this->cacheData = LBoxCacheAbstractRecord::getInstance($this->getSQL(), $this->getCacheGroup())->getData();
+			return $this->cacheData = LBoxCacheAbstractRecord::getInstance($this->getTableName(), $this->getSQL(), self::getCacheGroup())->getData();
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -319,10 +319,10 @@ echo "<br />\n";*/
 			if ($this->isCacheSynchronized) return;
 
 			if (is_bool($this->isTree())) {
-				LBoxCacheAbstractRecord::getInstance($this->getSQL(), $this->getCacheGroup())->system_istree	= (int)$this->isTree();
+				LBoxCacheAbstractRecord::getInstance($this->getTableName(), $this->getSQL(), self::getCacheGroup())->system_istree	= (int)$this->isTree();
 			}
-			LBoxCacheAbstractRecord::getInstance($this->getSQL(), $this->getCacheGroup())->sql	= $this->getSQL();
-			LBoxCacheAbstractRecord::getInstance($this->getSQL(), $this->getCacheGroup())->saveCachedData();
+			LBoxCacheAbstractRecord::getInstance($this->getTableName(), $this->getSQL(), self::getCacheGroup())->sql	= $this->getSQL();
+			LBoxCacheAbstractRecord::getInstance($this->getTableName(), $this->getSQL(), self::getCacheGroup())->saveCachedData();
 			$this->isCacheSynchronized	= true;
 		}
 		catch (Exception $e) {
@@ -350,7 +350,7 @@ echo "<br />\n";*/
 			$itemType 					= $this->getClassVar("itemType");
 			$idColName  				= eval("return $itemType::\$idColName;");
 			$id							= $this->cacheLastKeyStored+1;
-			LBoxCacheAbstractRecord::getInstance($this->getSQL(), $this->getCacheGroup())->$id	= $data;
+			LBoxCacheAbstractRecord::getInstance($this->getTableName(), $this->getSQL(), self::getCacheGroup())->$id	= $data;
 			$this->isCacheSynchronized	= false;
 			$this->cacheLastKeyStored	++;
 		}
@@ -360,27 +360,13 @@ echo "<br />\n";*/
 	}
 	
 	/**
-	 * resets Record's cache
+	 * returns table name
+	 * @return string
 	 */
-	protected function resetCache() {
+	protected function getTableName() {
 		try {
-//throw new Exception(__FUNCTION__);
-			LBoxCacheAbstractRecord::getInstance($this->getSQL(), $this->getCacheGroup())->reset();
-			$this->isCacheSynchronized	= false;
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-	
-	/**
-	 * clear all cache data
-	 */
-	public function clearCache() {
-		try {
-//throw new Exception(__FUNCTION__);
-			LBoxCacheAbstractRecord::getInstance(NULL, $this->getCacheGroup())->clean();
-			$this->isCacheSynchronized	= false;
+			$itemType 	= $this->getClassVar("itemType");
+			return		eval("return $itemType::\$tableName;");
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -391,10 +377,9 @@ echo "<br />\n";*/
 	 * returns cache group
 	 * @return string
 	 */
-	protected function getCacheGroup() {
+	public static function getCacheGroup() {
 		try {
-			$itemType 	= $this->getClassVar("itemType");
-			return		eval("return $itemType::\$tableName;");
+			return "collections";
 		}
 		catch (Exception $e) {
 			throw $e;

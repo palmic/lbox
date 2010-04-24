@@ -53,8 +53,10 @@ class LBoxCacheManagerFront
 			$url	= (substr(LBOX_REQUEST_URL, -1) == "/") ? LBOX_REQUEST_URL : LBOX_REQUEST_URL . "/";
 			$url	= str_replace("?/", "/", $url);
 			$url	= str_replace("//", "/", $url);
-			$this->recordTypes[$url]["components"][$componentID]	= $componentID;
-			$this->recordTypes[$url]["pageid"]							= LBoxFront::getPage()->config->id;
+			if (LBoxFront::getPage()->config->id != LBoxConfigSystem::getInstance()->getParamByPath("pages/page404")) {
+				$this->recordTypes[$url]["components"][$componentID]	= $componentID;
+				$this->recordTypes[$url]["pageid"]							= LBoxFront::getPage()->config->id;
+			}
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -77,8 +79,10 @@ class LBoxCacheManagerFront
 			$url	= (substr(LBOX_REQUEST_URL, -1) == "/") ? LBOX_REQUEST_URL : LBOX_REQUEST_URL . "/";
 			$url	= str_replace("?/", "/", $url);
 			$url	= str_replace("//", "/", $url);
-			$this->recordTypes[$url]["recordtypes"][$type]	= $type;
-			$this->recordTypes[$url]["pageid"]				= LBoxFront::getPage()->config->id;
+			if (LBoxFront::getPage()->config->id != LBoxConfigSystem::getInstance()->getParamByPath("pages/page404")) {
+				$this->recordTypes[$url]["recordtypes"][$type]	= $type;
+				$this->recordTypes[$url]["pageid"]				= LBoxFront::getPage()->config->id;
+			}
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -97,8 +101,10 @@ class LBoxCacheManagerFront
 			$url	= (substr(LBOX_REQUEST_URL, -1) == "/") ? LBOX_REQUEST_URL : LBOX_REQUEST_URL . "/";
 			$url	= str_replace("?/", "/", $url);
 			$url	= str_replace("//", "/", $url);
-			$this->recordTypes[$url]["forms"][$form->getName()]	= $form->getName();
-			$this->recordTypes[$url]["pageid"]					= LBoxFront::getPage()->config->id;
+			if (LBoxFront::getPage()->config->id != LBoxConfigSystem::getInstance()->getParamByPath("pages/page404")) {
+				$this->recordTypes[$url]["forms"][$form->getName()]	= $form->getName();
+				$this->recordTypes[$url]["pageid"]					= LBoxFront::getPage()->config->id;
+			}
 		}
 		catch (Exception $e) {
 			throw $e;
