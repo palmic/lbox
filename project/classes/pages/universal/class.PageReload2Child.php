@@ -7,12 +7,21 @@
 */
 class PageReload2Child extends PageDefault
 {
-	protected function executeStart() {
+	public function executeInit() {
 		try {
-			parent::executeStart();
+			parent::executeInit();
 			if ($this->config->getChildNodesIterator()) {
 				LBoxFront::reload($this->config->getChildNodesIterator()->current()->url);
 			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	protected function executeStart() {
+		try {
+			parent::executeStart();
 		}
 		catch (Exception $e) {
 			throw $e;
