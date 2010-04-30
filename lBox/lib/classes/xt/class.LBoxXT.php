@@ -145,9 +145,6 @@ class LBoxXT extends LBox
 			if (array_key_exists($loginGroup, self::$isLogged)) {
 				return self::$isLogged[$loginGroup];
 			}
-			if (!is_array($_SESSION["lbox"][self::SESSION_ARRAY_NAME])) {
-				return self::$isLogged[$loginGroup] = false;
-			}
 			if ($loginGroup === 0) {
 				if (strlen(LBoxFront::getPage()->xt) > 0) {
 					$loginGroup = LBoxFront::getPage()->xt;
@@ -168,13 +165,14 @@ class LBoxXT extends LBox
 				}
 			}
 			// prihlaseni z cookie
-			if (array_key_exists(self::COOKIE_NAME_LOGIN ."-". $loginGroup, $_COOKIE))
-			if (strlen($_COOKIE[self::COOKIE_NAME_LOGIN ."-". $loginGroup]) > 0) {
-				$login 			= explode(":", $_COOKIE[self::COOKIE_NAME_LOGIN ."-". $loginGroup]);
-				$group			= is_numeric($login[2]) ? (int)$login[2] : 1;
-				// logout pro obnoveni persistence cookie
-				self::logout();
-				self::login($login[0], $login[1], true, $group);
+			if (array_key_exists(self::COOKIE_NAME_LOGIN ."-". $loginGroup, $_COOKIE)) {
+				if (strlen($_COOKIE[self::COOKIE_NAME_LOGIN ."-". $loginGroup]) > 0) {
+					$login 			= explode(":", $_COOKIE[self::COOKIE_NAME_LOGIN ."-". $loginGroup]);
+					$group			= is_numeric($login[2]) ? (int)$login[2] : 1;
+					// logout pro obnoveni persistence cookie
+					self::logout();
+					self::login($login[0], $login[1], true, $group);
+				}
 			}
 			if (array_key_exists("lbox", (array)$_SESSION)) {
 				return self::$isLogged[$loginGroup] = (bool)$_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["signon"];
