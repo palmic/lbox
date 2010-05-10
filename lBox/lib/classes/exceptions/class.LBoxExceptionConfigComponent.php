@@ -13,7 +13,5 @@ class LBoxExceptionConfigComponent extends LBoxExceptionConfig
 	
 	const MSG_CLASS_DEFAULT_NOTFOUND 				= "Default class not found in system config!";	
 	const MSG_TEMPLATE_NOTFOUND 					= "Component template not found in config!";
-
-	protected $logVerbose	= true;
 }
 ?>

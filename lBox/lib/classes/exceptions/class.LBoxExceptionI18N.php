@@ -12,7 +12,5 @@ class LBoxExceptionI18N extends LBoxException
 	
 	const MSG_LNG_NOTEXISTS						= "This language mutation does not exists";
 	const MSG_LNG_ITEM_NOTEXISTS				= "Text item with this id does not exists in this language mutation";
-
-	protected $logVerbose	= true;
 }
 ?>
