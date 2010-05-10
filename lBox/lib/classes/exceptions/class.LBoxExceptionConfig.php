@@ -46,5 +46,7 @@ class LBoxExceptionConfig extends LBoxException
 	const MSG_NODE_BYID_NOT_FOUND									= "node was not found in config by given id attribute!";	
 	const MSG_PAGING_URLPARAM_EXAMPLE_NOT_CORRESPOND_PATTERN		= "paging_url_param_example config value does not correspond paging_url_param_pattern value!";	
 	const MSG_ATTRIBUTE_WRONG		 								= "config attribute is wrong!";
+	
+	protected $logVerbose	= false;
 }
 ?>
