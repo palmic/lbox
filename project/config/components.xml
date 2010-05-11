@@ -1,29 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <components>
 	<!-- layouts -->
-	<component id="layout_default" 						template="default.html" 							class="LayoutDefault" />
+	<component id="layout_default" 						template="default.html" 						class="LayoutDefault" />
+	<component id="layout_admin" 						template="admin.html" 							class="LayoutDefault" />
 
 	<!-- components -->
 	<component id="facebook_connector"					template="facebook_connector.html"				class="ComponentDefault" />
+	<component id="facebook_widget_activity"			template="facebook_widget_activity.html"		class="ComponentDefault" />
 	<component id="facebook_widget_login"				template="facebook_widget_login.html"			class="ComponentDefault" />
 	<component id="facebook_widget_like"				template="facebook_widget_like.html"			class="ComponentDefault" />
 	<component id="facebook_widget_recommendations"		template="facebook_widget_recommendations.html"	class="ComponentDefault" />
 	<component id="facebook_widget_comments"			template="facebook_widget_comments.html"		class="ComponentDefault" />
+	<component id="facebook_widget_ficepile"			template="facebook_widget_ficepile.html"		class="ComponentDefault" />
+	<component id="facebook_widget_livestream"			template="facebook_widget_livestream.html"		class="ComponentDefault" />
 
 	<component id="jspreload_webadmin"		template="jspreload_webadmin.html"		class="JSPreloadWebAdmin" />
 	<component id="menu_main" 				template="menu_main.html" 				class="MenuMain" />
 	<component id="menu_main_one_level" 	template="menu_main_one_level.html" 	class="MenuMain" />
 	<component id="menu_sub" 				template="menu_sub.html" 				class="MenuSub" />
 	<component id="breadcrumb" 				template="breadcrumb.html" 				class="Breadcrumb" />
-	<component id="news_list" 				template="news_list.html" 				class="NewsList" />
 	<component id="discussion" 				template="discussion.html" 				class="Discussion" 			rss="32" />
 	<component id="login_form" 				template="login_form.html" 				class="LoginForm" />
-	<component id="login_form_email" 		template="login_form.html" 				class="LoginFormEmail" />
-	<component id="login_form_dbfree"		template="login_form_dbfree.html" 		class="LoginFormDBFree" />
+	<component id="login_form_admin" 		template="login_form_admin.html" 		class="LoginFormAdmin" />
 	<component id="box_last_news" 			template="box_last_news.html" 			class="BoxLastNews" />
 	<component id="xt_tray" 				template="xt_tray.html" 				class="XTTray" />
 	<component id="counter_acces" 			template="counter_acces.html" 			class="CounterAcces" />
 	<component id="sitemap" 				template="sitemap.html" 				class="Sitemap" />
 	<component id="contact_form"			template="contact_form.html" 			class="ContactForm" />
 	<component id="box_inquiries"			template="box_inquiries.html" 			class="BoxInquiries" />
+
+	<component id="menu_1_one_level" 		template="menu_1_one_level.html" 		class="MenuSpecificItems" />
+	<component id="menu_2_one_level" 		template="menu_2_one_level.html" 		class="MenuSpecificItems" />
+
+	<component id="news_list" 				template="news_list.html" 				class="NewsList" />
+	<component id="news_list_last5" 		template="news_list.html" 				class="NewsListLast5" />
+	<component id="press_list" 				template="press_list.html" 				class="PressList" />
+	<component id="carousel_quotes" 			template="carousel_quotes.html" 			class="CarouselQuotes" />
+	<component id="contact_form_startup"			template="contact_form.html" 			class="ContactFormStartup" />
+	<component id="form_startup_signon"			template="form_startup_signon.html" 			class="FormStartupSignon" />
+	<component id="box_strip_right"				template="box_strip_right.html" 				class="ComponentDefault" />
+	<component id="box_to_invitation"				template="box_to_invitation.html" 				class="ComponentDefault" />
+	<component id="box_to_download"				template="box_to_download.html" 				class="ComponentDefault" />
+	
+	<component id="box_photogalleries"					template="box_photogalleries.html" 							class="BoxPhotogalleries" />
+	<component id="articles_wrote_about_list"		template="articles_wrote_about_list.html" 				class="ArticlesWroteAboutList" />
 </components>
