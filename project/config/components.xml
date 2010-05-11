@@ -4,6 +4,10 @@
 	<component id="layout_default" 						template="default.html" 							class="LayoutDefault" />
 
 	<!-- components -->
+	<component id="facebook_connector"			template="facebook_connector.html"		class="ComponentDefault" />
+	<component id="facebook_widget_login"		template="facebook_widget_login.html"	class="ComponentDefault" />
+	<component id="facebook_widget_like"		template="facebook_widget_like.html"	class="ComponentDefault" />
+
 	<component id="jspreload_webadmin"		template="jspreload_webadmin.html"		class="JSPreloadWebAdmin" />
 	<component id="menu_main" 				template="menu_main.html" 				class="MenuMain" />
 	<component id="menu_main_one_level" 	template="menu_main_one_level.html" 	class="MenuMain" />

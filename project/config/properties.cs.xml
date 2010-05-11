@@ -44,6 +44,9 @@
 	<!-- Private key pluginu recaptcha - k pouziti pouze na serverside API!!!! -->
 	<property name="recaptcha_key_private">6LdW2QQAAAAAAPPGimgi5hK1HcMZh92X2yWdCmVR</property>
 
+	<!-- facebook API ID - je treba vygenerovat pro kazdou aplikaci na http://developers.facebook.com/setup/ -->
+	<property name="facebook_api_id"></property>
+
 	<property name="contact_form_addresses">info@lbox.cz</property><!-- cilove mailove adresy kontaktnich formularu (oddelovat carkou) -->
 	<property name="contact_form_subject"><![CDATA[Vzkaz z kontaktního formuláře <host>]]></property><!-- predmet mailu z kontaktnich formularu -->
 
