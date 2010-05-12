@@ -99,7 +99,8 @@ class QueryBuilderPlatformMssql extends QueryBuilderPlatform
 	
 	public function getDoesTableExists($table, $database = "") {
 		try {
-			throw new DbControlException( "getDoesTableExists() is not implemented yet!");
+			$quotesColumnName	= $this->getQuotesColumnName();
+			return "SELECT name FROM SysObjects WHERE ".$quotesColumnName[0]."name".$quotesColumnName[1]." = ".$this->getValueWrapped($table)."";
 		}
 		catch (Exception $e) {
 			throw $e;
