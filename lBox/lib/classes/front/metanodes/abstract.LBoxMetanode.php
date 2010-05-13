@@ -326,7 +326,7 @@ LBoxFirePHP::table($this->styles, basename(__FILE__) ."::". __LINE__.': ' . 'met
 				$ctrlSeq			->setTemplateFileName("metanode_hidden.html");
 			$ctrlCallerID			= new LBoxFormControlFillHidden("caller_id", "", $callerID);
 				$ctrlCallerID		->setTemplateFileName("metanode_hidden.html");
-			$ctrlCallerType			= new LBoxFormControlFillHidden("caller_type", "", $this->caller instanceof LBoxPage ? "page" : "component");
+			$ctrlCallerType			= new LBoxFormControlFillHidden("caller_type", "", ($this->caller instanceof LBoxPage || $this->caller instanceof PageList) ? "page" : "component");
 				$ctrlCallerType		->setTemplateFileName("metanode_hidden.html");
 			$ctrlLng				= new LBoxFormControlFillHidden("lng", "", LBoxFront::getDisplayLanguage());
 				$ctrlLng			->setTemplateFileName("metanode_hidden.html");
