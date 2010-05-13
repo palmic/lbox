@@ -168,6 +168,12 @@ class LBoxCache2
 	}
 	
 	/**
+	 * jiz procistene IDs, aby se neprocistovaly vickrat
+	 * @var array
+	 */
+	protected static $idsCleaned	= array();
+	
+	/**
 	 * vymaze libovolne id z cache podle parametru
 	 * @param string $id
 	 * @param string $group
@@ -176,10 +182,14 @@ class LBoxCache2
 		try {
 			if (strlen($id) < 1) {$id = $this->id;}
 			if (strlen($group) < 1) {$group = $this->group;}
+			if (array_key_exists($group, self::$idsCleaned) && array_key_exists($id, self::$idsCleaned[$group])) {
+				return;
+			}
 			if (!$this->getCache()->remove($id, $group, true)) {
 				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_CACHE_CANNOT_WRITE, LBoxExceptionCache::CODE_CACHE_CANNOT_WRITE);
 			}
-LBoxFirePHP::warn("cache smazana: \$id='$id', \$group='$group' \$dir='". $this->getDir() ."'");
+LBoxFirePHP::warn("cache smazana: \$id='$id', \$group='$group'");
+			self::$idsCleaned[$group][$id]	= true;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -187,16 +197,26 @@ LBoxFirePHP::warn("cache smazana: \$id='$id', \$group='$group' \$dir='". $this->
 	}
 
 	/**
+	 * jiz procistene groupy, aby se neprocistovaly vickrat
+	 * @var array
+	 */
+	protected static $groupsCleaned	= array();
+	
+	/**
 	 * vycisti libovolnou groupu cache podle parametru
 	 * @param string $group
 	 * @param string $mode ingroup | notingroup | old  callback_myFunc - see http://pear.php.net/manual/en/package.caching.cache-lite.cache-lite.clean.php
 	 */
 	public function cleanConcrete($group = false, $mode = "ingroup") {
 		try {
+			if (array_key_exists($mode, self::$groupsCleaned) && array_key_exists($group, self::$groupsCleaned[$mode])) {
+				return;
+			}
 			if (!$this->getCache()->clean($group, $mode)) {
 				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_CACHE_CANNOT_WRITE, LBoxExceptionCache::CODE_CACHE_CANNOT_WRITE);
 			}
-LBoxFirePHP::warn("cache smazana: \$group='$group' \$dir='". $this->getDir() ."'");
+LBoxFirePHP::warn("cache smazana: \$group='$group'");
+			self::$groupsCleaned[$mode][$group]	= true;
 		}
 		catch (Exception $e) {
 			throw $e;
