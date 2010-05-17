@@ -49,7 +49,7 @@ abstract class AbstractRecord implements Iterator
 	 * @var boolean
 	 */
 	protected $isInDatabase;
-	
+
 	/**
 	 * record loaded flag - for no additional load
 	 * @var boolean
@@ -132,7 +132,7 @@ abstract class AbstractRecord implements Iterator
 	 * @var array
 	 */
 	public static $dependingRecords	= array();
-	
+
 	/**
 	 * database task id
 	 * @var string
@@ -156,13 +156,13 @@ abstract class AbstractRecord implements Iterator
 	 * @var array
 	 */
 	private $cacheClassVars = array();
-	
+
 	/**
 	 * cache var flag
 	 * @var array
 	 */
 	public static $doesTableExistsInDatabaseByTypes;
-	
+
 	/**
 	 * attributes definition for data/structure modification manipulations
 	 * array(	"name"=>"<COLNAME>",
@@ -176,7 +176,7 @@ abstract class AbstractRecord implements Iterator
 	 * @var array
 	 */
 	protected static $attributes	=	array(array());
-	
+
 	//== constructors ====================================================================
 
 	/**
@@ -229,31 +229,31 @@ abstract class AbstractRecord implements Iterator
 	 * @var bool
 	 */
 	protected $isInCache;
-	
+
 	/**
 	 * cache synchronized flag
 	 * @var bool
 	 */
 	protected $isCacheSynchronized	= false;
-	
+
 	/**
 	 * cache switched on flag
 	 * @var bool
 	 */
 	protected $isCacheOn;
-	
+
 	/**
 	 * cache temporary switch - used in cases of data manipulation operations to disable all the caching while operation is done
 	 * @var bool
 	 */
 	public static $isCacheOnTempSwitch;
-	
+
 	/**
 	 * explicit var to disable cache for concrete tables
 	 * @var bool
 	 */
 	public static $cacheDisabled	= false;
-	
+
 	/**
 	 * return true if record is cached
 	 * @return bool
@@ -447,7 +447,7 @@ abstract class AbstractRecord implements Iterator
 
 			// dependingRecords variable set check
 			$this		->getClassVar("dependingRecords");
-			
+
 			$config		= new DbCfg;
 			$path		= "/tasks/project/cache";
 			$value		= $config->$path;
@@ -759,9 +759,9 @@ abstract class AbstractRecord implements Iterator
 				$this->checkAttributesColumnsExists();
 				return;
 			}
-			
+
 			$idColName = $this->getIdColName();
-			
+
 			// cannot load without idColName value
 			if (strlen((string)$this->params[$idColName]) < 1) {
 				$className	= get_class($this);
@@ -772,7 +772,7 @@ abstract class AbstractRecord implements Iterator
 			if (count($this->getWhere()->getConditions()) < 1) {
 				throw new LBoxException("Cannot load record by ". get_class($this) ." whithout where specification! Set id or other parameters for get ONE record from db.");
 			}
-			
+
 			$sql	= $this->getQueryBuilder()->getSelectColumns($this->getClassVar("tableName"), array(), $this->getWhere());
 			$this->getDb()->setQuery($sql, true);
 // var_dump(__CLASS__ ."::". __LINE__ .": ". $sql);
@@ -801,14 +801,14 @@ abstract class AbstractRecord implements Iterator
 		$this->setSynchronized(true);
 		$this->loaded			= true;
 	}
-	
+
 	/**
 	 * delete Database record
 	 */
 	public function delete() {
 		try {
 			self::$isCacheOnTempSwitch	= false;
-			
+
 			$idColName = $this->getClassVar("idColName");
 			if (!$this->params[$idColName]) {
 				throw new LBoxException("Cannot delete database record whithout id specified! Can delete more records!!!");
@@ -828,7 +828,7 @@ abstract class AbstractRecord implements Iterator
 				$bidColName		= $treeColNames[3];
 				$myLft			= $this->get($lftColName);
 				$myRgt			= $this->get($rgtColName);
-				
+
 				$quotesColumnName		= $this->getQueryBuilder()->getQuotesColumnName();
 				$lftColNameSlashed		= reset($quotesColumnName) . $lftColName . end($quotesColumnName);
 				$rgtColNameSlashed		= reset($quotesColumnName) . $rgtColName . end($quotesColumnName);
@@ -895,7 +895,7 @@ abstract class AbstractRecord implements Iterator
 			$this->storeToCache();
 		}
 	}
-	
+
 	/**
 	 * setter for passwordChanged - ONLY FOR AbstractRecords INSTANCES!!!
 	 * @param boolean $value
@@ -906,7 +906,7 @@ abstract class AbstractRecord implements Iterator
 		}
 		$this->passwordChanged = $value;
 	}
-	
+
 	/**
 	 * check for the same record in database table
 	 * @return boolean
@@ -953,7 +953,7 @@ abstract class AbstractRecord implements Iterator
 			if (!array_key_exists($idColName, $this->params) || strlen($this->params[$idColName]) < 1) {
 				return false;
 			}
-			
+
 			$where	= new QueryBuilderWhere();
 			$where	->addConditionColumn($idColName, $this->params[$idColName]);
 			$sql	= $this->getQueryBuilder()->getSelectColumns($this->getClassVar("tableName"), array("$idColName"), $where);
@@ -1005,7 +1005,7 @@ abstract class AbstractRecord implements Iterator
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * getter for instance of class maping bounded table for relation M:1
 	 * @param $type - is defined by $this->getBounded()
@@ -1174,7 +1174,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * getter of static variable from child class
 	 * @param string $varname - Name of child class static variable
@@ -1316,7 +1316,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			$id				= $this->get($idColName);
 			$bId			= $this->get($bidColName);
 //var_dump($this->params[$idColName] .": getChildren");
-			
+
 			$filter[$pidColName]	= $id;
 			$filter[$bidColName]	= $bId;
 			$order			= (is_array($order) && (count($order) > 0)) ? $order : array($lftColName => 1);
@@ -1371,7 +1371,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			$rgtColNameSlashed		= reset($quotesColumnName) . $rgtColName . end($quotesColumnName);
 			$pidColNameSlashed		= reset($quotesColumnName) . $pidColName . end($quotesColumnName);
 			$bidColNameSlashed		= reset($quotesColumnName) . $bidColName . end($quotesColumnName);
-			
+
 			if ($child->$pidColName == $this->$idColName) {
 				// throw new LBoxException("This already is my child!");
 				return;
@@ -1450,7 +1450,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 				$wheres[$i]	->addConditionColumn($lftColName, $myRgt, 2);
 				$wheres[$i]	->addConditionColumn($lftColName, $chLft, -2);
 				$sqls[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($lftColName => "<<$lftColNameSlashed+$chWeight>>"), $wheres[$i]);
-				
+
 				/*$sqls[] = "UPDATE $tableName SET
 				$rgtColName = $rgtColName+$chWeight
 									WHERE 	$rgtColName > ($myRgt-1)
@@ -1496,7 +1496,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			$wheres2[$i]	= new QueryBuilderWhere();
 			$wheres2[$i]	->addConditionColumn($idColName, $chId);
 			$sqls2[$i]		= $this->getQueryBuilder()->getUpdate($tableName, array($pidColName => $myId), $wheres2[$i]);
-								
+
 			foreach ($sqls2 as $sql) {
 // var_dump("hallloooo: ". __CLASS__ ."::". __LINE__ .": ". $sql);
 				$this->getDb()->initiateQuery($sql);
@@ -1555,7 +1555,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			$rgtColNameSlashed		= reset($quotesColumnName) . $rgtColName . end($quotesColumnName);
 			$pidColNameSlashed		= reset($quotesColumnName) . $pidColName . end($quotesColumnName);
 			$bidColNameSlashed		= reset($quotesColumnName) . $bidColName . end($quotesColumnName);
-			
+
 			if ($child->$pidColName !== $this->get($idColName)) {
 				throw new LBoxException("Bad argument - its not my child!");
 			}
@@ -1604,7 +1604,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			$wheres[$i]	= new QueryBuilderWhere();
 			$wheres[$i]	->addConditionColumn($lftColName, $chRgt, 2);
 			$sqls[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($lftColName => "<<$lftColNameSlashed-$chWeight>>"), $wheres[$i]);
-			
+
 			/*$sqls[] = "UPDATE $tableName SET
 			$rgtColName = $rgtColName-$chWeight
 								WHERE 	$rgtColName > $chRgt
@@ -1613,7 +1613,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			$wheres[$i]	= new QueryBuilderWhere();
 			$wheres[$i]	->addConditionColumn($rgtColName, $chRgt, 2);
 			$sqls[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($rgtColName => "<<$rgtColNameSlashed-$chWeight>>"), $wheres[$i]);
-			
+
 			foreach ($sqls as $sql) {
 // var_dump(__CLASS__ ."::". __LINE__ .": ". $sql);
 				$this->getDb()->initiateQuery($sql);
@@ -1641,7 +1641,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			$this->clearCache();
 			$treeColNames	= $this->getClassVar("treeColNames");
 			$pidColName		= $treeColNames[2];
-			
+
 			$this->load();
 			if (!$this->params[$pidColName]) {
 				throw new LBoxException("I have no parent!");
@@ -1687,7 +1687,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			$rgtColNameSlashed		= reset($quotesColumnName) . $rgtColName . end($quotesColumnName);
 			$pidColNameSlashed		= reset($quotesColumnName) . $pidColName . end($quotesColumnName);
 			$bidColNameSlashed		= reset($quotesColumnName) . $bidColName . end($quotesColumnName);
-			
+
 			// set sibling as parent's child if is not
 			if ($sibling->$pidColName != $this->get($pidColName)) {
 				$this->getParent()->addChild($sibling);
@@ -1722,7 +1722,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			$wheres[$i]	->addConditionColumn($rgtColName, $chRgt+1, -2);
 			$sqls[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($lftColName => "<<$lftColNameSlashed + $maxRgt>>",
 																				$rgtColName => "<<$rgtColNameSlashed + $maxRgt>>"), $wheres[$i]);
-			
+
 			// make space for sibling
 			/*$sqls[] = "UPDATE $tableName SET
 			$lftColName = $lftColName + $chWeight,
@@ -1809,7 +1809,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * checks if given record is descendant
 	 * @param AbstractRecord $child
@@ -1859,7 +1859,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			$myLft			= $this->params[$lftColName];
 			$myRgt			= $this->params[$rgtColName];
 			$myBid			= $this->params[$bidColName];
-			
+
 			$where			= new QueryBuilderWhere();
 			$where			->addConditionColumn($lftColName, $myLft, 2);
 			$where			->addConditionColumn($rgtColName, $myRgt, -2);
@@ -1955,7 +1955,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			}
 			$columns 		= $this->getClassVar("treeColNames");
 			$tableName		= $this->getClassVar("tableName");
-			
+
 			try {
 				$this->getDb()->initiateQuery($this->getQueryBuilder()
 				->getSelectColumns($tableName, $columns, new QueryBuilderWhere, array(1)));
@@ -1974,7 +1974,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			throw $e;
 		}
 	}
-	
+
 	/**
 	* ckecks if table exists in database yet
 	* @return bool
@@ -1982,6 +1982,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 	*/
 	protected function doesTableExistsInDatabase() {
 		try {
+			$className	= get_class($this);
 			if (is_bool(self::$doesTableExistsInDatabaseByTypes[$className])) {
 				return self::$doesTableExistsInDatabaseByTypes[$className];
 			}
@@ -1993,7 +1994,6 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 				$schema	= $dbSelector->getTaskSchema(self::$task);
 			}
 			$value	= $this->getDb()->initiateQuery($this->getQueryBuilder()->getDoesTableExists($this->getClassVar("tableName"), $schema))->getNumRows() > 0;
-			$className	= get_class($this);
 			return self::$doesTableExistsInDatabaseByTypes[$className] = $value;
 		}
 		catch (Exception $e) {
@@ -2006,7 +2006,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 	 * @var bool
 	 */
 	protected $tableCreated = false;
-	
+
 	/**
 	* creates database table by attributes
 	* @throws Exception
@@ -2018,7 +2018,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			}
 			$attributes	= $this->getClassVar("attributes");
 			if (count(current($attributes)) < 1) {
-				throw new LBoxException(get_class($this) ." - Attributes not set - cannot automaticaly create database table!"); 
+				throw new LBoxException(get_class($this) ." - Attributes not set - cannot automaticaly create database table!");
 			}
 			$type			= get_class($this);
 			$tableName		= $this->getClassVar("tableName");
@@ -2072,7 +2072,7 @@ LBoxFirePHP::log("adding columns into '$tableName': ". implode(", ", $columns));
 				}
 			}
 			$this->getDb()->initiateQuery($this->getQueryBuilder()->getAddColumns($tableName, $cols));
-			
+
 			$this->resetCache();
 			$this->isCacheSynchronized	= false;
 		}
@@ -2080,7 +2080,7 @@ LBoxFirePHP::log("adding columns into '$tableName': ". implode(", ", $columns));
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * adds missing columns into database table by attributes
 	 * @throws Exception
@@ -2104,7 +2104,7 @@ LBoxFirePHP::log("adding columns into '$tableName': ". implode(", ", $columns));
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * getter na attributy
 	 * @return array
