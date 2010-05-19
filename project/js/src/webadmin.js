@@ -216,7 +216,7 @@ var renderRTE = function(field, form) {
 				focusAtStart: v_focusAtStart,
 				width: '724px', height: '300px',
 				filterWord: true,
-				ptags: true
+				ptags: false
 			});
 			editors[form.id][field.id].on('toolbarLoaded', function() {
 			        var codeConfig = { type: 'push', label: 'Edit HTML Code', value: 'editcode' };
