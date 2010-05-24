@@ -84,6 +84,9 @@ class AccesRecord extends AbstractRecordLBox
 	 */
 	public function __destruct() {
 		try {
+			if (LBoxConfigManagerProperties::getPropertyContentByName("log_access") < 1) {
+				return;
+			}
 			$this->params["queries"]			= DbControl::getQueryCount()+1;
 			$this->params["time_execution"]		= LBoxTimer::getInstance()->getTimeOfLife();
 			$this->params["cache_read"]			= LBoxCache::getInstance()->getFilesOpenedRead();
