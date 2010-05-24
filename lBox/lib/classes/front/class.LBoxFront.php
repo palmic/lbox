@@ -206,25 +206,31 @@ LBoxFirePHP::warn("cache VYPNUTA");
 				}
 			}
 			// logged reload
+			$reloadParamPartsLoggedDBFree	= strlen($pageCfg->xt_reload_logged_dbfree)		> 0 ? explode(":", (string)$pageCfg->xt_reload_logged_dbfree) 	: array();
 			$reloadParamPartsLogged			= strlen($pageCfg->xt_reload_logged)		 	> 0 ? explode(":", (string)$pageCfg->xt_reload_logged) 			: array();
 			$reloadParamPartsLoggedXT		= strlen($pageCfg->xt_reload_logged_xt) 		> 0 ? explode(":", (string)$pageCfg->xt_reload_logged_xt) 		: array();
 			$reloadParamPartsLoggedSuperXT	= strlen($pageCfg->xt_reload_logged_superxt) 	> 0 ? explode(":", (string)$pageCfg->xt_reload_logged_superxt) 	: array();
 			if (count($reloadParamPartsLoggedSuperXT) > 0) {
 				if (LBoxXTProject::isLoggedSuperAdmin($reloadParamPartsLoggedSuperXT[0])) {
-					LBoxFront::reloadLoggedSuperXT();
+					self::reloadLoggedSuperXT();
 				}
 			}
 			if (count($reloadParamPartsLoggedXT) > 0) {
 				if (LBoxXTProject::isLoggedAdmin($reloadParamPartsLoggedXT[0])) {
-					LBoxFront::reloadLoggedXT();
+					self::reloadLoggedXT();
 				}
 			}
 			if (count($reloadParamPartsLogged) > 0) {
 				if (LBoxXTProject::isLogged($reloadParamPartsLogged[0])) {
-					LBoxFront::reloadLogged();
+					self::reloadLogged();
 				}
 			}			
-
+			if (count($reloadParamPartsLoggedDBFree) > 0) {
+				if (LBoxXTDBFree::isLogged($reloadParamPartsLoggedDBFree[0])) {
+					self::reloadLoggedDBFree();
+				}
+			}			
+			
 			// prodlouzit init volani procedury do tridy aktualni stranky
 			self::getPage()->executeInit();
 		}
@@ -493,6 +499,26 @@ LBoxFirePHP::warn("cache VYPNUTA");
 	}
 	
 	/**
+	 * reloaduje na default logged dbfree page
+	 * @throws Exception
+	 */
+	public static function reloadLoggedDBFree() {
+		try {
+			$pageCfg = self::getPageCfg();
+			if (strlen($pageCfg->xt_reload_logged_dbfree) > 0) {
+				$reloadParamParts	= explode(":", $pageCfg->xt_reload_logged_dbfree);
+				$pageReload	= LBoxConfigManagerStructure::getPageById($reloadParamParts[1]);
+				if ($pageCfg->url != $pageReload->url) {
+					self::reload($pageReload->url);
+				}
+			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * Vraci string z URL za : pokud nejaky je
 	 * @return string
 	 */
@@ -688,6 +714,7 @@ LBoxFirePHP::warn("cache VYPNUTA");
 	public static function logout($loginGroup = 1) {
 		try {
 			LBoxXTProject::logout($loginGroup);
+			LBoxXTDBFree::logout($loginGroup);
 			self::reload(LBoxUtil::getURLWithoutParams(array(self::getURLParamNameLogout())));
 		}
 		catch (Exception $e) {
