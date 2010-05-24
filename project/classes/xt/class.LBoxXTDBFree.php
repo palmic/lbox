@@ -106,9 +106,6 @@ class LBoxXTDBFree extends LBox
 			if (array_key_exists($loginGroup, self::$isLogged)) {
 				return self::$isLogged[$loginGroup];
 			}
-			if (!is_array($_SESSION["lbox"][self::SESSION_ARRAY_NAME])) {
-				return self::$isLogged[$loginGroup] = false;
-			}
 			if ($loginGroup === 0) {
 				if (strlen(LBoxFront::getPage()->xt) > 0) {
 					$loginGroup = LBoxFront::getPage()->xt;
