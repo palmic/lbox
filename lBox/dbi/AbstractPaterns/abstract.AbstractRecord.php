@@ -401,10 +401,10 @@ abstract class AbstractRecord implements Iterator
 			$dependingRecords	= $this->getClassVar("dependingRecords", true);
 			foreach ((array)$dependingRecords as $dependingRecord) {
 				if (strlen($dependingRecord) < 1) continue;
-				$instance	= new $dependingRecord;
+				$instance	= new $dependingRecord(NULL, true);
 				if ($instance instanceof AbstractRecords) {
 					$dependingRecord	= eval("return $dependingRecord::\$itemType;");
-					$instance			= new $dependingRecord;
+					$instance			= new $dependingRecord(NULL, true);
 				}
 				if ($dependingRecord instanceof $myClass) {
 					throw new LBoxException("Cannot define the same className into dependingRecords attribute!");
