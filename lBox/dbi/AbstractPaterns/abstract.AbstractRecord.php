@@ -354,6 +354,7 @@ abstract class AbstractRecord implements Iterator
 	 */
 	public function clearCache() {
 		try {
+			if (!$this->isCacheOn()) return;
 			LBoxCacheAbstractRecord::getInstance($this->getClassVar("tableName"), $this->params[$this->getClassVar("idColName")], self::getCacheGroup())->clean();
 
 			// smazat zaroven i collections cache
@@ -373,6 +374,7 @@ abstract class AbstractRecord implements Iterator
 	 */
 	public function resetCache() {
 		try {
+			if (!$this->isCacheOn()) return;
 			$this->resetRelevantCache();
 			LBoxCacheAbstractRecord::getInstance($this->getClassVar("tableName"), $this->params[$this->getClassVar("idColName")], self::getCacheGroup())->reset();
 
