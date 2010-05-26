@@ -20,6 +20,12 @@ class LBoxPagingIteratorArray extends LBoxPagingIterator
 	protected $key;
 	
 	/**
+	 * flag
+	 * @var bool
+	 */
+	protected $endReached	= false;
+	
+	/**
 	 * pretizeno o konretni pozadavky
 	 * @param array $array
 	 * @param int $pageItems
@@ -43,7 +49,7 @@ class LBoxPagingIteratorArray extends LBoxPagingIterator
 				throw new LBoxExceptionPaging(LBoxExceptionPaging::MSG_PARAM_INT_NOTNULL, LBoxExceptionPaging::CODE_BAD_PARAM);
 			}
 			if (is_array($this->itemsPages[$page])) {
-				return $this->itemsPages[$page];
+				return new ArrayIterator($this->itemsPages[$page]);
 			}
 			if ($page > $this->getPageMax()) {
 				return;
@@ -61,8 +67,9 @@ class LBoxPagingIteratorArray extends LBoxPagingIterator
 				}
 				$i++;
 			}
+			$this->itemsPages[$page]	= $this->itemsPages[$page];
 			
-			return $this->itemsPages[$page];
+			return new ArrayIterator($this->itemsPages[$page]);
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -94,7 +101,7 @@ class LBoxPagingIteratorArray extends LBoxPagingIterator
 	
 	public function current() {
 		try {
-			if ($data = $this->getItemsPageCurrent()) {
+			if ($data = $this->itemsPages[$this->getPageNumberCurrent()]) {
 //LBoxFirePHP::log(__FUNCTION__ ." = ". $data[$this->key]);
 				return $data[$this->key];
 			}
@@ -120,7 +127,11 @@ class LBoxPagingIteratorArray extends LBoxPagingIterator
 
 	public function next() {
 		try {
-			$this->key	= next($this->itemsPages[$this->getPageNumberCurrent()]);
+			if (FALSE === next($this->itemsPages[$this->getPageNumberCurrent()])) {
+				$this->endReached	= true;
+			}
+			$this->key	= key($this->itemsPages[$this->getPageNumberCurrent()]);
+//LBoxFirePHP::log(__FUNCTION__ ." current key = ". $this->key);
 		}
 		catch(Exception $e) {
 			throw $e;
@@ -129,8 +140,11 @@ class LBoxPagingIteratorArray extends LBoxPagingIterator
 
 	public function rewind() {
 		try {
-			if ($data = $this->getItemsPageCurrent()) {
-				$this->key = reset($this->getItemsPageCurrent());
+			$this->getItemsPage($this->getPageNumberCurrent());
+			if (is_array($this->itemsPages[$this->getPageNumberCurrent()])) {
+				if (reset($this->itemsPages[$this->getPageNumberCurrent()])) {
+					$this->key = key($this->itemsPages[$this->getPageNumberCurrent()]);
+				}
 			}
 //LBoxFirePHP::log(__FUNCTION__ ." current key = ". $this->key);
 		}
@@ -141,8 +155,8 @@ class LBoxPagingIteratorArray extends LBoxPagingIterator
 
 	public function valid() {
 		try {
-//LBoxFirePHP::log(__FUNCTION__ ." = ". !($this->key === FALSE));
-			return !($this->key === FALSE);
+//LBoxFirePHP::log(__FUNCTION__ ." = ". !$this->endReached);
+			return !$this->endReached;
 		}
 		catch(Exception $e) {
 			throw $e;
