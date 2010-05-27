@@ -237,7 +237,7 @@ class LBoxFormMultistep extends LBoxForm
 	 * protected getter na current step
 	 * @return int
 	 */
-	protected function getStepCurrent() {
+	public function getStepCurrent() {
 		try {
 			if ($_SESSION["LBox"]["Forms"][$this->getName()]["step"] < 1) {
 				$_SESSION["LBox"]["Forms"][$this->getName()]["step"]	= 1;
