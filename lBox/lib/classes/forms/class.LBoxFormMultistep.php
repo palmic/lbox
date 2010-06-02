@@ -132,7 +132,6 @@ class LBoxFormMultistep extends LBoxForm
 			$dataPost	= LBoxFront::getDataPost();
 			if (strlen($dataPost[$this->getName()]["previous"]) > 0) {
 				$this->moveToPreviousStep();
-				LBoxFront::reload();
 			}
 			// zjistime, jestli nejsme na dalsim kroku pro zpracovani ve stavu do not reload
 			$isLastStep	= ($this->subForms[$this->getStepCurrent()+1] instanceof LBoxForm) ? false : true;
@@ -153,6 +152,9 @@ class LBoxFormMultistep extends LBoxForm
 				foreach ($this->processors as $processor) {
 					$processor->process();
 				}
+				$this->reset();
+				$_SESSION["LBox"]["Forms"][$this->getName()]["succes"]	= true;
+				LBoxFront::reload();
 			}
 		}
 		catch (Exception $e) {
@@ -237,7 +239,7 @@ class LBoxFormMultistep extends LBoxForm
 	 * protected getter na current step
 	 * @return int
 	 */
-	public function getStepCurrent() {
+	protected function getStepCurrent() {
 		try {
 			if ($_SESSION["LBox"]["Forms"][$this->getName()]["step"] < 1) {
 				$_SESSION["LBox"]["Forms"][$this->getName()]["step"]	= 1;
@@ -279,6 +281,7 @@ class LBoxFormMultistep extends LBoxForm
 				return;
 			}
 			$_SESSION["LBox"]["Forms"][$this->getName()]["step"]	= $this->getStepCurrent()-1;
+			LBoxFront::reload();
 		}
 		catch (Exception $e) {
 			throw $e;
