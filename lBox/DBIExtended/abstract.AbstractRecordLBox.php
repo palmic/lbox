@@ -161,6 +161,8 @@ abstract class AbstractRecordLBox extends AbstractRecord implements OutputItem
 	 */
 	public function clearCache() {
 		try {
+			// relevant cache je treba mazat bez ohledu na isCacheON() (viz parent::resetCache()), protoze se tim maze i relevantni front cache
+			$this->resetRelevantCache();
 			LBoxCacheManagerFront::getInstance()->cleanByRecordType(get_class($this));
 			return parent::clearCache();
 		}
@@ -174,6 +176,8 @@ abstract class AbstractRecordLBox extends AbstractRecord implements OutputItem
 	 */
 	public function resetCache() {
 		try {
+			// relevant cache je treba mazat bez ohledu na isCacheON() (viz parent::resetCache()), protoze se tim maze i relevantni front cache
+			$this->resetRelevantCache();
 			LBoxCacheManagerFront::getInstance()->cleanByRecordType(get_class($this));
 			return parent::resetCache();
 		}
