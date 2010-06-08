@@ -75,7 +75,7 @@ class LBoxException extends Exception
 	 */
 	protected function getLogFilePath() {
 		$month = date("Y-m");
-		return $this->logFileDir . $month ."_". $this->logFilename;
+		return LBOX_PATH_INSTANCE_ROOT . SLASH . $this->logFileDir . $month ."_". $this->logFilename;
 	}
 
 	protected function getFileH() {
