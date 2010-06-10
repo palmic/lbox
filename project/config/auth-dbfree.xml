@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- auth logins for loging-in without database -->
 <auth>
-	<login name="palmic" password="b3b4d2dbedc99fe843fd3dedb02f086f" ref_xtrole="6" />
-	<login name="zuzka" password="76dad8045cbdda90b165e6c2b7c47961" ref_xtrole="6" />
-	<login name="ondra" password="47e53c8527863a978365301ac02a80dc" ref_xtrole="6" />
-	<login name="zdenda" password="955db0b81ef1989b4a4dfeae8061a9a6" ref_xtrole="6" />
+	<login nick="palmic" name="palmic" password="b3b4d2dbedc99fe843fd3dedb02f086f" ref_xtrole="6" />
+	<login nick="zuzka" name="zuzka" password="76dad8045cbdda90b165e6c2b7c47961" ref_xtrole="6" />
+	<login nick="ondra" name="ondra" password="47e53c8527863a978365301ac02a80dc" ref_xtrole="6" />
+	<login nick="zdenda" name="zdenda" password="955db0b81ef1989b4a4dfeae8061a9a6" ref_xtrole="6" />
 </auth>

@@ -67,6 +67,9 @@
 		<api>
 			<url>/api/metanodes/v0.01/</url>
 		</api>
+		<images>
+			<path>$project/.data/metanodes/images</path>				
+		</images>
 	</metanodes>
 	<layouts>
 		<classes>
