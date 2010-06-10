@@ -23,6 +23,7 @@ var handleCancel = function() {
 var handleSuccessContentMetanode = function(o) {
     var json = o.responseText.substring(o.responseText.indexOf('{'), o.responseText.lastIndexOf('}') + 1);
     var data = eval('(' + json + ')');
+alert(data.Results.content);
 	if (data.Exception) {
 		alert('Error '+ data.Exception.code +': '+ data.Exception.message);
 		return;
