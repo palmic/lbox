@@ -22,21 +22,28 @@ try {
 		throw new LBoxException("API awaits array with only one node!");
 	}
 
-	foreach ($_POST as $k => $postData) {
-		switch($k) {
-			case "style":
-					$styleString	= "";
-					foreach ($postData as $propName => $propValue) {
-						$styleString .= "";
-					}
-					$returned	= saveMetanodeStylePropertiesByPostData($postData);
-				break;
-			default:
-					$returned	= saveMetanodeContentByPostData($postData);
-				break;
+	if ($_POST) {
+		foreach ($_POST as $k => $postData) {
+			switch($k) {
+				case "style":
+						$styleString	= "";
+						foreach ($postData as $propName => $propValue) {
+							$styleString .= "";
+						}
+						$returned	= saveMetanodeStylePropertiesByPostData($postData);
+					break;
+				default:
+						$returned	= saveMetanodeContentByPostData($postData);
+					break;
+			}
+			header("HTTP/1.1 200 OK");
+			echo(json_encode($returned));
 		}
+	}
+	else {
+		// get the node data
 		header("HTTP/1.1 200 OK");
-		echo(json_encode($returned));
+		die(getMetanodeByPostData($_GET)->getContent());
 	}
 }
 catch (Exception $e) {
@@ -74,15 +81,21 @@ function saveMetanodeContentByPostData($data = array()) {
 		
 		$ret = new stdclass(); // PHP base class
 		$ret->Results = new stdclass();
-		$ret->Results->content_raw = $contentRaw; // raw_data
+		//$ret->Results->content_raw = $contentRaw; // raw_data
 		$ret->Results->caller_type = $data["caller_type"];
 		$ret->Results->caller_id = $data["caller_id"];
 		$ret->Results->type = $data["type"];
 		$ret->Results->seq = $data["seq"];
 		$ret->Results->lng = $data["lng"];
 		$ret->Results->status = 'OK';
-		$ret->Results->content = $contentProcessed; // content
-		
+		//$ret->Results->content = $contentProcessed; // content
+		foreach ($data as $k => $v) {
+			if (preg_match("/content/", $k)) continue;
+			$paramsString	.= strlen($paramsString) > 0 ? "&" : "";
+			$paramsString	.= "$k=$v";
+		}
+		$ret->Results->data_url = LBOX_REQUEST_URL_VIRTUAL ."?$paramsString";
+
 		return $ret;
 	}
 	catch(Exception $e) {

@@ -21,12 +21,13 @@ var handleCancel = function() {
 	this.cancel();
 };
 var handleSuccessContentMetanode = function(o) {
-    var json = o.responseText.substring(o.responseText.indexOf('{'), o.responseText.lastIndexOf('}') + 1);
-    var data = eval('(' + json + ')');
+	var json = o.responseText.substring(o.responseText.indexOf('{'), o.responseText.lastIndexOf('}') + 1);
+	var data = eval('(' + json + ')');
 	if (data.Exception) {
 		alert('Error '+ data.Exception.code +': '+ data.Exception.message);
 		return;
 	}
+
 	var data_caller_type	= data.Results.caller_type;
 	var data_caller_id		= data.Results.caller_id;
 	var data_type			= data.Results.type;
@@ -35,12 +36,24 @@ var handleSuccessContentMetanode = function(o) {
 	var form				= document.getElementById('frm-metanode-'+data_caller_id+'-'+data_seq);
 	var nodeInstances		= YAHOO.util.Selector.query('.metanode-'+data_caller_id+'-'+data_seq);
 	var nodeContent;
+
+	/* get metanode saved content */
+	var xmlHttpObject = null;
+	try{/*Firefox, Opera 8.0+, Safari...*/xmlHttpObject = new XMLHttpRequest();}
+	catch(ex) {/*Internet Explorer...*/
+		try{xmlHttpObject = new ActiveXObject('Msxml2.XMLHTTP');}
+		catch(ex){xmlHttpObject = new ActiveXObject('Microsoft.XMLHTTP');}}	
+	 		xmlHttpObject.open("GET", data.Results.data_url.replace(/&amp;/g, "&"), false);
+	 		xmlHttpObject.send();
+	 		nodes[form.id].innerHTML = xmlHttpObject.responseText;
+
 	if (editors[form.id]) {
 		for (i in editors[form.id]) {
-		    editors[form.id][i].setEditorHTML(data.Results.content);
+		    editors[form.id][i].setEditorHTML(nodes[form.id].innerHTML);
 		}
 	}
-	nodes[form.id].innerHTML	= data.Results.content;
+
+	 
 	/* recreate resize onto reloaded metanode*/
 	if (resizesAllowed) {
 	    resizes[form.id] = new YAHOO.util.Resize(nodes[form.id], {
@@ -57,7 +70,7 @@ var handleSuccessContentMetanode = function(o) {
 		nodeInstances[i].style.overflow	= 'hidden';
 		if (!YAHOO.util.Selector.query('form.metanode', nodeInstances[i], true)) {
 			nodeContent				= YAHOO.util.Selector.query('.lbox-meta-content', nodeInstances[i], true);
-			nodeContent.innerHTML	= data.Results.content;
+			nodeContent.innerHTML	= nodes[form.id].innerHTML;
 		}
 	}
 	/* set meta as edited */
@@ -280,7 +293,6 @@ var renderRTE = function(field, form) {
 }
 
 function metanodes_attach() {
-	YAHOO.widget.Logger.enableBrowserConsole();
 
 	YAHOO.util.Dom.addClass(document.body, 'yui-skin-sam');
 		forms		= YAHOO.util.Selector.query('.lbox-meta form');
