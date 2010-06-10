@@ -1,3 +1,5 @@
+/*YAHOO.widget.Logger.enableBrowserConsole();*/
+
 var forms			= new Array();
 var containers		= new Array();
 var nodes			= new Array();
