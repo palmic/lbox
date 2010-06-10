@@ -270,6 +270,7 @@ var renderRTE = function(field, form) {
 			            this.addClass('editor-hidden');
 			        }, this, true);
 			}, editors[form.id][field.id], true);
+			yuiImgUploader(editors[form.id][field.id], field.id, '/api/upload/image/v0.01/','image');
 			editors[form.id][field.id].render();
 			/*RTE needs a little love to work in in a Dialog that can be 
 			shown and hidden; we let it know that it's being
