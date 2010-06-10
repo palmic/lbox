@@ -23,7 +23,6 @@ var handleCancel = function() {
 var handleSuccessContentMetanode = function(o) {
     var json = o.responseText.substring(o.responseText.indexOf('{'), o.responseText.lastIndexOf('}') + 1);
     var data = eval('(' + json + ')');
-alert(data.Results.content);
 	if (data.Exception) {
 		alert('Error '+ data.Exception.code +': '+ data.Exception.message);
 		return;
@@ -281,6 +280,8 @@ var renderRTE = function(field, form) {
 }
 
 function metanodes_attach() {
+	YAHOO.widget.Logger.enableBrowserConsole();
+
 	YAHOO.util.Dom.addClass(document.body, 'yui-skin-sam');
 		forms		= YAHOO.util.Selector.query('.lbox-meta form');
 	var dialog;
@@ -369,6 +370,7 @@ function metanodes_attach() {
 			/* attach dialog handlers */
 			dialogs[forms[i].id].callback.success = handleSuccessContentMetanode;
 			dialogs[forms[i].id].callback.failure = handleFailureMetanode;
+			dialogs[forms[i].id].callback.upload  = handleSuccessContentMetanode;
 			renderRTE(fields[forms[i].id], forms[i]);
 
 			/* attach resize on metanodes only */
