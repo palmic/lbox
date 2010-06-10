@@ -1,6 +1,6 @@
 <?php
 DEFINE("XT_GROUP", 1);
-require("../../../../lBox/lib/loader.php");
+require("../../../../../lBox/lib/loader.php");
 session_start();
 
 LBoxCacheManagerFront::getInstance()->switchListeningOff();
@@ -11,32 +11,30 @@ if ((!LBoxXTDBFree::isLogged(XT_GROUP)) && (!LBoxXTProject::isLoggedAdmin(XT_GRO
 }
 
 // firePHP debug
-LBoxFirePHP::table($_POST, 'POST data debug');
+//LBoxFirePHP::log(LBoxConfigSystem::getInstance()->getParamByPath("metanodes/images/path"));
+//LBoxFirePHP::table($_FILES['image'], "uploaded image data");
 
 try {
 	//////////////////////////////////////////////////////////////////////
 	//	saving data
 	//////////////////////////////////////////////////////////////////////
 
-	if (count($_POST) > 1) {
-		throw new LBoxException("API awaits array with only one node!");
-	}
-
-	foreach ($_POST as $k => $postData) {
-		switch($k) {
-			case "style":
-					$styleString	= "";
-					foreach ($postData as $propName => $propValue) {
-						$styleString .= "";
-					}
-					$returned	= saveMetanodeStylePropertiesByPostData($postData);
-				break;
-			default:
-					$returned	= saveMetanodeContentByPostData($postData);
-				break;
+	if (strlen($tmpPath = $_FILES['image']['tmp_name']) > 0) {
+		$imgName		= $_FILES["image"]["name"];
+		$userRecord		= LBoxXTProject::isLogged() ? LBoxXTProject::getUserXTRecord() : LBoxXTDBFree::getUserXTRecord();
+		$dirTarget		= LBoxConfigSystem::getInstance()->getParamByPath("metanodes/images/path") . SLASH . $userRecord->nick;
+		$imgNameTarget	= date("YmdHis") .".". LBoxUtil::getExtByFilename($imgName);
+		$imageURL		= /*LBOX_REQUEST_URL_SCHEME ."://". LBOX_REQUEST_URL_HOST ."/". */str_replace(LBOX_PATH_PROJECT, "", "$dirTarget/$imgNameTarget");
+		LBoxUtil::createDirByPath($dirTarget);
+		if (!move_uploaded_file($tmpPath, "$dirTarget". SLASH ."$imgNameTarget")) {
+			throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_UPLOAD_ERROR, LBoxExceptionFilesystem::CODE_FILE_UPLOAD_ERROR);
 		}
+		$ret 						= new stdclass(); // PHP base class
+		$ret->status				= "UPLOADED";
+		$ret->image_url				= $imageURL;
 		header("HTTP/1.1 200 OK");
-		echo(json_encode($returned));
+		header("content-type: text/html");
+		die(json_encode($ret));
 	}
 }
 catch (Exception $e) {
@@ -45,7 +43,9 @@ catch (Exception $e) {
 		$ret->Exception				= new stdclass();
 		$ret->Exception->code	 	= $e->getCode();
 		$ret->Exception->message 	= $e->getMessage();
+		$ret->Exception->trace	 	= $e->getTraceAsString();
 		header("HTTP/1.1 200 OK");
+		header("content-type: text/html");
 		die(json_encode($ret));
 }
 
@@ -67,6 +67,7 @@ function saveMetanodeContentByPostData($data = array()) {
 		$node->setContent($contentProcessed);
 		$node->store();
 		$contentProcessed	= $node->getContent();
+	
 	
 		//////////////////////////////////////////////////////////////////////
 		//	return filtered data

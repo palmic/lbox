@@ -31,6 +31,7 @@ RewriteRule ^gallery_import_images/(.*) project/import/photogallery/$1
 RewriteRule ^fotogalerie/(.*) project/filespace/photo/galleries/$1
 
 RewriteRule ^css/(.*) project/css/$1
+RewriteRule ^.data/(.*) project/.data/$1
 RewriteRule ^img/(.*) project/img/$1
 RewriteRule ^js/(.*) project/js/$1
 RewriteRule ^flash/(.*) project/flash/$1
