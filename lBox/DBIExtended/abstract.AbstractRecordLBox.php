@@ -1,5 +1,4 @@
 <?php
-
 /**
  * adds LBoxOutputFilter compatibility
  * @author Michal Palma <palmic at email dot cz>
@@ -12,6 +11,11 @@ abstract class AbstractRecordLBox extends AbstractRecord implements OutputItem
 	 * @var LBoxOutputFilter
 	 */
 	protected $outputFilter;
+
+	/**
+	 * @var bool
+	 */
+	public static $frontCacheForceCleanForAllXTUsers = false;
 
 	/**
 	 * overloaded with front cache logic
@@ -163,7 +167,7 @@ abstract class AbstractRecordLBox extends AbstractRecord implements OutputItem
 		try {
 			// relevant cache je treba mazat bez ohledu na isCacheON() (viz parent::resetCache()), protoze se tim maze i relevantni front cache
 			$this->resetRelevantCache();
-			LBoxCacheManagerFront::getInstance()->cleanByRecordType(get_class($this));
+			LBoxCacheManagerFront::getInstance()->cleanByRecordType(get_class($this), $this->getClassVar("frontCacheForceCleanForAllXTUsers"));
 			return parent::clearCache();
 		}
 		catch (Exception $e) {
@@ -178,7 +182,7 @@ abstract class AbstractRecordLBox extends AbstractRecord implements OutputItem
 		try {
 			// relevant cache je treba mazat bez ohledu na isCacheON() (viz parent::resetCache()), protoze se tim maze i relevantni front cache
 			$this->resetRelevantCache();
-			LBoxCacheManagerFront::getInstance()->cleanByRecordType(get_class($this));
+			LBoxCacheManagerFront::getInstance()->cleanByRecordType(get_class($this), $this->getClassVar("frontCacheForceCleanForAllXTUsers"));
 			return parent::resetCache();
 		}
 		catch (Exception $e) {

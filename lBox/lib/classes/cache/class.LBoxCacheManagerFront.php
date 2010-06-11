@@ -156,6 +156,12 @@ class LBoxCacheManagerFront
 	}
 	
 	/**
+	 * cache var
+	 * @var array
+	 */
+	protected static $cleanedByRecordType	= array();
+
+	/**
 	 * vycisti cache relevantni k danemu typu recordu
 	 * @param string $type
 	 * @param bool $forceCleanForAllXTUsers
@@ -165,6 +171,11 @@ class LBoxCacheManagerFront
 			if (strlen($type) < 1) {
 				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_PARAM_STRING_NOTNULL, LBoxExceptionCache::CODE_BAD_PARAM);
 			}
+			$key	= md5($type . $forceCleanForAllXTUsers);
+			if (array_key_exists($key, self::$cleanedByRecordType)) {
+				return;
+			}
+//LBoxFirePHP::error("mazu $type ". (int)$forceCleanForAllXTUsers);
 			if ($type == "AccesRecord") return;
 			foreach ((array)$this->recordTypes as $url => $recordInfo) {
 				if (!$url) {continue;}
@@ -187,6 +198,7 @@ class LBoxCacheManagerFront
 					}
 				}
 			}
+			self::$cleanedByRecordType[$key]	= true;
 		}
 		catch (Exception $e) {
 			throw $e;
