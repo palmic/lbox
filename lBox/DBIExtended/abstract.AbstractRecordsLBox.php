@@ -69,7 +69,9 @@ abstract class AbstractRecordsLBox extends AbstractRecords
 	 */
 	protected function resetCache() {
 		try {
-			LBoxCacheManagerFront::getInstance()->cleanByRecordType($this->getClassVar("itemType"));
+			$recordClass				= $this->getClassVar("itemType");
+			$forceCleanForAllXTUsers	= eval("return $recordClass::\$frontCacheForceCleanForAllXTUsers;");
+			LBoxCacheManagerFront::getInstance()->cleanByRecordType($recordClass, $forceCleanForAllXTUsers);
 			return parent::resetCache();
 		}
 		catch (Exception $e) {
@@ -82,7 +84,9 @@ abstract class AbstractRecordsLBox extends AbstractRecords
 	 */
 	public function clearCache() {
 		try {
-			LBoxCacheManagerFront::getInstance()->cleanByRecordType($this->getClassVar("itemType"));
+			$recordClass	= $this->getClassVar("itemType");
+			$forceCleanForAllXTUsers	= eval("return $recordClass::\$frontCacheForceCleanForAllXTUsers;");
+			LBoxCacheManagerFront::getInstance()->cleanByRecordType($recordClass, $forceCleanForAllXTUsers);
 			return parent::clearCache();
 		}
 		catch (Exception $e) {

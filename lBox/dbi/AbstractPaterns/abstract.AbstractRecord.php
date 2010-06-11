@@ -350,11 +350,20 @@ abstract class AbstractRecord implements Iterator
 	}
 
 	/**
+	 * cache var
+	 * @var array
+	 */
+	protected static $clearedCacheByTypes	= array();
+	
+	/**
 	 * clear all cache data
 	 */
 	public function clearCache() {
 		try {
 			if (!$this->isCacheOn()) return;
+			if (array_key_exists(get_class($this), self::$clearedCacheByTypes)) {
+				return;
+			}
 			LBoxCacheAbstractRecord::getInstance($this->getClassVar("tableName"), $this->params[$this->getClassVar("idColName")], self::getCacheGroup())->clean();
 
 			// smazat zaroven i collections cache
@@ -363,6 +372,7 @@ abstract class AbstractRecord implements Iterator
 			LBoxCacheAbstractRecord::getInstance($this->getClassVar("tableName"), $this->params[$this->getClassVar("idColName")], $cacheGroupItems)->clean();
 
 			$this				->resetRelevantCache();
+			self::$clearedCacheByTypes[get_class($this)]	= true;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -370,11 +380,20 @@ abstract class AbstractRecord implements Iterator
 	}
 
 	/**
+	 * cache var
+	 * @var array
+	 */
+	protected static $resettedCacheByTypes	= array();
+	
+	/**
 	 * resets Record's cache
 	 */
 	public function resetCache() {
 		try {
 			if (!$this->isCacheOn()) return;
+			if (array_key_exists(get_class($this), self::$resettedCacheByTypes)) {
+				return;
+			}
 			$this->resetRelevantCache();
 			LBoxCacheAbstractRecord::getInstance($this->getClassVar("tableName"), $this->params[$this->getClassVar("idColName")], self::getCacheGroup())->reset();
 
@@ -382,6 +401,7 @@ abstract class AbstractRecord implements Iterator
 			$itemsType			= $this->getClassVar("itemsType");
 			$cacheGroupItems	= eval("return $itemsType::getCacheGroup();");
 			LBoxCacheAbstractRecord::getInstance($this->getClassVar("tableName"), $this->params[$this->getClassVar("idColName")], $cacheGroupItems)->clean();
+			self::$resettedCacheByTypes[get_class($this)]	= true;
 		}
 		catch (Exception $e) {
 			throw $e;
