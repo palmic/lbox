@@ -52,12 +52,12 @@ try {
 		// sending data back
 		$ret->Results 	= new stdclass();
 		$ret->Data		= new stdclass();
-		$ret->Insert	= new stdclass();
+		$ret->Insert	= (int)(strlen($postFormData[$idColname]) < 1);
 		$ret->Results->status = 'OK';
 		$controls		= $form->getControls();
 		foreach ($controls as $control) {
 			$ctrlName	= $control->getName();
-			if (array_key_exists("action_reload_on_complete", $controls) && $controls["action_reload_on_complete"]->getValue()) {
+			/*if (array_key_exists("action_reload_on_complete", $controls) && $controls["action_reload_on_complete"]->getValue()) {
 				$ret->Data->$ctrlName	= "";
 			}
 			else {
@@ -66,16 +66,40 @@ try {
 					default:
 						$ret->Data->$ctrlName	= strlen($form->recordProcessed->$ctrlName) > 0 ? $form->recordProcessed->$ctrlName : $control->getValue();
 				}
-			}
+			}*/
 		}
 		if (array_key_exists("action_reload_on_complete", $controls) && $controls["action_reload_on_complete"]->getValue()) {
 			$ret->Data->action_reload_on_complete		= $controls["action_reload_on_complete"]->getValue();
 			$ret->Data->type							= $typeRecord;
 			$ret->Data->$idColname						= $form->recordProcessed->$idColname;
 		}
-		$ret->Insert	= (int)!$flagEdit;
+		else {
+			$ret->Data->type							= $typeRecord;
+			$ret->Data->$idColname						= $form->recordProcessed->$idColname;
+		}
+		// node data URL
+		$dataURLParams["type"]	= $typeRecord;
+		$dataURLParams["id"]	= $form->recordProcessed->$idColname;
+		foreach ($dataURLParams as $k => $v) {
+			if (preg_match("/content/", $k)) continue;
+			$paramsString	.= strlen($paramsString) > 0 ? "&" : "";
+			$paramsString	.= "$k=$v";
+		}
+		$ret->Data->data_url						= LBOX_REQUEST_URL_VIRTUAL ."?$paramsString";
 		header("HTTP/1.1 200 OK");
 		die(json_encode($ret));
+	}
+	if (!$_POST && count($_GET) > 0) {
+		// get the node data
+		$typeRecord		= $_GET["type"];
+		$idColname		= eval("return $typeRecord::\$idColName;");
+		$record			= new $typeRecord($_GET["id"]);
+		$out			= array();
+		foreach ($record as $param => $value) {
+			$out[$param]	= $value;
+		}
+		header("HTTP/1.1 200 OK");
+		die(json_encode($out));
 	}
 }
 catch (Exception $e) {
@@ -87,43 +111,5 @@ catch (Exception $e) {
 		$ret->Exception->message 	= $e->getMessage();
 		header("HTTP/1.1 200 OK");
 		die(json_encode($ret));
-}
-
-/**
- * ulozi obsah metanode podle predanych dat a vrati zpet jeji vysledny content
- * @param $data
- * @return stdclass
- */
-function saveMetanodeContentByPostData($data = array()) {
-	try {
-		$contentRaw			= $data["content"];
-		$contentProcessed	= $contentRaw;
-
-		$node	= getMetanodeByPostData($data);
-		$node->setContent($contentProcessed);
-		$node->store();
-		$contentProcessed	= $node->getContent();
-	
-	
-		//////////////////////////////////////////////////////////////////////
-		//	return filtered data
-		//////////////////////////////////////////////////////////////////////
-		
-		$ret = new stdclass(); // PHP base class
-		$ret->Results = new stdclass();
-		$ret->Results->content_raw = $contentRaw; // raw_data
-		$ret->Results->caller_type = $data["caller_type"];
-		$ret->Results->caller_id = $data["caller_id"];
-		$ret->Results->type = $data["type"];
-		$ret->Results->seq = $data["seq"];
-		$ret->Results->lng = $data["lng"];
-		$ret->Results->status = 'OK';
-		$ret->Results->content = $contentProcessed; // content
-		
-		return $ret;
-	}
-	catch(Exception $e) {
-		throw $e;
-	}
 }
 ?>
