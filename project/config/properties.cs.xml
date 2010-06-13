@@ -20,6 +20,8 @@
 	<property name="ref_page_xt_registration">300</property><!-- id stranky s registraci usera -->
 	<property name="ref_page_registration_confirm">301</property><!-- id stranky, ktera potvrzuje confirm registrace -->
 	
+	<property name="path_photos_content"><![CDATA[<project>/img/content]]></property>
+
 	<!-- tyto hodnoty se davaji natvrdo, to znamena, ze kdyz zde bude 0, pouzije se jako maxlength formularoveho pole opravdu 0 -->
 	<property name="form_max_length_discussion_title">50</property>
 	<property name="form_max_length_discussion_text">250</property>
