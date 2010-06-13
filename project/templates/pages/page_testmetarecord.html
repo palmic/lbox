@@ -15,6 +15,6 @@
 	    </div>
 	</div>
 	<p tal:condition="not: SELF/getRecords/count">V systému zatím není žádný článek</p>
-	<tal:block tal:replace="structure lbox:metanode.1.richtext" />
+	<x tal:replace="structure lbox:component.login_form_email" />
 <x tal:replace="lbox:slot_end.content" />
 <x tal:replace="structure lbox:component.layout_default" />

@@ -71,6 +71,14 @@
 			<path>$project/.data/metanodes/images</path>				
 		</images>
 	</metanodes>
+	<metarecords>
+		<templates>
+			<path>$project/templates/metarecords</path>
+		</templates>
+		<api>
+			<url>/api/metarecords/v0.01/</url>
+		</api>
+	</metarecords>
 	<layouts>
 		<classes>
 			<default>LayoutDefault</default>
