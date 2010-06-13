@@ -161,7 +161,7 @@ var handleSuccessContentMetarecord = function(o){
 			metarecordSaved	= new YAHOO.util.Element(metarecordFirst.cloneNode(true));
 			/* insert clone before first one */
 			YAHOO.util.Dom.insertBefore(metarecordSaved, metarecordFirst);
-			/* corrent delete-id control */
+			/* correct delete-id control */
 			var clonnedForms = metarecordSaved.getElementsByTagName('form');
 			for (i in clonnedForms) {
 				if (clonnedForms[i].className == 'frm-delete') {
@@ -173,12 +173,22 @@ var handleSuccessContentMetarecord = function(o){
 				}
 			}
 		}
+		/* get node data from API */
+		var xmlHttpObject = null;
+		try{/*Firefox, Opera 8.0+, Safari...*/xmlHttpObject = new XMLHttpRequest();}
+		catch(ex) {/*Internet Explorer...*/
+			try{xmlHttpObject = new ActiveXObject('Msxml2.XMLHTTP');}
+			catch(ex){xmlHttpObject = new ActiveXObject('Microsoft.XMLHTTP');}}	
+		 		xmlHttpObject.open("GET", data.Data.data_url.replace(/&amp;/g, "&"), false);
+		 		xmlHttpObject.send();
+		 		var jsonGet = xmlHttpObject.responseText;
+		 var dataGet = eval('(' + jsonGet + ')');
 		
 		/* set clone properties */
 		var metarecordNode;
-		for (i in data.Data) {
+		for (i in dataGet) {
 			if (metarecordNode = YAHOO.util.Dom.getElementsByClassName('metarecord-node-'+i, false, metarecordSaved)[0]) {
-				metarecordNode.innerHTML	= data.Data[i];
+				metarecordNode.innerHTML	= dataGet[i];
 			}
 		}
 		/* close dialog */
@@ -195,7 +205,7 @@ var handleSuccessContentMetarecord = function(o){
 		/* set meta as edited */
 		metarecordSaved.addClass('metarecord-saved');
 	}
-	delete clonnedForms;delete metarecordSaved;delete json;delete data;delete labels;delete infoElms; delete msgElms;delete traceElms;
+	delete clonnedForms;delete metarecordSaved;delete json;delete data;delete labels;delete infoElms; delete msgElms;delete traceElms;delete dataGet;delete jsonGet;
 }
 var handleFailureMetarecord = function(o) {
     var json = o.responseText.substring(o.responseText.indexOf('{'), o.responseText.lastIndexOf('}') + 1);
