@@ -12,4 +12,4 @@ project/documents/doc/html*
 *~
 
 # blokovani verzovani dat metanodu atd.
-# project/.data/*
+project/.data/*
