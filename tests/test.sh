@@ -1,0 +1,1 @@
+/opt/php/bin/phpunit --coverage-html ./report ./phpunittest.php

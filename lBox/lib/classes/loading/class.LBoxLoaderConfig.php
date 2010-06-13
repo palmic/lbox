@@ -38,7 +38,7 @@ class LBoxLoaderConfig extends LBoxLoader
 		try {
 			// prohledat zadane cesty
 			foreach ($this->paths as $path) {
-				if (strlen($found = $this->getPathOfType($type, $path)) > 0) {
+				if (strlen($found = $this->getPathOfType($type, $path, NULL, "<type>(\.\w{2})?\.".$this->postfix)) > 0) {
 					break;
 				}
 			}

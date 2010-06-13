@@ -10,77 +10,80 @@ define("LBOX_DIRNAME_PLUGINS", "plugins");
 
 $slash	= SLASH;
 
-$dirArr 			= explode($slash, dirname(__FILE__));
+$dirArr 			= explode(SLASH, dirname(__FILE__));
 unset($dirArr[count($dirArr)-1]);
 $lBoxDirName		= end($dirArr);
 $projectRootArr		= $dirArr;
 unset($projectRootArr[count($projectRootArr)-1]);
-$projectRootPath	= implode($slash, $projectRootArr);
+$projectRootPath	= implode(SLASH, $projectRootArr);
 $paths 		= array(
-$projectRootPath . $slash . $lBoxDirName,
-$projectRootPath . $slash . LBOX_DIRNAME_PROJECT,
-$projectRootPath . $slash . LBOX_DIRNAME_PLUGINS,
+$projectRootPath . SLASH . $lBoxDirName,
+$projectRootPath . SLASH . LBOX_DIRNAME_PROJECT,
+$projectRootPath . SLASH . LBOX_DIRNAME_PLUGINS,
 );
 $pathsIgnore = array(
-$projectRootPath . $slash ."$lBoxDirName". $slash ."TAL",
-$projectRootPath . $slash ."$lBoxDirName". $slash ."dev",
-$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."dev",
-$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."css",
-$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."js",
-$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."documents",
-$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."img",
-$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."filespace",
-$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash .".cache",
-$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash .".tal_compiled",
-$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."wsw",
+$projectRootPath . SLASH ."$lBoxDirName". SLASH ."TAL",
+$projectRootPath . SLASH ."$lBoxDirName". SLASH ."dev",
+$projectRootPath . SLASH . LBOX_DIRNAME_PROJECT . SLASH ."dev",
+$projectRootPath . SLASH . LBOX_DIRNAME_PROJECT . SLASH ."css",
+$projectRootPath . SLASH . LBOX_DIRNAME_PROJECT . SLASH ."js",
+$projectRootPath . SLASH . LBOX_DIRNAME_PROJECT . SLASH ."documents",
+$projectRootPath . SLASH . LBOX_DIRNAME_PROJECT . SLASH ."img",
+$projectRootPath . SLASH . LBOX_DIRNAME_PROJECT . SLASH ."filespace",
+$projectRootPath . SLASH . LBOX_DIRNAME_PROJECT . SLASH .".cache",
+$projectRootPath . SLASH . LBOX_DIRNAME_PROJECT . SLASH .".tal_compiled",
+$projectRootPath . SLASH . LBOX_DIRNAME_PROJECT . SLASH ."wsw",
 );
 $pathsConfig = array(
-$projectRootPath . $slash . "$lBoxDirName". $slash ."config",
-$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."config",
+$projectRootPath . SLASH . "$lBoxDirName". SLASH ."config",
+$projectRootPath . SLASH . LBOX_DIRNAME_PROJECT . SLASH ."config",
 );
 
 define("LBOX_PATH_INSTANCE_ROOT", 		$projectRootPath);
-define("LBOX_PATH_CORE", 				LBOX_PATH_INSTANCE_ROOT 	 . $slash . "lBox");
-define("LBOX_PATH_CORE_CLASSES", 		LBOX_PATH_CORE 				. $slash ."lib". $slash ."classes");
-define("LBOX_PATH_PROJECT", 			LBOX_PATH_INSTANCE_ROOT 	. $slash . LBOX_DIRNAME_PROJECT);
-define("LBOX_PATH_CACHE", 				LBOX_PATH_INSTANCE_ROOT		. $slash . LBOX_DIRNAME_PROJECT. $slash . ".cache");
-define("LBOX_PATH_PLUGINS", 			LBOX_PATH_INSTANCE_ROOT		. $slash . LBOX_DIRNAME_PLUGINS);
+define("LBOX_PATH_CORE", 				LBOX_PATH_INSTANCE_ROOT 	 . SLASH . "lBox");
+define("LBOX_PATH_CORE_CLASSES", 		LBOX_PATH_CORE 				. SLASH ."lib". SLASH ."classes");
+define("LBOX_PATH_PROJECT", 			LBOX_PATH_INSTANCE_ROOT 	. SLASH . LBOX_DIRNAME_PROJECT);
+define("LBOX_PATH_CACHE", 				LBOX_PATH_INSTANCE_ROOT		. SLASH . LBOX_DIRNAME_PROJECT. SLASH . ".cache");
+define("LBOX_PATH_PLUGINS", 			LBOX_PATH_INSTANCE_ROOT		. SLASH . LBOX_DIRNAME_PLUGINS);
 
 // explicitni load
-require(LBOX_PATH_CORE_CLASSES 	. $slash ."loading". $slash ."class.LBoxLoader.php");
+require(LBOX_PATH_CORE_CLASSES 	. SLASH ."loading". SLASH ."class.LBoxLoader.php");
 
 function __autoload ($className)
 {
+	GLOBAL $paths, $pathsIgnore;
 	try {
 		$debug = false;
-		
-$slash	= SLASH;
 
-$dirArr 			= explode($slash, dirname(__FILE__));
+$dirArr 			= explode(SLASH, dirname(__FILE__));
 unset($dirArr[count($dirArr)-1]);
 $lBoxDirName		= end($dirArr);
 $projectRootArr		= $dirArr;
 unset($projectRootArr[count($projectRootArr)-1]);
-$projectRootPath	= implode($slash, $projectRootArr);
+$projectRootPath	= implode(SLASH, $projectRootArr);
 $paths 		= array(
-$projectRootPath . $slash . $lBoxDirName,
-$projectRootPath . $slash . LBOX_DIRNAME_PROJECT,
+$projectRootPath . SLASH . $lBoxDirName,
+$projectRootPath . SLASH . LBOX_DIRNAME_PROJECT,
+$projectRootPath . SLASH . LBOX_DIRNAME_PLUGINS,
 );
 $pathsIgnore = array(
-$projectRootPath . $slash ."$lBoxDirName". $slash ."TAL",
-$projectRootPath . $slash ."$lBoxDirName". $slash ."dev",
-$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."dev",
-$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."css",
-$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."js",
-$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."filespace",
-$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash .".tal_compiled",
-$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."wsw",
+$projectRootPath . SLASH ."$lBoxDirName". SLASH ."TAL",
+$projectRootPath . SLASH ."$lBoxDirName". SLASH ."dev",
+$projectRootPath . SLASH . LBOX_DIRNAME_PROJECT . SLASH ."dev",
+$projectRootPath . SLASH . LBOX_DIRNAME_PROJECT . SLASH ."css",
+$projectRootPath . SLASH . LBOX_DIRNAME_PROJECT . SLASH ."js",
+$projectRootPath . SLASH . LBOX_DIRNAME_PROJECT . SLASH ."documents",
+$projectRootPath . SLASH . LBOX_DIRNAME_PROJECT . SLASH ."img",
+$projectRootPath . SLASH . LBOX_DIRNAME_PROJECT . SLASH ."filespace",
+$projectRootPath . SLASH . LBOX_DIRNAME_PROJECT . SLASH .".cache",
+$projectRootPath . SLASH . LBOX_DIRNAME_PROJECT . SLASH .".tal_compiled",
+$projectRootPath . SLASH . LBOX_DIRNAME_PROJECT . SLASH ."wsw",
 );
 $pathsConfig = array(
-$projectRootPath . $slash . "$lBoxDirName". $slash ."config",
-$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."config",
+$projectRootPath . SLASH . "$lBoxDirName". SLASH ."config",
+$projectRootPath . SLASH . LBOX_DIRNAME_PROJECT . SLASH ."config",
 );
-
+		
 		LBoxLoader::getInstance($paths, $pathsIgnore)->debug = $debug;
 		LBoxLoader::getInstance()->load($className);
 	}
@@ -106,7 +109,7 @@ $projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."config",
 $requestURI	= IIS ? $_SERVER['HTTP_X_REWRITE_URL'] : $_SERVER['REQUEST_URI'];
 $scheme 	= array_key_exists('HTTPS', $_SERVER) ? 'https' : 'http';
 $url = $scheme.'://'.$_SERVER['HTTP_HOST'].$requestURI;
-$urlArray = parse_url($url);
+$urlArray = @parse_url($url);
 // oddelime casti za :
 $urlArrayParts = explode(":", $urlArray["path"]);
 
@@ -127,8 +130,8 @@ $urlArrayParts = explode(":", $urlArray["path"]);
   }
   unset($_GET["{QUERY_STRING}"]);
 
-try {
 
+try {
 	DEFINE("LBOX_REQUEST_URL", 				$url);
 	DEFINE("LBOX_REQUEST_URL_VIRTUAL", 		"/");
 	
@@ -148,11 +151,11 @@ try {
 	LBoxLoaderConfig::getInstance($pathsConfig);
 	// nastavit DbControl config file cestu
 	DbCfg::$cfgFilepath = LBoxLoaderConfig::getInstance()->getPathOf("db");
-	
+
 	// pokud nemame pearovsky firePHP pouzivame lokani LBOXovy
 	@include("FirePHPCore/fb.php");
 	if (!class_exists("FirePHP")) {
-		require(LBOX_PATH_CORE 			. $slash ."firephp". $slash ."0.3". $slash ."lib" . $slash ."FirePHPCore" . $slash ."FirePHP.class.php");
+		require(LBOX_PATH_CORE 			. SLASH ."firephp". SLASH ."0.3.1". SLASH ."lib" . SLASH ."FirePHPCore" . SLASH ."fb.php");
 	}
 	// disable firePHP on remote mashines (enabled on localhost only!!!)
 	if (LBOX_REQUEST_IP != LBOX_REQUEST_IP_MY) {
@@ -170,21 +173,27 @@ try {
 	/*FirePHP::getInstance(true)->setObjectFilter('ClassName',
 	                         					  array('MemberName'));*/
 	// TAL load
-	define("PHPTAL_FORCE_REPARSE", 			LBoxConfigSystem::getInstance()->getParamByPath("output/tal/PHPTAL_FORCE_REPARSE"));
-	define("PHPTAL_PHP_CODE_DESTINATION",	LBOX_PATH_PROJECT 			. $slash .".tal_compiled". $slash);
-	//die("'". PHPTAL_PHP_CODE_DESTINATION ."'");
+	// pokud nemame pearovsky PHPTAL pouzivame lokani LBOXovy
+	@include("PHPTAL.php");
+	if (!@constant("PHPTAL_VERSION")) {
+		define("LBOX_PATH_PHPTAL", LBOX_PATH_CORE . SLASH ."TAL". SLASH ."PHPTAL-1.2.1");
+		define("LBOX_PATH_PHPTAL_GETTEXTTRANSLATOR", LBOX_PATH_PHPTAL . SLASH ."PHPTAL");
 
-	// pokud nemame pearovsky firePHP pouzivame lokani LBOXovy
-	@include("FirePHPCore/FirePHP.class.php");
-	if (!class_exists("FirePHP")) {
-		require(LBOX_PATH_CORE 			. $slash ."firephp". $slash ."0.3.1". $slash ."lib" . $slash ."FirePHPCore" . $slash ."fb.php");
+		require(LBOX_PATH_PHPTAL . SLASH ."PHPTAL.php");
 	}
-	
-	// standard TAL translator service to extend
-	require (PHPTAL_DIR ."phptal/GetTextTranslator.php");
+	else {
+		define("LBOX_PATH_PHPTAL", "PHPTAL");
+		define("LBOX_PATH_PHPTAL_GETTEXTTRANSLATOR", LBOX_PATH_PHPTAL);
+	}
+	// TAL translator service to extend the standard
+	require (LBOX_PATH_PHPTAL_GETTEXTTRANSLATOR . SLASH ."GetTextTranslator.php");
 	require("lbox.phptal.php");
-	
+
 	LBoxUtil::createDirByPath(PHPTAL_PHP_CODE_DESTINATION);
+
+	// cache lite load
+	define("LBOX_PATH_CHACHELITE", LBOX_PATH_CORE . SLASH ."cachelite" . SLASH ."Cache_Lite-1.7.8");
+	require(LBOX_PATH_CHACHELITE . SLASH . "Lite.php");
 }
 catch (Exception $e) {
 	echo "<hr />";
@@ -201,7 +210,7 @@ catch (Exception $e) {
 	echo "<br />";
 	echo nl2br($e->getTraceAsString());
 	echo "<hr />";
-	
+
 	exit;
 }
 

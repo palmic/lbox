@@ -195,10 +195,11 @@ class LBoxLoader
 	 * @param string 	$type type to load
 	 * @param string 	$in absolutni cesta kde hledat
 	 * @param string 	$prefix pokud je prazdny, pouziji se prefixy z $this->prefixes, jinak se hleda jen konkretni
+	 * @param string	$pattern - pokud je nastaven, bude se hledat podle nej
 	 * @return string
 	 * @throws LBoxExceptionLoader
 	 */
-	protected function getPathOfType($type = "", $in = "", $prefix = NULL) {
+	protected function getPathOfType($type = "", $in = "", $prefix = NULL, $pattern = "") {
 		if (strlen($type) < 1) {
 			throw new LBoxExceptionLoader("\$type ". LBoxExceptionLoader::MSG_PARAM_STRING_NOTNULL, LBoxExceptionLoader::CODE_BAD_PARAM);
 		}
@@ -212,7 +213,6 @@ class LBoxLoader
 		if (substr($in, strlen($in)-1) == SLASH) {
 			$in = substr($in, 0, strlen($in)-1);
 		}
-
 		if (strlen($path = $this->getPathOfQuickly($type, $prefix)) > 0) {
 			return $path;
 		}
@@ -256,39 +256,56 @@ class LBoxLoader
 			}
 			else {
 				$postfix = $this->postfix;
-				if (is_string($prefix)) {
-					if (strlen($prefix) > 0)  {
-						$prefixCompare = "$prefix.";
-					}
-					if ($nameReaded == $prefixCompare ."$type.$postfix") {
-						$this->searchedPathsByPrefixedTypes["$prefix.$type"][] = "$in". SLASH;
-						if ($this->debug) {
-							echo __CLASS__ ."(". __LINE__ ."):: <font style='color:green;'>'<b>$type</b>' found in '<i>$in". SLASH ."$nameReaded</i>'<br /></font>\n";
+				switch (true) {
+					case strlen($pattern) > 0:
+							if (preg_match("/". str_replace("<type>", $type, $pattern) ."/", $nameReaded)) {
+								$this->searchedPathsByPrefixedTypes["$prefix.$type"][] = "$in". SLASH;
+								if ($this->debug) {
+									echo __CLASS__ ."(". __LINE__ ."):: <font style='color:green;'>'<b>$type</b>' found in '<i>$in". SLASH ."$nameReaded</i>'<br /></font>\n";
+								}
+								$this->foundTypesInPaths[$type] = "$in". SLASH ."$nameReaded";
+								return "$in". SLASH ."$nameReaded";
+							}
+							$this->checkedFiles["$nameReaded"] = "$in". SLASH ."$nameReaded";
+							if ($this->debug) {
+								echo __CLASS__ ."(". __LINE__ ."):: <font style='color:red;'>'<b>$type</b>' NOT found as '<i>$in". SLASH ."$nameReaded</i>'<br /></font>\n";
+							}
+						break;
+					case is_string($prefix):
+							if (strlen($prefix) > 0)  {
+								$prefixCompare = "$prefix.";
+							}
+							if ($nameReaded == $prefixCompare ."$type.$postfix") {
+								$this->searchedPathsByPrefixedTypes["$prefix.$type"][] = "$in". SLASH;
+								if ($this->debug) {
+									echo __CLASS__ ."(". __LINE__ ."):: <font style='color:green;'>'<b>$type</b>' found in '<i>$in". SLASH ."$nameReaded</i>'<br /></font>\n";
+								}
+								$this->foundTypesInPaths[$type] = "$in". SLASH ."$nameReaded";
+								return "$in". SLASH ."$nameReaded";
+							}
+							$this->checkedFiles["$nameReaded"] = "$in". SLASH ."$nameReaded";
+							if ($this->debug) {
+								echo __CLASS__ ."(". __LINE__ ."):: <font style='color:red;'>'<b>$type</b>' NOT found as '<i>$in". SLASH ."$nameReaded</i>'<br /></font>\n";
+							}
+						break;
+					default:
+						foreach($this->prefixes as $prefixCheck) {
+							if (strlen($prefixCheck) > 0)  {
+								$prefixCompare = "$prefixCheck.";
+							}
+							if ($nameReaded == $prefixCompare ."$type.$postfix") {
+								$this->searchedPathsByPrefixedTypes["$prefixCheck.$type"][] = "$in". SLASH;
+								if ($this->debug) {
+									echo __CLASS__ ."(". __LINE__ ."):: <font style='color:green;'>'<b>$type</b>' found in '<i>$in". SLASH ."$nameReaded</i>'<br /></font>\n";
+								}
+								$this->foundTypesInPaths[$type] = "$in". SLASH ."$nameReaded";
+								return "$in". SLASH ."$nameReaded";
+							}
+							$this->checkedFiles["$nameReaded"] = "$in". SLASH ."$nameReaded";
+							if ($this->debug) {
+								echo __CLASS__ ."(". __LINE__ ."):: <font style='color:red;'>'<b>$type</b>' NOT found as '<i>$in". SLASH ."$nameReaded</i>'<br /></font>\n";
+							}
 						}
-						$this->foundTypesInPaths[$type] = "$in". SLASH ."$nameReaded";
-						return "$in". SLASH ."$nameReaded";
-					}
-					$this->checkedFiles["$nameReaded"] = "$in". SLASH ."$nameReaded";
-					if ($this->debug) {
-						echo __CLASS__ ."(". __LINE__ ."):: <font style='color:red;'>'<b>$type</b>' NOT found as '<i>$in". SLASH ."$nameReaded</i>'<br /></font>\n";
-					}
-				}
-				else foreach($this->prefixes as $prefixCheck) {
-					if (strlen($prefixCheck) > 0)  {
-						$prefixCompare = "$prefixCheck.";
-					}
-					if ($nameReaded == $prefixCompare ."$type.$postfix") {
-						$this->searchedPathsByPrefixedTypes["$prefixCheck.$type"][] = "$in". SLASH;
-						if ($this->debug) {
-							echo __CLASS__ ."(". __LINE__ ."):: <font style='color:green;'>'<b>$type</b>' found in '<i>$in". SLASH ."$nameReaded</i>'<br /></font>\n";
-						}
-						$this->foundTypesInPaths[$type] = "$in". SLASH ."$nameReaded";
-						return "$in". SLASH ."$nameReaded";
-					}
-					$this->checkedFiles["$nameReaded"] = "$in". SLASH ."$nameReaded";
-					if ($this->debug) {
-						echo __CLASS__ ."(". __LINE__ ."):: <font style='color:red;'>'<b>$type</b>' NOT found as '<i>$in". SLASH ."$nameReaded</i>'<br /></font>\n";
-					}
 				}
 			}
 		}
