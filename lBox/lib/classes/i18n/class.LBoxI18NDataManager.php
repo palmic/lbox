@@ -46,8 +46,9 @@ class LBoxI18NDataManager extends LBoxConfigManager
 			if (strlen($filePath) < 1) {
 				throw new LBoxException(LBoxException::MSG_PARAM_STRING_NOTNULL, LBoxException::CODE_BAD_PARAM);
 			}
-			if (!self::$instances[$filePath] instanceof $className) {
-				self::$instances[$filePath] = new $className($filePath);
+			if (!	array_key_exists($filePath, self::$instances)
+				||	!(self::$instances[$filePath] instanceof $className)) {
+						self::$instances[$filePath] = new $className($filePath);
 			}
 			return self::$instances[$filePath];
 		}

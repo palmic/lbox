@@ -154,11 +154,13 @@ class LBoxXT extends LBox
 				}
 			}
 			if (array_key_exists("lbox", (array)$_SESSION)) {
-				if ($_SESSION["lbox"][self::SESSION_ARRAY_NAME][0]["logout"] == 1) {
-					return self::$isLogged[$loginGroup] = false;
+				if (	array_key_exists(0, $_SESSION["lbox"][self::SESSION_ARRAY_NAME])
+					&&	$_SESSION["lbox"][self::SESSION_ARRAY_NAME][0]["logout"] == 1) {
+						return self::$isLogged[$loginGroup] = false;
 				}
-				else if ($_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["logout"] == 1) {
-					return self::$isLogged[$loginGroup] = false;
+				else if (	array_key_exists("logout", $_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup])
+						 &&	$_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["logout"] == 1) {
+							return self::$isLogged[$loginGroup] = false;
 				}
 				if ((bool)$_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["signon"]) {
 					return self::$isLogged[$loginGroup] = true;
@@ -355,7 +357,8 @@ class LBoxXT extends LBox
 			if (!self::isLogged($loginGroup)) {
 				throw new LBoxExceptionXT(LBoxExceptionXT::MSG_NOT_LOGGED, LBoxExceptionXT::CODE_NOT_LOGGED);
 			}
-			if (self::$xtUserRecords[$loginGroup] instanceof XTUsersRecord) {
+			if (	array_key_exists($loginGroup, self::$xtUserRecords)
+				&&	self::$xtUserRecords[$loginGroup] instanceof XTUsersRecord) {
 				return self::$xtUserRecords[$loginGroup];
 			}
 			return self::$xtUserRecords[$loginGroup] = new XTUsersRecord($_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["userId"]);
@@ -384,7 +387,8 @@ class LBoxXT extends LBox
 			if (!self::isLogged($loginGroup)) {
 				throw new LBoxExceptionXT(LBoxExceptionXT::MSG_NOT_LOGGED, LBoxExceptionXT::CODE_NOT_LOGGED);
 			}
-			if (self::$xtRoleRecords[self::getUserXTRecord($loginGroup)->id] instanceof XTRolesRecord) {
+			if (array_key_exists(self::getUserXTRecord($loginGroup)->id, self::$xtRoleRecords)
+				&&	self::$xtRoleRecords[self::getUserXTRecord($loginGroup)->id] instanceof XTRolesRecord) {
 				return self::$xtRoleRecords[self::getUserXTRecord($loginGroup)->id];
 			}
 			return self::$xtRoleRecords[self::getUserXTRecord($loginGroup)->id] = self::getUserXTRecord($loginGroup)->getRole();

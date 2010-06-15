@@ -37,8 +37,10 @@ abstract class LBoxConfigManager extends LBox
 	 */
 	protected function getNodeByParam($paramName = "", $paramValue = "") {
 		try {
-			if ($this->nodesByParams[$paramName][$paramValue] instanceof LBoxConfigItem) {
-				return $this->nodesByParams[$paramName][$paramValue];
+			if (	array_key_exists($paramName, $this->nodesByParams)
+				&& 	array_key_exists($paramValue, $this->nodesByParams[$paramName])
+				&& 	$this->nodesByParams[$paramName][$paramValue] instanceof LBoxConfigItem) {
+						return $this->nodesByParams[$paramName][$paramValue];
 			}
 			if (strlen($paramName) < 1) {
 				throw new LBoxExceptionConfig("Bad param \$paramName, ". LBoxExceptionConfig::MSG_PARAM_STRING_NOTNULL,
@@ -114,9 +116,9 @@ abstract class LBoxConfigManager extends LBox
 						return $found;
 					}
 				}
-				if ($cache) {
+				/*TODO if ($cache) {
 					$this->nodesByParams[$paramName][$node->$paramName]	= $node;
-				}
+				}*/
 				if ($node->getContent() == $content) {
 					return $node;
 				}
