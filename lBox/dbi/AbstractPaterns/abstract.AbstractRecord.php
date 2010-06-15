@@ -161,7 +161,7 @@ abstract class AbstractRecord implements Iterator
 	 * cache var flag
 	 * @var array
 	 */
-	public static $doesTableExistsInDatabaseByTypes;
+	public static $doesTableExistsInDatabaseByTypes = array();
 
 	/**
 	 * attributes definition for data/structure modification manipulations
@@ -571,6 +571,7 @@ abstract class AbstractRecord implements Iterator
 	 */
 	public function setIsTree($isTree = true) {
 		try {
+			$className	= get_class($this);
 			self::$isTree[$className]	= (bool)$isTree;
 		}
 		catch (Exception $e) {
@@ -2005,7 +2006,8 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 	protected function doesTableExistsInDatabase() {
 		try {
 			$className	= get_class($this);
-			if (is_bool(self::$doesTableExistsInDatabaseByTypes[$className])) {
+			if (array_key_exists($className, self::$doesTableExistsInDatabaseByTypes)
+				&&	is_bool(self::$doesTableExistsInDatabaseByTypes[$className])) {
 				return self::$doesTableExistsInDatabaseByTypes[$className];
 			}
 			if (strlen($this->getClassVar("dbName", true)) > 0) {

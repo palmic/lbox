@@ -75,7 +75,7 @@ class LBoxCacheManagerFront
 			if ($this->listeningOff) {
 				return;
 			}
-			if ($type == AccesRecord) return;
+			if ($type == "AccesRecord") return;
 			$url	= (substr(LBOX_REQUEST_URL, -1) == "/") ? LBOX_REQUEST_URL : LBOX_REQUEST_URL . "/";
 			$url	= str_replace("?/", "/", $url);
 			$url	= str_replace("//", "/", $url);
