@@ -178,7 +178,15 @@ abstract class LBoxConfigItem implements OutputItem
 	 */
 	public function setContent($value) {
 		try {
-			$this->node->nodeValue	= $value;
+			if (htmlspecialchars($value) == $value && htmlspecialchars_decode($value) == $value) {
+				$this->node->nodeValue	= $value;
+			}
+			else {
+				foreach($this->node->childNodes as $nodeChild) {
+					$this->node->removeChild($nodeChild);
+				}
+				$this->node->appendChild($this->config->getDom()->createCDATASection($value));
+			}
 			$this->store();
 		}
 		catch (Exception $e) {
@@ -455,6 +463,7 @@ abstract class LBoxConfigItem implements OutputItem
 	 */
 	public function delete() {
 		try {
+			$content	= $this->node->nodeValue;
 			$this->node->parentNode->removeChild($this->node);
 			$this->store();
 		}
