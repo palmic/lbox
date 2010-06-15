@@ -82,7 +82,7 @@ class LBoxConfigProperties extends LBoxConfig
 			}
 			try {
 				if (LBoxConfigManagerProperties::getInstance()->getPropertyByName($name)) {
-					throw new LBoxExceptionConfig("This property already exists!");
+					throw new LBoxExceptionConfig("'$name': This property already exists!");
 				}
 			}
 			catch (Exception $e) {
@@ -95,7 +95,7 @@ class LBoxConfigProperties extends LBoxConfig
 			}
 			$instance	= parent::getCreateItem();
 			$instance->name	= $name;
-			$instance->getNode()->nodeValue	= $value;
+			$instance->setContent($value);
 			return $instance;
 		}
 		catch (Exception $e) {

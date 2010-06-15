@@ -11,7 +11,7 @@ require_once $pathRoot.'/lBox/lib/loader_phpunit.php';
 
 class ConfigItem extends PHPUnit_Framework_TestCase
 {
-    public function testAppendChild() {
+    /*public function testAppendChild() {
     	$item1 = LBoxConfigManagerStructure::getInstance()->getPageById(2);
     	$item2 = LBoxConfigManagerStructure::getInstance()->getPageById(201);
     	
@@ -97,15 +97,16 @@ class ConfigItem extends PHPUnit_Framework_TestCase
 
     	$newItem	= LBoxConfigManagerStructure::getInstance()->getPageById(30);
     	$newItem	->delete();
-    }
+    }*/
 
     public function testSetContent() {
-    	$this->assertType("LBoxConfigItemProperty", $item = LBoxConfigProperties::getInstance()->getCreateItem("testname", "testcontent"));
+    	$this->assertType("LBoxConfigItemProperty", $item = LBoxConfigProperties::getInstance()->getCreateItem("testname", "<project>"));
     	$item->store();
-    	$this->assertSame("testcontent", $item->getContent());
+    	$this->assertSame("<project>", $item->getContent());
     	
-    	$item->setContent("testcontent 2");
-    	$this->assertSame("testcontent 2", $item->getContent());
+    	$this->assertType("LBoxConfigItemProperty", $item = LBoxConfigManagerProperties::getInstance()->getPropertyByName("testname"));
+    	$item->setContent("project");
+    	$this->assertSame("project", $item->getContent());
 
     	$this->assertType("LBoxConfigItemProperty", $item	= LBoxConfigManagerProperties::getInstance()->getPropertyByName("testname"));
     	$item->delete();
