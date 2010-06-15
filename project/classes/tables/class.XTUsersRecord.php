@@ -82,7 +82,7 @@ class XTUsersRecord extends AbstractRecordLBox
 	 */
 	public function getRole() {
 		try {
-			return $this->getBoundedM1Instance("XTRolesRecords", $filter, $order, $limit, $whereAdd)->current();
+			return $this->getBoundedM1Instance("XTRolesRecords")->current();
 		}
 		catch (Exception $e) {
 			throw $e;
