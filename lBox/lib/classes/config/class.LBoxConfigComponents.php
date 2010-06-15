@@ -11,7 +11,9 @@ class LBoxConfigComponents extends LBoxConfig
 	protected static $instance;
 	protected $configName 			= "components";
 	protected $classNameIterator	= "LBoxIteratorComponents";
-
+	protected $classNameItem		= "LBoxConfigItemComponent";
+	protected $nodeName				= "component";
+	
 	/**
 	 * defines unicate ID attribute name to check if is unique and index by it
 	 * @var string
@@ -23,6 +25,15 @@ class LBoxConfigComponents extends LBoxConfig
 	 */
 	protected $cacheNodes			= array();
 
+	public function resetInstance() {
+		try {
+			self::$instance	= NULL;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
 	/**
 	 * @return LBoxConfigStructure
 	 * @throws Exception
@@ -97,6 +108,17 @@ class LBoxConfigComponents extends LBoxConfig
 				}
 				$this->cacheNodes[$item->$idName] = $item;
 			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	public function store() {
+		try {
+			$this->cacheNodes		= array();
+			parent::store();
+			$this->load();
 		}
 		catch (Exception $e) {
 			throw $e;

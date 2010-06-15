@@ -10,7 +10,9 @@ class LBoxConfigAuthDBFree extends LBoxConfig
 	protected static $instance;
 	protected $configName 			= "auth-dbfree";
 	protected $classNameIterator	= "LBoxIteratorAuthDBFree";
-
+	protected $classNameItem		= "LBoxConfigItemAuthDBFree";
+	protected $nodeName				= "login";
+	
 	/**
 	 * defines unicate ID attribute name to check if is unique and index by it
 	 * @var string
@@ -33,6 +35,15 @@ class LBoxConfigAuthDBFree extends LBoxConfig
 				self::$instance = new $className;
 			}
 			return self::$instance;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	public function resetInstance() {
+		try {
+			self::$instance	= NULL;
 		}
 		catch (Exception $e) {
 			throw $e;

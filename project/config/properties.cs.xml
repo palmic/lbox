@@ -1,60 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <properties>
-	<property name="log_access">1</property><!-- prepinatelny atribut, ktery prepina logovani pristupu do databaze -->
-	<property name="cache_front">0</property><!-- prepinatec zapinajici cachovani front dat -->
-	
-	<property name="web_title">lbox.cz</property><!-- title webu pouzivany na homepage a v ostatnich strankach dynamicky ve vzorech -->
-	<property name="page_title_pattern">$page_title &lt; $properties_web_title</property><!-- vzor titlu stranky -->
-	<property name="page_home_title_pattern">$properties_web_title</property><!-- vzor titlu homepage -->
-	<property name="page_title_pattern_article">$article_name &lt; $properties_web_title</property><!-- vzor titlu stranky zobrazujici clanek -->
-	<property name="page_title_pattern_party">$properties_web_title | party: $party_name</property><!-- vzor titlu stranky zobrazujici detail party -->
-	<property name="page_title_pattern_photogallery">$properties_web_title | fotogalerie: $photogallery_name</property><!-- vzor titlu stranky zobrazujici clanek -->
-	<property name="page_rss_title_pattern">$page_title na lbox.cz</property><!-- vzor titlu RSS stranky -->
-	<property name="page_rss_discussion_article_title_pattern">$page_title článku $article_heading na lbox.cz</property><!-- vzor titlu RSS stranky komentaru clanku -->
-	<property name="page_rss_discussion_party_title_pattern">$page_title party $article_heading na $properties_web_title</property><!-- vzor titlu RSS stranky komentaru party -->
-	<property name="page_rss_discussion_guestbook_title_pattern">$page_title guestbooku na lbox.cz</property><!-- vzor titlu RSS stranky komentaru guestbooku -->
-
-	<property name="ref_page_xt_admin">999</property><!-- id stranky, pro extranet admin -->
-	<property name="ref_page_xt_login">9999</property><!-- id stranky, pro xt login, pokud je na to nejaka specialni -->
-
-	<property name="ref_page_xt_registration">300</property><!-- id stranky s registraci usera -->
-	<property name="ref_page_registration_confirm">301</property><!-- id stranky, ktera potvrzuje confirm registrace -->
-	
-	<property name="path_photos_content"><![CDATA[<project>/img/content]]></property>
-
-	<!-- tyto hodnoty se davaji natvrdo, to znamena, ze kdyz zde bude 0, pouzije se jako maxlength formularoveho pole opravdu 0 -->
-	<property name="form_max_length_discussion_title">50</property>
-	<property name="form_max_length_discussion_text">250</property>
-	<property name="form_max_length_nick">15</property>
-	<property name="form_max_length_email">35</property>
-	<property name="form_max_length_phone">20</property>
-	<property name="form_max_length_password">20</property>
-	<property name="form_max_length_www">20</property>
-	<property name="form_max_length_name">20</property>
-	<property name="form_max_length_surname">20</property>
-	<property name="form_max_length_company">30</property>
-
-	<property name="paging_range">5</property>
-	
-	<!-- odesilatel confirm mailu registrace -->
-	<property name="registration_confirm_mail_from">info@lbox.cz</property>
-	<!-- subject confirm mailu registrace -->
-	<property name="registration_confirm_mail_subject"><![CDATA[Potvrzeni registrace na webu <host>]]></property>
-
-	<!-- Public key pluginu recaptcha - k pouziti na frontu (javascript) -->
-	<property name="recaptcha_key_public">6LdW2QQAAAAAAHAQAsVrsKgrSBD10Wu4ouZ8VMz-</property>
-	<!-- Private key pluginu recaptcha - k pouziti pouze na serverside API!!!! -->
-	<property name="recaptcha_key_private">6LdW2QQAAAAAAPPGimgi5hK1HcMZh92X2yWdCmVR</property>
-
-	<!-- facebook API ID - je treba vygenerovat pro kazdou aplikaci na http://developers.facebook.com/setup/ -->
-	<property name="facebook_api_id"></property>
-
-	<property name="contact_form_addresses">info@lbox.cz</property><!-- cilove mailove adresy kontaktnich formularu (oddelovat carkou) -->
-	<property name="contact_form_subject"><![CDATA[Vzkaz z kontaktního formuláře <host>]]></property><!-- predmet mailu z kontaktnich formularu -->
-
-
-	<!-- seznam IDs stranek na kterych bude povolen resize oddelenych mezerou. all znaci vsechny -->
-	<property name="metanodes_allow_resize_pages"></property>
-	<!-- seznam IDs roli pro ktere budou metanodes zakazane oddelenych carkou - napriklad: 5,6 -->
-	<property name="metanodes_forbidden_xtroles"></property>
+  <property name="log_access">1</property>
+  <!-- prepinatelny atribut, ktery prepina logovani pristupu do databaze -->
+  <property name="cache_front">0</property>
+  <!-- prepinatec zapinajici cachovani front dat -->
+  <property name="web_title">lbox.cz</property>
+  <!-- title webu pouzivany na homepage a v ostatnich strankach dynamicky ve vzorech -->
+  <property name="page_title_pattern">$page_title &lt; $properties_web_title</property>
+  <!-- vzor titlu stranky -->
+  <property name="page_home_title_pattern">$properties_web_title</property>
+  <!-- vzor titlu homepage -->
+  <property name="page_title_pattern_article">$article_name &lt; $properties_web_title</property>
+  <!-- vzor titlu stranky zobrazujici clanek -->
+  <property name="page_title_pattern_party">$properties_web_title | party: $party_name</property>
+  <!-- vzor titlu stranky zobrazujici detail party -->
+  <property name="page_title_pattern_photogallery">$properties_web_title | fotogalerie: $photogallery_name</property>
+  <!-- vzor titlu stranky zobrazujici clanek -->
+  <property name="page_rss_title_pattern">$page_title na lbox.cz</property>
+  <!-- vzor titlu RSS stranky -->
+  <property name="page_rss_discussion_article_title_pattern">$page_title článku $article_heading na lbox.cz</property>
+  <!-- vzor titlu RSS stranky komentaru clanku -->
+  <property name="page_rss_discussion_party_title_pattern">$page_title party $article_heading na $properties_web_title</property>
+  <!-- vzor titlu RSS stranky komentaru party -->
+  <property name="page_rss_discussion_guestbook_title_pattern">$page_title guestbooku na lbox.cz</property>
+  <!-- vzor titlu RSS stranky komentaru guestbooku -->
+  <property name="ref_page_xt_admin">999</property>
+  <!-- id stranky, pro extranet admin -->
+  <property name="ref_page_xt_login">9999</property>
+  <!-- id stranky, pro xt login, pokud je na to nejaka specialni -->
+  <property name="ref_page_xt_registration">300</property>
+  <!-- id stranky s registraci usera -->
+  <property name="ref_page_registration_confirm">301</property>
+  <!-- id stranky, ktera potvrzuje confirm registrace -->
+  <property name="path_photos_content"><![CDATA[<project>/img/content]]></property>
+  <!-- tyto hodnoty se davaji natvrdo, to znamena, ze kdyz zde bude 0, pouzije se jako maxlength formularoveho pole opravdu 0 -->
+  <property name="form_max_length_discussion_title">50</property>
+  <property name="form_max_length_discussion_text">250</property>
+  <property name="form_max_length_nick">15</property>
+  <property name="form_max_length_email">35</property>
+  <property name="form_max_length_phone">20</property>
+  <property name="form_max_length_password">20</property>
+  <property name="form_max_length_www">20</property>
+  <property name="form_max_length_name">20</property>
+  <property name="form_max_length_surname">20</property>
+  <property name="form_max_length_company">30</property>
+  <property name="paging_range">5</property>
+  <!-- odesilatel confirm mailu registrace -->
+  <property name="registration_confirm_mail_from">info@lbox.cz</property>
+  <!-- subject confirm mailu registrace -->
+  <property name="registration_confirm_mail_subject"><![CDATA[Potvrzeni registrace na webu <host>]]></property>
+  <!-- Public key pluginu recaptcha - k pouziti na frontu (javascript) -->
+  <property name="recaptcha_key_public">6LdW2QQAAAAAAHAQAsVrsKgrSBD10Wu4ouZ8VMz-</property>
+  <!-- Private key pluginu recaptcha - k pouziti pouze na serverside API!!!! -->
+  <property name="recaptcha_key_private">6LdW2QQAAAAAAPPGimgi5hK1HcMZh92X2yWdCmVR</property>
+  <!-- facebook API ID - je treba vygenerovat pro kazdou aplikaci na http://developers.facebook.com/setup/ -->
+  <property name="facebook_api_id"/>
+  <property name="contact_form_addresses">info@lbox.cz</property>
+  <!-- cilove mailove adresy kontaktnich formularu (oddelovat carkou) -->
+  <property name="contact_form_subject"><![CDATA[Vzkaz z kontaktního formuláře <host>]]></property>
+  <!-- predmet mailu z kontaktnich formularu -->
+  <!-- seznam IDs stranek na kterych bude povolen resize oddelenych mezerou. all znaci vsechny -->
+  <property name="metanodes_allow_resize_pages"/>
+  <!-- seznam IDs roli pro ktere budou metanodes zakazane oddelenych carkou - napriklad: 5,6 -->
+  <property name="metanodes_forbidden_xtroles"/>
 </properties>

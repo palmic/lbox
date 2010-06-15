@@ -10,7 +10,9 @@ class LBoxConfigStructure extends LBoxConfig
 	protected static $instance;
 	protected $configName 			= "structure";
 	protected $classNameIterator	= "LBoxIteratorStructure";
-
+	protected $classNameItem		= "LBoxConfigItemStructure";
+	protected $nodeName				= "page";
+	
 	/**
 	 * defines unicate ID attribute name to check if is unique and index by it
 	 * @var string
@@ -27,6 +29,15 @@ class LBoxConfigStructure extends LBoxConfig
 	 */
 	protected $cacheNodesByUrl		= array();
 
+	public function resetInstance() {
+		try {
+			self::$instance	= NULL;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
 	/**
 	 * @return LBoxConfigStructure
 	 * @throws Exception
@@ -47,7 +58,7 @@ class LBoxConfigStructure extends LBoxConfig
 	/**
 	 * pretizeno o kontrolu vzhledem k multilang
 	 */
-	protected function getDOM() {
+	public function getDOM() {
 		try {
 			if ($this->dom instanceof DOMDocument) {
 				return $this->dom;
@@ -79,7 +90,7 @@ class LBoxConfigStructure extends LBoxConfig
 				throw new LBoxExceptionConfigComponent(LBoxExceptionConfigComponent::MSG_PARAM_STRING_NOTNULL, LBoxExceptionConfigComponent::CODE_BAD_PARAM);
 			}
 			if (!array_key_exists($id, $this->cacheNodes)) {
-				throw new LBoxExceptionConfigComponent(LBoxExceptionConfigComponent::MSG_NODE_BYID_NOT_FOUND, LBoxExceptionConfigComponent::CODE_NODE_BYID_NOT_FOUND);
+				throw new LBoxExceptionConfigComponent(LBoxExceptionConfigComponent::MSG_NODE_BYID_NOT_FOUND, LBoxExceptionConfig::CODE_NODE_BYID_NOT_FOUND);
 			}
 			return $this->cacheNodes[$id];
 		}
@@ -161,6 +172,69 @@ class LBoxConfigStructure extends LBoxConfig
 		}
 	}
 	
+	/**
+	 * pretizeno o nastaveni povinnych hodnot
+	 * @param string $id
+	 * @param string $url
+	 */
+	public function getCreateItem($id = "", $url = "") {
+		try {
+			if (strlen($id) < 1) {
+				throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_PARAM_STRING_NOTNULL, LBoxExceptionConfig::CODE_BAD_PARAM);
+			}
+			if (strlen($url) < 1) {
+				throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_PARAM_STRING_NOTNULL, LBoxExceptionConfig::CODE_BAD_PARAM);
+			}
+			try {
+				if (LBoxConfigManagerStructure::getInstance()->getPageById($id)) {
+					throw new LBoxExceptionConfig("Page with this id already exists!");
+				}
+			}
+			catch (Exception $e) {
+				switch ($e->getCode()) {
+					case LBoxExceptionConfig::CODE_NODE_BYID_NOT_FOUND:
+					case LBoxExceptionConfigStructure::CODE_NODE_BYURL_NOT_FOUND:
+						break;
+					default:
+						throw $e;
+				}
+			}
+			try {
+				if (LBoxConfigManagerStructure::getInstance()->getPageByUrl($url)) {
+					throw new LBoxExceptionConfig("Page with this url already exists!");
+				}
+			}
+			catch (Exception $e) {
+				switch ($e->getCode()) {
+					case LBoxExceptionConfig::CODE_NODE_BYID_NOT_FOUND:
+					case LBoxExceptionConfigStructure::CODE_NODE_BYURL_NOT_FOUND:
+						break;
+					default:
+						throw $e;
+				}
+			}
+			$instance		= parent::getCreateItem();
+			$instance->id	= $id;
+			$instance->url	= $url;
+			return $instance;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	public function store() {
+		try {
+			$this->cacheNodes		= array();
+			$this->cacheNodesByUrl	= array();
+			parent::store();
+			$this->load();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
 	protected function __construct() {
 		try {
 			$this->load();

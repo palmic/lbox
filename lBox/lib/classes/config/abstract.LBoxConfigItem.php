@@ -9,6 +9,12 @@
 abstract class LBoxConfigItem implements OutputItem
 {
 	/**
+	 * config instance zastupujici DOM document
+	 * @var LBoxConfig
+	 */
+	protected $config;
+
+	/**
 	 * relevantni DOMNode
 	 * @var DOMNode
 	 */
@@ -39,6 +45,19 @@ abstract class LBoxConfigItem implements OutputItem
 	protected $level;
 	
 	/**
+	 * setter na config
+	 * @param LBoxConfig $config
+	 */
+	public function setConfig(LBoxConfig $config) {
+		try {
+			$this->config	= $config;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * prijima DOMNode s nodeName == $this->nodeName, jinak vyhodi vyjimku
 	 * @param DOMNode $node
 	 * @throws LBoxExceptionConfig
@@ -59,6 +78,27 @@ abstract class LBoxConfigItem implements OutputItem
 	 * @param string $name
 	 * @throws LBoxExceptionConfig
 	 */
+	public function __set($name = "", $value = "") {
+		if (strlen($name) < 1) {
+			throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_PARAM_STRING_NOTNULL, LBoxExceptionConfig::CODE_BAD_PARAM);
+		}
+		if ($value === NULL) {
+			if (!$this->node->removeAttribute($name)) {
+				throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_ATTRIBUTE_CANNOT_DELETE, LBoxExceptionConfig::CODE_ATTRIBUTE_CANNOT_DELETE);
+			}
+		}
+		else {
+			if (!$this->node->setAttribute($name, $value)) {
+				throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_ATTRIBUTE_CANNOT_CHANGE, LBoxExceptionConfig::CODE_ATTRIBUTE_CANNOT_CHANGE);
+			}
+		}
+	}
+
+	/**
+	 * Vraci attributy
+	 * @param string $name
+	 * @throws LBoxExceptionConfig
+	 */
 	public function __get($name = "") {
 		switch ($name) {
 			default:
@@ -69,6 +109,19 @@ abstract class LBoxConfigItem implements OutputItem
 				else {
 					return $value;
 				}
+		}
+	}
+	
+	/**
+	 * getter na DOMNode
+	 * @return DOMNode
+	 */
+	public function getNode() {
+		try {
+			return $this->node;
+		}
+		catch (Exception $e) {
+			throw $e;
 		}
 	}
 
@@ -119,6 +172,20 @@ abstract class LBoxConfigItem implements OutputItem
 		}
 	}
 
+	/**
+	 * nastavi obsah item
+	 * @param string $value
+	 */
+	public function setContent($value) {
+		try {
+			$this->node->nodeValue	= $value;
+			$this->store();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
 	public function __toString() {
 		$msg = "Object of type ". get_class($this) ."\ntagName:\n	". $this->node->tagName ."\n";
 		$msg .= "attributes:\n";
@@ -129,12 +196,19 @@ abstract class LBoxConfigItem implements OutputItem
 		return $msg . $attributesString ."\n";
 	}
 
+	public function __destruct() {}
+
 	/**
 	 * Vraci jestli ma potomky ve strukture
 	 * @return bool
 	 */
 	public function hasChildren() {
-		return (bool) $this->node->hasChildNodes();
+		// je treba projet jestli ma element nodes,
+		//$this->node->hasChildNodes() vrati true i pokud ma pouze text nodes
+		foreach ($this->getChildNodesIterator() as $child) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -195,17 +269,16 @@ abstract class LBoxConfigItem implements OutputItem
 	 */
 	public function getChildNodesIterator() {
 		try {
-			if ($this->hasChildren()) {
-				if (strlen($classNameIterator = $this->classNameIterator) < 1) {
-					throw new LBoxExceptionConfig("classNameIterator: ". LBoxExceptionConfig::MSG_ABSTRACT_NODENAME_NOT_DEFINED, LBoxExceptionConfig::CODE_ABSTRACT_NODENAME_NOT_DEFINED);
-				}
-				$iterator = new $classNameIterator;
-				$iterator->setParent($this->node);
-				if ($this->outputFilter instanceof LBoxOutputFilter) {
-					$iterator->setOutputFilterItemsClass(get_class($this->outputFilter));
-				}
-				return $iterator;
+			if (strlen($classNameIterator = $this->classNameIterator) < 1) {
+				throw new LBoxExceptionConfig("classNameIterator: ". LBoxExceptionConfig::MSG_ABSTRACT_NODENAME_NOT_DEFINED, LBoxExceptionConfig::CODE_ABSTRACT_NODENAME_NOT_DEFINED);
 			}
+			$iterator = new $classNameIterator;
+			$iterator->setConfig($this->config);
+			$iterator->setParent($this->node);
+			if ($this->outputFilter instanceof LBoxOutputFilter) {
+				$iterator->setOutputFilterItemsClass(get_class($this->outputFilter));
+			}
+			return $iterator;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -222,6 +295,7 @@ abstract class LBoxConfigItem implements OutputItem
 				$className	= get_class($this);
 				$parent		= new $className;
 				$parent->setNode($this->node->parentNode);
+				$parent->setConfig($this->config);
 				if ($this->outputFilter instanceof LBoxOutputFilter) {
 					$ofClassName	= get_class($this->outputFilter);
 					$parent->setOutputFilter(new $ofClassName($parent));
@@ -291,6 +365,7 @@ abstract class LBoxConfigItem implements OutputItem
 				$className	= get_class($this);
 				$previous	= new $className;
 				$previous		->setNode($prev);
+				$previous		->setConfig($this->config);
 				if ($this->outputFilter instanceof LBoxOutputFilter) {
 					$ofClassName	= get_class($this->outputFilter);
 					$previous->setOutputFilter(new $ofClassName($previous));
@@ -317,6 +392,7 @@ abstract class LBoxConfigItem implements OutputItem
 				$className	= get_class($this);
 				$nextItem	= new $className;
 				$nextItem	->setNode($next);
+				$nextItem	->setConfig($this->config);
 				if ($this->outputFilter instanceof LBoxOutputFilter) {
 					$ofClassName	= get_class($this->outputFilter);
 					$nextItem->setOutputFilter(new $ofClassName($nextItem));
@@ -325,6 +401,75 @@ abstract class LBoxConfigItem implements OutputItem
 			}
 		}
 		catch(Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * vlozi predany LBCI do struktury jako posledniho potomka
+	 * @param LBoxConfigItem $child
+	 */
+	public function appendChild(LBoxConfigItem $child) {
+		try {
+			$this->node->appendChild($child->getNode());
+			$this->store();
+			$child->store();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * vlozi predany LBCI do struktury pred sebe na stejnou uroven
+	 * @param LBoxConfigItem $child
+	 */
+	public function insertBefore(LBoxConfigItem $sibling) {
+		try {
+			$this->node = $this->node->parentNode->insertBefore($sibling->getNode(), $this->node);
+			$this->store();
+			$sibling->store();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * vyjme LBCI ze stromu a vlozi jej nakonec
+	 */
+	public function removeFromTree() {
+		try {
+			$this->config->getDOM()->documentElement->appendChild($this->getNode());
+			$this->store();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * odstrani LBCI ze stromu
+	 */
+	public function delete() {
+		try {
+			$this->node->parentNode->removeChild($this->node);
+			$this->store();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * ulozi zmeny pokud nejake byly provedeny
+	 */
+	public function store() {
+		try {
+			$this->config->store();
+			$this->level 	= NULL;
+		}
+		catch (Exception $e) {
 			throw $e;
 		}
 	}

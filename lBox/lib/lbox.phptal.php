@@ -230,7 +230,7 @@ class LBoxTranslator extends PHPTAL_GetTextTranslator
        			}
     			catch (LBoxException $e) {
     				switch ($e->getCode()) {
-    					case LBoxExceptionConfigComponent::CODE_NODE_BYID_NOT_FOUND:
+    					case LBoxExceptionConfig::CODE_NODE_BYID_NOT_FOUND:
     							// v pripade, ze jsme nenalezli lang text v konkretni definici, hledame jeste v globalni
     							if ($lngIndex < 1) {
     								continue;

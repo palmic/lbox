@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pages>
-	<page id="1" url="/" class="PageTitle" template="page_title.html" heading="lbox.cz" in_menu="0" />
+  <page id="1" url="/" class="PageTitle" template="page_title.html" heading="lbox.cz" in_menu="0"/>
 
-	<page id="901" url="/rss/" template="page_rss_articles.xml" class="PageRSSArticlesNews" title="RSS novinek" heading="RSS novinek" in_menu="0" rss="600" />
-	<page id="902" url="/404/" template="page_404.html" title="Stránka nebyla nalezena" heading="Stránka nebyla nalezena" in_menu="0" />
-	<page id="903" url="/sitemap.xml" class="PageSitemap09" template="sitemap09.xml" in_menu="0" cache_off="1" />
-	
-	<page id="999" url="/admin/" template="admin.html" class="PageDefault" heading="Admin" keywords="" description="" in_menu="0" xt="1" bodyid="admin">
-		<page id="9999" url="/admin/login/" class="PageAdminLogin" template="admin_login.html" heading="Login" in_menu="0" xt_reload_logged_xt="1:999" />
-	</page>
+  <page id="901" url="/rss/" template="page_rss_articles.xml" class="PageRSSArticlesNews" title="RSS novinek" heading="RSS novinek" in_menu="0" rss="600"/>
+  <page id="902" url="/404/" template="page_404.html" title="Stránka nebyla nalezena" heading="Stránka nebyla nalezena" in_menu="0"/>
+  <page id="903" url="/sitemap.xml" class="PageSitemap09" template="sitemap09.xml" in_menu="0" cache_off="1"/>
+  <page id="999" url="/admin/" template="admin.html" class="PageDefault" heading="Admin" keywords="" description="" in_menu="0" xt="1" bodyid="admin">
+    <page id="9999" url="/admin/login/" class="PageAdminLogin" template="admin_login.html" heading="Login" in_menu="0" xt_reload_logged_xt="1:999"/>
+  </page>
 </pages>

@@ -10,6 +10,8 @@ class LBoxI18NData extends LBoxConfig
 	protected static 	$instance;
 	protected		 	$configName 			= "translation";
 	protected 			$classNameIterator		= "LBoxI18NDataIterator";
+	protected 			$classNameItem			= "LBoxI18NDataItem";
+	protected 			$nodeName				= "text";
 	
 	public 				$filePath;
 
@@ -26,6 +28,15 @@ class LBoxI18NData extends LBoxConfig
 	
 	protected $loaded				= false;
 
+	public function resetInstance() {
+		try {
+			self::$instance	= NULL;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
 	/**
 	 * getter configu konkretniho lang textu podle id
 	 * @param int $id
@@ -39,7 +50,7 @@ class LBoxI18NData extends LBoxConfig
 			}
 			$this->load();
 			if (!array_key_exists($id, $this->cacheNodes)) {
-				throw new LBoxExceptionConfigComponent(LBoxExceptionConfigComponent::MSG_NODE_BYID_NOT_FOUND, LBoxExceptionConfigComponent::CODE_NODE_BYID_NOT_FOUND);
+				throw new LBoxExceptionConfigComponent(LBoxExceptionConfigComponent::MSG_NODE_BYID_NOT_FOUND, LBoxExceptionConfig::CODE_NODE_BYID_NOT_FOUND);
 			}
 			return $this->cacheNodes[$id];
 		}
