@@ -77,7 +77,7 @@ class LBoxI18NData extends LBoxConfig
 		}
 	}
 
-	protected function getDOM() {
+	public function getDOM() {
 		if (strlen($this->filePath) < 1) {
 			throw new  LBoxExceptionConfig(LBoxExceptionConfig::MSG_CFG_FILE_NOT_DEFINED, LBoxExceptionConfig::CODE_CFG_FILE_NOT_DEFINED);
 		}
