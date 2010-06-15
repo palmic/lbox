@@ -11,7 +11,18 @@ class LBoxConfigProperties extends LBoxConfig
 	protected static $instance;
 	protected $configName 			= "properties";
 	protected $classNameIterator	= "LBoxIteratorProperties";
-
+	protected $classNameItem		= "LBoxConfigItemProperty";
+	protected $nodeName				= "property";
+	
+	public function resetInstance() {
+		try {
+			self::$instance	= NULL;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
 	/**
 	 * @return LBoxConfigProperties
 	 * @throws Exception
@@ -32,7 +43,7 @@ class LBoxConfigProperties extends LBoxConfig
 	/**
 	 * pretizeno o kontrolu vzhledem k multilang
 	 */
-	protected function getDOM() {
+	public function getDOM() {
 		try {
 			if ($this->dom instanceof DOMDocument) {
 				return $this->dom;
@@ -55,6 +66,39 @@ class LBoxConfigProperties extends LBoxConfig
 			}
 		}
 		catch(Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * pretizeno o nastaveni povinnych hodnot
+	 * @param string $name
+	 * @param string $value
+	 */
+	public function getCreateItem($name = "", $value = "") {
+		try {
+			if (strlen($name) < 1) {
+				throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_PARAM_STRING_NOTNULL, LBoxExceptionConfig::CODE_BAD_PARAM);
+			}
+			try {
+				if (LBoxConfigManagerProperties::getInstance()->getPropertyByName($name)) {
+					throw new LBoxExceptionConfig("This property already exists!");
+				}
+			}
+			catch (Exception $e) {
+				switch ($e->getCode()) {
+					case LBoxExceptionProperty::CODE_PROPERTY_NOT_FOUND:
+						break;
+					default:
+						throw $e;
+				}
+			}
+			$instance	= parent::getCreateItem();
+			$instance->name	= $name;
+			$instance->getNode()->nodeValue	= $value;
+			return $instance;
+		}
+		catch (Exception $e) {
 			throw $e;
 		}
 	}

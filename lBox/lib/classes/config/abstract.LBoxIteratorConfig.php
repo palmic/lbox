@@ -9,6 +9,12 @@
 abstract class LBoxIteratorConfig extends LBoxIterator
 {
 	/**
+	 * config instance zastupujici DOM document
+	 * @var LBoxConfig
+	 */
+	protected $config;
+
+	/**
 	 * rodicovsky DOM element, kterym iterujeme
 	 * @var DOMNode
 	 */
@@ -44,6 +50,19 @@ abstract class LBoxIteratorConfig extends LBoxIterator
 	}
 
 	/**
+	 * setter na config
+	 * @param LBoxConfig $config
+	 */
+	public function setConfig(LBoxConfig $config) {
+		try {
+			$this->config	= $config;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * @param DOMNode $parentElement - root element iteratoru
 	 * @throws LBoxExceptionConfig
 	 */
@@ -65,7 +84,7 @@ abstract class LBoxIteratorConfig extends LBoxIterator
 			}
 		}
 	}
-
+	
 	public function __toString() {
 		$msg = "Object of type ". get_class($this) ."\n";
 		$msg .= "Loaded items in cache:\n";
@@ -93,6 +112,7 @@ abstract class LBoxIteratorConfig extends LBoxIterator
 					throw new LBoxExceptionConfig("$className class ". LBoxExceptionConfig::MSG_CLASS_NOT_CONFIG_ITEM, LBoxExceptionConfig::CODE_CLASS_NOT_CONFIG_ITEM);
 				}
 				$instance->setNode($this->items[$this->key()]);
+				$instance->setConfig($this->config);
 				// output filters pokud je nastavena class
 				if (strlen($this->outputFilterClass) > 0) {
 					$class = $this->outputFilterClass;

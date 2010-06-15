@@ -20,6 +20,15 @@ class LBoxConfigSystem extends LBoxConfig
 	 */
 	protected static 	$paramsByPaths	= array();
 	
+	public function resetInstance() {
+		try {
+			self::$instance	= NULL;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
 	/**
 	 * @return LBoxConfigSystem
 	 * @throws Exception
@@ -43,7 +52,7 @@ class LBoxConfigSystem extends LBoxConfig
 	 * @throws Exception
 	 */
 	public function getParamByPath($path = "") {
-		if (strlen(self::$paramsByPaths[$path]) > 0) {
+		if (array_key_exists($path, self::$paramsByPaths) && strlen(self::$paramsByPaths[$path]) > 0) {
 			return self::$paramsByPaths[$path];
 		}
 		if (strlen($path) < 1) {

@@ -85,6 +85,7 @@ $urlArray = parse_url($url);
 $urlArrayParts = explode(":", $urlArray["path"]);
 
   // emulace GET
+  $urlArray["query"] = array_key_exists("query", $urlArray) ? $urlArray["query"] : "";
   $urlGetQueryIn  = explode("&", str_replace("&amp;", "&", urldecode($urlArray["query"])));
   foreach ($urlGetQueryIn as $urlGetVarsLevel1) {
   	if (is_numeric(strpos($urlGetVarsLevel1, "["))) {
@@ -158,7 +159,7 @@ try {
 	require (LBOX_PATH_PHPTAL_GETTEXTTRANSLATOR . $slash ."GetTextTranslator.php");
 	require("lbox.phptal.php");
 
-	LBoxUtil::createDirByPath(PHPTAL_PHP_CODE_DESTINATION);
+	//LBoxUtil::createDirByPath(PHPTAL_PHP_CODE_DESTINATION);
 
 	// cache lite load
 	define("LBOX_PATH_CHACHELITE", LBOX_PATH_CORE . $slash ."cachelite" . $slash ."Cache_Lite-1.7.8");

@@ -10,7 +10,18 @@ class LBoxConfigLangdomains extends LBoxConfig
 	protected static $instance;
 	protected $configName 			= "langdomains";
 	protected $classNameIterator	= "LBoxIteratorLangdomains";
-
+	protected $classNameItem		= "LBoxConfigItemLangdomain";
+	protected $nodeName				= "domain";
+	
+	public function resetInstance() {
+		try {
+			self::$instance	= NULL;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
 	/**
 	 * @return LBoxConfigLangdomains
 	 * @throws Exception

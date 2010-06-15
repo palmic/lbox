@@ -3,7 +3,6 @@
 * @author Michal Palma <palmic at email dot cz>
 * @package LBox
 * @version 1.0
-
 * @date 2007-12-08
 */
 abstract class LBoxConfig extends LBox
@@ -20,6 +19,18 @@ abstract class LBoxConfig extends LBox
 	 */
 	protected $classNameIterator;
 	
+	/**
+	 * Trida jednotlivych items - definovat v podtride!
+	 * @var string
+	 */
+	protected $classNameItem;
+
+	/**
+	 * item nodeName - musi byt definano v podtride!
+	 * @var string
+	 */
+	protected $nodeName;
+
 	/**
 	 * cache var
 	 * @var DOMXPath
@@ -43,7 +54,7 @@ abstract class LBoxConfig extends LBox
 	 * @return DOMDocument
 	 * @throws LBoxExceptionConfig
 	 */
-	protected function getDOM() {
+	public function getDOM() {
 		if ($this->dom instanceof DOMDocument) {
 			return $this->dom;
 		}
@@ -55,6 +66,8 @@ abstract class LBoxConfig extends LBox
 				throw new  LBoxExceptionConfig("'". $this->configName ."' ". LBoxExceptionConfig::MSG_TYPE_NOT_FOUND, LBoxExceptionConfig::CODE_TYPE_NOT_FOUND);
 			}
 			$this->dom = new DOMDocument;
+			$this->dom->formatOutput		= true;
+			$this->dom->preserveWhiteSpace	= false;
 			if (!$this->dom->load($path)) {
 				throw new  LBoxExceptionConfig("'$path'". LBoxExceptionConfig::MSG_INVALID_PATH, LBoxExceptionConfig::CODE_INVALID_PATH);
 			}
@@ -80,6 +93,7 @@ abstract class LBoxConfig extends LBox
 			throw $e;
 		}
 	}
+
 	/**
 	 * Vraci iterator prvni urovne configu
 	 * @return LBoxIteratorConfig
@@ -97,6 +111,7 @@ abstract class LBoxConfig extends LBox
 			if (!$instance instanceof LBoxIteratorConfig) {
 				throw new  LBoxExceptionConfig(LBoxExceptionConfig::MSG_CLASS_NOT_ITERATOR_CONFIG, LBoxExceptionConfig::CODE_CLASS_NOT_ITERATOR_CONFIG);
 			}
+			$instance->setConfig($this);
 			$instance->setParent($this->getDOM()->documentElement);
 			return $this->rootIterator = $instance;
 		}
@@ -105,9 +120,59 @@ abstract class LBoxConfig extends LBox
 		}
 	}
 	
+	/**
+	 * Vytvori a vrati novou item automaticky vlozeny nakonec struktury
+	 * @return LBoxConfigItem
+	 */
+	public function getCreateItem() {
+		try {
+			if (strlen($className = $this->classNameItem) < 1) {
+				throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_ABSTRACT_CLASSNAME_NOT_DEFINED, LBoxExceptionConfig::CODE_ABSTRACT_CLASSNAME_NOT_DEFINED);
+			}
+			if (strlen($this->nodeName) < 1) {
+				throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_ABSTRACT_NODENAME_NOT_DEFINED, LBoxExceptionConfig::CODE_ABSTRACT_NODENAME_NOT_DEFINED);
+			}
+			$instance	= eval("return new $className;");
+			if (!$instance instanceof LBoxConfigItem) {
+				throw new LBoxExceptionConfig("$className class ". LBoxExceptionConfig::MSG_CLASS_NOT_CONFIG_ITEM, LBoxExceptionConfig::CODE_CLASS_NOT_CONFIG_ITEM);
+			}
+			if (!$node = $this->dom->createElement($this->nodeName)) {
+				throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_NODE_CANNOT_CREATE, LBoxExceptionConfig::CODE_NODE_CANNOT_CREATE);
+			}
+			$this->dom->documentElement->appendChild($node);
+			$instance->setNode($node);
+			$instance->setConfig($this);
+			return $instance;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * uklada dokument zpet do filu
+	 */
+	public function store() {
+		try {
+			if (strlen($path = LBoxLoaderConfig::getInstance()->getPathOf($this->configName)) < 1) {
+				throw new  LBoxExceptionConfig("'". $this->configName ."' ". LBoxExceptionConfig::MSG_TYPE_NOT_FOUND, LBoxExceptionConfig::CODE_TYPE_NOT_FOUND);
+			}
+			$this->getDOM()->save($path);
+			
+			$this->dom			= NULL;
+			$this->rootIterator	= NULL;
+			self::$xPath		= NULL;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
 	protected function __construct() {
 	}
 
 	abstract public static function getInstance();
+
+	abstract public function resetInstance();
 }
 ?>

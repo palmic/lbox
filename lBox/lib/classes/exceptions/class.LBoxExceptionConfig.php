@@ -24,6 +24,10 @@ class LBoxExceptionConfig extends LBoxException
 	const CODE_CFG_FILE_NOT_DEFINED								= 1013;
 	const CODE_INVALID_PATH 									= 1014;
 	const CODE_ATTRIBUTE_WRONG		 							= 1015;
+	const CODE_ATTRIBUTE_CANNOT_CHANGE 							= 1016;
+	const CODE_ATTRIBUTE_CANNOT_DELETE 							= 1017;
+	const CODE_NODE_CANNOT_CREATE	 							= 1018;
+	const CODE_NODE_CANNOT_DELETE	 							= 1019;
 	
 	const MSG_CFG_FILE_NOT_DEFINED 									= "must be valid absolute valid path to dir!";	
 	const MSG_INVALID_PATH 											= "path is invalid. Config file or config paths error!";	
@@ -46,6 +50,10 @@ class LBoxExceptionConfig extends LBoxException
 	const MSG_NODE_BYID_NOT_FOUND									= "node was not found in config by given id attribute!";	
 	const MSG_PAGING_URLPARAM_EXAMPLE_NOT_CORRESPOND_PATTERN		= "paging_url_param_example config value does not correspond paging_url_param_pattern value!";	
 	const MSG_ATTRIBUTE_WRONG		 								= "config attribute is wrong!";
+	const MSG_ATTRIBUTE_CANNOT_CHANGE 								= "cannot write the DOM attribute change!";
+	const MSG_ATTRIBUTE_CANNOT_DELETE 								= "cannot delete DOM attribute!";
+	const MSG_NODE_CANNOT_CREATE	 								= "cannot create DOM node";
+	const MSG_NODE_CANNOT_DELETE	 								= "cannot delete DOM node";
 	
 	protected $logVerbose	= false;
 }
