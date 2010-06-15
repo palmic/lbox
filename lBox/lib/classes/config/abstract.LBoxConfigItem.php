@@ -205,8 +205,10 @@ abstract class LBoxConfigItem implements OutputItem
 	public function hasChildren() {
 		// je treba projet jestli ma element nodes,
 		//$this->node->hasChildNodes() vrati true i pokud ma pouze text nodes
-		foreach ($this->getChildNodesIterator() as $child) {
-			return true;
+		foreach ($this->node->childNodes as $childNode) {
+			if ($childNode instanceof DOMElement) {
+				return true;
+			}
 		}
 		return false;
 	}
