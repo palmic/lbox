@@ -11,6 +11,7 @@ class LBoxConfigLangdomains extends LBoxConfig
 	protected $configName 			= "langdomains";
 	protected $classNameIterator	= "LBoxIteratorLangdomains";
 	protected $classNameItem		= "LBoxConfigItemLangdomain";
+	protected $classNameManager		= "LBoxConfigManagerLangdomains";
 	protected $nodeName				= "domain";
 	
 	public function resetInstance() {

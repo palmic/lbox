@@ -3,7 +3,6 @@
  * @author Michal Palma <palmic at email dot cz>
  * @package LBox
  * @version 1.0
-
  * @date 2007-12-08
  */
 abstract class LBoxConfigItem implements OutputItem
@@ -43,7 +42,15 @@ abstract class LBoxConfigItem implements OutputItem
 	 * @var int
 	 */
 	protected $level;
-	
+
+	public function __construct() {
+		try {
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
 	/**
 	 * setter na config
 	 * @param LBoxConfig $config
@@ -127,6 +134,9 @@ abstract class LBoxConfigItem implements OutputItem
 
 	public function getParamDirect($name = "") {
 		try {
+			if (!$this->node instanceof DOMNode) {
+				throw new LBoxExceptionConfig("Cannot get data from destructed config item (after LBCI::store()). Do get new instance from LBCManager");
+			}
 			if ($this->node->hasAttributes()) {
 				foreach ($this->node->attributes as $attribute) {
 					if ($attribute->name == $name) {
@@ -213,6 +223,9 @@ abstract class LBoxConfigItem implements OutputItem
 	public function hasChildren() {
 		// je treba projet jestli ma element nodes,
 		//$this->node->hasChildNodes() vrati true i pokud ma pouze text nodes
+		if (!$this->node instanceof DOMNode) {
+			throw new LBoxExceptionConfig("Cannot get data from destructed config item (after LBCI::store()). Do get new instance from LBCManager");
+		}
 		foreach ($this->node->childNodes as $childNode) {
 			if ($childNode instanceof DOMElement) {
 				return true;
@@ -463,8 +476,13 @@ abstract class LBoxConfigItem implements OutputItem
 	 */
 	public function delete() {
 		try {
+			if (!$this->node instanceof DOMNode) {
+				throw new LBoxExceptionConfig("Cannot get data from destructed config item (after LBCI::store()). Do get new instance from LBCManager");
+			}
 			$content	= $this->node->nodeValue;
-			$this->node->parentNode->removeChild($this->node);
+			if (!$this->node->parentNode->removeChild($this->node)) {
+				throw new LBoxExceptionConfig("Cannot delete node!");
+			}
 			$this->store();
 		}
 		catch (Exception $e) {
@@ -479,6 +497,7 @@ abstract class LBoxConfigItem implements OutputItem
 		try {
 			$this->config->store();
 			$this->level 	= NULL;
+			$this->node 	= NULL;
 		}
 		catch (Exception $e) {
 			throw $e;

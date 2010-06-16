@@ -34,6 +34,18 @@ class LBoxConfigManagerProperties extends LBoxConfigManager
 	}
 
 	/**
+	 * destroys singleton instance from cache
+	 */
+	public static function resetInstance() {
+		try {
+			self::$instance = NULL;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * getter config vlastnosti by name
 	 * @return LBoxConfigItemProperty
 	 * @throws LBoxException

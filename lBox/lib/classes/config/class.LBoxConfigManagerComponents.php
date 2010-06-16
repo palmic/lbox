@@ -34,6 +34,18 @@ class LBoxConfigManagerComponents extends LBoxConfigManager
 	}
 	
 	/**
+	 * destroys singleton instance from cache
+	 */
+	public static function resetInstance() {
+		try {
+			self::$instance = NULL;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * getter configu konkretni komponenty
 	 * @return LBoxConfigItemComponent
 	 * @throws LBoxException

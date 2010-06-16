@@ -37,7 +37,19 @@ class LBoxConfigManagerAuthDBFree extends LBoxConfigManager
 			throw $e;
 		}
 	}
-	
+
+	/**
+	 * destroys singleton instance from cache
+	 */
+	public static function resetInstance() {
+		try {
+			self::$instance = NULL;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
 	/**
 	 * getter na loginy podle hesla, pokud takovy existuje (heslo sam prevadi do md5)
 	 * @param string $password

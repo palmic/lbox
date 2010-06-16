@@ -11,6 +11,7 @@ class LBoxConfigAuthDBFree extends LBoxConfig
 	protected $configName 			= "auth-dbfree";
 	protected $classNameIterator	= "LBoxIteratorAuthDBFree";
 	protected $classNameItem		= "LBoxConfigItemAuthDBFree";
+	protected $classNameManager		= "LBoxConfigManagerAuthDBFree";
 	protected $nodeName				= "login";
 	
 	/**

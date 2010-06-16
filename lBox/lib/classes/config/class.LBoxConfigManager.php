@@ -131,6 +131,8 @@ abstract class LBoxConfigManager extends LBox
 	
 	abstract public static function getInstance();
 
+	abstract public static function resetInstance();
+	
 	/**
 	 * vraci root iterator config nodu
 	 * @return LBoxIteratorConfig

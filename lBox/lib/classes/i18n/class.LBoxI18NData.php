@@ -11,6 +11,7 @@ class LBoxI18NData extends LBoxConfig
 	protected		 	$configName 			= "translation";
 	protected 			$classNameIterator		= "LBoxI18NDataIterator";
 	protected 			$classNameItem			= "LBoxI18NDataItem";
+	protected 			$classNameManager		= "LBoxI18NDataManager";
 	protected 			$nodeName				= "text";
 	
 	public 				$filePath;
