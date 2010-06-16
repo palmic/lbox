@@ -26,6 +26,12 @@ abstract class LBoxConfig extends LBox
 	protected $classNameItem;
 
 	/**
+	 * manager trida
+	 * @var string
+	 */
+	protected $classNameManager;
+	
+	/**
 	 * item nodeName - musi byt definano v podtride!
 	 * @var string
 	 */
@@ -157,11 +163,17 @@ abstract class LBoxConfig extends LBox
 			if (strlen($path = LBoxLoaderConfig::getInstance()->getPathOf($this->configName)) < 1) {
 				throw new  LBoxExceptionConfig("'". $this->configName ."' ". LBoxExceptionConfig::MSG_TYPE_NOT_FOUND, LBoxExceptionConfig::CODE_TYPE_NOT_FOUND);
 			}
+			if (strlen($classNameManager = $this->classNameManager) < 1) {
+				throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_ABSTRACT_CLASSNAME_NOT_DEFINED, LBoxExceptionConfig::CODE_ABSTRACT_CLASSNAME_NOT_DEFINED);
+			}
 			$this->getDOM()->save($path);
 			
 			$this->dom			= NULL;
 			$this->rootIterator	= NULL;
 			self::$xPath		= NULL;
+			$classNameMe		= get_class($this);
+			eval("return $classNameManager::resetInstance();");
+			eval("return $classNameMe::resetInstance();");
 		}
 		catch (Exception $e) {
 			throw $e;

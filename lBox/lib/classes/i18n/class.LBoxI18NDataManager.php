@@ -58,6 +58,18 @@ class LBoxI18NDataManager extends LBoxConfigManager
 	}
 
 	/**
+	 * destroys singleton instance from cache
+	 */
+	public static function resetInstance() {
+		try {
+			self::$instances = array();
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * @param string $filePath
 	 */
 	protected function __construct($filePath	= "") {

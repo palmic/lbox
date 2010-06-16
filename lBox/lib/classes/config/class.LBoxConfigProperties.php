@@ -12,6 +12,7 @@ class LBoxConfigProperties extends LBoxConfig
 	protected $configName 			= "properties";
 	protected $classNameIterator	= "LBoxIteratorProperties";
 	protected $classNameItem		= "LBoxConfigItemProperty";
+	protected $classNameManager		= "LBoxConfigManagerProperties";
 	protected $nodeName				= "property";
 	
 	public function resetInstance() {

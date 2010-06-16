@@ -11,6 +11,7 @@ class LBoxConfigStructure extends LBoxConfig
 	protected $configName 			= "structure";
 	protected $classNameIterator	= "LBoxIteratorStructure";
 	protected $classNameItem		= "LBoxConfigItemStructure";
+	protected $classNameManager		= "LBoxConfigManagerStructure";
 	protected $nodeName				= "page";
 	
 	/**
@@ -90,7 +91,7 @@ class LBoxConfigStructure extends LBoxConfig
 				throw new LBoxExceptionConfigComponent(LBoxExceptionConfigComponent::MSG_PARAM_STRING_NOTNULL, LBoxExceptionConfigComponent::CODE_BAD_PARAM);
 			}
 			if (!array_key_exists($id, $this->cacheNodes)) {
-				throw new LBoxExceptionConfigComponent(LBoxExceptionConfigComponent::MSG_NODE_BYID_NOT_FOUND, LBoxExceptionConfig::CODE_NODE_BYID_NOT_FOUND);
+				throw new LBoxExceptionConfigComponent("$id: ". LBoxExceptionConfigComponent::MSG_NODE_BYID_NOT_FOUND, LBoxExceptionConfig::CODE_NODE_BYID_NOT_FOUND);
 			}
 			return $this->cacheNodes[$id];
 		}
@@ -176,6 +177,7 @@ class LBoxConfigStructure extends LBoxConfig
 	 * pretizeno o nastaveni povinnych hodnot
 	 * @param string $id
 	 * @param string $url
+	 * @return LBoxConfigItem
 	 */
 	public function getCreateItem($id = "", $url = "") {
 		try {

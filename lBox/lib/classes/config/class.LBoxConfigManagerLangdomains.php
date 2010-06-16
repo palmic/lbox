@@ -39,6 +39,18 @@ class LBoxConfigManagerLangdomains extends LBoxConfigManager
 	}
 
 	/**
+	 * destroys singleton instance from cache
+	 */
+	public static function resetInstance() {
+		try {
+			self::$instance = NULL;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * getter jazyka podle domeny
 	 * @return string
 	 * @throws LBoxException

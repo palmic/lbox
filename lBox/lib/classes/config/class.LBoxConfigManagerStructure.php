@@ -34,6 +34,18 @@ class LBoxConfigManagerStructure extends LBoxConfigManager
 	}
 	
 	/**
+	 * destroys singleton instance from cache
+	 */
+	public static function resetInstance() {
+		try {
+			self::$instance = NULL;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * getter configu konkretni stranky podle url
 	 * @param string $url
 	 * @param string $outputFilterClass

@@ -12,6 +12,7 @@ class LBoxConfigComponents extends LBoxConfig
 	protected $configName 			= "components";
 	protected $classNameIterator	= "LBoxIteratorComponents";
 	protected $classNameItem		= "LBoxConfigItemComponent";
+	protected $classNameManager		= "LBoxConfigManagerComponents";
 	protected $nodeName				= "component";
 	
 	/**
