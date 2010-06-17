@@ -1,1 +1,1 @@
-/opt/php/bin/phpunit --coverage-html ./reports/config/configitem ./config/configitem.ph
+/opt/php/bin/phpunit --coverage-html ./reports config
