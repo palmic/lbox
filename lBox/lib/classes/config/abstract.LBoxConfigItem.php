@@ -135,7 +135,7 @@ abstract class LBoxConfigItem implements OutputItem
 	public function getParamDirect($name = "") {
 		try {
 			if (!$this->node instanceof DOMNode) {
-				throw new LBoxExceptionConfig("Cannot get data from destructed config item (after LBCI::store()). Do get new instance from LBCManager");
+				throw new LBoxExceptionConfig("Cannot get data from destructed config item (after calling config store()). Do get new instance from LBCManager");
 			}
 			if ($this->node->hasAttributes()) {
 				foreach ($this->node->attributes as $attribute) {
@@ -197,7 +197,6 @@ abstract class LBoxConfigItem implements OutputItem
 				}
 				$this->node->appendChild($this->config->getDom()->createCDATASection($value));
 			}
-			$this->store();
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -224,7 +223,7 @@ abstract class LBoxConfigItem implements OutputItem
 		// je treba projet jestli ma element nodes,
 		//$this->node->hasChildNodes() vrati true i pokud ma pouze text nodes
 		if (!$this->node instanceof DOMNode) {
-			throw new LBoxExceptionConfig("Cannot get data from destructed config item (after LBCI::store()). Do get new instance from LBCManager");
+			throw new LBoxExceptionConfig("Cannot get data from destructed config item (after calling config store()). Do get new instance from LBCManager");
 		}
 		foreach ($this->node->childNodes as $childNode) {
 			if ($childNode instanceof DOMElement) {
@@ -435,8 +434,6 @@ abstract class LBoxConfigItem implements OutputItem
 	public function appendChild(LBoxConfigItem $child) {
 		try {
 			$this->node->appendChild($child->getNode());
-			$this->store();
-			$child->store();
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -450,8 +447,6 @@ abstract class LBoxConfigItem implements OutputItem
 	public function insertBefore(LBoxConfigItem $sibling) {
 		try {
 			$this->node = $this->node->parentNode->insertBefore($sibling->getNode(), $this->node);
-			$this->store();
-			$sibling->store();
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -464,7 +459,6 @@ abstract class LBoxConfigItem implements OutputItem
 	public function removeFromTree() {
 		try {
 			$this->config->getDOM()->documentElement->appendChild($this->getNode());
-			$this->store();
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -477,27 +471,12 @@ abstract class LBoxConfigItem implements OutputItem
 	public function delete() {
 		try {
 			if (!$this->node instanceof DOMNode) {
-				throw new LBoxExceptionConfig("Cannot get data from destructed config item (after LBCI::store()). Do get new instance from LBCManager");
+				throw new LBoxExceptionConfig("Cannot get data from destructed config item (after calling config store()). Do get new instance from LBCManager");
 			}
 			$content	= $this->node->nodeValue;
 			if (!$this->node->parentNode->removeChild($this->node)) {
 				throw new LBoxExceptionConfig("Cannot delete node!");
 			}
-			$this->store();
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-
-	/**
-	 * ulozi zmeny pokud nejake byly provedeny
-	 */
-	public function store() {
-		try {
-			$this->config->store();
-			$this->level 	= NULL;
-			$this->node 	= NULL;
 		}
 		catch (Exception $e) {
 			throw $e;

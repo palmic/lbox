@@ -13,3 +13,5 @@ project/documents/doc/html*
 
 # blokovani verzovani dat metanodu atd.
 project/.data/*
+
+tests/reports/*
