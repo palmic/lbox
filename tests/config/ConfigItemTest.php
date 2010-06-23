@@ -4,7 +4,7 @@ $dirArr		= explode("/", dirname(__FILE__));$pathRoot	= "";foreach ($dirArr as $d
 class ConfigItem extends PHPUnit_Framework_TestCase
 {
     public function testCreateItem() {
-    	$this->assertType("LBoxConfigItemStructure", $newItem	= LBoxConfigStructure::getInstance()->getCreateItem(3, "/new-item-3/"));
+    	$this->assertType("LBoxConfigItemStructure", $newItem	= LBoxConfigStructure::getInstance()->getCreateItem("/new-item-3/", 3));
     	$newItem	->state	= "new item";
     	LBoxConfigStructure::getInstance()->store();
 
@@ -17,7 +17,7 @@ class ConfigItem extends PHPUnit_Framework_TestCase
      * @depends testCreateItem
      */
     public function testDeleteItem() {
-    	$this->assertType("LBoxConfigItemStructure", $newItem	= LBoxConfigStructure::getInstance()->getCreateItem(3, "/new-item-3/"));
+    	$this->assertType("LBoxConfigItemStructure", $newItem	= LBoxConfigStructure::getInstance()->getCreateItem("/new-item-3/", 3));
     	$newItem	->state	= "new item";
     	LBoxConfigStructure::getInstance()->store();
 
@@ -34,9 +34,9 @@ class ConfigItem extends PHPUnit_Framework_TestCase
     }
 
     public function testAppendChild() {
-    	$itemsCreate1	= LBoxConfigStructure::getInstance()->getCreateItem(2, "/temporary-2/");
+    	$itemsCreate1	= LBoxConfigStructure::getInstance()->getCreateItem("/temporary-2/", 2);
     	LBoxConfigStructure::getInstance()->store();
-    	$itemsCreate2	= LBoxConfigStructure::getInstance()->getCreateItem(201, "/temporary-201/");
+    	$itemsCreate2	= LBoxConfigStructure::getInstance()->getCreateItem("/temporary-201/", 201);
     	LBoxConfigStructure::getInstance()->store();
     			
 		$item1 = LBoxConfigManagerStructure::getInstance()->getPageById(2);
@@ -61,9 +61,9 @@ class ConfigItem extends PHPUnit_Framework_TestCase
     }
 
     public function testRemoveFromTree() {
-    	$itemsCreate1	= LBoxConfigStructure::getInstance()->getCreateItem(2, "/temporary-2/");
+    	$itemsCreate1	= LBoxConfigStructure::getInstance()->getCreateItem("/temporary-2/", 2);
     	LBoxConfigStructure::getInstance()->store();
-    	$itemsCreate2	= LBoxConfigStructure::getInstance()->getCreateItem(201, "/temporary-201/");
+    	$itemsCreate2	= LBoxConfigStructure::getInstance()->getCreateItem("/temporary-201/", 201);
     	LBoxConfigStructure::getInstance()->store();
 		$item1 = LBoxConfigManagerStructure::getInstance()->getPageById(2);
     	$item2 = LBoxConfigManagerStructure::getInstance()->getPageById(201);
@@ -93,9 +93,9 @@ class ConfigItem extends PHPUnit_Framework_TestCase
     }
 
     public function testAttribute() {
-    	$itemsCreate1	= LBoxConfigStructure::getInstance()->getCreateItem(2, "/temporary-2/");
+    	$itemsCreate1	= LBoxConfigStructure::getInstance()->getCreateItem("/temporary-2/", 2);
     	LBoxConfigStructure::getInstance()->store();
-    	$itemsCreate2	= LBoxConfigStructure::getInstance()->getCreateItem(201, "/temporary-201/");
+    	$itemsCreate2	= LBoxConfigStructure::getInstance()->getCreateItem("/temporary-201/", 201);
     	LBoxConfigStructure::getInstance()->store();
     	
 		$item1 = LBoxConfigManagerStructure::getInstance()->getPageById(2);
@@ -127,9 +127,9 @@ class ConfigItem extends PHPUnit_Framework_TestCase
     }
 
     public function testInsertBefore() {
-    	$this->assertType("LBoxConfigItemStructure", $newItem	= LBoxConfigStructure::getInstance()->getCreateItem(30, "/new-item-30/"));
-    	$this->assertType("LBoxConfigItemStructure", $newItem2	= LBoxConfigStructure::getInstance()->getCreateItem(3001, "/new-item-3001/"));
-    	$this->assertType("LBoxConfigItemStructure", $newItem3	= LBoxConfigStructure::getInstance()->getCreateItem(3002, "/new-item-3002/"));
+    	$this->assertType("LBoxConfigItemStructure", $newItem	= LBoxConfigStructure::getInstance()->getCreateItem("/new-item-30/", 30));
+    	$this->assertType("LBoxConfigItemStructure", $newItem2	= LBoxConfigStructure::getInstance()->getCreateItem("/new-item-3001/", 3001));
+    	$this->assertType("LBoxConfigItemStructure", $newItem3	= LBoxConfigStructure::getInstance()->getCreateItem("/new-item-3002/", 3002));
     	
     	$this->assertNull($newItem->appendChild($newItem2));
     	LBoxConfigStructure::getInstance()->store();

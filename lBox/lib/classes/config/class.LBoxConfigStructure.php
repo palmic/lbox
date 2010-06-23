@@ -175,16 +175,16 @@ class LBoxConfigStructure extends LBoxConfig
 	
 	/**
 	 * pretizeno o nastaveni povinnych hodnot
-	 * @param string $id
 	 * @param string $url
+	 * @param string $id
 	 * @return LBoxConfigItem
 	 */
-	public function getCreateItem($id = "", $url = "") {
+	public function getCreateItem($url = "", $id = "") {
 		try {
-			if (strlen($id) < 1) {
+			if (strlen($url) < 1) {
 				throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_PARAM_STRING_NOTNULL, LBoxExceptionConfig::CODE_BAD_PARAM);
 			}
-			if (strlen($url) < 1) {
+			if (strlen($id) < 1) {
 				throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_PARAM_STRING_NOTNULL, LBoxExceptionConfig::CODE_BAD_PARAM);
 			}
 			try {
