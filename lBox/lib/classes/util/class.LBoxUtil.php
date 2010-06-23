@@ -254,6 +254,37 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 	}
 
 	/**
+	 * vraci vypis souboru v adresari
+	 * @param string $path
+	 * @return array
+	 */
+	public static function getFilenamesOfDir($path = "") {
+		try {
+			if (strlen($path) < 1) {
+				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_PARAM_STRING_NOTNULL, LBoxExceptionCache::CODE_BAD_PARAM);
+			}
+			$path	= self::fixPathSlashes($path);
+			if (is_file($path)) {
+				throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_DIR_IS_FILE, LBoxExceptionFilesystem::CODE_DIR_IS_FILE);
+			}
+			$dir	= dir($path);
+			$out	= array();
+			while (($entry = $dir->read()) !== false) {
+				if($entry == '.' || $entry == '..') continue;
+				if(is_dir($path .SLASH. $entry))  {
+					continue;
+				}
+				$out[]	= $entry;
+			}
+			$dir->close();
+			return $out;
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * smaze adresar podle predane cesty
 	 * @param string $path
 	 * @param bool $withSubDirs
