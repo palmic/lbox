@@ -154,11 +154,11 @@ class LBoxXT extends LBox
 				}
 			}
 			if (array_key_exists("lbox", (array)$_SESSION)) {
-				if (	array_key_exists(0, $_SESSION["lbox"][self::SESSION_ARRAY_NAME])
+				if (	array_key_exists(0, (array)$_SESSION["lbox"][self::SESSION_ARRAY_NAME])
 					&&	$_SESSION["lbox"][self::SESSION_ARRAY_NAME][0]["logout"] == 1) {
 						return self::$isLogged[$loginGroup] = false;
 				}
-				else if (	array_key_exists("logout", $_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup])
+				else if (	array_key_exists("logout", (array)$_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup])
 						 &&	$_SESSION["lbox"][self::SESSION_ARRAY_NAME][$loginGroup]["logout"] == 1) {
 							return self::$isLogged[$loginGroup] = false;
 				}
