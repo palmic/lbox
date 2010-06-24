@@ -248,6 +248,8 @@ class LBoxConfigStructure extends LBoxConfig
 			else {
 				$id	= (int)(((string)$parent->id) . "001");
 			}
+var_dump($id);
+var_dump($url);die;
 			$child	= $this->getCreateItem($url, $id);
 			$parent->appendChild($child);
 			return $child;
