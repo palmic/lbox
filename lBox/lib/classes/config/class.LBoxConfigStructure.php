@@ -185,7 +185,9 @@ class LBoxConfigStructure extends LBoxConfig
 				throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_PARAM_STRING_NOTNULL, LBoxExceptionConfig::CODE_BAD_PARAM);
 			}
 			if (strlen($id) < 1) {
-				throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_PARAM_STRING_NOTNULL, LBoxExceptionConfig::CODE_BAD_PARAM);
+				$ids	= array_keys($this->cacheNodes);
+				arsort($ids);
+				$id	= (current($ids))+1;
 			}
 			try {
 				if (LBoxConfigManagerStructure::getInstance()->getPageById($id)) {
@@ -224,7 +226,37 @@ class LBoxConfigStructure extends LBoxConfig
 			throw $e;
 		}
 	}
-
+	
+	/**
+	 * 
+	 * vytvori novou item pod predaneho parenta
+	 * @param LBoxConfigItemStructure $parent
+	 * @param string $urlPart
+	 */
+	public function getCreateChild(LBoxConfigItemStructure $parent, $urlPart = "") {
+		try {
+			if (strlen($urlPart) < 1) {
+				throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_PARAM_STRING_NOTNULL, LBoxExceptionConfig::CODE_BAD_PARAM);
+			}
+			$url	= $parent->url ."/". $urlPart ."/";
+			$url	= preg_replace("/(\/+)/", "/", $url);
+			if ($parent->hasChildren()) {
+				foreach ($parent->getChildNodesIterator() as $child) {
+					$id	= $child->id+1;
+				}
+			}
+			else {
+				$id	= (int)(((string)$parent->id) . "001");
+			}
+			$child	= $this->getCreateItem($url, $id);
+			$parent->appendChild($child);
+			return $child;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
 	public function store() {
 		try {
 			$this->cacheNodes		= array();

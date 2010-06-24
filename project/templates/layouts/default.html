@@ -18,6 +18,7 @@
 	<link tal:condition="exists: SELF/page/rssPage" rel="alternate" type="application/rss+xml" href="${SELF/page/rssPage/url}" title="${SELF/page/rssPage/title}" />
 	</head>
     <body tal:attributes="class SELF/page/bodyclass | default">
+		<x tal:replace="structure lbox:component.webui_structure" />
 		<x tal:replace="structure lbox:component.menu_main" />
 		<x tal:replace="structure lbox:slot.content" />
     </body>

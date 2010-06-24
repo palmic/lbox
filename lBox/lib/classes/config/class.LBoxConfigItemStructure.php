@@ -10,7 +10,9 @@ class LBoxConfigItemStructure extends LBoxConfigItemComponent
 {
 	protected $nodeName 			= "page";
 	protected $classNameIterator	= "LBoxIteratorStructure";
-
+	
+	protected $idAttributeName		= "id";
+	
 
 	/**
 	 * Vraci jestli jde o Home page

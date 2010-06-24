@@ -19,6 +19,7 @@ class LBoxConfigItemComponent extends LBoxConfigItem
 
 	protected $nodeName 			= "component";
 	protected $classNameIterator	= "LBoxIteratorComponents";
+	protected $idAttributeName		= "id";
 	
 	public function __construct() {
 		try {

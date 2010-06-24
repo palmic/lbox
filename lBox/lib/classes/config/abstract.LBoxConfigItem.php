@@ -32,6 +32,12 @@ abstract class LBoxConfigItem implements OutputItem
 	protected $classNameIterator;
 
 	/**
+	 * defines unicate ID attribute name to check if is unique and index by it
+	 * @var string
+	 */
+	protected $idAttributeName;
+	
+	/**
 	 * set OutputFilters
 	 * @var LBoxOutputFilter
 	 */
@@ -284,7 +290,32 @@ abstract class LBoxConfigItem implements OutputItem
 			throw $e;
 		}
 	}
-	
+
+	/**
+	 * 
+	 * vraci, jestli je predana item jeho primym potomkem
+	 * @param LBoxConfigItem $child
+	 */
+	public function isParentOf(LBoxConfigItem $child) {
+		try {
+			if (strlen($idAttributeName = $this->idAttributeName) < 1) {
+				throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_INSTANCE_VAR_STRING_NOTNULL, LBoxExceptionConfig::CODE_BAD_INSTANCE_VAR);
+			}
+			if (!$this->hasChildren()) {
+				return false;
+			}
+			foreach ($this->getChildNodesIterator() as $childItem) {
+				if ($childItem->$idAttributeName	== $child->$idAttributeName) {
+					return true;
+				}
+			}
+			return false;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
 	/**
 	 * Vraci iterator potomku ve strukture
 	 * @return LBoxIteratorConfig
