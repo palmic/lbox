@@ -84,13 +84,34 @@ class LBoxUtil
 	 */
 	public static function getURLByNameString($name = "") {
 		try {
-			$out 	= strtolower(trim($name));
+			$out 	= urldecode(strtolower(trim($name)));
 
 			$vzor = array("@&(.*?);@"); $nahrazeni = array("-"); $text = preg_replace($vzor, $nahrazeni, $out);
 			$out 	= strtr($out, array("á" => "a", "č" => "c", "ď" => "d", "é" => "e", "ě" => "e", "í" => "i", "ň" => "n", "ó" => "o", "ř" => "r", "š" => "s", "ť" => "t", "ú" => "u", "ů" => "u", "ý" => "y", "ž" => "z",
 			"." => "-", "," => "-", ";" => "-", ":" => "-", "&" => "and", "_" => "-", "@" => "", " " => "-"));
 			$out	= ereg_replace("[^[:alnum:]]", "-", $out);
 			$out	= ereg_replace("(-+)", "-", $out);
+			return 	$out;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * reverse k getURLByNameString()
+	 * @param string $url
+	 * @return string
+	 */
+	public static function getNameByURLString($url = "") {
+		try {
+			if (strlen($url) < 1) {
+				throw new LBoxException(LBoxException::MSG_PARAM_STRING_NOTNULL, LBoxException::CODE_BAD_PARAM);
+			}
+			$out 	= urldecode($url);
+			$out	= preg_replace("/\-/", " ", $out);
+			$out	= ucfirst($out);
+			
 			return 	$out;
 		}
 		catch (Exception $e) {

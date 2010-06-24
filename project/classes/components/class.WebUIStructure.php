@@ -35,7 +35,7 @@ class WebUIStructure extends WebUI
 		try {
 			$controls["id"]			= new LBoxFormControlFillHidden("id", "", $this->getPage() ? $this->getPage()->config->getParamDirect("id") : NULL);
 			$controls["id"]			->setDisabled();
-			$controls["heading"]	= new LBoxFormControlFill("heading", "heading", $this->getPage() ? $this->getPage()->config->getParamDirect("heading") : NULL);
+			$controls["heading"]	= new LBoxFormControlFill("heading", "heading", $this->getPage() ? $this->getPage()->config->getParamDirect("heading") : LBoxUtil::getNameByURLString($this->getURLPartCurrentLast()));
 				$controls["heading"]	->setRequired();
 			$controls["title"]		= new LBoxFormControlFill("title", "title", $this->getPage() ? $this->getPage()->config->getParamDirect("title") : NULL);
 			$controls["url"]		= new LBoxFormControlFill("url", "url", preg_replace("/(\/+)/", "", $this->getPage() ? $this->getPage()->config->getParamDirect("url") : $this->getURLPartCurrentLast()));
@@ -175,7 +175,7 @@ class WebUIStructure extends WebUI
 					$out = $part;
 				}
 			}
-			return $out;
+			return LBoxUtil::getURLByNameString($out);
 		}
 		catch (Exception $e) {
 			throw $e;

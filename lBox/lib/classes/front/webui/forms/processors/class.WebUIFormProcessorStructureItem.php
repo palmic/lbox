@@ -20,9 +20,23 @@ class WebUIFormProcessorStructureItem extends LBoxFormProcessor
 				$configItem	= LBoxConfigManagerStructure::getInstance()->getPageById($this->form->getControlByName("id")->getValue());
 			}
 			else {
+				try {
+					if (LBoxConfigManagerStructure::getInstance()->getPageByUrl($this->form->getControlByName("url")->getValue())) {
+						throw new LBoxExceptionConfigStructure("URL: ". LBoxExceptionConfigStructure::MSG_ATTRIBUTE_UNIQUE_NOT_UNIQUE, LBoxExceptionConfigStructure::CODE_ATTRIBUTE_UNIQUE_NOT_UNIQUE);
+					}
+				}
+				catch (Exception $e) {
+					switch ($e->getCode()) {
+						case LBoxExceptionConfigStructure::CODE_NODE_BYURL_NOT_FOUND:
+								NULL;
+							break;
+						default:
+							throw $e;
+					}
+				}
 				if ($parentID	= $this->form->getControlByName("parent_id")->getValue()) {
 					$parent	= LBoxConfigManagerStructure::getInstance()->getPageById($parentID);
-					LBoxConfigStructure::getInstance()->getCreateChild(	$parent, $this->form->getControlByName("url")->getValue());
+					LBoxConfigStructure::getInstance()->getCreateChild($parent, $this->form->getControlByName("url")->getValue());
 				}
 				else {
 					$configItem	= LBoxConfigStructure::getInstance()->getCreateItem($this->form->getControlByName("url")->getValue());
@@ -31,6 +45,12 @@ class WebUIFormProcessorStructureItem extends LBoxFormProcessor
 			foreach ($this->form->getControls() as $control) {
 				$name	= $control->getName();
 				switch ($name) {
+					case "parent_id":
+							NULL;
+						break;
+					case "id":
+							NULL;
+						break;
 					case "type":
 							$configItem->template	= str_replace("(.+)", $control->getValue(), $this->fileNamesTemplatePagesTypesPattern);
 							$configItem->template	= preg_replace("/[^\w_\-\.]/", "", $configItem->template);
@@ -45,19 +65,14 @@ class WebUIFormProcessorStructureItem extends LBoxFormProcessor
 								$configItem->$name	= preg_replace("/(\/+)/", "/", $configItem->$name);
 							}
 						break;
-					case "parent_id":
-							NULL;
-						break;
 					default:
 						$configItem->$name	= $control->getValue();
 				}
 			}
 			LBoxConfigStructure::getInstance()->store();
 			
-			//reload pokud se jedna o editaci aktualni stranky
-			if (LBoxFront::getPage()->id == $this->form->getControlByName("id")->getValue()) {
-				LBoxFront::reload(LBoxConfigManagerStructure::getInstance()->getPageById($this->form->getControlByName("id")->getValue())->url);
-			}
+			//reload na nove ulozenou stranky
+			LBoxFront::reload(LBoxConfigManagerStructure::getInstance()->getPageById($configItem->id)->url);
 		}
 		catch (Exception $e) {
 			throw $e;
