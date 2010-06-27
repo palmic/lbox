@@ -205,7 +205,7 @@ class LBoxConfigStructure extends LBoxConfig
 			}
 			try {
 				if (LBoxConfigManagerStructure::getInstance()->getPageByUrl($url)) {
-					throw new LBoxExceptionConfig("Page with this url already exists!");
+					throw new LBoxExceptionConfigStructure("Page with this url already exists!", LBoxExceptionConfigStructure::CODE_ATTRIBUTE_UNIQUE_NOT_UNIQUE);
 				}
 			}
 			catch (Exception $e) {

@@ -23,10 +23,11 @@ class LBoxException extends Exception
 	const MSG_PARAM_INT 						= "must be integer!";
 	const MSG_PARAM_BOOL 						= "must be boolean!";
 	
-	const MSG_INSTANCE_VAR_INTEGER_NOTNULL		= "Bad instance param, must be NOT NULL integer!";
-	const MSG_INSTANCE_VAR_STRING_NOTNULL		= "Bad instance param, must be NOT NULL string!";
-	const MSG_INSTANCE_VAR_ARRAY_NOTNULL		= "Bad instance param, must be NOT NULL array!";
-	const MSG_RECORD_NOT_FOUND					= "Record not found!";
+	const MSG_INSTANCE_VAR_INTEGER_NOTNULL				= "Bad instance param, must be NOT NULL integer!";
+	const MSG_INSTANCE_VAR_STRING_NOTNULL				= "Bad instance param, must be NOT NULL string!";
+	const MSG_INSTANCE_VAR_ARRAY_NOTNULL				= "Bad instance param, must be NOT NULL array!";
+	const MSG_INSTANCE_VAR_INSTANCE_CONCRETE_NOTNULL	= "Bad instance param, must be NOT NULL concrete instance!";
+	const MSG_RECORD_NOT_FOUND							= "Record not found!";
 	
 	/**
 	 * default destination email addresses for error notification

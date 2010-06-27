@@ -449,5 +449,7 @@ function webui_structure_sliding() {
 		var anim = new YAHOO.util.Anim(formContainer,{height:{to:heightTo}},1,YAHOO.util.Easing.easeOut);
 		anim.animate();
 	});
-	new YAHOO.util.Element(formContainer).setStyle('height', 0);
+	if (!formContainer.getElementsByClassName('error')[0]) {
+		new YAHOO.util.Element(formContainer).setStyle('height', 0);
+	} 
 }

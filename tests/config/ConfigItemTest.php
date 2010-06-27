@@ -240,5 +240,16 @@ class ConfigItem extends PHPUnit_Framework_TestCase
     	$item->delete();
     	LBoxConfigProperties::getInstance()->store();
     }
+    
+    public function testGetPropertyContent() {
+    	$content	= "testovaci obsah";
+    	$this->assertType("LBoxConfigItemProperty", $property	= LBoxConfigProperties::getInstance()->getCreateItem("phpunit_test", $content));
+    	LBoxConfigProperties::getInstance()->store();
+    	
+    	$this->assertSame($content, LBoxConfigManagerProperties::gpcn("phpunit_test"));
+    	$this->assertType("LBoxConfigItemProperty", $property	= LBoxConfigManagerProperties::getInstance()->getPropertyByName("phpunit_test"));
+    	$property->delete();
+    	LBoxConfigProperties::getInstance()->store();
+    }
 }
 ?>
