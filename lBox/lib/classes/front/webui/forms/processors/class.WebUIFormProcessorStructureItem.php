@@ -44,6 +44,7 @@ class WebUIFormProcessorStructureItem extends LBoxFormProcessor
 				}
 			}
 			foreach ($this->form->getControls() as $control) {
+				if ($control instanceof LBoxFormControlMultiple) continue;
 				$name	= $control->getName();
 				switch ($name) {
 					case "id":
