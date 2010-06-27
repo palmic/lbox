@@ -1,6 +1,10 @@
 @media screen,projection {
 	#webui-structure form fieldset	{ border: 1px solid #000000; padding: 5px 10px; }
-	#webui-structure form .control	{ display: inline; }
+	#webui-structure form .control,
+	#webui-structure form label,
+	#webui-structure form .error div,
+	#webui-structure form .error	{ display: inline; }
+	#webui-structure form .error	{ background-color: #ff0000; color: #ffffff; }
 	#webui-structure .container		{ overflow: hidden; }
-	#webui-structure .handle		{ width: 100px; height: 20px; background-color: #00ff00; cursor: pointer; }
+	#webui-structure .handle		{ width: 100px; height: 20px; background-color: #ADDB72; cursor: pointer; text-align: center; font-weight: bold; }
 }

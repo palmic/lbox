@@ -5,6 +5,12 @@
 class WebUIFormControlValidatorStructurePageExistsByURL extends ValidatorRecordNotExists
 {
 	protected $idColName	= "id";
+	
+	/**
+	 * cache var
+	 * @var LBoxFormControl
+	 */
+	protected $controlParentID;
 
 	public function validate(LBoxFormControl $control = NULL) {
 		try {
@@ -36,7 +42,7 @@ class WebUIFormControlValidatorStructurePageExistsByURL extends ValidatorRecordN
 	}
 
 	/**
-	 * @param mixed $value
+	 * @param string $value
 	* @return LBoxConfigItemStructure
 	*/
 	protected function getExistingRelevantRecord($value = "") {
@@ -44,8 +50,25 @@ class WebUIFormControlValidatorStructurePageExistsByURL extends ValidatorRecordN
 			if (strlen($value) < 1) {
 				throw new LBoxExceptionFormValidator(LBoxExceptionFormValidator::MSG_PARAM_STRING_NOTNULL, LBoxExceptionFormValidator::CODE_BAD_PARAM);
 			}
+			if (!$this->controlParentID instanceof LBoxFormControl) {
+				throw new LBoxExceptionFormValidator(LBoxExceptionFormValidator::MSG_INSTANCE_VAR_INSTANCE_CONCRETE_NOTNULL, LBoxExceptionFormValidator::CODE_BAD_INSTANCE_VAR);
+			}
 			try {
-				$value	= "/$value/";
+				if ($parentID = $this->controlParentID->getValue()) {
+					$parent	= LBoxConfigManagerStructure::getInstance()->getPageById($parentID);
+					$urlParts	= explode("/", $value);
+					foreach ($urlParts as $part) {
+						if (strlen(trim($part)) > 0) {
+							$out = $part;
+						}
+					}
+					$urlPart	= LBoxUtil::getURLByNameString($out);
+					$value		= $parent->url ."/". $urlPart ."/";
+				}
+				else {
+					$value	= "/$value/";
+				}
+				$value		= preg_replace("/(\/+)/", "/", $value);
 				if ($page = LBoxConfigManagerStructure::getInstance()->getPageByUrl($value)) {
 					return $page;
 				}
@@ -59,6 +82,18 @@ class WebUIFormControlValidatorStructurePageExistsByURL extends ValidatorRecordN
 						throw $e;
 				}
 			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * @param LBoxFormControl $control
+	 */
+	public function setControlParentID(LBoxFormControl $control) {
+		try {
+			$this->controlParentID	= $control;
 		}
 		catch (Exception $e) {
 			throw $e;

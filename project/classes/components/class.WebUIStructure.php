@@ -39,7 +39,7 @@ class WebUIStructure extends WebUI
 				$subControls["base"]["heading"]	->setRequired();
 				$subControls["base"]["heading"]	->setTemplateFileName("webui_structure_heading.html");
 			$subControls["base"]["title"]		= new LBoxFormControlFill("title", "title", $this->getPage() ? $this->getPage()->config->getParamDirect("title") : NULL);
-			$subControls["base"]["url"]		= new LBoxFormControlFill("url", "url", preg_replace("/(\/+)/", "", $this->getPage() ? $this->getPage()->config->getParamDirect("url") : $this->getURLPartCurrentLast()));
+			$subControls["base"]["url"]		= new LBoxFormControlFill("url", "url", preg_replace("/(\/+)/", "", $this->getURLPartCurrentLast()));
 				$subControls["base"]["url"]		->setRequired();
 				$subControls["base"]["url"]		->addFilter(new LBoxFormFilterTrim);
 				$subControls["base"]["url"]		->addFilter(new LBoxFormFilterURLStringFromName());
@@ -50,10 +50,12 @@ class WebUIStructure extends WebUI
 				$subControls["base"]["url"]		->addValidator(new WebUIFormControlValidatorStructureItemURL);
 					$validatorPageExistsByURL	= new WebUIFormControlValidatorStructurePageExistsByURL($this->getPage() ? $this->getPage()->config->getParamDirect("id") : NULL);
 					$subControls["base"]["url"]		->addValidator($validatorPageExistsByURL);
-			$subControls["base"]["type"]		= new LBoxFormControlChooseOne("type", "typ", $this->getPageTypeCurrent());
-				$subControls["base"]["type"]	->setRequired();
-			foreach ($this->getPagesTypes() as $type) {
-				$subControls["base"]["type"]	->addOption(new LBoxFormControlOption($type, $type));
+			if ((!$this->getPage()) || (preg_match("/". $this->fileNamesTemplatePagesTypesPattern ."/", $this->getPage()->config->template))) {
+				$subControls["base"]["type"]		= new LBoxFormControlChooseOne("type", "typ", $this->getPageTypeCurrent());
+					$subControls["base"]["type"]	->setRequired();
+				foreach ($this->getPagesTypes() as $type) {
+					$subControls["base"]["type"]	->addOption(new LBoxFormControlOption($type, $type));
+				}
 			}
 			$subControls["structure"]["in_menu"]	= new LBoxFormControlChooseOne("in_menu", "v menu", $this->getPage() ? $this->getPage()->config->getParamDirect("in_menu") : 0);
 			$subControls["structure"]["in_menu"]	->setTemplateFileName("lbox_form_control_choose_one_radio.html");
@@ -70,7 +72,9 @@ class WebUIStructure extends WebUI
 				$subControls["seo"]["keywords"]		->setTemplateFileName("webui_structure_keywords.html");
 			$subControls["seo"]["description"]	= new LBoxFormControlFill("description", "description", $this->getPage() ? $this->getPage()->config->getParamDirect("description") : NULL);
 				$subControls["seo"]["description"]	->setTemplateFileName("webui_structure_description.html");
-			
+
+			$validatorPageExistsByURL	->setControlParentID($subControls["structure"]["parent_id"]);
+				
 			foreach ($subControls as $themeName => $theme) {
 				foreach ($theme as $subControl) {
 					if (!$controls[$themeName] instanceof LBoxFormControlMultiple) {
@@ -137,6 +141,7 @@ class WebUIStructure extends WebUI
 			throw $e;
 		}
 	}
+
 	/**
 	 * vraci pole moznych typu stranek
 	 * @return array

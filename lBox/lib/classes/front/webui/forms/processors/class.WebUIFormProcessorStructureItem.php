@@ -18,6 +18,11 @@ class WebUIFormProcessorStructureItem extends LBoxFormProcessor
 			}
 			if (strlen($this->form->getControlByName("id")->getValue()) > 0) {
 				$configItem	= LBoxConfigManagerStructure::getInstance()->getPageById($this->form->getControlByName("id")->getValue());
+				// smazat cache pro existujici stranku na jeji puvodni URL jeste pred moznou zmenou!
+				LBoxCacheManagerFront::getInstance()->cleanByPageID($this->form->getControlByName("id")->getValue(), true);
+				if ($parentID	= $this->form->getControlByName("parent_id")->getValue()) {
+					$parent	= LBoxConfigManagerStructure::getInstance()->getPageById($parentID);
+				}
 			}
 			else {
 				try {
@@ -92,6 +97,9 @@ class WebUIFormProcessorStructureItem extends LBoxFormProcessor
 			}
 
 			LBoxConfigStructure::getInstance()->store();
+
+			// pro jistotu smazani front cache stranky na jeji potencialne zmenene URL (mohly by tam byt data z minulosti)
+			LBoxCacheManagerFront::getInstance()->cleanByPageID($this->form->getControlByName("id")->getValue(), true);
 			
 			//reload na nove ulozenou stranky
 			LBoxFront::reload(LBoxConfigManagerStructure::getInstance()->getPageById($configItem->id)->url);
