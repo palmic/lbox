@@ -5,6 +5,8 @@
 	<component id="layout_admin" 						template="admin.html" 							class="LayoutDefault" />
 
 	<!-- components -->
+	<component id="webui_structure"					template="webui_structure.html"				class="WebUIStructure" />
+
 	<component id="facebook_connector"					template="facebook_connector.html"				class="ComponentDefault" />
 	<component id="facebook_widget_activity"			template="facebook_widget_activity.html"		class="ComponentDefault" />
 	<component id="facebook_widget_login"				template="facebook_widget_login.html"			class="ComponentDefault" />

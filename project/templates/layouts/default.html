@@ -3,6 +3,8 @@
     <head>
     <meta http-equiv="Content-type" content="application/xhtml+xml; charset=utf-8"/>
     <title tal:content="SELF/page/title" />
+    <meta name="description" tal:condition="SELF/page/description" content="${SELF/page/description}" />
+    <meta name="keywords" tal:condition="SELF/page/keywords" content="${SELF/page/keywords}" />
     <link rel="stylesheet" href="/css/css-reset.css" type="text/css"/>
     <link rel="stylesheet" href="/css/css.css" type="text/css"/>
     <!--[if lte IE 6]>
@@ -18,6 +20,7 @@
 	<link tal:condition="exists: SELF/page/rssPage" rel="alternate" type="application/rss+xml" href="${SELF/page/rssPage/url}" title="${SELF/page/rssPage/title}" />
 	</head>
     <body tal:attributes="class SELF/page/bodyclass | default">
+		<x tal:replace="structure lbox:component.webui_structure" />
 		<x tal:replace="structure lbox:component.menu_main" />
 		<x tal:replace="structure lbox:slot.content" />
     </body>

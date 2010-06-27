@@ -84,13 +84,34 @@ class LBoxUtil
 	 */
 	public static function getURLByNameString($name = "") {
 		try {
-			$out 	= strtolower(trim($name));
+			$out 	= urldecode(strtolower(trim($name)));
 
 			$vzor = array("@&(.*?);@"); $nahrazeni = array("-"); $text = preg_replace($vzor, $nahrazeni, $out);
 			$out 	= strtr($out, array("á" => "a", "č" => "c", "ď" => "d", "é" => "e", "ě" => "e", "í" => "i", "ň" => "n", "ó" => "o", "ř" => "r", "š" => "s", "ť" => "t", "ú" => "u", "ů" => "u", "ý" => "y", "ž" => "z",
 			"." => "-", "," => "-", ";" => "-", ":" => "-", "&" => "and", "_" => "-", "@" => "", " " => "-"));
 			$out	= ereg_replace("[^[:alnum:]]", "-", $out);
 			$out	= ereg_replace("(-+)", "-", $out);
+			return 	$out;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * reverse k getURLByNameString()
+	 * @param string $url
+	 * @return string
+	 */
+	public static function getNameByURLString($url = "") {
+		try {
+			if (strlen($url) < 1) {
+				throw new LBoxException(LBoxException::MSG_PARAM_STRING_NOTNULL, LBoxException::CODE_BAD_PARAM);
+			}
+			$out 	= urldecode($url);
+			$out	= preg_replace("/\-/", " ", $out);
+			$out	= ucfirst($out);
+			
 			return 	$out;
 		}
 		catch (Exception $e) {
@@ -249,6 +270,37 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 			$dir->close();
 		}
 		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * vraci vypis souboru v adresari
+	 * @param string $path
+	 * @return array
+	 */
+	public static function getFilenamesOfDir($path = "") {
+		try {
+			if (strlen($path) < 1) {
+				throw new LBoxExceptionCache(LBoxExceptionCache::MSG_PARAM_STRING_NOTNULL, LBoxExceptionCache::CODE_BAD_PARAM);
+			}
+			$path	= self::fixPathSlashes($path);
+			if (is_file($path)) {
+				throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_DIR_IS_FILE, LBoxExceptionFilesystem::CODE_DIR_IS_FILE);
+			}
+			$dir	= dir($path);
+			$out	= array();
+			while (($entry = $dir->read()) !== false) {
+				if($entry == '.' || $entry == '..') continue;
+				if(is_dir($path .SLASH. $entry))  {
+					continue;
+				}
+				$out[]	= $entry;
+			}
+			$dir->close();
+			return $out;
+		}
+		catch(Exception $e) {
 			throw $e;
 		}
 	}
