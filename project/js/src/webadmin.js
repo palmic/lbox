@@ -430,4 +430,24 @@ function metanodes_attach() {
 		dialogs[forms[i].id].render();
 	}
 }
-/*YAHOO.util.Event.onDOMReady(metanodes_attach);*/
+function webui_structure_sliding() {
+	if (!document.getElementById('webui-structure')) return;
+	var forms			= new YAHOO.util.Element(document.getElementById('webui-structure')).getElementsByTagName('form');
+	var formContainer	= YAHOO.util.Dom.getAncestorByClassName(forms[0], 'container');
+	var handles			= new YAHOO.util.Element(document.getElementById('webui-structure')).getElementsByClassName('handle');
+	var handleContainer	= YAHOO.util.Dom.getAncestorByClassName(handles[0], 'container');
+	YAHOO.util.Event.addListener(handles[0], 'click', function(ev) {
+		var forms			= new YAHOO.util.Element(document.getElementById('webui-structure')).getElementsByTagName('form');
+		var regionContainer	= YAHOO.util.Dom.getRegion(formContainer);
+		var regionForm		= YAHOO.util.Dom.getRegion(forms[0]);
+		if (regionContainer.bottom - regionContainer.top > 0) {
+			var heightTo	= 0;
+		}
+		else {
+			var heightTo	= regionForm.bottom - regionForm.top;
+		}
+		var anim = new YAHOO.util.Anim(formContainer,{height:{to:heightTo}},1,YAHOO.util.Easing.easeOut);
+		anim.animate();
+	});
+	new YAHOO.util.Element(formContainer).setStyle('height', 0);
+}

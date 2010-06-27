@@ -175,21 +175,23 @@ class LBoxConfigStructure extends LBoxConfig
 	
 	/**
 	 * pretizeno o nastaveni povinnych hodnot
-	 * @param string $id
 	 * @param string $url
+	 * @param string $id
 	 * @return LBoxConfigItem
 	 */
-	public function getCreateItem($id = "", $url = "") {
+	public function getCreateItem($url = "", $id = "") {
 		try {
-			if (strlen($id) < 1) {
-				throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_PARAM_STRING_NOTNULL, LBoxExceptionConfig::CODE_BAD_PARAM);
-			}
 			if (strlen($url) < 1) {
 				throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_PARAM_STRING_NOTNULL, LBoxExceptionConfig::CODE_BAD_PARAM);
 			}
+			if (strlen($id) < 1) {
+				$ids	= array_keys($this->cacheNodes);
+				arsort($ids);
+				$id	= (current($ids))+1;
+			}
 			try {
 				if (LBoxConfigManagerStructure::getInstance()->getPageById($id)) {
-					throw new LBoxExceptionConfig("Page with this id already exists!");
+					throw new LBoxExceptionConfigStructure("Page with this id already exists!", LBoxExceptionConfigStructure::CODE_ATTRIBUTE_UNIQUE_NOT_UNIQUE);
 				}
 			}
 			catch (Exception $e) {
@@ -224,7 +226,40 @@ class LBoxConfigStructure extends LBoxConfig
 			throw $e;
 		}
 	}
-
+	
+	/**
+	 * 
+	 * vytvori novou item pod predaneho parenta
+	 * @param LBoxConfigItemStructure $parent
+	 * @param string $urlPart
+	 */
+	public function getCreateChild(LBoxConfigItemStructure $parent, $urlPart = "") {
+		try {
+			if (strlen($urlPart) < 1) {
+				throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_PARAM_STRING_NOTNULL, LBoxExceptionConfig::CODE_BAD_PARAM);
+			}
+			$url	= $parent->url ."/". $urlPart ."/";
+			$url	= preg_replace("/(\/+)/", "/", $url);
+			if ($parent->hasChildren()) {
+				foreach ($parent->getChildNodesIterator() as $child) {
+					$id	= $child->id+1;
+				}
+			}
+			else {
+				$id	= (int)(((string)$parent->id) . "001");
+				while (array_key_exists($id, $this->cacheNodes)) {
+					$id++;
+				}
+			}
+			$child	= $this->getCreateItem($url, $id);
+			$parent->appendChild($child);
+			return $child;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
 	public function store() {
 		try {
 			$this->cacheNodes		= array();

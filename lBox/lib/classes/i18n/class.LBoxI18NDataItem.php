@@ -9,7 +9,8 @@ class LBoxI18NDataItem extends LBoxConfigItem
 {
 	protected $nodeName 			= "text";
 	protected $classNameIterator	= "LBoxI18NDataIterator";
-
+	protected $idAttributeName		= "id";
+	
 	public function setNode(DOMNode $node) {
 		$this->node = $node;
 		if (strlen($this->nodeName) < 1) {

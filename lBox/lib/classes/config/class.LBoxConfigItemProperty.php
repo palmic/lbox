@@ -10,6 +10,7 @@ class LBoxConfigItemProperty extends LBoxConfigItem
 {
 	protected $nodeName 			= "property";
 	protected $classNameIterator	= "LBoxIteratorProperties";
+	protected $idAttributeName		= "name";
 	
 	public function __construct() {
 		try {
