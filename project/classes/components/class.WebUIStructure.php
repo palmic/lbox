@@ -46,14 +46,17 @@ class WebUIStructure extends WebUI
 				$validatorURLFromHeading	= new LBoxFormFilterURLFromName($controls["url"]);
 				$validatorURLFromHeading	->setControlName($controls["heading"]);
 				$controls["url"]		->addFilter($validatorURLFromHeading);
-			$controls["parent_id"]	= new LBoxFormControlChooseOne("parent_id", "parent", $this->getPage() ? $this->getPage()->config->getParent()->id : NULL);
-			$controls["parent_id"]	->setTemplateFileName("lbox_form_control_choose_one_select.html");
-				$this->fillControlChooseParentID($controls["parent_id"]);
 			$controls["type"]		= new LBoxFormControlChooseOne("type", "typ", $this->getPageTypeCurrent());
 				$controls["type"]	->setRequired();
 			foreach ($this->getPagesTypes() as $type) {
 				$controls["type"]	->addOption(new LBoxFormControlOption($type, $type));
 			}
+			$controls["parent_id"]	= new LBoxFormControlChooseOne("parent_id", "parent", $this->getPage() ? $this->getPage()->config->getParent()->id : NULL);
+			$controls["parent_id"]	->setTemplateFileName("lbox_form_control_choose_one_select.html");
+				$this->fillControlChooseParentID($controls["parent_id"]);
+			$controls["move_before"]= new LBoxFormControlChooseOne("move_before", "přesunout před", $this->getPage() ? $this->getValueCurrentMoveBefore() : NULL);
+			$controls["move_before"]	->setTemplateFileName("lbox_form_control_choose_one_select.html");
+				$this->fillControlChooseMoveBefore($controls["move_before"]);
 			$controls["in_menu"]	= new LBoxFormControlChooseOne("in_menu", "v menu", $this->getPage() ? $this->getPage()->config->getParamDirect("in_menu") : 0);
 			$controls["in_menu"]	->setTemplateFileName("lbox_form_control_choose_one_radio.html");
 				$controls["in_menu"]	->setRequired();
@@ -147,14 +150,14 @@ class WebUIStructure extends WebUI
 	protected function fillControlChooseParentID(LBoxFormControlChoose $control, LBoxConfigItemStructure $root = NULL, $pre = "") {
 		try {
 			if (!$root) {
-				$control->addOption(new LBoxFormControlOption(0, " "));
+				$control->addOption(new LBoxFormControlOption(0, "&nbsp;"));
 			}
 			$iterator	= $root instanceof LBoxConfigItemStructure ? $root->getChildNodesIterator() : LBoxConfigManagerStructure::getInstance()->getIterator();
 			foreach($iterator as $page) {
 				if ($page->id == $this->getPage()->id) continue;
-				$control->addOption(new LBoxFormControlOption($page->id, $pre . $page->url ." - ". $page->heading));
+				$control->addOption(new LBoxFormControlOption($page->id, $pre . $page->heading ." - ". $page->url));
 				if ($page->hasChildren()) {
-					$this->fillControlChooseParentID($control, $page, "$pre  ");
+					$this->fillControlChooseParentID($control, $page, "$pre&nbsp;&nbsp;&nbsp;&nbsp;");	
 				}
 			}
 		}
@@ -176,6 +179,43 @@ class WebUIStructure extends WebUI
 				}
 			}
 			return LBoxUtil::getURLByNameString($out);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * naplni control optiony
+	 * @param LBoxFormControlChoose $control
+	 * @param LBoxConfigItemStructure $root
+	 * @param string $pre
+	 */
+	protected function fillControlChooseMoveBefore(LBoxFormControlChoose $control) {
+		try {
+			$iterator	= ($this->getPage() && $this->getPage()->config->hasParent())
+								? $this->getPage()->config->getParent()->getChildNodesIterator()
+								: LBoxConfigManagerStructure::getInstance()->getIterator();
+			$control->addOption(new LBoxFormControlOption(0, "&nbsp;"));
+			foreach($iterator as $page) {
+				if ($page->id == $this->getPage()->id) continue;
+				$control->addOption(new LBoxFormControlOption($page->id, $page->heading ." - ". $page->url));
+			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * getter na hodnotu getMoveBefore aktualni stranky
+	 * @return string
+	 */
+	protected function getValueCurrentMoveBefore() {
+		try {
+			return ($this->getPage() && $this->getPage()->config->getSiblingAfter())
+								? $this->getPage()->config->getSiblingAfter()->id
+								: NULL;
 		}
 		catch (Exception $e) {
 			throw $e;
