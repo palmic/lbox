@@ -1,0 +1,6 @@
+@media screen,projection {
+	#webui-structure form fieldset	{ border: 1px solid #000000; padding: 5px 10px; }
+	#webui-structure form .control	{ display: inline; }
+	#webui-structure .container		{ overflow: hidden; }
+	#webui-structure .handle		{ width: 100px; height: 20px; background-color: #00ff00; cursor: pointer; }
+}

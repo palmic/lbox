@@ -96,9 +96,7 @@ abstract class LBoxConfigItem implements OutputItem
 			throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_PARAM_STRING_NOTNULL, LBoxExceptionConfig::CODE_BAD_PARAM);
 		}
 		if ($value === NULL) {
-			if (!$this->node->removeAttribute($name)) {
-				throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_ATTRIBUTE_CANNOT_DELETE, LBoxExceptionConfig::CODE_ATTRIBUTE_CANNOT_DELETE);
-			}
+			$this->node->removeAttribute($name);
 		}
 		else {
 			if (!$this->node->setAttribute($name, $value)) {

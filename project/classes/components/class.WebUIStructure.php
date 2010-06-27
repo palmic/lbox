@@ -35,35 +35,52 @@ class WebUIStructure extends WebUI
 		try {
 			$controls["id"]			= new LBoxFormControlFillHidden("id", "", $this->getPage() ? $this->getPage()->config->getParamDirect("id") : NULL);
 			$controls["id"]			->setDisabled();
-			$controls["heading"]	= new LBoxFormControlFill("heading", "heading", $this->getPage() ? $this->getPage()->config->getParamDirect("heading") : LBoxUtil::getNameByURLString($this->getURLPartCurrentLast()));
-				$controls["heading"]	->setRequired();
-			$controls["title"]		= new LBoxFormControlFill("title", "title", $this->getPage() ? $this->getPage()->config->getParamDirect("title") : NULL);
-			$controls["url"]		= new LBoxFormControlFill("url", "url", preg_replace("/(\/+)/", "", $this->getPage() ? $this->getPage()->config->getParamDirect("url") : $this->getURLPartCurrentLast()));
-				$controls["url"]		->setRequired();
-				$controls["url"]		->addFilter(new LBoxFormFilterTrim);
-				$controls["url"]		->addFilter(new LBoxFormFilterURLStringFromName());
-				$controls["url"]		->addValidator(new WebUIFormControlValidatorStructureItemURL);
-				$validatorURLFromHeading	= new LBoxFormFilterURLFromName($controls["url"]);
-				$validatorURLFromHeading	->setControlName($controls["heading"]);
-				$controls["url"]		->addFilter($validatorURLFromHeading);
-			$controls["type"]		= new LBoxFormControlChooseOne("type", "typ", $this->getPageTypeCurrent());
-				$controls["type"]	->setRequired();
+			$subControls["base"]["heading"]	= new LBoxFormControlFill("heading", "heading", $this->getPage() ? $this->getPage()->config->getParamDirect("heading") : LBoxUtil::getNameByURLString($this->getURLPartCurrentLast()));
+				$subControls["base"]["heading"]	->setRequired();
+				$subControls["base"]["heading"]	->setTemplateFileName("webui_structure_heading.html");
+			$subControls["base"]["title"]		= new LBoxFormControlFill("title", "title", $this->getPage() ? $this->getPage()->config->getParamDirect("title") : NULL);
+			$subControls["base"]["url"]		= new LBoxFormControlFill("url", "url", preg_replace("/(\/+)/", "", $this->getPage() ? $this->getPage()->config->getParamDirect("url") : $this->getURLPartCurrentLast()));
+				$subControls["base"]["url"]		->setRequired();
+				$subControls["base"]["url"]		->addFilter(new LBoxFormFilterTrim);
+				$subControls["base"]["url"]		->addFilter(new LBoxFormFilterURLStringFromName());
+				$filterURLFromHeading	= new LBoxFormFilterURLFromName($subControls["base"]["url"]);
+				$filterURLFromHeading	->setControlName($subControls["base"]["heading"]);
+				$subControls["base"]["url"]		->addFilter($filterURLFromHeading);
+				$subControls["base"]["url"]		->setTemplateFileName("webui_structure_url.html");
+				$subControls["base"]["url"]		->addValidator(new WebUIFormControlValidatorStructureItemURL);
+					$validatorPageExistsByURL	= new WebUIFormControlValidatorStructurePageExistsByURL($this->getPage() ? $this->getPage()->config->getParamDirect("id") : NULL);
+					$subControls["base"]["url"]		->addValidator($validatorPageExistsByURL);
+			$subControls["base"]["type"]		= new LBoxFormControlChooseOne("type", "typ", $this->getPageTypeCurrent());
+				$subControls["base"]["type"]	->setRequired();
 			foreach ($this->getPagesTypes() as $type) {
-				$controls["type"]	->addOption(new LBoxFormControlOption($type, $type));
+				$subControls["base"]["type"]	->addOption(new LBoxFormControlOption($type, $type));
 			}
-			$controls["parent_id"]	= new LBoxFormControlChooseOne("parent_id", "parent", $this->getPage() ? $this->getPage()->config->getParent()->id : NULL);
-			$controls["parent_id"]	->setTemplateFileName("lbox_form_control_choose_one_select.html");
-				$this->fillControlChooseParentID($controls["parent_id"]);
-			$controls["move_before"]= new LBoxFormControlChooseOne("move_before", "přesunout před", $this->getPage() ? $this->getValueCurrentMoveBefore() : NULL);
-			$controls["move_before"]	->setTemplateFileName("lbox_form_control_choose_one_select.html");
-				$this->fillControlChooseMoveBefore($controls["move_before"]);
-			$controls["in_menu"]	= new LBoxFormControlChooseOne("in_menu", "v menu", $this->getPage() ? $this->getPage()->config->getParamDirect("in_menu") : 0);
-			$controls["in_menu"]	->setTemplateFileName("lbox_form_control_choose_one_radio.html");
-				$controls["in_menu"]	->setRequired();
-				$controls["in_menu"]	->addOption(new LBoxFormControlOption(1, "ano"));
-				$controls["in_menu"]	->addOption(new LBoxFormControlOption(0, "ne"));
-
-			$this->form = new LBoxForm("webui-structure-item-". LBoxFront:: getPage()->id, "post", "upravit stranku", "uložit");
+			$subControls["structure"]["in_menu"]	= new LBoxFormControlChooseOne("in_menu", "v menu", $this->getPage() ? $this->getPage()->config->getParamDirect("in_menu") : 0);
+			$subControls["structure"]["in_menu"]	->setTemplateFileName("lbox_form_control_choose_one_radio.html");
+				$subControls["structure"]["in_menu"]	->setRequired();
+				$subControls["structure"]["in_menu"]	->addOption(new LBoxFormControlOption(1, "ano"));
+				$subControls["structure"]["in_menu"]	->addOption(new LBoxFormControlOption(0, "ne"));
+			$subControls["structure"]["parent_id"]	= new LBoxFormControlChooseOne("parent_id", "parent", $this->getPage() ? $this->getPage()->config->getParent()->id : NULL);
+			$subControls["structure"]["parent_id"]	->setTemplateFileName("lbox_form_control_choose_one_select.html");
+				$this->fillControlChooseParentID($subControls["structure"]["parent_id"]);
+			$subControls["structure"]["move_before"]= new LBoxFormControlChooseOne("move_before", "přesunout před", $this->getPage() ? $this->getValueCurrentMoveBefore() : NULL);
+			$subControls["structure"]["move_before"]	->setTemplateFileName("lbox_form_control_choose_one_select.html");
+				$this->fillControlChooseMoveBefore($subControls["structure"]["move_before"]);
+			$subControls["seo"]["keywords"]		= new LBoxFormControlFill("keywords", "keywords", $this->getPage() ? $this->getPage()->config->getParamDirect("keywords") : NULL);
+				$subControls["seo"]["keywords"]		->setTemplateFileName("webui_structure_keywords.html");
+			$subControls["seo"]["description"]	= new LBoxFormControlFill("description", "description", $this->getPage() ? $this->getPage()->config->getParamDirect("description") : NULL);
+				$subControls["seo"]["description"]	->setTemplateFileName("webui_structure_description.html");
+			
+			foreach ($subControls as $themeName => $theme) {
+				foreach ($theme as $subControl) {
+					if (!$controls[$themeName] instanceof LBoxFormControlMultiple) {
+						$controls[$themeName]	= new LBoxFormControlMultiple($themeName);
+						$controls[$themeName]	->setTemplateFileName("webui_structure_multi.html");
+					}
+					$controls[$themeName]	->addControl($subControl);
+				}
+			}
+			$this->form	= new LBoxForm("webui-structure-item-". LBoxFront:: getPage()->id, "post", "upravit stranku", "uložit");
 			$processor	= new WebUIFormProcessorStructureItem();
 			$processor	->setFileNamesTemplatePagesTypesPattern($this->fileNamesTemplatePagesTypesPattern);
 			//$this->form ->addProcessor(new LBoxFormProcessorDev());

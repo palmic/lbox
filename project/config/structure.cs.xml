@@ -1,20 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pages>
   <page id="1" url="/" class="PageTitle" template="page_title.html" heading="lbox.cz" in_menu="0"/>
-  <page id="2" url="/test/" class="PageTest" template="webui_default.html" heading="Test heading" in_menu="1" parent_id="1" title="Test title"/>
   <page id="901" url="/rss/" template="page_rss_articles.xml" class="PageRSSArticlesNews" title="RSS novinek" heading="RSS novinek" in_menu="0" rss="600"/>
   <page id="902" url="/404/" template="page_404.html" title="Stránka nebyla nalezena" heading="Stránka nebyla nalezena" in_menu="0"/>
   <page id="903" url="/sitemap.xml" class="PageSitemap09" template="sitemap09.xml" in_menu="0" cache_off="1"/>
   <page id="999" url="/admin/" template="admin.html" class="PageDefault" heading="Admin" keywords="" description="" in_menu="0" xt="1" bodyid="admin">
     <page id="9999" url="/admin/login/" class="PageAdminLogin" template="admin_login.html" heading="Login" in_menu="0" xt_reload_logged_xt="1:999"/>
   </page>
-  <page id="10000" url="/parent/" heading="Parent" title="" template="webui_default.html" in_menu="1">
-    <page id="10000003" url="/parent/child-4/" heading="Child 4" title="" template="webui_empty.html" in_menu="1"/>
-    <page id="10000002" url="/child-3/" heading="Child 3" title="" template="webui_empty.html" in_menu="1"/>
-    <page id="10000001" url="/parentchild/" heading="Child" title="" template="webui_empty.html" in_menu="1">
-      <page id="10000001001" url="/parent/child/child-2/" heading="Child 2" title="" template="webui_empty.html" in_menu="1"/>
-    </page>
-  </page>
-  <page id="10000001003" url="/-nazdar/" heading=" nazdar" title="" template="webui_default.html" in_menu="1"/>
-  <page id="10000001002" url="/ahoj/" heading="Ahoj" title="" template="webui_empty.html" in_menu="1"/>
 </pages>
