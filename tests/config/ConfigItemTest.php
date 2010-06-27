@@ -4,23 +4,23 @@ $dirArr		= explode("/", dirname(__FILE__));$pathRoot	= "";foreach ($dirArr as $d
 class ConfigItem extends PHPUnit_Framework_TestCase
 {
     public function testCreateItem() {
-    	$this->assertType("LBoxConfigItemStructure", $newItem	= LBoxConfigStructure::getInstance()->getCreateItem("/new-item-3/"));
+    	$this->assertType("LBoxConfigItemStructure", $newItem	= LBoxConfigStructure::getInstance()->getCreateItem("/unittest-new-item-3/"));
     	$newItem	->state	= "new item";
     	LBoxConfigStructure::getInstance()->store();
 
-    	$this->assertType("LBoxConfigItemStructure", $newItem = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/new-item-3/"));
+    	$this->assertType("LBoxConfigItemStructure", $newItem = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-new-item-3/"));
 		$newItem->delete();
     	LBoxConfigStructure::getInstance()->store();
     }
 
     public function testCreateChild() {
-    	$this->assertType("LBoxConfigItemStructure", $parent	= LBoxConfigStructure::getInstance()->getCreateItem("/parent/"));
+    	$this->assertType("LBoxConfigItemStructure", $parent	= LBoxConfigStructure::getInstance()->getCreateItem("/unittest-parent/"));
     	LBoxConfigStructure::getInstance()->store();
-    	$parent	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/parent/");
+    	$parent	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-parent/");
     	
-    	$this->assertType("LBoxConfigItemStructure", $child	= LBoxConfigStructure::getInstance()->getCreateChild($parent, "/child/"));
+    	$this->assertType("LBoxConfigItemStructure", $child	= LBoxConfigStructure::getInstance()->getCreateChild($parent, "/unittest-child/"));
     	LBoxConfigStructure::getInstance()->store();
-    	$this->assertType("LBoxConfigItemStructure", $parent	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/parent/"));
+    	$this->assertType("LBoxConfigItemStructure", $parent	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-parent/"));
     	$this->assertType("LBoxConfigItemStructure", $child	= $parent->getChildNodesIterator()->current());
 
     	$this->assertTrue($parent->isParentOf($child), "Rodicovsky vztah neplati podle predpokladu");
@@ -33,27 +33,58 @@ class ConfigItem extends PHPUnit_Framework_TestCase
 		LBoxConfigStructure::getInstance()->store();
 		$this->assertFalse($parent->isParentOf($child), "child uz nema byt potomkem parenta");
 		
-    	$this->assertType("LBoxConfigItemStructure", $parent 	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/parent/"));
+    	$this->assertType("LBoxConfigItemStructure", $parent 	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-parent/"));
 		$this->assertType("LBoxConfigItemStructure", $child		= LBoxConfigManagerStructure::getInstance()->getPageByUrl($childURL));
 		$parent->delete();
 		$child->delete();
 		LBoxConfigStructure::getInstance()->store();
     }
 
+    public function testCreateChildID() {
+    	$this->assertType("LBoxConfigItemStructure", $parent	= LBoxConfigStructure::getInstance()->getCreateItem("/unittest-parent/"));
+    	LBoxConfigStructure::getInstance()->store();
+    	$parent	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-parent/");
+    	
+    	$this->assertType("LBoxConfigItemStructure", $child	= LBoxConfigStructure::getInstance()->getCreateChild($parent, "/unittest-child-1/"));
+    	$child1URL	= $child->url;
+    	LBoxConfigStructure::getInstance()->store();
+    	$this->assertType("LBoxConfigItemStructure", $parent	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-parent/"));
+    	$this->assertType("LBoxConfigItemStructure", $child	= $parent->getChildNodesIterator()->current());
+    	
+    	$child->removeFromTree();
+    	LBoxConfigStructure::getInstance()->store();
+    	$this->assertType("LBoxConfigItemStructure", $parent	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-parent/"));
+    	
+    	$this->assertType("LBoxConfigItemStructure", $child2	= LBoxConfigStructure::getInstance()->getCreateChild($parent, "/unittest-child-2/"));
+    	$child2URL	= $child->url;
+    	LBoxConfigStructure::getInstance()->store();
+
+    	$this->assertType("LBoxConfigItemStructure", $child		= LBoxConfigManagerStructure::getInstance()->getPageByUrl($child1URL));
+    	$this->assertType("LBoxConfigItemStructure", $child2	= LBoxConfigManagerStructure::getInstance()->getPageByUrl($child2URL));
+    	$this->assertType("LBoxConfigItemStructure", $parent	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-parent/"));
+		$parent->appendChild($child);
+		$parent->appendChild($child2);
+    	LBoxConfigStructure::getInstance()->store();
+		
+    	$this->assertType("LBoxConfigItemStructure", $parent	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-parent/"));
+    	$parent->delete();
+    	LBoxConfigStructure::getInstance()->store();
+    }
+    
     /**
      * @depends testCreateItem
      */
     public function testDeleteItem() {
-    	$this->assertType("LBoxConfigItemStructure", $newItem	= LBoxConfigStructure::getInstance()->getCreateItem("/new-item-3/"));
+    	$this->assertType("LBoxConfigItemStructure", $newItem	= LBoxConfigStructure::getInstance()->getCreateItem("/unittest-new-item-3/"));
     	$newItem	->state	= "new item";
     	LBoxConfigStructure::getInstance()->store();
 
-    	$this->assertType("LBoxConfigItemStructure", $item 		= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/new-item-3/"));
+    	$this->assertType("LBoxConfigItemStructure", $item 		= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-new-item-3/"));
     	
     	$item->delete();
     	LBoxConfigStructure::getInstance()->store();
     	try {
-	    	LBoxConfigManagerStructure::getInstance()->getPageByUrl("/new-item-3/");
+	    	LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-new-item-3/");
     	}
     	catch (Exception $e) {
     		$this->assertSame(LBoxExceptionConfigStructure::CODE_NODE_BYURL_NOT_FOUND, $e->getCode());
@@ -61,20 +92,20 @@ class ConfigItem extends PHPUnit_Framework_TestCase
     }
 
     public function testAppendChild() {
-    	$itemsCreate1	= LBoxConfigStructure::getInstance()->getCreateItem("/temporary-2/");
+    	$itemsCreate1	= LBoxConfigStructure::getInstance()->getCreateItem("/unittest-temporary-2/");
     	LBoxConfigStructure::getInstance()->store();
-    	$itemsCreate2	= LBoxConfigStructure::getInstance()->getCreateItem("/temporary-201/");
+    	$itemsCreate2	= LBoxConfigStructure::getInstance()->getCreateItem("/unittest-temporary-201/");
     	LBoxConfigStructure::getInstance()->store();
     			
-		$item1 = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/temporary-2/");
-    	$item2 = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/temporary-201/");
+		$item1 = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-temporary-2/");
+    	$item2 = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-temporary-201/");
     	
     	$this->assertFalse($item1->hasChildren());
     	$this->assertFalse($item2->hasParent());
     	$this->assertNull($item1->appendChild($item2));
     	LBoxConfigStructure::getInstance()->store();
-    	$item1 = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/temporary-2/");
-    	$item2 = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/temporary-201/");
+    	$item1 = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-temporary-2/");
+    	$item2 = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-temporary-201/");
     	
     	$this->assertTrue($item1->hasChildren());
     	$this->assertTrue($item2->hasParent());
@@ -82,23 +113,23 @@ class ConfigItem extends PHPUnit_Framework_TestCase
     	$this->assertSame($item2->id, $item1->getChildNodesIterator()->current()->id);
 
     	// smaze i vnorenou 201
-    	$itemsDelete1	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/temporary-2/");
+    	$itemsDelete1	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-temporary-2/");
 		$itemsDelete1	->delete();
     	LBoxConfigStructure::getInstance()->store();
     }
 
     public function testRemoveFromTree() {
-    	$itemsCreate1	= LBoxConfigStructure::getInstance()->getCreateItem("/temporary-2/");
+    	$itemsCreate1	= LBoxConfigStructure::getInstance()->getCreateItem("/unittest-temporary-2/");
     	LBoxConfigStructure::getInstance()->store();
-    	$itemsCreate2	= LBoxConfigStructure::getInstance()->getCreateItem("/temporary-201/");
+    	$itemsCreate2	= LBoxConfigStructure::getInstance()->getCreateItem("/unittest-temporary-201/");
     	LBoxConfigStructure::getInstance()->store();
-		$item1 = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/temporary-2/");
-    	$item2 = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/temporary-201/");
+		$item1 = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-temporary-2/");
+    	$item2 = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-temporary-201/");
     	
     	$this->assertNull($item1->appendChild($item2));
     	LBoxConfigStructure::getInstance()->store();
-    	$item1 = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/temporary-2/");
-    	$item2 = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/temporary-201/");
+    	$item1 = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-temporary-2/");
+    	$item2 = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-temporary-201/");
     	
     	$this->assertTrue($item1->hasChildren());
     	$this->assertTrue($item2->hasParent());
@@ -111,77 +142,77 @@ class ConfigItem extends PHPUnit_Framework_TestCase
     	$this->assertFalse($item1->hasChildren());
     	$this->assertFalse($item2->hasParent());
 
-    	$itemsDelete1	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/temporary-2/");
+    	$itemsDelete1	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-temporary-2/");
 		$itemsDelete1	->delete();
     	LBoxConfigStructure::getInstance()->store();
-		$itemsDelete2	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/temporary-201/");
+		$itemsDelete2	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-temporary-201/");
     	$itemsDelete2	->delete();
     	LBoxConfigStructure::getInstance()->store();
     }
 
     public function testAttribute() {
-    	$itemsCreate1	= LBoxConfigStructure::getInstance()->getCreateItem("/temporary-2/");
+    	$itemsCreate1	= LBoxConfigStructure::getInstance()->getCreateItem("/unittest-temporary-2/");
     	LBoxConfigStructure::getInstance()->store();
-    	$itemsCreate2	= LBoxConfigStructure::getInstance()->getCreateItem("/temporary-201/");
+    	$itemsCreate2	= LBoxConfigStructure::getInstance()->getCreateItem("/unittest-temporary-201/");
     	LBoxConfigStructure::getInstance()->store();
     	
-		$item1 = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/temporary-2/");
+		$item1 = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-temporary-2/");
     	
     	$this->assertNull($item1->role);
     	$item1->role	= "parent of test-2";
     	LBoxConfigStructure::getInstance()->store();
-    	$item1 = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/temporary-2/");
+    	$item1 = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-temporary-2/");
     	
     	$this->assertSame($item1->role, "parent of test-2");
 
        	$item1->role = "";
     	LBoxConfigStructure::getInstance()->store();
-		$item1 = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/temporary-2/");
+		$item1 = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-temporary-2/");
     	
 		$this->assertSame($item1->role, "");
 
-    	$item1 = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/temporary-2/");
+    	$item1 = LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-temporary-2/");
        	$item1->role = NULL;
        	$this->assertNull($item1->role);
     	LBoxConfigStructure::getInstance()->store();
     	
-    	$itemsDelete1	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/temporary-2/");
+    	$itemsDelete1	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-temporary-2/");
 		$itemsDelete1	->delete();
     	LBoxConfigStructure::getInstance()->store();
-		$itemsDelete2	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/temporary-201/");
+		$itemsDelete2	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-temporary-201/");
     	$itemsDelete2	->delete();
     	LBoxConfigStructure::getInstance()->store();
     }
 
     public function testInsertBefore() {
-    	$this->assertType("LBoxConfigItemStructure", $newItem	= LBoxConfigStructure::getInstance()->getCreateItem("/new-item-30/"));
+    	$this->assertType("LBoxConfigItemStructure", $newItem	= LBoxConfigStructure::getInstance()->getCreateItem("/unittest-new-item-30/"));
     	LBoxConfigStructure::getInstance()->store();
-    	$this->assertType("LBoxConfigItemStructure", $newItem2	= LBoxConfigStructure::getInstance()->getCreateItem("/new-item-3001/"));
+    	$this->assertType("LBoxConfigItemStructure", $newItem2	= LBoxConfigStructure::getInstance()->getCreateItem("/unittest-new-item-3001/"));
     	LBoxConfigStructure::getInstance()->store();
-    	$this->assertType("LBoxConfigItemStructure", $newItem3	= LBoxConfigStructure::getInstance()->getCreateItem("/new-item-3002/"));
+    	$this->assertType("LBoxConfigItemStructure", $newItem3	= LBoxConfigStructure::getInstance()->getCreateItem("/unittest-new-item-3002/"));
     	
-    	$newItem	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/new-item-30/");
-    	$newItem2	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/new-item-3001/");
+    	$newItem	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-new-item-30/");
+    	$newItem2	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-new-item-3001/");
     	
     	$this->assertNull($newItem->appendChild($newItem2));
     	LBoxConfigStructure::getInstance()->store();
 
-    	$newItem	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/new-item-30/");
-    	$newItem2	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/new-item-3001/");
+    	$newItem	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-new-item-30/");
+    	$newItem2	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-new-item-3001/");
     	
     	$this->assertSame($newItem2->id, $newItem->getChildNodesIterator()->current()->id);
     	
-    	$newItem2	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/new-item-3001/");
-    	$newItem3	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/new-item-3002/");
+    	$newItem2	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-new-item-3001/");
+    	$newItem3	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-new-item-3002/");
     	$this->assertNull($newItem2->insertBefore($newItem3));
     	LBoxConfigStructure::getInstance()->store();
     	
-    	$newItem2	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/new-item-3001/");
-    	$newItem3	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/new-item-3002/");
+    	$newItem2	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-new-item-3001/");
+    	$newItem3	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-new-item-3002/");
     	$this->assertSame($newItem2->id, $newItem3->getSiblingAfter()->id);
     	$this->assertSame($newItem3->id, $newItem2->getSiblingBefore()->id);
 
-    	$newItem	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/new-item-30/");
+    	$newItem	= LBoxConfigManagerStructure::getInstance()->getPageByUrl("/unittest-new-item-30/");
     	$newItem	->delete();
     	LBoxConfigStructure::getInstance()->store();
     }

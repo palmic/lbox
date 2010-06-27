@@ -191,7 +191,7 @@ class LBoxConfigStructure extends LBoxConfig
 			}
 			try {
 				if (LBoxConfigManagerStructure::getInstance()->getPageById($id)) {
-					throw new LBoxExceptionConfig("Page with this id already exists!");
+					throw new LBoxExceptionConfigStructure("Page with this id already exists!", LBoxExceptionConfigStructure::CODE_ATTRIBUTE_UNIQUE_NOT_UNIQUE);
 				}
 			}
 			catch (Exception $e) {
@@ -247,9 +247,10 @@ class LBoxConfigStructure extends LBoxConfig
 			}
 			else {
 				$id	= (int)(((string)$parent->id) . "001");
+				while (array_key_exists($id, $this->cacheNodes)) {
+					$id++;
+				}
 			}
-var_dump($id);
-var_dump($url);die;
 			$child	= $this->getCreateItem($url, $id);
 			$parent->appendChild($child);
 			return $child;

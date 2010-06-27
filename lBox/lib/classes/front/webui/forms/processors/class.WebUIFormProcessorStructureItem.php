@@ -36,7 +36,8 @@ class WebUIFormProcessorStructureItem extends LBoxFormProcessor
 				}
 				if ($parentID	= $this->form->getControlByName("parent_id")->getValue()) {
 					$parent	= LBoxConfigManagerStructure::getInstance()->getPageById($parentID);
-					LBoxConfigStructure::getInstance()->getCreateChild($parent, $this->form->getControlByName("url")->getValue());
+					// zaridi parental vztah jen pri vytvareni (nutno kvuli odvozeni ID) - pro editaci je dodatecne prirazeni nize 
+					$configItem	= LBoxConfigStructure::getInstance()->getCreateChild($parent, $this->form->getControlByName("url")->getValue());
 				}
 				else {
 					$configItem	= LBoxConfigStructure::getInstance()->getCreateItem($this->form->getControlByName("url")->getValue());
@@ -45,11 +46,10 @@ class WebUIFormProcessorStructureItem extends LBoxFormProcessor
 			foreach ($this->form->getControls() as $control) {
 				$name	= $control->getName();
 				switch ($name) {
-					case "parent_id":
-							NULL;
-						break;
 					case "id":
-							NULL;
+					case "parent_id":
+					case "move_before":
+						NULL;
 						break;
 					case "type":
 							$configItem->template	= str_replace("(.+)", $control->getValue(), $this->fileNamesTemplatePagesTypesPattern);
@@ -69,6 +69,27 @@ class WebUIFormProcessorStructureItem extends LBoxFormProcessor
 						$configItem->$name	= $control->getValue();
 				}
 			}
+			// je treba dodatecne zajistit parental vztah, pri editaci horni logika to zajistuje pouze pri vytvareni, ale ne pri editaci
+			if ($parentID = $this->form->getControlByName("parent_id")->getValue()) {
+				LBoxConfigManagerStructure::getInstance()->getPageById($parentID)->appendChild($configItem);
+			}
+			else {
+				$configItem->removeFromTree();
+			}
+
+			// move before
+			if ($siblingID	= $this->form->getControlByName("move_before")->getValue()) {
+				LBoxConfigManagerStructure::getInstance()->getPageById($siblingID)->insertBefore($configItem);
+			}
+			else {
+				if ($parentID = $this->form->getControlByName("parent_id")->getValue()) {
+					LBoxConfigManagerStructure::getInstance()->getPageById($parentID)->appendChild($configItem);
+				}
+				else {
+					$configItem->removeFromTree();
+				}
+			}
+
 			LBoxConfigStructure::getInstance()->store();
 			
 			//reload na nove ulozenou stranky

@@ -405,7 +405,7 @@ abstract class LBoxConfigItem implements OutputItem
 	}
 	
 	/**
-	 * Vraci parenta ve strukture
+	 * Vraci sourozence pred sebou
 	 * @return LBoxConfigItem
 	 */
 	public function getSiblingBefore() {
@@ -432,7 +432,7 @@ abstract class LBoxConfigItem implements OutputItem
 	}
 	
 	/**
-	 * Vraci parenta ve strukture
+	 * Vraci sourozence za sebou
 	 * @return LBoxConfigItem
 	 */
 	public function getSiblingAfter() {
