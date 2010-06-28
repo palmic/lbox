@@ -36,7 +36,7 @@ class WebUIStructure extends WebUI
 			if ($this->form instanceof LBoxForm) {
 				return $this->form;
 			}
-			if ($this->getPage()->config->isHomePage()) {
+			if ($this->getPage() && $this->getPage()->config->isHomePage()) {
 				return NULL;
 			}
 			$controls["id"]			= new LBoxFormControlFillHidden("id", "", $this->getPage() ? $this->getPage()->config->getParamDirect("id") : NULL);
