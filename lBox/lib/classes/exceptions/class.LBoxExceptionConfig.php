@@ -28,6 +28,7 @@ class LBoxExceptionConfig extends LBoxException
 	const CODE_ATTRIBUTE_CANNOT_DELETE 							= 1017;
 	const CODE_NODE_CANNOT_CREATE	 							= 1018;
 	const CODE_NODE_CANNOT_DELETE	 							= 1019;
+	const CODE_DOCUMENT_CANNOT_SAVE	 							= 1020;
 	
 	const MSG_CFG_FILE_NOT_DEFINED 									= "must be valid absolute valid path to dir!";	
 	const MSG_INVALID_PATH 											= "path is invalid. Config file or config paths error!";	
@@ -54,6 +55,8 @@ class LBoxExceptionConfig extends LBoxException
 	const MSG_ATTRIBUTE_CANNOT_DELETE 								= "cannot delete DOM attribute!";
 	const MSG_NODE_CANNOT_CREATE	 								= "cannot create DOM node";
 	const MSG_NODE_CANNOT_DELETE	 								= "cannot delete DOM node";
+	
+	const MSG_DOCUMENT_CANNOT_SAVE	 								= "cannot save the document, check permissions!";
 	
 	protected $logVerbose	= false;
 }

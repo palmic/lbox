@@ -166,7 +166,9 @@ abstract class LBoxConfig extends LBox
 			if (strlen($classNameManager = $this->classNameManager) < 1) {
 				throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_ABSTRACT_CLASSNAME_NOT_DEFINED, LBoxExceptionConfig::CODE_ABSTRACT_CLASSNAME_NOT_DEFINED);
 			}
-			$this->getDOM()->save($path);
+			if ($this->getDOM()->save($path) === FALSE) {
+				throw new LBoxExceptionConfig("$path: ". LBoxExceptionConfig::MSG_DOCUMENT_CANNOT_SAVE, LBoxExceptionConfig::CODE_DOCUMENT_CANNOT_SAVE);
+			}
 			
 			$this->dom			= NULL;
 			$this->rootIterator	= NULL;
