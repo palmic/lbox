@@ -277,9 +277,11 @@ class WebUIStructure extends WebUI
 			}
 			switch (count($this->optionsInMenu)) {
 				case 2:
-						$this->optionsInMenu[1]	= "ano";
-						$this->optionsInMenu[0]	= "ne";
 						krsort($this->optionsInMenu);
+						end($this->optionsInMenu);
+						$this->optionsInMenu[key($this->optionsInMenu)]	= "ne";
+						reset($this->optionsInMenu);
+						$this->optionsInMenu[key($this->optionsInMenu)]	= "ano";
 					break;
 				default:
 					$this->optionsInMenu[0]	= "v žádném menu";
