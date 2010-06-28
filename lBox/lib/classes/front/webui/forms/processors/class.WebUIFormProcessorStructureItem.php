@@ -81,10 +81,14 @@ class WebUIFormProcessorStructureItem extends LBoxFormProcessor
 				// editace + parent puvodne nemel tohoto potomka
 				case $this->form->getControlByName("id")->getValue() && $this->form->getControlByName("parent_id")->getValue() > 0
 					&& !LBoxConfigManagerStructure::getInstance()->getPageById($this->form->getControlByName("parent_id")->getValue())->isParentOf($configItem):
-						// uprednostnit appendChild()
 						LBoxConfigManagerStructure::getInstance()->getPageById($this->form->getControlByName("parent_id")->getValue())->appendChild($configItem);
 					break;
- 				// editace + move before je nastaveno na jiny node nez bylo
+				// parent neni nastaven, jde o editaci a predtim nastaven byl
+				case !$this->form->getControlByName("parent_id")->getValue() && $configItem->hasParent():
+						// uprednostnit removeFromTree()
+						$configItem->removeFromTree();
+					break;
+				// editace + move before je nastaveno na jiny node nez bylo
  				case ($this->form->getControlByName("move_before")->getValue()
 					&& $this->form->getControlByName("id")->getValue()
 					&& (!$configItem->hasSiblingBefore() || $configItem->getSiblingBefore()->id != $this->form->getControlByName("move_before")->getValue())):
@@ -96,7 +100,7 @@ class WebUIFormProcessorStructureItem extends LBoxFormProcessor
 					break;
 				// parent je nastaven
 				case $this->form->getControlByName("parent_id")->getValue():
-						// uprednostnit appendChild()
+					// uprednostnit appendChild()
 						LBoxConfigManagerStructure::getInstance()->getPageById($this->form->getControlByName("parent_id")->getValue())->appendChild($configItem);
 					break;
 				default:
