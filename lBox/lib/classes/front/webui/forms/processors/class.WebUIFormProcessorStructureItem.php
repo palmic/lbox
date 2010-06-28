@@ -75,25 +75,32 @@ class WebUIFormProcessorStructureItem extends LBoxFormProcessor
 						$configItem->$name	= $control->getValue();
 				}
 			}
-			// je treba dodatecne zajistit parental vztah, pri editaci horni logika to zajistuje pouze pri vytvareni, ale ne pri editaci
-			if ($parentID = $this->form->getControlByName("parent_id")->getValue()) {
-				LBoxConfigManagerStructure::getInstance()->getPageById($parentID)->appendChild($configItem);
-			}
-			else {
-				$configItem->removeFromTree();
-			}
-
-			// move before
-			if ($siblingID	= $this->form->getControlByName("move_before")->getValue()) {
-				LBoxConfigManagerStructure::getInstance()->getPageById($siblingID)->insertBefore($configItem);
-			}
-			else {
-				if ($parentID = $this->form->getControlByName("parent_id")->getValue()) {
-					LBoxConfigManagerStructure::getInstance()->getPageById($parentID)->appendChild($configItem);
-				}
-				else {
-					$configItem->removeFromTree();
-				}
+			// move before a parent_id
+			// - je treba dodatecne zajistit parental vztah, pri editaci horni logika to zajistuje pouze pri vytvareni, ale ne pri editaci
+			switch (true) {
+				// editace + parent puvodne nemel tohoto potomka
+				case $this->form->getControlByName("id")->getValue() && $this->form->getControlByName("parent_id")->getValue() > 0
+					&& !LBoxConfigManagerStructure::getInstance()->getPageById($this->form->getControlByName("parent_id")->getValue())->isParentOf($configItem):
+						// uprednostnit appendChild()
+						LBoxConfigManagerStructure::getInstance()->getPageById($this->form->getControlByName("parent_id")->getValue())->appendChild($configItem);
+					break;
+ 				// editace + move before je nastaveno na jiny node nez bylo
+ 				case ($this->form->getControlByName("move_before")->getValue()
+					&& $this->form->getControlByName("id")->getValue()
+					&& (!$configItem->hasSiblingBefore() || $configItem->getSiblingBefore()->id != $this->form->getControlByName("move_before")->getValue())):
+				// vlozeni + moveBefore je nastaveno
+				case ($this->form->getControlByName("move_before")->getValue()
+					&& $this->form->getControlByName("id")->getValue()):
+						// uprednostnit insertBefore()
+						LBoxConfigManagerStructure::getInstance()->getPageById($this->form->getControlByName("move_before")->getValue())->insertBefore($configItem);
+					break;
+				// parent je nastaven
+				case $this->form->getControlByName("parent_id")->getValue():
+						// uprednostnit appendChild()
+						LBoxConfigManagerStructure::getInstance()->getPageById($this->form->getControlByName("parent_id")->getValue())->appendChild($configItem);
+					break;
+				default:
+						$configItem->removeFromTree();
 			}
 
 			LBoxConfigStructure::getInstance()->store();

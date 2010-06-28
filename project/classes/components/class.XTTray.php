@@ -27,10 +27,6 @@ class XTTray extends LBoxComponent
 
 	protected function executePrepend(PHPTAL $TAL) {
 		try {
-			// odlogovat uzivatele, jestli ma byti
-			if ($this->isToLogout()) {
-				$this->logout();
-			}
 
 			$urls["logout"]		= LBOX_REQUEST_URL_VIRTUAL .":". $this->urlParamNameLogout;
 			$pagesCFG["admin"]	= LBoxConfigManagerStructure::getInstance()->getPageById(
@@ -41,9 +37,6 @@ class XTTray extends LBoxComponent
 				$pageCFG->setOutputFilter(new OutputFilterPage($pageCFG));
 			}
 			$loginGroup					= strlen($this->page->xt) > 0 ? $this->page->xt : 1;
-			$TAL->isLogged				= LBoxXTProject::isLogged($loginGroup);
-			$TAL->isLoggedAdmin			= LBoxXTProject::isLoggedAdmin($loginGroup);
-			$TAL->isLoggedSuperAdmin	= LBoxXTProject::isLoggedSuperAdmin($loginGroup);
 			$TAL->urls			= $urls;
 			$TAL->pagesCFG		= $pagesCFG;
 		}

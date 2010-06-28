@@ -1,4 +1,4 @@
-<div id="xt-tray" tal:condition="isLoggedAdmin">
+<div id="xt-tray" tal:condition="php: LBoxXT::isLoggedAdmin() OR LBoxXTDBFree::isLogged()">
 	<ul class="page-admin">
 	  <tal:block tal:define="node SELF/getPageRootAdmin">
 	    <li tal:attributes="class node/getClass | default">
