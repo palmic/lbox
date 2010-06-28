@@ -11,7 +11,7 @@ class WebUIStructure extends WebUI
 	 * @var string
 	 */
 	protected $fileNamesTemplatePagesTypesPattern	= "^webui_(.+).html$";
-
+	
 	protected function executePrepend(PHPTAL $TAL) {
 		try {
 			parent::executePrepend($TAL);
@@ -33,6 +33,12 @@ class WebUIStructure extends WebUI
 	 */
 	public function getForm() {
 		try {
+			if ($this->form instanceof LBoxForm) {
+				return $this->form;
+			}
+			if ($this->getPage()->config->isHomePage()) {
+				return NULL;
+			}
 			$controls["id"]			= new LBoxFormControlFillHidden("id", "", $this->getPage() ? $this->getPage()->config->getParamDirect("id") : NULL);
 			$controls["id"]			->setDisabled();
 			$subControls["base"]["heading"]	= new LBoxFormControlFill("heading", "heading", $this->getPage() ? $this->getPage()->config->getParamDirect("heading") : LBoxUtil::getNameByURLString($this->getURLPartCurrentLast()));
@@ -130,7 +136,7 @@ class WebUIStructure extends WebUI
 
 	/**
 	 * Vraci aktualni stranku, nebo NULL pokud jde o 404
-	 * @return LBoxConfigItemStructure
+	 * @return LBoxPage
 	 */
 	protected function getPage() {
 		try {
