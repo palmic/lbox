@@ -64,10 +64,16 @@ class WebUIStructure extends WebUI
 				}
 			}
 			$subControls["structure"]["in_menu"]	= new LBoxFormControlChooseOne("in_menu", "v menu", $this->getPage() ? $this->getPage()->config->getParamDirect("in_menu") : 0);
-			$subControls["structure"]["in_menu"]	->setTemplateFileName("lbox_form_control_choose_one_radio.html");
 				$subControls["structure"]["in_menu"]	->setRequired();
-				$subControls["structure"]["in_menu"]	->addOption(new LBoxFormControlOption(1, "ano"));
-				$subControls["structure"]["in_menu"]	->addOption(new LBoxFormControlOption(0, "ne"));
+				foreach ($this->getOptionsInMenu() as $k=> $option) {
+					$subControls["structure"]["in_menu"]	->addOption(new LBoxFormControlOption($k, $option));
+				}
+				if (count($this->getOptionsInMenu()) < 3) {
+					$subControls["structure"]["in_menu"]	->setTemplateFileName("lbox_form_control_choose_one_radio.html");
+				}
+				else {
+					$subControls["structure"]["in_menu"]	->setTemplateFileName("lbox_form_control_choose_one_select.html");
+				}
 			$subControls["structure"]["parent_id"]	= new LBoxFormControlChooseOne("parent_id", "parent", $this->getPage() ? $this->getPage()->config->getParent()->id : NULL);
 			$subControls["structure"]["parent_id"]	->setTemplateFileName("lbox_form_control_choose_one_select.html");
 				$this->fillControlChooseParentID($subControls["structure"]["parent_id"]);
@@ -244,6 +250,42 @@ class WebUIStructure extends WebUI
 			return ($this->getPage() && $this->getPage()->config->getSiblingAfter())
 								? $this->getPage()->config->getSiblingAfter()->id
 								: NULL;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * cache var
+	 * @return array
+	 */
+	protected $optionsInMenu	= array();
+
+	/**
+	 * getter na veskere moznosti vyberu in_menu
+	 * @return array
+	 */
+	protected function getOptionsInMenu() {
+		try {
+			if (count($this->optionsInMenu) > 0) {
+				return $this->optionsInMenu;
+			}
+			$pagesIterator	= LBoxConfigManagerStructure::getInstance()->getIterator();
+			foreach ($pagesIterator as $page) {
+				$this->optionsInMenu[$page->in_menu]	= $page->in_menu;
+			}
+			switch (count($this->optionsInMenu)) {
+				case 2:
+						$this->optionsInMenu[1]	= "ano";
+						$this->optionsInMenu[0]	= "ne";
+						krsort($this->optionsInMenu);
+					break;
+				default:
+					$this->optionsInMenu[0]	= "v žádném menu";
+					ksort($this->optionsInMenu);
+			}
+			return $this->optionsInMenu;
 		}
 		catch (Exception $e) {
 			throw $e;
