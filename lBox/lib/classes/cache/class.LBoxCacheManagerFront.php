@@ -206,6 +206,24 @@ class LBoxCacheManagerFront
 	}
 
 	/**
+	 * vymaze cache vsech URLs
+	 * @param bool $forceCleanForAllXTUsers
+	 */
+	public function cleanAllURLs($forceCleanForAllXTUsers = false) {
+		try {
+			foreach ((array)$this->recordTypes as $url => $recordType) {
+				if (!$url) {
+					continue;
+				}
+				$this->cleanURLData($url, $forceCleanForAllXTUsers);
+			}
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
 	 * vymaze cache stranky podle predaneho id, nebo current stranky pokud zadne ID predano nebylo
 	 * @param int $pageID
 	 * @param bool $forceCleanForAllXTUsers
