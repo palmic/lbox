@@ -271,6 +271,8 @@ class WebUIStructure extends WebUI
 			if (count($this->optionsInMenu) > 0) {
 				return $this->optionsInMenu;
 			}
+			$this->optionsInMenu[0]	= 0;
+			$this->optionsInMenu[1]	= 1;
 			$pagesIterator	= LBoxConfigManagerStructure::getInstance()->getIterator();
 			foreach ($pagesIterator as $page) {
 				$this->optionsInMenu[$page->in_menu]	= $page->in_menu;
