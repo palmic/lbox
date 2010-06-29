@@ -10,7 +10,7 @@ class PageReload2Child extends PageDefault
 	public function executeInit() {
 		try {
 			parent::executeInit();
-			if ($this->config->getChildNodesIterator() && $this->config->getChildNodesIterator()->count() > 0) {
+			if ($this->config->getChildNodesIterator()) {
 				LBoxFront::reload($this->config->getChildNodesIterator()->current()->url);
 			}
 		}
