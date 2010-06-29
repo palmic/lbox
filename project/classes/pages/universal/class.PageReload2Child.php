@@ -10,7 +10,7 @@ class PageReload2Child extends PageDefault
 	public function executeInit() {
 		try {
 			parent::executeInit();
-			if ($this->config->getChildNodesIterator()) {
+			if ($this->config->getChildNodesIterator() && $this->config->getChildNodesIterator()->count() > 0) {
 				LBoxFront::reload($this->config->getChildNodesIterator()->current()->url);
 			}
 		}
@@ -27,7 +27,7 @@ class PageReload2Child extends PageDefault
 			throw $e;
 		}
 	}
-	
+
 	protected function executePrepend(PHPTAL $TAL) {
 //DbControl::$debug = true;
 		try {
