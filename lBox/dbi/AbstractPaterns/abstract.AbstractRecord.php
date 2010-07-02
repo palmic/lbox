@@ -202,9 +202,7 @@ abstract class AbstractRecord implements Iterator
 				$this->loaded		= true;
 			}
 			if (!$this->loaded) {
-				if (!$this->doesTableExistsInDatabase()) {
-					$this->createTable();
-				}
+				$this->createTable();
 				if ($this->isInDatabase()) {
 					$this->load();
 				}
@@ -2047,7 +2045,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			$type			= get_class($this);
 			$tableName		= $this->getClassVar("tableName");
 			$idColName		= $this->getClassVar("idColName");
-LBoxFirePHP::log("creating table '$tableName'");
+LBoxFirePHP::log("creating table '$tableName' by instance of '". get_class($this) ."'");
 			foreach ($attributes as $attribute) {
 				switch (true) {
 					case ($attribute["name"] == $idColName):
@@ -2068,7 +2066,7 @@ LBoxFirePHP::log("creating table '$tableName'");
 			}*/
 			array_unshift($attributes, array("name"=>$idColName, "type"=>"int", "notnull" => true, "autoincrement" => true, "visibility"=>"protected"));
 			$this->getDb()->initiateQuery($this->getQueryBuilder()->getCreateTable($tableName, $attributes, array("pk" => "$idColName")));
-			self::$doesTableExistsInDatabaseByTypes[$className]	= true;
+			self::$doesTableExistsInDatabaseByTypes[get_class($this)]	= true;
 		}
 		catch (Exception $e) {
 			throw $e;

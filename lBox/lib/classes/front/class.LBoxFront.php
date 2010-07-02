@@ -395,7 +395,7 @@ LBoxFirePHP::warn("cache VYPNUTA");
 	protected static function reloadPersistentLocationXT() {
 		try {
 			if (LBoxXTProject::isLogged()) {
-				if (array_key_exists("LBox", $_SESSION)
+				if (array_key_exists("LBox", $_SESSION) && array_key_exists("LBoxFront", $_SESSION["LBox"])
 					&&	strlen($url = $_SESSION["LBox"]["LBoxFront"]["persistentLocationXT"]) > 0) {
 						unset($_SESSION["LBox"]["LBoxFront"]["persistentLocationXT"]);
 						self::reload($url);

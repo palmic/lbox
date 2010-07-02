@@ -1,0 +1,31 @@
+<div class="discussion" tal:define="parent SELF/getRecord">
+	<tal:block tal:content="structure SELF/getRecord/getForm" />
+	<x tal:condition="parent/getChildren/count" metal:use-macro="discussion_list" />	
+</div>
+<ul metal:define-macro="discussion_list" tal:define="parent parent">
+	<li tal:repeat="post parent/getChildren" id="${SELF/getFormGroupName}-post-${post/id}">
+		<x metal:use-macro="discussion_post_detail" />
+		<tal:block tal:condition="post/hasChildren" tal:define="parent post"><x metal:use-macro="discussion_list" /></tal:block>
+	</li>
+</ul>
+<div metal:define-macro="discussion_post_detail" tal:define="post post">
+	<div class="title"><span class="title" tal:content="post/title" /></div>
+	<div>
+		<strong>Autor:</strong>
+		<em><a tal:condition="post/email" tal:content="post/nick" href="mailto:${post/email}" /></em>
+			<span tal:condition="not: post/email" tal:content="post/nick" />
+	        <a tal:condition="post/www" href="${post/www}">www</a>
+	        | <strong>Zasláno:</strong>
+		<span tal:replace="post/created" />
+	</div>
+	<div class="content wsw" tal:content="structure post/body" />
+	<!-- <a href="${discussion/url}?${SELF/getFormGroupName}[${replyToParamName}]=${post/id}#new-post">Odpovědět</a> -->
+	<form action="${discussion/url}?${SELF/getFormGroupName}[${replyToParamName}]=${post/id}#new-post" id="reply-${post/id}" method="post"><div><input type="submit" name="reply" value="Odpovědět" /></div></form>
+	<div class="xt-admin" tal:condition="xtAdmin">
+		<form method="post" onsubmit="return (confirm('Skutečně chceš smazat příspěvek -${post/title}- autora -${post/nick}- i se všemi podřazenými příspěvky?') ? true : false)">
+			<input type="hidden" name="${SELF/getFormGroupName}[xt][id]" value="${post/id}" />
+			<input type="hidden" name="${SELF/getFormGroupName}[xt][action]" value="delete" />
+			<input type="submit" name="${SELF/getFormGroupName}[xt][submit]" value="delete" />
+		</form>
+	</div>
+</div>
