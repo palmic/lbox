@@ -22,6 +22,7 @@
 	<component id="menu_sub" 				template="menu_sub.html" 				class="MenuSub" />
 	<component id="breadcrumb" 				template="breadcrumb.html" 				class="Breadcrumb" />
 	<component id="discussion" 				template="discussion.html" 				class="Discussion" 			rss="32" />
+	<component id="discussion_new" 			template="discussion_new.html" 			class="DiscussionNew" 		rss="32" />
 	<component id="login_form" 				template="login_form.html" 				class="LoginForm" />
 	<component id="login_form_email" 		template="login_form.html" 				class="LoginFormEmail" />
 	<component id="login_form_admin" 		template="login_form_admin.html" 		class="LoginFormAdmin" />

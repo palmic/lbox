@@ -86,7 +86,7 @@ class LoginForm extends LBoxComponent
 	 */
 	public function getURLLogout() {
 		try {
-			return LBoxUtil::getURLWithParams(array(LBoxFront::getURLParamNameLogout()), LBoxUtil::getURLWithoutParams(array(Front::getURLParamNameLogout())));
+			return LBoxUtil::getURLWithParams(array(LBoxFront::getURLParamNameLogout()), LBoxUtil::getURLWithoutParams(array(LBoxFront::getURLParamNameLogout())));
 		}
 		catch (Exception $e) {
 			throw $e;
