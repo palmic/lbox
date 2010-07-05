@@ -147,8 +147,12 @@ class DiscussionsRecord extends AbstractRecordLBox
 				return $this->form;
 			}
 			
+			if (!$this->isInDatabase()) {
+				LBoxFront::reload(LBoxUtil::getURLWithoutParamsByPattern(array("/^replyto\-([\w\d]+)$/")));				
+			}
+			
 			if ($this->hasParent()) {
-				$title = $this->getParent()->title;
+				$title = $this->title;
 				switch (true) {
 					case (preg_match("/^re( *)(\d+)(.*)/i", $title, $regs)) :
 							$num = $regs[2]+1;
@@ -169,31 +173,47 @@ class DiscussionsRecord extends AbstractRecordLBox
 
 			$controls["pid"]	= new LBoxFormControlFillHidden("pid", "", $id);
 				$controls["pid"]	->setDisabled();
-			$controls["title"]	= new LBoxFormControlFill("title", "title", $title);
-			$controls["nick"]	= new LBoxFormControlFill("nick", "nick", LBoxXT::isLogged() ? LBoxXT::getUserXTRecord()->nick : "");
+			$controls["title"]	= new LBoxFormControlFill("title", "titulek", $title, LBoxConfigManagerProperties::gpcn("form_max_length_discussion_title"));
+				$controls["title"]	->setRequired();
+				$controls["title"]	->setTemplateFilename("discussion_title.html");
+			$controls["nick"]	= new LBoxFormControlFill("nick", "nick", LBoxXT::isLogged() ? LBoxXT::getUserXTRecord()->nick : "", LBoxConfigManagerProperties::gpcn("form_max_length_nick"));
 				if (LBoxXT::isLogged() && strlen(LBoxXT::getUserXTRecord()->nick) > 0) {
 					$controls["nick"]->setDisabled();
 				}
 				$controls["nick"]	->setTemplateFilename("lbox_form_control_nick.html");
+					$validatorNick	= new ValidatorAdminRecordNotExists(LBoxXT::isLogged() ? LBoxXT::getUserXTRecord()->id : NULL);
+					$validatorNick	->setRecordClassName("XTUsersRecord");
+					$validatorNick	->setFilterColName("nick");
+					$controls["nick"]	->addValidator($validatorNick);
 				$controls["nick"]	->setRequired();
-			$controls["email"]	= new LBoxFormControlFill("email", "email", LBoxXT::isLogged() ? LBoxXT::getUserXTRecord()->email : "");
+			$controls["email"]	= new LBoxFormControlFill("email", "email", LBoxXT::isLogged() ? LBoxXT::getUserXTRecord()->email : "", LBoxConfigManagerProperties::gpcn("form_max_length_email"));
 				if (LBoxXT::isLogged() && strlen(LBoxXT::getUserXTRecord()->email) > 0) {
 					$controls["email"]->setDisabled();
 				}
 				$controls["email"]	->setTemplateFilename("lbox_form_control_email.html");
 				$controls["email"]	->addValidator(new LBoxFormValidatorEmail);
-			$controls["www"]	= new LBoxFormControlFill("www", "www", LBoxXT::isLogged() ? LBoxXT::getUserXTRecord()->www : "");
+					$validatorEmail	= new ValidatorAdminRecordNotExists(LBoxXT::isLogged() ? LBoxXT::getUserXTRecord()->id : NULL);
+					$validatorEmail	->setRecordClassName("XTUsersRecord");
+					$validatorEmail	->setFilterColName("email");
+					$controls["email"]	->addValidator($validatorEmail);
+			$controls["www"]	= new LBoxFormControlFill("www", "www", LBoxXT::isLogged() ? LBoxXT::getUserXTRecord()->www : "", LBoxConfigManagerProperties::gpcn("form_max_length_www"));
 				if (LBoxXT::isLogged() && strlen(LBoxXT::getUserXTRecord()->www) > 0) {
 					$controls["www"]->setDisabled();
 				}
 				$controls["www"]	->setTemplateFilename("lbox_form_control_www.html");
 				$controls["www"]	->addValidator(new LBoxFormValidatorURLHTTPHTTPS);
-			$controls["body"]	= new LBoxFormControlFill("body", "body");
+			$controls["body"]	= new LBoxFormControlFill("body", "body", "", 1);
 				$controls["body"]	->setTemplateFilename("discussion_body.html");
+				$controls["body"]	->addValidator(new LBoxFormValidatorDiscussionBody);
 				$controls["body"]	->setRequired();
+			if (LBoxConfigManagerProperties::gpcn("discussion_recaptcha")) {
+				$controls["recaptcha"]	= new LBoxFormControlReCaptcha;
+			}
 
-			$this->form			= new LBoxForm("discussion-$id-post", "post", $this->hasParent() ? "Odpověď na příspěvek" : "Nový příspěvek", "odeslat");
-			$this->form			->addProcessor(new LBoxFormProcessorDev);
+			$this->form			= new LBoxForm("discussion-$id-post", "post", $this->hasParent() ? ("Odpověď na příspěvek \"". $this->getParamDirect("title") ."\"") : "Nový příspěvek", "odeslat");
+			//$this->form			->addProcessor(new LBoxFormProcessorDev);
+			$this->form			->addProcessor(new ProcessorDiscussionPost);
+			$this->form->setAntiSpam((bool)LBoxConfigManagerProperties::gpcn("discussion_antispam"));
 
 			foreach ($controls as $control) {
 				$control	->addFilter(new LBoxFormFilterTrim);

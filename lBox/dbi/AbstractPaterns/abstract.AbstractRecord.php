@@ -1358,6 +1358,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 	public function addChild(AbstractRecord $child) {
 		try {
 			$className 	= get_class($this);
+
 			$idColName	= $this->getIdColName();
 			if (!($child instanceof $className)) {
 				throw new LBoxException("Cannot append child of another type into '$className' type!");
@@ -1432,6 +1433,7 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			$childTmp->load();
 			$chTmpLft		= $childTmp->$lftColName;
 			$chTmpRgt		= $childTmp->$rgtColName;
+//var_dump("\$chTmpRgt = ". $chTmpRgt);
 
 			// shift tree left
 			$sqls		= array();
@@ -1483,11 +1485,15 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 				$wheres[$i]	->addConditionColumn($rgtColName, $chLft, -2);
 				$sqls[$i]	= $this->getQueryBuilder()->getUpdate($tableName, array($rgtColName => "<<$rgtColNameSlashed+$chWeight>>"), $wheres[$i]);
 			}
+//var_dump($sqls);
 			foreach ($sqls as $sql) {
 // var_dump(__CLASS__ ."::". __LINE__ .": ". $sql);
 				$this->getDb()->initiateQuery($sql);
 			}
 
+			unset(self::$clearedCacheByTypes[get_class($this)]);
+			$this->isCacheOn	= false;
+			$this->clearCache();
 			$this->setSynchronized(false);
 			$this->load();
 			$chTmpDiff	= $chTmpRgt-($this->rgt-1);
@@ -1517,14 +1523,16 @@ NOT TESTED AND TOTALY INEFFICIENT FOR SURE
 			$wheres2[$i]	= new QueryBuilderWhere();
 			$wheres2[$i]	->addConditionColumn($idColName, $chId);
 			$sqls2[$i]		= $this->getQueryBuilder()->getUpdate($tableName, array($pidColName => $myId), $wheres2[$i]);
-
+//var_dump($sqls2);die;
 			foreach ($sqls2 as $sql) {
 // var_dump("hallloooo: ". __CLASS__ ."::". __LINE__ .": ". $sql);
 				$this->getDb()->initiateQuery($sql);
 			}
 
 			$this	->getDb()->transactionCommit();
-			$this	->clearCache();
+			unset(self::$clearedCacheByTypes[get_class($this)]);
+			$this->clearCache();
+			$this->setSynchronized(false);
 			$child->load();
 		}
 		catch (Exception $e) {

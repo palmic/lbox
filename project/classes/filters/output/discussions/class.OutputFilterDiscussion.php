@@ -1,48 +1,66 @@
-<?php
+<?
 /**
  * @author Michal Palma <palmic@email.cz>
  * @package LBox
- * @version 1.0
-
- * @since 2007-12-08
+ * @since 2010-07-05
  */
 class OutputFilterDiscussion extends OutputFilterComponent
 {
+	/**
+	 * pattern na URL param reply to
+	 * @var string
+	 */
+	protected $patternURLParamReplyTo	= "^replyto\-([\w\d]+)$";
+	
+	/**
+	 * cache var
+	 * @var DiscussionsRecord
+	 */
+	protected $record;
+
 	public function prepare($name = "", $value = NULL) {
-		try {
-			switch ($name) {
-				case "createdDate":
-					return date("j.n. Y", $this->instance->created);
-					break;
-				case "url":
-					if ($this->instance->getParamDirect("type") != "post") {
-						return $this->getDiscussionPageUrl();
+		if (!$this->record instanceof AbstractRecord) {
+			throw new LBoxExceptionOutputFilter(LBoxExceptionOutputFilter::MSG_INSTANCE_VAR_INSTANCE_CONCRETE_NOTNULL, LBoxExceptionOutputFilter::CODE_BAD_INSTANCE_VAR);
+		}
+		switch ($name) {
+			case "rssURL":
+					if ($this->instance->rss) {
+						$rssPageUrl	= LBoxConfigManagerStructure::getInstance()->getPageById($this->instance->rss)->url;
+						$pageId		= $this->instance->page->id;
+						return "$rssPageUrl:$pageId/". LBoxFront::getLocationUrlParam();
+					}
+				break;
+			case "getForm":
+					$parentId	= NULL;
+					foreach (LBoxFront::getUrlParamsArray() as $param) {
+						if (preg_match("/". $this->patternURLParamReplyTo ."/", $param, $matches)) {
+							$parentId	= $matches[1];
+						}
+					}
+					if ($parentId) {
+						$record	= new DiscussionsRecord($parentId);
+						if (!$record->isInDatabase()) {
+							LBoxFront::reload(LBoxUtil::getURLWithoutParamsByPattern(array("/". $this->patternURLParamReplyTo ."/")));
+						}
+						$record	->setOutputFilter(new OutputFilterDiscussionRecord($record));
+						return $record->getForm();
 					}
 					else {
-						return $this->getDiscussionPageUrl() ."#discussion-post-". $this->instance->getParamDirect("id");
+						return $this->record->getForm();
 					}
-					break;
-				case "numPosts":
-					return $this->instance->getDescendantsCount();
-					break;
-				default:
-					return $value;
-			}
-		}
-		catch (Exception $e) {
-			throw $e;
+				break;
+			default:
+				return $value;
 		}
 	}
 
 	/**
-	 * vraci URL stranky/clanku/galerie, atd..  ke ktere je diskuze pripojena
-	 * @return string
+	 * setter pro discussion record
+	 * @param DiscussionsRecord $record
 	 */
-	protected function getDiscussionPageUrl() {
+	public function setRecord(DiscussionsRecord $record) {
 		try {
-			$pageUrl	= LBoxConfigManagerStructure::getInstance()->getPageById($this->instance->pageId)->url;
-			$paramUrl 	= $this->instance->urlParam;
-			return $pageUrl . (strlen($paramUrl) > 0 ? ":$paramUrl" : "");
+			$this->record	= $record;
 		}
 		catch (Exception $e) {
 			throw $e;

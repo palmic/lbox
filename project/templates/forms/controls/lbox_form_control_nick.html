@@ -3,6 +3,8 @@
 		<span class="text"><span class="lft"><span class="rgt"><span class="mdl"><input 	class="text" type="text" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]"
 				tal:attributes="value SELF/getValue | SELF/getDefault; maxlength SELF/getLengthMax | default; size SELF/getLengthMax | default; disabled SELF/getDisabled" /></span></span></span></span></label>
 	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
-		<div tal:condition="exists: exceptions/17001">Prosím vyplňte nick</div>
+		<div tal:condition="exists: exceptions/17001" i18n:translate="string:error_17001">Prosíme vyplňte nick</div>
+		<div tal:condition="exists: exceptions/17003" i18n:translate="string:error_17003">Nick není správně vyplněn</div>
+		<div tal:condition="exists: exceptions/17010" i18n:translate="string:error_17010">Tento nick je již obsazen</div>
 	</div>
 </div>
