@@ -43,10 +43,16 @@ class DiscussionsRecord extends AbstractRecordLBox
 	
 	/**
 	 * cache var
-	 * @var DiscussionsRecords
+	 * @var Iterator
 	 */
 	protected $children;
 	
+	/**
+	 * pattern na URL param reply to
+	 * @var string
+	 */
+	protected $patternURLParamReplyTo	= "^replyto\-([\w\d]+)$";
+
 	/**
 	 * pretizeno o nastaveni tree structure
 	 */
@@ -110,18 +116,40 @@ class DiscussionsRecord extends AbstractRecordLBox
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * getter na potomky, ktere budou v prvni urovni prispevku serazeny sestupne
 	 * @return DiscussionsRecords
 	 */
 	public function getChildren() {
 		try {
-			if ($this->children instanceof DiscussionsRecords) {
+			if ($this->children instanceof AbstractRecords || $this->records instanceof LBoxPagingIterator) {
 				return $this->children;
 			}
 			$treeColNames	= $this->getClassVar("treeColNames");
-			$this->children = parent::getChildren(false, $this->hasParent() ? array($treeColNames[0] => 1) : array($treeColNames[0] => 0));
+			$parentId	= NULL;
+			foreach (LBoxFront::getUrlParamsArray() as $param) {
+				if (preg_match("/". $this->patternURLParamReplyTo ."/", $param, $matches)) {
+					$parentId	= $matches[1];
+				}
+			}
+			if (!$this->hasParent() && $parentId) {
+				// replyto
+				$this->children = new DiscussionsRecordsNotTree(array($this->getClassVar("idColName") => $parentId));
+				$this->children	->setOutputFilterItemsClass("OutputFilterDiscussionRecord");
+			}
+			else {
+				// strankovany vypis z rootu
+				if (!$this->hasParent()
+					&& is_numeric($pageItems = LBoxConfigManagerProperties::gpcn("discussion_paging_pageitems"))
+					&& $pageItems > 0) {
+						$this->children 	= new LBoxPagingIteratorRecords("DiscussionsRecordsNotTree", $pageItems, get_class($this->outputFilter), array($treeColNames[2] => $this->getParamDirect($this->getClassVar("idColName"))), array($treeColNames[0] => 0));
+				}
+				// NEstrankovany vypis z rootu
+				else {
+					$this->children = parent::getChildren(false, $this->hasParent() ? array($treeColNames[0] => 1) : array($treeColNames[0] => 0));
+				}
+			}
 			return $this->children;
 		}
 		catch (Exception $e) {
@@ -148,7 +176,7 @@ class DiscussionsRecord extends AbstractRecordLBox
 			}
 			
 			if (!$this->isInDatabase()) {
-				LBoxFront::reload(LBoxUtil::getURLWithoutParamsByPattern(array("/^replyto\-([\w\d]+)$/")));				
+				LBoxFront::reload(LBoxUtil::getURLWithoutParamsByPattern(array("/". $this->patternURLParamReplyTo ."/")));				
 			}
 			
 			if ($this->hasParent()) {

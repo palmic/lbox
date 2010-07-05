@@ -8,6 +8,12 @@
  */
 class OutputFilterDiscussionRecord extends OutputFilterRecordEditableByAdmin
 {
+	/**
+	 * cache var
+	 * @var array
+	 */
+	protected static $formsByIDs = array();
+	
 	public function prepare($name = "", $value = NULL) {
 		try {
 			switch ($name) {
@@ -43,8 +49,15 @@ class OutputFilterDiscussionRecord extends OutputFilterRecordEditableByAdmin
 					}
 					break;
 				case "email":
-				case "www":
 						return (string)$value;
+					break;
+				case "www":
+						if (strlen($value) > 0 && !preg_match("/^http(s?)\:\/\//", $value)) {
+							return "http://$value";
+						}
+						else {
+							return (string)$value;
+						}
 					break;
 				default:
 					return parent::prepare($name, $value);
@@ -78,6 +91,10 @@ class OutputFilterDiscussionRecord extends OutputFilterRecordEditableByAdmin
 		try {
 			$classNameInstance	= get_class($this->instance);
 			$idColName			= eval("return $classNameInstance::\$idColName;");
+			if (array_key_exists($this->instance->$idColName, self::$formsByIDs)
+				&& self::$formsByIDs[$this->instance->$idColName] instanceof LBoxForm) {
+					return self::$formsByIDs[$this->instance->$idColName];
+			}
 			
 			$controls["id"]		= new LBoxFormControlFillHidden("pid", "", $this->instance->$idColName);
 			$controls["id"]		->setDisabled();
@@ -89,7 +106,7 @@ class OutputFilterDiscussionRecord extends OutputFilterRecordEditableByAdmin
 			foreach ($controls as $control) {
 				$form->addControl($control);
 			}
-			return $form;
+			return self::$formsByIDs[$this->instance->$idColName] = $form;
 		}
 		catch (Exception $e) {
 			throw $e;

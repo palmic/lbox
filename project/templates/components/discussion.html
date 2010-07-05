@@ -1,78 +1,36 @@
-<div class="discussion" tal:define="parent discussion" tal:condition="discussion">
-	<tal:bock tal:condition="exists: postsWordDecl5">
+<div class="discussion" tal:define="parent SELF/getRecord">
+	<tal:bock tal:condition="parent/postsWordDecl5">
 		<tal:block tal:define="global postsWord string:příspěvků" />
 	</tal:bock>
-	<tal:bock tal:condition="exists: postsWordDecl2">
+	<tal:bock tal:condition="parent/postsWordDecl2">
 		<tal:block tal:define="global postsWord string:příspěvky" />
 	</tal:bock>
-	<tal:bock tal:condition="exists: postsWordDecl1">
+	<tal:bock tal:condition="parent/postsWordDecl1">
 		<tal:block tal:define="global postsWord string:příspěvek" />
 	</tal:bock>
-	<h3>diskuze <tal:block tal:content="string:(${discussion/numPosts} ${postsWord})" /></h3>
-	<div class="rss">
-		<a href="${SELF/rssURL}" title="RSS diskuze">RSS diskuze</a>
-	</div>
-	<noscript tal:condition="spamDefenseJS"><p>Pro správnou funkci formuláře je nutné mít zapnutý javaScript</p></noscript>
-	<tal:block tal:condition="exists: form/error">
-		<p tal:condition="exists: form/error/spamDefenseJS" class="cooltip error" tiitle="Naše diskuze vzužívá v obraně proti spamu skutečnost, že spam roboti neumí interpretovat javascript. Kvůli tomu bohužel není možné odeslání příspěvku do diskuze bez javascriptu">Pro odeslání príspěvku je nutné mít zapnutý javaScript!</p>
-	</tal:block>
-	<p tal:condition="saved">Příspěvek byl v pořádku vložen</p>
-	<form id="new-post" method="post" action="${form/target}">
-		<fieldset>
-			<legend>Nový příspěvek</legend>
-			<div tal:define="control form/controls/pid">
-				<input type="hidden" id="${control/id}" name="${control/name}" value="${control/value}" />
-			</div>
-			<div tal:define="control form/controls/title">
-				<label for="${control/id}"><strong tal:condition="control/required">*</strong>Titulek <span class="description">(max <tal:block tal:content="control/maxLength" /> znaků)</span>:</label>
-				<input type="text" id="${control/id}" name="${control/name}" value="${control/value}" tal:attributes="disabled control/disabled | default; class control/disabled | default; maxlength control/maxLength | default" />
-				<tal:block tal:condition="exists:control/error">
-					<span class="error" tal:condition="exists:control/error/empty">zadej prosím titulek</span>
-					<span class="error" tal:condition="exists:control/error/tooLong">zvolený titulek je moc dlouhý</span>
-				</tal:block>
-			</div>
-			<div tal:define="control form/controls/nick">
-				<label for="${control/id}"><strong tal:condition="control/required">*</strong>Nick <span class="description">(max <tal:block tal:content="control/maxLength" /> znaků)</span>:</label>
-				<input type="text" id="${control/id}" name="${control/name}" value="${control/value}" tal:attributes="disabled control/disabled | default; class control/disabled | default; maxlength control/maxLength | default" />
-				<tal:block tal:condition="exists:control/error">
-					<span class="error" tal:condition="exists:control/error/empty">nezadal(a) jsi svůj nick</span>
-					<span class="error" tal:condition="exists:control/error/isNotFree">Zvolený nick je už bohužel zabraný registrovaným uživatelem.</span>
-					<span class="error" tal:condition="exists:control/error/tooLong">zvolený nick je moc dlouhý</span>
-				</tal:block>
-			</div>
-			<div tal:define="control form/controls/email">
-				<label for="${control/id}"><strong tal:condition="control/required">*</strong>e-mail <span class="description">(max <tal:block tal:content="control/maxLength" /> znaků)</span>:</label>
-				<input type="text" id="${control/id}" name="${control/name}" value="${control/value}" tal:attributes="disabled control/disabled | default; class control/disabled | default; maxlength control/maxLength | default" />
-				<tal:block tal:condition="exists:control/error">
-					<span class="error" tal:condition="exists:control/error/invalid">Nesprávný e-mail</span>
-					<span class="error" tal:condition="exists:control/error/empty">zadej prosím e-mail</span>
-					<span class="error" tal:condition="exists:control/error/tooLong">zvolený e-mail je moc dlouhý</span>
-				</tal:block>
-			</div>
-			<div tal:define="control form/controls/www">
-				<label for="${control/id}"><strong tal:condition="control/required">*</strong>www <span class="description">(max <tal:block tal:content="control/maxLength" /> znaků)</span>:</label>
-				<input type="text" id="${control/id}" name="${control/name}" value="${control/value}" tal:attributes="disabled control/disabled | default; class control/disabled | default; maxlength control/maxLength | default" />
-				<tal:block tal:condition="exists:control/error">
-					<span class="error" tal:condition="exists:control/error/empty">nezadal(a) jsi své www</span>
-					<span class="error" tal:condition="exists:control/error/tooLong">zvolené www je moc dlouhé</span>
-				</tal:block>
-			</div>
-			<div tal:define="control form/controls/body">
-				<label for="${control/id}"><strong tal:condition="control/required">*</strong>text <span class="description">(max <tal:block tal:content="control/maxLength" /> znaků)</span>:</label>
-				<textarea id="${control/id}" name="${control/name}" tal:content="control/value | default" cols="30" rows="5" />
-				<tal:block tal:condition="exists:control/error">
-					<span class="error" tal:condition="exists:control/error/empty">zadej prosím alespoň nějaký text</span>
-					<span class="error" tal:condition="exists:control/error/tooLong">zvolený text je moc dlouhý</span>
-				</tal:block>
-			</div>
-			<input type="submit" name="${SELF/getFormGroupName}[submit]" value="odeslat" />
-		</fieldset>
-	</form>
-	<script tal:condition="spamDefenseJS" type="text/javascript" tal:content="structure string:Page.sDefense(document.getElementById('new-post'), '${SELF/getFormGroupName}');"></script>
+	<h2 class="heading">diskuze <tal:block tal:content="string:(${parent/numPosts} ${postsWord})" /></h2>
+	<tal:block tal:content="structure SELF/getForm" />
 	<x tal:condition="parent/getChildren/count" metal:use-macro="discussion_list" />	
+	<div class="paging" tal:condition="exists: parent/getChildren/getPages">
+		<tal:block tal:condition="parent/getChildren/getPages">
+		<ul tal:condition="parent/getChildren/getPages/has_more_pages" tal:define="pages parent/getChildren/getPages">
+			<div class="lft"><div class="rgt"><div class="mdl">
+				<li class="previous" tal:condition="not: pages/getPageCurrent/is_first">
+					<div class="lft"><div class="rgt"><div class="mdl"><a tal:define="page pages/getPageCurrent/previous" href="${page/url}" title="přejít na předchozí stránku" i18n:attributes="title paging_goto_page_previous" i18n:translate="string:paging_page_previous">předchozí</a></div></div></div>
+				</li>
+				<li class="current">
+					<div class="lft"><div class="rgt"><div class="mdl"><span tal:define="page pages/getPageCurrent">${page/getNumber}</span></div></div></div>
+				</li>
+				<li class="next" tal:condition="not: pages/getPageCurrent/is_last">
+					<div class="lft"><div class="rgt"><div class="mdl"><a tal:define="page pages/getPageCurrent/next" href="${page/url}" title="přejít na následující stránku" i18n:attributes="title paging_goto_page_next" i18n:translate="string:paging_page_next">následující</a></div></div></div>
+				</li>
+			</div></div></div>
+		</ul>
+		</tal:block>
+	</div>
 </div>
 <ul metal:define-macro="discussion_list" tal:define="parent parent">
-	<li tal:repeat="post parent/getChildren" id="${SELF/getFormGroupName}-post-${post/id}">
+	<li tal:repeat="post parent/getChildren" id="discussion-post-${post/id}">
 		<x metal:use-macro="discussion_post_detail" />
 		<tal:block tal:condition="post/hasChildren" tal:define="parent post"><x metal:use-macro="discussion_list" /></tal:block>
 	</li>
@@ -83,18 +41,11 @@
 		<strong>Autor:</strong>
 		<em><a tal:condition="post/email" tal:content="post/nick" href="mailto:${post/email}" /></em>
 			<span tal:condition="not: post/email" tal:content="post/nick" />
-	        <a tal:condition="post/www" href="${post/www}">www</a>
+	        <a tal:condition="post/www" target="_blank" href="${post/www}">www</a>
 	        | <strong>Zasláno:</strong>
-		<span tal:REPLACE="post/created" />
+		<span tal:replace="post/createdDateTime" />
 	</div>
-	<div class="content wsw" tal:content="structure post/body" class="body" />
-	<!-- <a href="${discussion/url}?${SELF/getFormGroupName}[${replyToParamName}]=${post/id}#new-post">Odpovědět</a> -->
-	<form action="${discussion/url}?${SELF/getFormGroupName}[${replyToParamName}]=${post/id}#new-post" id="reply-${post/id}" method="post"><div><input type="submit" name="reply" value="Odpovědět" /></div></form>
-	<div class="xt-admin" tal:condition="xtAdmin">
-		<form method="post" onsubmit="return (confirm('Skutečně chceš smazat příspěvek -${post/title}- autora -${post/nick}- i se všemi podřazenými příspěvky?') ? true : false)">
-			<input type="hidden" name="${SELF/getFormGroupName}[xt][id]" value="${post/id}" />
-			<input type="hidden" name="${SELF/getFormGroupName}[xt][action]" value="delete" />
-			<input type="submit" name="${SELF/getFormGroupName}[xt][submit]" value="delete" />
-		</form>
-	</div>
+	<div class="content wsw" tal:content="structure post/body" />
+	<tal:block tal:replace="structure post/formToReply" />
+	<tal:block tal:content="structure post/form_xt_delete" />
 </div>
