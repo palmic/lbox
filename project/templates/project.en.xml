@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <translation>
 	<text id="error_17001">povinná hodnota není vyplněna</text>
+
+	<text id="paging_page_previous">previous</text>
+	<text id="paging_page_next">next</text>
+	<text id="paging_goto_page_previous">go to previous page</text>
+	<text id="paging_goto_page_next">go to next page</text>
 </translation>
