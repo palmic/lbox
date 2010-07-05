@@ -15,6 +15,18 @@ class DiscussionNew extends LBoxComponent
 	 */
 	protected $record;
 
+	protected function executeStart() {
+		try {
+			parent::executeStart();
+			$outputFilter	= new OutputFilterDiscussion($this->config);
+			$outputFilter	->setRecord($this->getRecord());
+			$this->config->setOutputFilter($outputFilter);
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
 	protected function executePrepend(PHPTAL $TAL) {
 		try {
 		}
@@ -34,7 +46,7 @@ class DiscussionNew extends LBoxComponent
 			}
 			$pageID			= LBoxConfigManagerStructure::getInstance()->getPageByUrl(LBOX_REQUEST_URL_VIRTUAL)->id;
 			$locationURL	= $this->getLocationUrlParam();
-			$discussions = new DiscussionsRecords(array("pageId" => $pageID, "urlParam" => $locationURL), array("lft" => 1), array(0, 1));
+			$discussions = new DiscussionsRecords(array("pageId" => $pageID/*, "urlParam" => $locationURL*/), array("lft" => 1), array(0, 1));
 			if ($discussions->count() < 1) {
 				// pokud diskuze nebyla nalezena, vytvorime ji a vratime
 				$discussion 			= new DiscussionsRecord();
@@ -45,7 +57,7 @@ class DiscussionNew extends LBoxComponent
 			else {
 				$discussion 			= $discussions->current();
 			}
-			$discussion->setOutputFilter(new OutputFilterDiscussion($discussion));
+			$discussion->setOutputFilter(new OutputFilterDiscussionRecord($discussion));
 
 			return $this->record = $discussion;
 		}

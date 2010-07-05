@@ -6,9 +6,6 @@
 		<span class="text"><span class="lft"><span class="rgt"><span class="mdl"><input 	class="text" type="text" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]"
 				tal:attributes="value SELF/getValue | SELF/getDefault; maxlength SELF/getLengthMax | default; size SELF/getLengthMax | default; disabled SELF/getDisabled" /></span></span></span></span></label>
 	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
-		<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
-			<div tal:condition="exists: exceptions/17001">Prosím vyplňte www</div>
-			<div tal:condition="exists: exceptions/17010">www není vyplněno správně</div>
-		</div>
+		<div tal:condition="exists: exceptions/17001">Prosíme vyplňte titulek</div>
 	</div>
 </div>

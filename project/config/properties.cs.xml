@@ -17,12 +17,6 @@
   <property name="page_title_pattern_photogallery">$properties_web_title | fotogalerie: $photogallery_name</property>
   <!-- vzor titlu stranky zobrazujici clanek -->
   <property name="page_rss_title_pattern">$page_title na lbox.cz</property>
-  <!-- vzor titlu RSS stranky -->
-  <property name="page_rss_discussion_article_title_pattern">$page_title článku $article_heading na lbox.cz</property>
-  <!-- vzor titlu RSS stranky komentaru clanku -->
-  <property name="page_rss_discussion_party_title_pattern">$page_title party $article_heading na $properties_web_title</property>
-  <!-- vzor titlu RSS stranky komentaru party -->
-  <property name="page_rss_discussion_guestbook_title_pattern">$page_title guestbooku na lbox.cz</property>
   <!-- vzor titlu RSS stranky komentaru guestbooku -->
   <property name="ref_page_xt_admin">999</property>
   <!-- id stranky, pro extranet admin -->
@@ -34,8 +28,6 @@
   <!-- id stranky, ktera potvrzuje confirm registrace -->
   <property name="path_photos_content"><![CDATA[<project>/img/content]]></property>
   <!-- tyto hodnoty se davaji natvrdo, to znamena, ze kdyz zde bude 0, pouzije se jako maxlength formularoveho pole opravdu 0 -->
-  <property name="form_max_length_discussion_title">50</property>
-  <property name="form_max_length_discussion_text">250</property>
   <property name="form_max_length_nick">15</property>
   <property name="form_max_length_email">35</property>
   <property name="form_max_length_phone">20</property>
@@ -45,6 +37,17 @@
   <property name="form_max_length_surname">20</property>
   <property name="form_max_length_company">30</property>
   <property name="paging_range">5</property>
+
+  <!-- diskuze -->
+  <property name="discussion_antispam">1</property>
+  <property name="discussion_recaptcha">0</property>
+  <property name="form_max_length_discussion_title">50</property>
+  <property name="form_max_length_discussion_text">250</property>
+  <!-- vzor titlu RSS stranky -->
+  <property name="page_rss_discussion_article_title_pattern">$page_title článku $article_heading na lbox.cz</property>
+  <!-- vzor titlu RSS stranky komentaru clanku -->
+  <property name="page_rss_discussion_party_title_pattern">$page_title party $article_heading na $properties_web_title</property>
+
   <!-- odesilatel confirm mailu registrace -->
   <property name="registration_confirm_mail_from">info@lbox.cz</property>
   <!-- subject confirm mailu registrace -->
