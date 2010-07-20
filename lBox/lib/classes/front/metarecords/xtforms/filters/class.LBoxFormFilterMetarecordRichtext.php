@@ -13,6 +13,7 @@ class LBoxFormFilterMetarecordRichtext extends LBoxFormFilter
 									'output-html' => false,
 									'output-xhtml' => true,
 									'show-body-only' => true,
+									'clean' => true,
 									'wrap' => 200);
 				$tidy	= new tidy();
 				//var_dump($content);
