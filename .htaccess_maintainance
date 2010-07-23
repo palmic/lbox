@@ -1,4 +1,5 @@
 RewriteEngine On
+RewriteBase /
 
 RewriteRule ^(.*).sql$ /
 RewriteRule ^(.*).gz$ /
@@ -56,7 +57,7 @@ RewriteRule ^(.*) msg_maintainance.html [L]
 
 
 # lighttpd equivalent configuration:
-# 
+#
 # $HTTP["host"] == "lbox.localhost.cz" {
 #             server.document-root = "/windows/E/www/LBox"
 # 	    url.rewrite-once = (
@@ -80,7 +81,7 @@ RewriteRule ^(.*) msg_maintainance.html [L]
 #         	"^/data_test/(.*)$" => "/project/data/test/$1",
 #         	"^/doc/(.*)$" => "/project/documents/doc/html/$1",
 #         	"^/phpunit/(.*)$" => "/project/documents/tests/PHPUnit/reports/$1",
-# 
+#
 #         	"^(.*)$" => "/index.php?$1",
 # 		)
 # }
