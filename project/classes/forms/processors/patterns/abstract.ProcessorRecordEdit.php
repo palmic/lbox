@@ -64,6 +64,14 @@ abstract class ProcessorRecordEdit extends LBoxFormProcessor
 				if ($control->getName() == eval("return $classNameRecord::\$idColName;")) continue;
 				if ($control->getName() == "filter_by") continue;
 				if (is_numeric(array_search($control->getName(), $this->controlsIgnore))) continue;
+				if ($control instanceof LBoxFormControlChooseMore) {
+					// choose more pocita s defaultnim schematem sloupcu odvozenych od options values podle LBoxFormProcessorSQLCreateTable
+					foreach ($control->getValue() as $value) {
+						$colName	= strtolower($control->getName()) ."_". strtolower(LBoxUtil::getURLByNameString($value));
+						$record->$colName = 1;
+					}
+					continue;
+				}
 				if ($control->getName() == "photo_delete")	{
 					if ($control->getValue()) {
 						$record->deletePhoto();
