@@ -65,10 +65,19 @@ abstract class ProcessorRecordEdit extends LBoxFormProcessor
 				if ($control->getName() == "filter_by") continue;
 				if (is_numeric(array_search($control->getName(), $this->controlsIgnore))) continue;
 				if ($control instanceof LBoxFormControlChooseMore) {
+					$colNamesChooseMoreChecked[$control->getName()]	= array();
 					// choose more pocita s defaultnim schematem sloupcu odvozenych od options values podle LBoxFormProcessorSQLCreateTable
 					foreach ($control->getValue() as $value) {
-						$colName	= strtolower($control->getName()) ."_". strtolower(LBoxUtil::getURLByNameString($value));
+						$colNamesChooseMoreChecked[$control->getName()][] = $colName = strtolower($control->getName()) ."_". strtolower(LBoxUtil::getURLByNameString($value));
 						$record->$colName = 1;
+					}
+					// zpetna kontrola options, ktere nebyly zaskrtle a tim by mely byt vynulovany
+					foreach ($record as $colName => $value) {
+						if (preg_match('/^'. strtolower($control->getName()) .'_' .'(.+)$/', $colName, $matches) && $value) {
+							if (!is_numeric(array_search($colName, $colNamesChooseMoreChecked[$control->getName()]))) {
+								$record->$colName = 0;
+							}
+						}
 					}
 					continue;
 				}
@@ -87,6 +96,7 @@ abstract class ProcessorRecordEdit extends LBoxFormProcessor
 				$colName	= $control->getName();
 				$record	->$colName	= strlen($control->getValue()) > 0 ? $control->getValue() : "<<NULL>>";
 			}
+//DbControl::$debug=true;
 			$record->store();
 		}
 		catch (Exception $e) {
