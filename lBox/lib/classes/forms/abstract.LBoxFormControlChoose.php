@@ -48,7 +48,7 @@ abstract class LBoxFormControlChoose extends LBoxFormControl
 		try {
 			$value	= parent::getValue();
 			if (strlen($value) > 0) {
-				if (!array_key_exists($value, $this->getOptions())) {
+				if (!array_key_exists((string)$value, (array)$this->getOptions())) {
 					throw new LBoxExceptionFormControl("$value: ". LBoxExceptionFormControl::MSG_FORM_CONTROL_VALUE_NOT_OPTION, LBoxExceptionFormControl::CODE_FORM_CONTROL_VALUE_NOT_OPTION);
 				}
 			}
