@@ -36,8 +36,8 @@ lbox_forms_show	= function(control) {
 			input.disabled = false;
 		}
 	});
-	/*if (Fx && Fx.Morph) {
-		if (control.retrieve('sizeOri').y) {
+	if (Fx && Fx.Morph) {
+		if (control.retrieve('sizeOri') && control.retrieve('sizeOri').y) {
 			if (control.getStyle('height').toInt() == 0) {
 				control.setStyle('height', 0);
 				control.setStyle('display', 'block');
@@ -45,21 +45,15 @@ lbox_forms_show	= function(control) {
 					control.store('fxmorph', new Fx.Morph(control.id, {duration: 'short', transition: Fx.Transitions.Sine.easeOut}));
 				}
 				control.retrieve('fxmorph').start({'height': [0, control.retrieve('sizeOri').y]}).chain(
-						function(){ this.start({'background-color': ['#FFFFFF', '#80B0FF']}); },
-						function(){ this.start({'background-color': ['#80B0FF', '#FFFFFF']}); },
-						function(){ this.start({'background-color': ['#FFFFFF', '#80B0FF']}); },
-						function(){ this.start({'background-color': ['#80B0FF', '#FFFFFF']}); }
+						function(){ this.start({'background-color': ['#FFFFFF', '#80B0FF']}); },function(){ this.start({'background-color': ['#80B0FF', '#FFFFFF']}); }
+						/*,function(){ this.start({'background-color': ['#FFFFFF', '#80B0FF']}); },function(){ this.start({'background-color': ['#80B0FF', '#FFFFFF']}); }*/
 				);
 			}
 		}
-		else {
-			control.setStyle('display', 'block');
-			control.setStyle('height', 'auto');
-		}
 	}
-	else {*/
+	else {
 		control.setStyle('display', 'block');
-	/*}*/
+	}
 }
 lbox_forms_hide	= function(control, calledByChange) {
 	control.getElements('input').each(function(input, index) {
@@ -101,7 +95,7 @@ lbox_forms_hide	= function(control, calledByChange) {
 		input.disabled = true;
 		lbox_forms_input_deactivate_classname(input);
 	});
-	/*if (Fx && Fx.Morph) {
+	if (Fx && Fx.Morph) {
 		control.store('sizeOri', control.getSize());
 		control.setStyle('overflow', 'hidden');
 		if (control.getStyle('height').toInt() > 0) {
@@ -111,14 +105,10 @@ lbox_forms_hide	= function(control, calledByChange) {
 			}
 			control.retrieve('fxmorph').start({'height': [control.retrieve('sizeOri').y, 0]});
 		}
-		else {
-			control.setStyle('height', '0px');
-		}
+	}
+	else {
 		control.setStyle('display', 'none');
 	}
-	else {*/
-		control.setStyle('display', 'none');
-	/*}*/
 }
 lbox_forms_switch_slaves_by_master = function(masterInput, calledByChange) {
 	var masterControl		= masterInput.getParent('.control');
@@ -261,6 +251,9 @@ window.addEvent('domready', function() {
 	$$('.control').each(function(control, index) {
 		if (!control.getParent('form').hasClass('disabled')) {
 			if (!control.hasClass('control-multiple')) {
+				if (Fx && Fx.Morph) {
+					control.store('sizeOri', control.getSize());control.setStyle('height', control.retrieve('sizeOri').y);
+				}
 				control.getElements('input').each(function(input, index) {
 					if (input.retrieve('disabledBefore') == undefined) {
 						if (input.disabled) {
