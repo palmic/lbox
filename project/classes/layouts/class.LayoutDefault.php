@@ -1,7 +1,7 @@
 <?php
 /**
  * Default component class for layouts
-* @author Michal Palma <palmic@email.cz>
+* @author Michal Palma <michal.palma@gmail.com>
 * @package LBox
 * @version 1.0
 

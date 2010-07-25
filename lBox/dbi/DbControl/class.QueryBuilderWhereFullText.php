@@ -2,7 +2,7 @@
 
 /**
  * Class defining universal FULLTEXT where conditions for QueryBuilder objects
- * @author Michal Palma <palmic at email dot cz>
+ * @author Michal Palma <michal.palma@gmail.com>
  * @package DbControl
  * @version 1.5
  * @date 2009-04-22

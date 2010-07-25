@@ -3,7 +3,7 @@
 require_once(LBOX_PATH_CORE_CLASSES . SLASH ."exceptions". SLASH ."class.LBoxExceptionCache.php");
 
 /**
- * @author Michal Palma <palmic at email dot cz>
+ * @author Michal Palma <michal.palma@gmail.com>
  * @package LBox
  * @version 1.0
  * @date 2008-02-13

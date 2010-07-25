@@ -2,7 +2,7 @@
 
 /**
 * Database platform control implementation. Classes for exact platform must be inherited from it
-* @author Michal Palma <palmic at email dot cz>
+* @author Michal Palma <michal.palma@gmail.com>
 
 * @package DbControl
 * @version 1.5

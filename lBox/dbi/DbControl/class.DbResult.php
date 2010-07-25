@@ -3,7 +3,7 @@
 
 /**
 * Class to managing DB result
-* @author Michal Palma <palmic at email dot cz>
+* @author Michal Palma <michal.palma@gmail.com>
 
 * @package DbControl
 * @version 1.5

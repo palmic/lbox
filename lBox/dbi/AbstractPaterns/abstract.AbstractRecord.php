@@ -5,7 +5,7 @@
  * you can specify new record by no $id specified. Cannot load record from db whithout $id!
  * Iterator interface implemented for array iterate to get Columns whithout known of their names. Cannot set them like array items! You can set them like public objects params
  * need DbControl class!
- * @author Michal Palma <palmic at email dot cz>
+ * @author Michal Palma <michal.palma@gmail.com>
  * @date 2006-02-07
  * @version 0.2 2008-09-16
  */

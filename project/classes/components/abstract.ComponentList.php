@@ -1,7 +1,7 @@
 <?php
 /**
  * trida obsahujici funkcnost seznamu vcetne strankovani - pro pouziti v komponentach/strankach zobrazujjicich strankovaci seznamy
-* @author Michal Palma <palmic@email.cz>
+* @author Michal Palma <michal.palma@gmail.com>
 * @package LBox
 * @version 1.0
 

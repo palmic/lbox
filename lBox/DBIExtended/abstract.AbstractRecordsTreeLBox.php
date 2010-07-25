@@ -2,7 +2,7 @@
 
 /**
  * adds LBoxOutputFilter compatibility
- * @author Michal Palma <palmic at email dot cz>
+ * @author Michal Palma <michal.palma@gmail.com>
  * @date 2007-11-03
  */
 abstract class AbstractRecordsTreeLBox extends AbstractRecordsTree
