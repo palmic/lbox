@@ -13,8 +13,8 @@ class LBoxFormProcessorSQLCreateTable extends LBoxFormProcessor
 					case $control instanceof LBoxFormControlMultiple: continue; break;
 					case $control->getName() == "id": continue; break;
 					case ($control instanceof LBoxFormControlChooseMore || $control instanceof LBoxFormControlChooseMoreFromRecords):
-						foreach ($control->getValue() as $value) {
-							echo "  `". strtolower($control->getName()) ."_". strtolower(LBoxUtil::getURLByNameString($value)) ."` integer(1) DEFAULT 0,<br />";
+						foreach ($control->getOptions() as $optionName => $option) {
+							echo "  `". strtolower($control->getName()) ."_". strtolower(LBoxUtil::getURLByNameString($optionName)) ."` integer(1) DEFAULT 0,<br />";
 						}
 					break;
 					default:
