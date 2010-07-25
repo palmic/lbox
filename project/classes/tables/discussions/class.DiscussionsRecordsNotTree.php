@@ -1,6 +1,6 @@
 <?php
 /**
-* @author Michal Palma <palmic@email.cz>
+* @author Michal Palma <michal.palma@gmail.com>
 * @package LBox techhouse.cz
 * @since 2010-07-05
 */

@@ -3,7 +3,7 @@
 /**
  * abstract class - parent of classes to handling with database records collection
  * need DbControl class!
- * @author Michal Palma <palmic at email dot cz>
+ * @author Michal Palma <michal.palma@gmail.com>
  * @date 2006-02-07
  * @version 0.2 2008-09-16
  */

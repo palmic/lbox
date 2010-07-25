@@ -1,7 +1,7 @@
 <?php
 /**
 * system config manager
-* @author Michal Palma <palmic at email dot cz>
+* @author Michal Palma <michal.palma@gmail.com>
 * @package LBox
 * @version 1.0
 

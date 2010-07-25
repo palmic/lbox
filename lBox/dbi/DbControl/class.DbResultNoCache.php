@@ -3,7 +3,7 @@
 
 /**
 * Class to managing DB result whithout caching results. Essential for handling big data amount.
-* @author Michal Palma <palmic at email dot cz>
+* @author Michal Palma <michal.palma@gmail.com>
 
 * @package DbControl
 * @version 1.5

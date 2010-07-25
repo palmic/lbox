@@ -3,7 +3,7 @@
 
 /**
 * Database platform implementation for MSSQL.
-* @author Michal Palma <palmic at email dot cz>
+* @author Michal Palma <michal.palma@gmail.com>
 
 * @package DbControl
 * @version 1.5

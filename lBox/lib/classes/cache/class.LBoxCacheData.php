@@ -2,7 +2,7 @@
 
 /**
  * Obecna Cache trida pro cachovani obecne cehokoli
- * @author Michal Palma <palmic at email dot cz>
+ * @author Michal Palma <michal.palma@gmail.com>
  * @package LBox
  * @version 1.0
  * @date 2010-04-08

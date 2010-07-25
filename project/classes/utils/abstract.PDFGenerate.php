@@ -5,7 +5,7 @@
  *  - !je treba definovat $fileNameTemplateHTML!
  *  - !je treba mit namapovanou cestu k PDML sablonam property path_templates_pdml v properties.xml! 
  *  - v parametru konstruktoru je mozno predat record, ktery je potom v sablone dostupny jako SELF/dataRecord
- * @author Michal Palma <palmic@email.cz>
+ * @author Michal Palma <michal.palma@gmail.com>
  * @package LBox ubytovny-v-praze.cz
  * @version 1.0
  * @license http://creativecommons.org/licenses/by-sa/3.0/

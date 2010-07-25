@@ -2,7 +2,7 @@
 
 /**
  * adds Tree functionality to Records class
- * @author Michal Palma <palmic at email dot cz>
+ * @author Michal Palma <michal.palma@gmail.com>
  * @date 2007-09-16
  */
 abstract class AbstractRecordsTree extends AbstractRecords

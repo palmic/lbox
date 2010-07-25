@@ -1,7 +1,7 @@
 <?php
 /**
  * Default page class used in case of no defined page class
-* @author Michal Palma <palmic@email.cz>
+* @author Michal Palma <michal.palma@gmail.com>
 * @package LBox
 * @version 1.0
 
