@@ -1,4 +1,4 @@
-<div class="control" id="control-${id}" tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
+<div class="control" id="control-${id}" tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}" tal:attributes="title SELF/title | default">
 	<label for="${id}"><span class="label">${SELF/getLabel}
 		<span tal:condition="SELF/isRequired" class="info-required">* </span></span>
 		<span class="select"><span class="lft"><span class="rgt"><span class="mdl">
