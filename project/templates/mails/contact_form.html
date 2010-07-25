@@ -8,10 +8,14 @@
 		<h4>Kontaktní formulář</h4>
 		<p><a href="mailto:${SELF/data/getControls/email/getValue}">${SELF/data/getControls/name/getValue} ${SELF/data/getControls/surname/getValue}</a>
 			odeslal kontaktní formulář s následujícími daty:</p>
-		<h5>Firma:</h5>
-		<p>${SELF/data/getControls/company/getValue}</p>
-		<h5>Telefon:</h5>
-		<p>${SELF/data/getControls/phone/getValue}</p>
+		<tal:block tal:condition="exists: SELF/data/getControls/company">
+			<h5>Firma:</h5>
+			<p>${SELF/data/getControls/company/getValue}</p>
+		</tal:block>
+		<tal:block tal:condition="exists: SELF/data/getControls/phone">
+			<h5>Telefon:</h5>
+			<p>${SELF/data/getControls/phone/getValue}</p>
+		</tal:block>
 		<h5>Zpráva:</h5>
 		<p>${SELF/data/getControls/message/getValue}</p>
 	</body>
