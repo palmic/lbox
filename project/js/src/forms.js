@@ -85,7 +85,7 @@ lbox_forms_hide	= function(control, calledByChange) {
 			input.value	= '';
 		}
 		if (input.retrieve('disabledBefore') == undefined) {
-			if (input.disabled) {
+			if (input.disableddaa) {
 				input.store('disabledBefore', true);
 			}
 			else {
@@ -96,7 +96,9 @@ lbox_forms_hide	= function(control, calledByChange) {
 		lbox_forms_input_deactivate_classname(input);
 	});
 	if (Fx && Fx.Morph) {
-		control.store('sizeOri', control.getSize());
+		if (!control.retrieve('sizeOri')) {
+			control.store('sizeOri', control.getSize());
+		}
 		control.setStyle('overflow', 'hidden');
 		if (control.getStyle('height').toInt() > 0) {
 			control.setStyle('height', control.getStyle('height').toInt());
@@ -252,7 +254,9 @@ window.addEvent('domready', function() {
 		if (!control.getParent('form').hasClass('disabled')) {
 			if (!control.hasClass('control-multiple')) {
 				if (Fx && Fx.Morph) {
-					control.store('sizeOri', control.getSize());control.setStyle('height', control.retrieve('sizeOri').y);
+					if (!control.retrieve('sizeOri')) {
+						control.store('sizeOri', control.getSize());control.setStyle('height', control.retrieve('sizeOri').y);
+					}
 				}
 				control.getElements('input').each(function(input, index) {
 					if (input.retrieve('disabledBefore') == undefined) {
