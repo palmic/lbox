@@ -42,8 +42,9 @@ try {
 	}
 	else {
 		// get the node data
-		header("HTTP/1.1 200 OK");
-		die(getMetanodeByPostData($_GET)->getContent());
+		//header("HTTP/1.1 200 OK");
+		echo(getMetanodeByPostData($_GET)->getContent());
+		exit;
 	}
 }
 catch (Exception $e) {
