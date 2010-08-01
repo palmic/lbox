@@ -51,7 +51,7 @@ if ( $_POST['submit'] == "Submit" ) {
 
   if ( $_POST['Message'] == '' ) {
     $body             = $mail->getFile('contents.html');
-    $body             = eregi_replace("[\]",'',$body);
+    $body             = preg_replace('/[\]/i','',$body);
   } else {
     $body = $_POST['Message'];
   }
@@ -196,7 +196,8 @@ $mail = new PHPMailer();
 <?php
 if ( $_POST['Message'] == '' ) {
   echo '$body             = $mail->getFile(\'contents.html\');' . "\n";
-  echo '$body             = eregi_replace("[\]",\'\',$body);' . "\n";
+  echo '$body             = preg_replace("/[\]/i",\'\',$body);' . "\n";
+  //echo '$body             = eregi_replace("[\]",\'\',$body);' . "\n";
 } else {
   echo '$body = ' . $_POST['Message'] . "\n";
 }

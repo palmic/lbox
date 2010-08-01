@@ -10,6 +10,11 @@ define("LBOX_DIRNAME_PLUGINS", "plugins");
 
 $slash	= SLASH;
 
+/**
+ * environment settings
+ */
+date_default_timezone_set('Europe/Berlin');
+
 $dirArr 			= explode($slash, dirname(__FILE__));
 unset($dirArr[count($dirArr)-1]);
 $lBoxDirName		= end($dirArr);

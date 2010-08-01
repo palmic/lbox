@@ -1128,7 +1128,8 @@ function _match($token)
         default:
             // if it's a reference
             if (preg_match('/^\$?[A-Ia-i]?[A-Za-z]\$?[0-9]+$/',$token) and
-               !ereg("[0-9]",$this->_lookahead) and 
+               !preg_match('/\d/',$this->_lookahead) and
+               //!preg_match('/\d/',$this->_lookahead) and 
                ($this->_lookahead != ':') and ($this->_lookahead != '.') and
                ($this->_lookahead != '!'))
  {
@@ -1136,32 +1137,32 @@ function _match($token)
             }
             // If it's an external reference (Sheet1!A1 or Sheet1:Sheet2!A1)
             elseif (preg_match("/^[A-Za-z0-9_]+(\:[A-Za-z0-9_]+)?\![A-Ia-i]?[A-Za-z][0-9]+$/",$token) and
-                   !ereg("[0-9]",$this->_lookahead) and
+                   !preg_match('/\d/',$this->_lookahead) and
                    ($this->_lookahead != ':') and ($this->_lookahead != '.'))
  {
                 return $token;
             }
             // if it's a range (A1:A2)
             elseif (preg_match("/^(\$)?[A-Ia-i]?[A-Za-z](\$)?[0-9]+:(\$)?[A-Ia-i]?[A-Za-z](\$)?[0-9]+$/",$token) and 
-                   !ereg("[0-9]",$this->_lookahead))
+                   !preg_match('/\d/',$this->_lookahead))
  {
                 return $token;
             }
             // if it's a range (A1..A2)
             elseif (preg_match("/^(\$)?[A-Ia-i]?[A-Za-z](\$)?[0-9]+\.\.(\$)?[A-Ia-i]?[A-Za-z](\$)?[0-9]+$/",$token) and 
-                   !ereg("[0-9]",$this->_lookahead))
+                   !preg_match('/\d/',$this->_lookahead))
  {
                 return $token;
             }
             // If it's an external range like Sheet1:Sheet2!A1:B2
             elseif (preg_match("/^[A-Za-z0-9_]+(\:[A-Za-z0-9_]+)?\!([A-Ia-i]?[A-Za-z])?[0-9]+:([A-Ia-i]?[A-Za-z])?[0-9]+$/",$token) and
-                   !ereg("[0-9]",$this->_lookahead))
+                   !preg_match('/\d/',$this->_lookahead))
  {
                 return $token;
             }
 	    // If it's an external range like 'Sheet1:Sheet2'!A1:B2
             elseif (preg_match("/^'[A-Za-z0-9_ ]+(\:[A-Za-z0-9_ ]+)?'\!([A-Ia-i]?[A-Za-z])?[0-9]+:([A-Ia-i]?[A-Za-z])?[0-9]+$/",$token) and
-                   !ereg("[0-9]",$this->_lookahead))
+                   !preg_match('/\d/',$this->_lookahead))
  {
                 return $token;
             }
@@ -1173,12 +1174,14 @@ function _match($token)
                 return $token;
             }
             // If it's a string (of maximum 255 characters)
-            elseif (ereg("^\"[^\"]{0,255}\"$",$token))
+            elseif (preg_match("^\"[^\"]{0,255}\"$",$token))
+            //elseif (ereg("^\"[^\"]{0,255}\"$",$token))
  {
                 return $token;
             }
             // if it's a function call
-            elseif (eregi("^[A-Z0-9\xc0-\xdc\.]+$",$token) and ($this->_lookahead == "(")) {
+            elseif (preg_match('/^[A-Z0-9\xc0-\xdc\.]+$/i',$token) and ($this->_lookahead == "(")) {
+            //elseif (eregi("^[A-Z0-9\xc0-\xdc\.]+$",$token) and ($this->_lookahead == "(")) {
                 return $token;
             }
             return '';
@@ -1283,7 +1286,8 @@ function _condition()
 function _expression()
  {
     // If it's a string return a string node
-    if (ereg("^\"[^\"]{0,255}\"$", $this->_current_token))
+    if (preg_match("^\"[^\"]{0,255}\"$", $this->_current_token))
+    //if (ereg("^\"[^\"]{0,255}\"$", $this->_current_token))
  {
         $result = $this->_createTree($this->_current_token, '', '');
         $this->_advance();
@@ -1436,7 +1440,8 @@ function _fact()
         $this->_advance();
         return $result;
     }
- elseif (eregi("^[A-Z0-9\xc0-\xdc\.]+$",$this->_current_token))
+ elseif (preg_match('/^[A-Z0-9\xc0-\xdc\.]+$/i', $this->_current_token))
+ //elseif (eregi("^[A-Z0-9\xc0-\xdc\.]+$",$this->_current_token))
  {
     // if it's a function call
         $result = $this->_func();
@@ -1468,7 +1473,7 @@ function _func()
             }
  else {
                 trigger_error("Sintactic error: coma expected in ".
-                                  "function $function, {$num_args}º arg", E_USER_ERROR);
+                                  "function $function, {$num_args}ï¿½ arg", E_USER_ERROR);
             }
             $result2 = $this->_condition();
             if ($this->isError($result2)) {

@@ -8,7 +8,7 @@ class LBoxFormValidatorFileName extends LBoxFormValidator
 	 * regularni vyraz kontrolujici vymezeni povolenych znaku v nazvu filu
 	 * @var string
 	 */
-	protected $regSigns	= '^([[:alnum:]_\.\-])+$';
+	protected $regSigns	= '^([\w_\.\-])+$';
 
 	public function validate(LBoxFormControl $control = NULL) {
 		try {
@@ -20,7 +20,8 @@ class LBoxFormValidatorFileName extends LBoxFormValidator
 				$value		= $control->getValue();
 			}
 			if (strlen($value) > 0)
-			if (!ereg($this->regSigns, $value)) {
+			if (!preg_match('/'.$this->regSigns.'/', $value)) {
+			//if (!ereg($this->regSigns, $value)) {
 				throw new LBoxExceptionFormValidator(	LBoxExceptionFormValidator::MSG_FORM_VALIDATION_FILENAME_INVALID,
 														LBoxExceptionFormValidator::CODE_FORM_VALIDATION_FILENAME_INVALID);
 			}
