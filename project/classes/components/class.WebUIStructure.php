@@ -74,7 +74,7 @@ class WebUIStructure extends WebUI
 				else {
 					$subControls["structure"]["in_menu"]	->setTemplateFileName("lbox_form_control_choose_one_select.html");
 				}
-			$subControls["structure"]["parent_id"]	= new LBoxFormControlChooseOne("parent_id", "parent", $this->getPage() ? $this->getPage()->config->getParent()->id : NULL);
+			$subControls["structure"]["parent_id"]	= new LBoxFormControlChooseOne("parent_id", "parent", $this->getPage() && $this->getPage()->config->hasParent() ? $this->getPage()->config->getParent()->id : NULL);
 			$subControls["structure"]["parent_id"]	->setTemplateFileName("lbox_form_control_choose_one_select.html");
 				$this->fillControlChooseParentID($subControls["structure"]["parent_id"]);
 			$subControls["structure"]["move_before"]= new LBoxFormControlChooseOne("move_before", "přesunout před", $this->getPage() ? $this->getValueCurrentMoveBefore() : NULL);
@@ -89,7 +89,7 @@ class WebUIStructure extends WebUI
 				
 			foreach ($subControls as $themeName => $theme) {
 				foreach ($theme as $subControl) {
-					if (!$controls[$themeName] instanceof LBoxFormControlMultiple) {
+					if (!array_key_exists($themeName, $controls) || !$controls[$themeName] instanceof LBoxFormControlMultiple) {
 						$controls[$themeName]	= new LBoxFormControlMultiple($themeName);
 						$controls[$themeName]	->setTemplateFileName("webui_structure_multi.html");
 					}
