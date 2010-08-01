@@ -314,7 +314,8 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 				$columnsString	.= reset(self::getQuotesColumnName()) . $columnName . end(self::getQuotesColumnName());
 			}
 			foreach ($where->getPhrases() as $phrase) {
-				$phrase			 = ereg_replace("[[:punct:]]", "", $phrase);
+				$phrase			 = preg_replace('/[-!"#$%&\'()*+,./:;<=>?@[\\\]^_`{|}~]/', '', $phrase);
+				//$phrase			 = ereg_replace("[[:punct:]]", "", $phrase);
 				if (strlen(trim($phrase)) < 1) continue;
 				$phrase 		 = $this->escapeString($phrase);
 				$phrasesString	.= strlen($phrasesString) > 0 ? " " : "";

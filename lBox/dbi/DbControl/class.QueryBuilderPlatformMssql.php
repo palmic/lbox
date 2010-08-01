@@ -222,7 +222,8 @@ class QueryBuilderPlatformMssql extends QueryBuilderPlatform
 			$columnsString	= "";
 			$phrasesString	= "";
 			foreach ($where->getPhrases() as $phrase) {
-				$phrase			 = ereg_replace("[[:punct:]]", "", $phrase);
+				$phrase			 = preg_replace('/[-!"#$%&\'()*+,./:;<=>?@[\\\]^_`{|}~]/', '', $phrase);
+				//$phrase			 = ereg_replace("[[:punct:]]", "", $phrase);
 				if (strlen(trim($phrase)) < 1) continue;
 				$phrase 		 = $this->escapeString($phrase);
 				$phrasesString	.= strlen($phrasesString) > 0 ? " " : "";

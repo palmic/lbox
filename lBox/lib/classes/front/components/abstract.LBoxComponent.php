@@ -520,7 +520,8 @@ abstract class LBoxComponent
 			$pagingUrlParamPattern = LBoxConfigSystem::getInstance()->getParamByPath("output/paging/paging_url_param_pattern");
 			if (count($params = $this->getUrlParamsArray()) > 0) {
 				foreach ($params as $param) {
-					if (ereg($pagingUrlParamPattern, $param, $regs)) {
+					if (preg_match("/$pagingUrlParamPattern/", $param, $regs)) {
+					//if (ereg($pagingUrlParamPattern, $param, $regs)) {
 						// nalezneme prvni numericky reg - pro univerzalnost vzoru
 						foreach ($regs as $reg) {
 							if (is_numeric($reg)) {
@@ -947,7 +948,8 @@ abstract class LBoxComponent
 
 			if (($paramsCount = count($params = $this->getUrlParamsArray())) > 0) {
 				foreach ($params as $kP => $param) {
-					if (ereg($pagingUrlParamPattern, $param, $regs)) {
+					if (preg_match("/$pagingUrlParamPattern/", $param, $regs)) {
+					//if (ereg($pagingUrlParamPattern, $param, $regs)) {
 						// ulozime si key parametru strankovani
 						$paramPagingKey	= $kP;
 						// zrusime z pole prvni klic s celym stringem
@@ -973,7 +975,8 @@ abstract class LBoxComponent
 			}
 			// umele sestaveni regs pro pripad, ze nemame po ruce vygenerovane z aktualniho strankovani
 			if (count((array)$regs) < 1) {
-				if (!ereg($pagingUrlParamPattern, $pagingUrlParamExample, $regs)) {
+				if (!preg_match("/$pagingUrlParamPattern/", $pagingUrlParamExample, $regs)) {
+				//if (!ereg($pagingUrlParamPattern, $pagingUrlParamExample, $regs)) {
 					throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_PAGING_URLPARAM_EXAMPLE_NOT_CORRESPOND_PATTERN, LBoxExceptionConfig::CODE_PAGING_URLPARAM_EXAMPLE_NOT_CORRESPOND_PATTERN);
 				}
 				// zrusime z pole prvni klic s celym stringem
@@ -1027,7 +1030,8 @@ abstract class LBoxComponent
 		if (($paramsCount = count($params = $this->getUrlParamsArray())) > 0) {
 			foreach ($params as $k => $param) {
 				// nalezene strankovani - ulozime dany key
-				if (ereg($pagingUrlParamPattern, $param, $regs)) {
+				if (preg_match("/$pagingUrlParamPattern/", $param, $regs)) {
+				//if (ereg($pagingUrlParamPattern, $param, $regs)) {
 					$paramPagingKey = $k;
 				}
 			}
