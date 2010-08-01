@@ -188,7 +188,7 @@ class WebUIStructure extends WebUI
 			}
 			$iterator	= $root instanceof LBoxConfigItemStructure ? $root->getChildNodesIterator() : LBoxConfigManagerStructure::getInstance()->getIterator();
 			foreach($iterator as $page) {
-				if ($page->id == $this->getPage()->id) continue;
+				if ($this->getPage() && $page->id == $this->getPage()->id) continue;
 				$control->addOption(new LBoxFormControlOption($page->id, $pre . $page->heading ." - ". $page->url));
 				if ($page->hasChildren()) {
 					$this->fillControlChooseParentID($control, $page, "$pre&nbsp;&nbsp;&nbsp;&nbsp;");	
@@ -232,7 +232,7 @@ class WebUIStructure extends WebUI
 								: LBoxConfigManagerStructure::getInstance()->getIterator();
 			$control->addOption(new LBoxFormControlOption(0, "&nbsp;"));
 			foreach($iterator as $page) {
-				if ($page->id == $this->getPage()->id) continue;
+				if ($this->getPage() && $page->id == $this->getPage()->id) continue;
 				$control->addOption(new LBoxFormControlOption($page->id, $page->heading ." - ". $page->url));
 			}
 		}
