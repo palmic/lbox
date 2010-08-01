@@ -7,18 +7,45 @@
 */
 class PageTest extends PageRecordsList
 {
-	protected $classNameRecord				= "ArticlesNewsRecord";
-	protected $classNameRecordOutputFilter	= "OutputFilterArticleNews";
-	protected $propertyNamePagingPageRange 	= "";
-	protected $propertyNamePagingBy 		= "";
-	protected $propertyNameRefPageEdit		= "ref_page_xt_edit_article_news";
-	protected $orderBy						= array("time_published" => 0, "ref_access" => 0);
+	/**
+	 * cache var
+	 * @var LBoxForm
+	 */
+	protected $form;
 	
-	protected function executePrepend(PHPTAL $TAL) {
+	/*protected function executePrepend(PHPTAL $TAL) {
 		//DbControl::$debug = true;
 		try {
 		}
 		catch (Exception $e) {
+			throw $e;
+		}
+	}*/
+	
+	/**
+	 * @return LBoxForm
+	 */
+	public function getForm() {
+		try {
+			if ($this->form instanceof LBoxForm) {
+				return $this->form;
+			}
+			
+			$controls["text"]			= new LBoxFormControlFill("text", "text");
+			$controls["text"]			->addFilter(new LBoxFormFilterTrim);
+			$controls["text"]			->addValidator(new ValidatorURLParam);
+			$controls["leaveempty"]		= new LBoxFormControlFill("leaveempty", "leave empty");
+			$controls["leaveempty"]		->setRequired();
+			
+			$this->form	= new LBoxForm("test");
+			foreach ($controls as $control) {
+				$this->form->addControl($control);
+			}
+			$this->form->addProcessor(new LBoxFormProcessorDev);
+			
+			return $this->form;
+		}
+		catch(Exception $e) {
 			throw $e;
 		}
 	}
