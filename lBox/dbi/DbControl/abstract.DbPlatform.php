@@ -115,6 +115,12 @@ abstract class DbPlatform
     * @return void
     */
     abstract protected function connect();
+
+    /**
+     * returns last connection used
+     * @return pointer
+     */
+    abstract static public function getLastConnection();
 }
 
 ?>

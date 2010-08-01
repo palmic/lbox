@@ -423,7 +423,8 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 		/*if (ini_get("magic_quotes_gpc") == 1 || strtolower(ini_get("magic_quotes_gpc")) == "on") {
 			return $string;
 		}*/
-		return mysql_escape_string($string);
+		return mysql_real_escape_string($string);
+		//return mysql_escape_string($string);
 	}
 }
 ?>
