@@ -122,7 +122,8 @@ class LBoxForm
 				throw new LBoxExceptionForm("$name: ". LBoxExceptionForm::MSG_FORM_DUPLICATE_FORMNAME, LBoxExceptionForm::CODE_FORM_DUPLICATE_FORMNAME);
 			}
 			self::$forms[$name]	= $this;
-			if (array_key_exists("LBox", (array)$_SESSION))
+			if (array_key_exists("LBox", (array)$_SESSION)
+				&& array_key_exists($this->getName(), (array)$_SESSION["LBox"]))
 			if ($_SESSION["LBox"]["Forms"][$this->getName()]["succes"]) {
 				unset($_SESSION["LBox"]["Forms"][$this->getName()]["succes"]);
 				$this->sentSucces	= true;
