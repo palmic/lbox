@@ -77,6 +77,12 @@ class LBoxForm
 	protected $doNotReload	= false;
 
 	/**
+	 * if true, __toString() method will throw Exception higher or write out it into code
+	 * @var bool
+	 */
+	protected $forceThrow = false;
+
+	/**
 	 * cache metody getFilesData
 	 * @var array
 	 */
@@ -449,10 +455,9 @@ class LBoxForm
 	}
 
 	/**
-	 * @param bool $forceThrow throw Exception higher or write out it into code
 	 * @return string
 	 */
-	public function __toString($forceThrow = false) {
+	public function __toString() {
 		try {
 			// pridat antispam, pokud je zapnut
 			if ($this->isAntiSpamSet()) {
@@ -464,7 +469,7 @@ class LBoxForm
 				$out	.= $this->getTAL()->execute();
 			}
 			catch (Exception $e) {
-				if ($forceThrow) {
+				if ($this->forceThrow) {
 					throw $e;
 				}
 				// var_dump($e);
@@ -494,6 +499,21 @@ class LBoxForm
 				$out 	= "<!--$out-->";
 			}
 			return $out;
+		}
+		catch (Exception $e) {
+			throw $e;
+		}
+	}
+
+	/**
+	 * __toString overloaded by forceThrow parameter
+	 * @param bool $forceThrow
+	 * @return string
+	 */
+	public function toString($forceThrow = false) {
+		try {
+			$this->forceThrow	= $forceThrow;
+			return $this->__toString();
 		}
 		catch (Exception $e) {
 			throw $e;
