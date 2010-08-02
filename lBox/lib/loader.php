@@ -13,7 +13,7 @@ $slash	= SLASH;
 /**
  * environment settings
  */
-date_default_timezone_set('Europe/Berlin');
+@date_default_timezone_set(date_default_timezone_get());
 
 $dirArr 			= explode($slash, dirname(__FILE__));
 unset($dirArr[count($dirArr)-1]);
