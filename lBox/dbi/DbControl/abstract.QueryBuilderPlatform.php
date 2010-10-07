@@ -2,6 +2,7 @@
 abstract class QueryBuilderPlatform
 {
 	protected $regExpDynamic	= "<<(.*)>>";
+	//protected $regExpDynamic	= "<<(.*)>>";
 	
 	/**
 	 * returns prior INSERT query
@@ -139,7 +140,7 @@ abstract class QueryBuilderPlatform
      */
     protected function getValueWrapped($value = "") {
     	// value is defined for direct use
-    	if (ereg($this->regExpDynamic, $value, $regs) > 0) {
+    	if (preg_match('/'.$this->regExpDynamic.'/', $value, $regs) > 0) {
     		return $regs[1];
     	}
     	switch (true) {

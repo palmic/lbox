@@ -591,7 +591,9 @@ abstract class AbstractRecord implements Iterator
 			if ($varName == "*") {
 				return $this->params;
 			}
-			return $this->params[$varName];
+			if (array_key_exists($varName, $this->params)) {
+				return $this->params[$varName];
+			}
 		}
 		catch (Exception $e) {
 			throw $e;

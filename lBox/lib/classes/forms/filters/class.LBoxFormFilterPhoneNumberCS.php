@@ -8,7 +8,8 @@ class LBoxFormFilterPhoneNumberCS extends LBoxFormFilter
 	 * regularni vyraz pro zjisteni, jestli
 	 * @var string
 	 */
-	protected $regPhone	= '^([[:digit:]]{9})$';
+	protected $regPhone	= '^([\d]{9})$';
+	//protected $regPhone	= '^([[:digit:]]{9})$';
 	
 	/**
 	 * predvolba pro konkretni zemi
@@ -18,7 +19,8 @@ class LBoxFormFilterPhoneNumberCS extends LBoxFormFilter
 	
 	public function filter(LBoxFormControl $control = NULL) {
 		try {
-			if (ereg($this->regPhone, $control->getValue())) {
+			if (preg_match('/'.$this->regPhone.'/', $control->getValue())) {
+			//if (ereg($this->regPhone, $control->getValue())) {
 				return $this->phoneNumberPrefix . $control->getValue();
 			}
 			return $control->getValue();

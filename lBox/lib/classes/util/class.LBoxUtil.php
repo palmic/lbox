@@ -58,7 +58,8 @@ class LBoxUtil
 			$pagingUrlParamPattern	= LBoxConfigSystem::getInstance()->getParamByPath("output/paging/paging_url_param_pattern");
 			$pagingUrlParamExample	= LBoxConfigSystem::getInstance()->getParamByPath("output/paging/paging_url_param_example");
 
-			if (!ereg($pagingUrlParamPattern, $pagingUrlParamExample, $regs)) {
+			if (!preg_match("/$pagingUrlParamPattern/", $pagingUrlParamExample, $regs)) {
+			//if (!ereg($pagingUrlParamPattern, $pagingUrlParamExample, $regs)) {
 				throw new LBoxExceptionConfig(LBoxExceptionConfig::MSG_PAGING_URLPARAM_EXAMPLE_NOT_CORRESPOND_PATTERN, LBoxExceptionConfig::CODE_PAGING_URLPARAM_EXAMPLE_NOT_CORRESPOND_PATTERN);
 			}
 			// zrusime z pole prvni klic s celym stringem
@@ -89,8 +90,9 @@ class LBoxUtil
 			$vzor = array("@&(.*?);@"); $nahrazeni = array("-"); $text = preg_replace($vzor, $nahrazeni, $out);
 			$out 	= strtr($out, array("á" => "a", "č" => "c", "ď" => "d", "é" => "e", "ě" => "e", "í" => "i", "ň" => "n", "ó" => "o", "ř" => "r", "š" => "s", "ť" => "t", "ú" => "u", "ů" => "u", "ý" => "y", "ž" => "z",
 			"." => "-", "," => "-", ";" => "-", ":" => "-", "&" => "and", "_" => "-", "@" => "", " " => "-"));
-			$out	= ereg_replace("[^[:alnum:]]", "-", $out);
-			$out	= ereg_replace("(-+)", "-", $out);
+			$out	= preg_replace("[^\w-]", "-", $out);
+			//$out	= ereg_replace("[^[:alnum:]]", "-", $out);
+			//$out	= ereg_replace("(-+)", "-", $out);
 			return 	$out;
 		}
 		catch (Exception $e) {
@@ -128,16 +130,18 @@ class LBoxUtil
 	 */
 	public static function getDateTimeStamp($date = "", $dayPrecission = false) {
 		try {
-			if (ereg("([0-9]{4})-([0-9]{1,2})-([0-9]{1,2}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})", $date, $ereg)) {
+			if (preg_match('/(\d{4})-(\d{1,2})-(\d{1,2}) (\d{1,2}):(\d{1,2}):(\d{1,2})/', $date, $regs)) {
+			//if (ereg("([0-9]{4})-([0-9]{1,2})-([0-9]{1,2}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})", $date, $regs)) {
 				if ($dayPrecission) {
-					return mktime(0, 0, 0, $ereg[2], $ereg[3], $ereg[1]);
+					return mktime(0, 0, 0, $regs[2], $regs[3], $regs[1]);
 				}
 				else {
-					return mktime($ereg[4], $ereg[5], $ereg[6], $ereg[2], $ereg[3], $ereg[1]);
+					return mktime($regs[4], $regs[5], $regs[6], $regs[2], $regs[3], $regs[1]);
 				}
 			}
-			else if (ereg("([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})", $date, $ereg)) {
-				return mktime(0, 0, 0, $ereg[2], $ereg[3], $ereg[1]);
+			else if (preg_match('/(\d{4})-(\d{1,2})-(\d{1,2})/', $date, $regs)) {
+			//else if (ereg("([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})", $date, $regs)) {
+				return mktime(0, 0, 0, $regs[2], $regs[3], $regs[1]);
 			}
 			else {
 				throw new LBoxException("Given date is not ISO formated ($date)");
@@ -367,7 +371,8 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 			if (!is_dir($pathTarget)) {
 				throw new LBoxExceptionFilesystem("'$pathTarget': ". LBoxExceptionFilesystem::MSG_DIRECTORY_NOT_EXISTS, LBoxExceptionFilesystem::CODE_DIRECTORY_NOT_EXISTS);
 			}
-			$fileName		= ereg_replace("[^[:alpha:]]", "_", $fileName);
+			$fileName		= preg_replace('/[^[A-Za-z]]/', "_", $fileName);
+			//$fileName		= ereg_replace("[^[:alpha:]]", "_", $fileName);
 			//$fileName 		= mb_convert_encoding($fileName, "UTF-8");
 			// pryc s diakritikou pokud mame prostredi s mbstring extension
 			$fileName 		= self::removeDiacritic($fileName);

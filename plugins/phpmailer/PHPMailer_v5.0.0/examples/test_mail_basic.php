@@ -11,7 +11,8 @@ require_once('../class.phpmailer.php');
 $mail             = new PHPMailer(); // defaults to using php "mail()"
 
 $body             = file_get_contents('contents.html');
-$body             = eregi_replace("[\]",'',$body);
+$body             = preg_replace('/[\]/i','',$body);
+//$body             = preg_replace('/[\]/i','',$body);
 
 $mail->AddReplyTo("name@yourdomain.com","First Last");
 

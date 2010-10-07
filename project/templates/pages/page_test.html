@@ -1,21 +1,4 @@
 <x tal:replace="lbox:slot_start" />
-	<h1 tal:content="SELF/page/heading" />
-	<tal:block tal:content="structure SELF/getFormNewRecord" />
-	<div class="metarecords metarecords-${SELF/getClassNameRecord}">
-	    <div class="news metarecord lbox-meta" tal:repeat="record SELF/getRecords">
-	        <h2><a href="#" title="přejít na ${record/heading}"><span class="metarecord-node-heading_${lbox:front.getDisplayLanguage}" tal:content="record/heading" /></a></h2>
-	        <div><img tal:condition="record/getPhoto" src="${record/getPhoto/url}" width="${record/getPhoto/size_x}" height="${record/getPhoto/size_y}" alt="${record/heading}" />
-			<tal:block class="metarecord-node-perex_${lbox:front.getDisplayLanguage}" tal:content="structure record/perex" /></div>
-	        <!--!p class="perex"><span class="date">${record/publishedDate}</span><span> | </span> 
-				<tal:block tal:replace="structure record/perex_raw" />
-				<img tal:condition="record/getPhoto" src="${record/getPhoto/url}" width="${record/getPhoto/size_x}" height="${record/getPhoto/size_y}" alt="${record/heading}" /></p-->
-			<tal:block tal:content="structure record/form_xt_delete" />
-			<tal:block tal:content="structure record/form_xt_edit" />
-	        <div class="clear" />
-	    </div>
-	</div>
-	<p tal:condition="not: SELF/getRecords/count">V systému zatím není žádný článek</p>
-	<tal:block tal:replace="structure lbox:metanode.1.richtext" />
-	<x tal:replace="structure lbox:component.login_form_dbfree" />
+	<tal:block tal:replace="structure SELF/getForm" />
 <x tal:replace="lbox:slot_end.content" />
 <x tal:replace="structure lbox:component.layout_default" />

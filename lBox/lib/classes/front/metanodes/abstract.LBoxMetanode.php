@@ -110,6 +110,12 @@ abstract class LBoxMetanode extends LBox
 	 */
 	protected $isActive;
 	
+	/**
+	 * cache var
+	 * @var PHPTAL
+	 */
+	protected $TAL;
+	
 	CONST TYPE								= "";
 
 	CONST TEMPLATE_FILENAME					= "";

@@ -11,12 +11,6 @@ abstract class LBoxPage extends LBoxComponent
 	protected $templatePath = LBOX_PATH_TEMPLATES_PAGES;
 
 	/**
-	 * component config node instance
-	 * @var LBoxConfigItemComponent
-	 */
-	protected $config;
-
-	/**
 	 * @param string $templateFileName
 	 * @throws
 	 */
