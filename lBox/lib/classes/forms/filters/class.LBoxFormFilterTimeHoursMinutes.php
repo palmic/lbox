@@ -1,4 +1,7 @@
 <?php
+/**
+ * transformuje casovy udaj do jineho tvaru
+ */
 class LBoxFormFilterTimeHoursMinutes extends LBoxFormFilter
 {
 	public function filter(LBoxFormControl $control = NULL) {
@@ -9,11 +12,13 @@ class LBoxFormFilterTimeHoursMinutes extends LBoxFormFilter
 			// prepinac moznosti formatu casu
 			switch (true) {
 				//1205 => 12:05
-				case ereg("^([[:digit:]]{2})([[:digit:]]{2})$", $control->getValue(), $regs):
+				case preg_match('/^([\d]{2})([\d]{2})$/', $control->getValue(), $regs):
+				//case ereg("^([\d]{2})([\d]{2})$", $control->getValue(), $regs):
 						return $regs[1] .":". $regs[2];
 					break;
 				//125 => 12:05
-				case ereg("^([[:digit:]]{2})([[:digit:]]{1})$", $control->getValue(), $regs):
+				case preg_match('/^([\d]{2})([\d]{1})$/', $control->getValue(), $regs):
+				//case ereg("^([\d]{2})([\d]{1})$", $control->getValue(), $regs):
 						return $regs[1] .":0". $regs[2];
 					break;
 				default: 

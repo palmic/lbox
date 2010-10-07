@@ -13,12 +13,13 @@ class LBoxFormValidatorPhone extends LBoxFormValidator
 	 * - 666333
 	 * @var string
 	 */
-	protected $regPhone	= '^(\+)?([[:digit:]]{3})?([[:digit:]]{3})?([[:digit:]]{6})$';
+	protected $regPhone	= '^(\+)?([\d]{3})?([\d]{3})?([\d]{6})$';
 	
 	public function validate(LBoxFormControl $control = NULL) {
 		try {
 			if (strlen($control->getValue()) > 0)
-			if (!ereg($this->regPhone, $control->getValue())) {
+			if (!preg_match('/'.$this->regPhone.'/', $control->getValue())) {
+			//if (!ereg($this->regPhone, $control->getValue())) {
 				throw new LBoxExceptionFormValidator(	LBoxExceptionFormValidator::MSG_FORM_VALIDATION_PHONE_NOTVALID,
 														LBoxExceptionFormValidator::CODE_FORM_VALIDATION_PHONE_NOTVALID);
 			}

@@ -38,6 +38,12 @@ class LBoxMetaRecord extends LBox
 		}
 	}
 	
+	/**
+	 * cache var
+	 * @var PHPTAL
+	 */
+	protected $TAL;
+	
 	public function __toString() {
 		try {
 			try {

@@ -28,7 +28,7 @@ try {
 		$record			= strlen($postFormData[$idColname]) < 1 ? new $typeRecord : new $typeRecord($postFormData[$idColname]);
 		$form	= LBoxMetaRecordsManager::getMetaRecord($record)->getForm();
 		$form->setDoNotReload(true);
-		$form->__toString($forceThrow = true);
+		$form->toString($forceThrow = true);
 		
 		$ret 						= new stdclass(); // PHP base class
 		

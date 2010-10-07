@@ -7,12 +7,13 @@ class LBoxFormValidatorZIPCS extends LBoxFormValidator
 	/**
 	 * reg pattern kontroly PSC
 	 */
-	protected $reg	= '^[[:digit:]]{5}$';
+	protected $reg	= '^[\d]{5}$';
 	
 	public function validate(LBoxFormControl $control = NULL) {
 		try {
 			if (strlen($control->getValue()) > 0)
-			if (!ereg($this->reg, $control->getValue())) {
+			if (!preg_match('/'.$this->reg.'/', $control->getValue())) {
+			//if (!ereg($this->reg, $control->getValue())) {
 				throw new LBoxExceptionFormValidator(	LBoxExceptionFormValidator::MSG_FORM_VALIDATION_CONTROL_NOT_VALID,
 														LBoxExceptionFormValidator::CODE_FORM_VALIDATION_CONTROL_NOT_VALID);
 			}

@@ -116,5 +116,4 @@ abstract class DbPlatform
     */
     abstract protected function connect();
 }
-
 ?>

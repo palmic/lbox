@@ -13,7 +13,8 @@ class LBoxFormValidatorEmail extends LBoxFormValidator
 	public function validate(LBoxFormControl $control = NULL) {
 		try {
 			if (strlen($control->getValue()) > 0)
-			if (!eregi($this->reg, $control->getValue())) {
+			if (!preg_match('/'.$this->reg.'/i', $control->getValue())) {
+			//if (!eregi($this->reg, $control->getValue())) {
 				throw new LBoxExceptionFormValidator(	LBoxExceptionFormValidator::MSG_FORM_VALIDATION_EMAIL_NOTVALID,
 														LBoxExceptionFormValidator::CODE_FORM_VALIDATION_EMAIL_NOTVALID);
 			}

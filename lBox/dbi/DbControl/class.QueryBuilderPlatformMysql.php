@@ -314,7 +314,8 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 				$columnsString	.= reset(self::getQuotesColumnName()) . $columnName . end(self::getQuotesColumnName());
 			}
 			foreach ($where->getPhrases() as $phrase) {
-				$phrase			 = ereg_replace("[[:punct:]]", "", $phrase);
+				$phrase			 = preg_replace('/[-!"#$%&\'()*+,./:;<=>?@[\\\]^_`{|}~]/', '', $phrase);
+				//$phrase			 = ereg_replace("[[:punct:]]", "", $phrase);
 				if (strlen(trim($phrase)) < 1) continue;
 				$phrase 		 = $this->escapeString($phrase);
 				$phrasesString	.= strlen($phrasesString) > 0 ? " " : "";
@@ -422,7 +423,8 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 		/*if (ini_get("magic_quotes_gpc") == 1 || strtolower(ini_get("magic_quotes_gpc")) == "on") {
 			return $string;
 		}*/
-		return mysql_escape_string($string);
+		return mysql_real_escape_string($string);
+		//return mysql_escape_string($string);
 	}
 }
 ?>

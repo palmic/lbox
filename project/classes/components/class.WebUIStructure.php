@@ -74,7 +74,7 @@ class WebUIStructure extends WebUI
 				else {
 					$subControls["structure"]["in_menu"]	->setTemplateFileName("lbox_form_control_choose_one_select.html");
 				}
-			$subControls["structure"]["parent_id"]	= new LBoxFormControlChooseOne("parent_id", "parent", $this->getPage() ? $this->getPage()->config->getParent()->id : NULL);
+			$subControls["structure"]["parent_id"]	= new LBoxFormControlChooseOne("parent_id", "parent", $this->getPage() && $this->getPage()->config->hasParent() ? $this->getPage()->config->getParent()->id : NULL);
 			$subControls["structure"]["parent_id"]	->setTemplateFileName("lbox_form_control_choose_one_select.html");
 				$this->fillControlChooseParentID($subControls["structure"]["parent_id"]);
 			$subControls["structure"]["move_before"]= new LBoxFormControlChooseOne("move_before", "přesunout před", $this->getPage() ? $this->getValueCurrentMoveBefore() : NULL);
@@ -89,7 +89,7 @@ class WebUIStructure extends WebUI
 				
 			foreach ($subControls as $themeName => $theme) {
 				foreach ($theme as $subControl) {
-					if (!$controls[$themeName] instanceof LBoxFormControlMultiple) {
+					if (!array_key_exists($themeName, $controls) || !$controls[$themeName] instanceof LBoxFormControlMultiple) {
 						$controls[$themeName]	= new LBoxFormControlMultiple($themeName);
 						$controls[$themeName]	->setTemplateFileName("webui_structure_multi.html");
 					}
@@ -188,7 +188,7 @@ class WebUIStructure extends WebUI
 			}
 			$iterator	= $root instanceof LBoxConfigItemStructure ? $root->getChildNodesIterator() : LBoxConfigManagerStructure::getInstance()->getIterator();
 			foreach($iterator as $page) {
-				if ($page->id == $this->getPage()->id) continue;
+				if ($this->getPage() && $page->id == $this->getPage()->id) continue;
 				$control->addOption(new LBoxFormControlOption($page->id, $pre . $page->heading ." - ". $page->url));
 				if ($page->hasChildren()) {
 					$this->fillControlChooseParentID($control, $page, "$pre&nbsp;&nbsp;&nbsp;&nbsp;");	
@@ -232,7 +232,7 @@ class WebUIStructure extends WebUI
 								: LBoxConfigManagerStructure::getInstance()->getIterator();
 			$control->addOption(new LBoxFormControlOption(0, "&nbsp;"));
 			foreach($iterator as $page) {
-				if ($page->id == $this->getPage()->id) continue;
+				if ($this->getPage() && $page->id == $this->getPage()->id) continue;
 				$control->addOption(new LBoxFormControlOption($page->id, $page->heading ." - ". $page->url));
 			}
 		}

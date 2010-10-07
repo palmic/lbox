@@ -554,7 +554,8 @@ LBoxFirePHP::warn("cache VYPNUTA");
 		try {
 			$pagingUrlParamPattern = LBoxConfigSystem::getInstance()->getParamByPath("output/paging/paging_url_param_pattern");
 			if (strlen($param) < 1) return false;
-			return (bool)ereg($pagingUrlParamPattern, $param);
+			return (bool)preg_match("/$pagingUrlParamPattern/", $param);
+			//return (bool)ereg($pagingUrlParamPattern, $param);
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -618,7 +619,8 @@ LBoxFirePHP::warn("cache VYPNUTA");
 			}
 			//$calString	= implode("; ", $converted) . "; return \$variable;";
 			$calString	= "return (" . implode("; ", $converted) . ");";
-			$calString	= ereg_replace("\[([[:alnum:]]*)\]", "[\"\\1\"]", $calString);
+			$calString	= preg_replace("/\[([[A-Za-z0-9]]*)\]/", "[\"\\1\"]", $calString);
+			//$calString	= ereg_replace("\[([[:alnum:]]*)\]", "[\"\\1\"]", $calString);
 			$get		= eval($calString);
 			var_dump($stringParts);
 			var_dump($converted);
