@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<translation>
+        <text id="label">Order form</text>
+        <text id="info_required">Star signed fields are required</text>
+        <text id="form_sent">Form was succesfully sent. Thank You.</text>
+
+        <text id="value_submit_sent">sent</text>
+	<text id="value_submit_finish">finish</text>
+	<text id="value_submit_next">next</text>
+	<text id="value_submit_previous">previous</text>
+</translation>

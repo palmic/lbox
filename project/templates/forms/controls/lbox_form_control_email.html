@@ -1,14 +1,11 @@
 <div class="control" id="control-${id}" tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
-	<label for="${id}"><span class="label">
-		<span tal:condition="not: exists: SELF/translateKey"
-			>${SELF/getLabel}</span><span
-				tal:condition="exists: SELF/translateKey" i18n:translate="SELF/translateKey">${SELF/getLabel}</span><!-- ie6 bug fix --><span tal:condition="SELF/isRequired" class="info-required">* </span></span>
-		<span class="text"><span class="lft"><span class="rgt"><span class="mdl"><input class="text" type="text" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]"
-								tal:attributes="value SELF/getValue | SELF/getDefault; maxlength SELF/getLengthMax | default; size SELF/getLengthMax | default; disabled SELF/getDisabled" /></span></span></span></span></label>
+	<label for="${id}"><span class="label"><span><tal:block tal:condition="not: exists:SELF/i18n">${SELF/getLabel}</tal:block><tal:block tal:condition="exists:SELF/i18n" i18n:translate="string:label" /></span><!-- ie6 bug fix --><span tal:condition="SELF/isRequired" class="info-required">* </span></span>
+		<span class="text"><span class="lft"><span class="rgt"><span class="mdl"><input 	class="text" type="text" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]"
+									tal:attributes="value SELF/getValue | SELF/getDefault; maxlength SELF/getLengthMax | default; size SELF/getLengthMax | default; disabled SELF/getDisabled" /></span></span></span></span></label>
 	<div class="error" tal:condition="SELF/getExceptionsValidations" tal:define="exceptions SELF/getExceptionsValidations">
-		<div tal:condition="exists: exceptions/17001" i18n:translate="string:error_17001">Prosíme vyplňte email</div>
-		<div tal:condition="exists: exceptions/17003" i18n:translate="string:error_17003">Emailová adresa není správně vyplněna</div>
-		<div tal:condition="exists: exceptions/18901" i18n:translate="string:error_18901">Tento email již je zaregistrován</div>
-		<div tal:condition="exists: exceptions/17010" i18n:translate="string:error_17010">Tento email již je zaregistrován</div>
+		<div tal:condition="exists: exceptions/17001">Prosíme vyplňte email</div>
+		<div tal:condition="exists: exceptions/17003">Emailová adresa není správně vyplněna</div>
+		<div tal:condition="exists: exceptions/18901">Tento email již je zaregistrován</div>
+		<div tal:condition="exists: exceptions/17018">Tento email již je zaregistrován</div>
 	</div>
 </div>

@@ -1,4 +1,4 @@
-<div class="control" id="control-${id}" tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}" tal:attributes="title SELF/title | default">
+<div class="control" id="control-${id}" tal:define="id string:frm-${SELF/getForm/getName}-ctrl-${SELF/getName}">
 	<label for="${id}"><span class="label">${SELF/getLabel}
 		<span tal:condition="SELF/isRequired" class="info-required">* </span></span>
 		<span class="select"><span class="lft"><span class="rgt"><span class="mdl">
@@ -15,7 +15,7 @@
 	</div>
 </div>
 <tal:block metal:define-macro="control_select">
-  <select tal:define="options SELF/getOptions" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]" tal:attributes="disabled SELF/getDisabled">
+  <select tal:define="options SELF/getOptions" id="${id}" name="${SELF/getForm/getName}[${SELF/getName}]">
       <option tal:repeat="option options" tal:attributes="value option/getValue; selected option/getSelected; title option/title | default" tal:content="structure option/getLabel" />
   </select>
 </tal:block>
