@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<translation>
+        <text id="label">Objednávkový formulář</text>
+        <text id="info_required">Pole označená hvězdičkou jsou povinná</text>
+        <text id="form_sent">Formulář byl úspěšně odeslán. Děkujeme.</text>
+
+        <text id="value_submit_sent">odeslat</text>
+	<text id="value_submit_finish">dokončit</text>
+	<text id="value_submit_next">další</text>
+	<text id="value_submit_previous">předchozí</text>
+</translation>
