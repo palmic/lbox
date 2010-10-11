@@ -18,15 +18,17 @@ function run_tests() {
 		if (is_dir("$path/$entry")) {
 			if ($entry == 'coverage') {
 				$coveragePath	= $path .'/'. $entry;
-				$coverage 		= ' --coverage-html '. $coveragePath;
+				$coverage 		= 	'--coverage-html '. $coveragePath . ' ';
+				$coverage			.=	' --coverage-clover '. $coveragePath . '/clover.xml ';
 			}
 			continue;
 		}
 		if (is_test($entry)) {
 			include "$path/$entry";
-			//$lime_output->info("phpunit $path/$entry --colors $coverage");
+			$call	= "phpunit $path/$entry $coverage--colors";
 			$lime_output->green_bar($entry);
-			system("phpunit $path/$entry --colors $coverage");
+			//$lime_output->info($call);
+			system($call);
 		}
 	}
 	if (strlen($coverage) > 0) {
