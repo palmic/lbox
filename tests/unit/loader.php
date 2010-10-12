@@ -11,11 +11,6 @@ require_once($pathRoot .'/tests/lime/lime.php');
 require_once $pathRoot.'/lBox/lib/loader_phpunit.php';
 require_once('PHPUnit/Autoload.php');
 
-        $supplier	= new SupplierRecord();
-        $supplier	->name	= 'dodavatel s.r.o.';
-var_dump($supplier);die;
-        
-
 /**
  * runs all defined tests
  * if tests directory contains coverage folder, it will generate coverage results there

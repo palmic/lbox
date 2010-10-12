@@ -1,1 +1,0 @@
-/opt/php/bin/phpunit --coverage-html ./reports config
