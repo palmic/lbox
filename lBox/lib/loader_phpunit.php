@@ -1,4 +1,5 @@
 <?php
+define("WIN", false);
 define("SLASH", '/');
 define("LBOX_DIRNAME_PROJECT", "project");
 define("LBOX_DIRNAME_PLUGINS", "plugins");
@@ -46,30 +47,52 @@ require(LBOX_PATH_CORE_CLASSES 	. $slash ."loading". $slash ."class.LBoxLoader.p
 
 function __autoload ($className)
 {
-	GLOBAL $paths, $pathsIgnore;
 	try {
+		
 		$debug = false;
 
-		LBoxLoader::getInstance($paths, $pathsIgnore)->debug = $debug;
+		$slash				= SLASH;
+		$dirArr 			= explode($slash, dirname(__FILE__));
+		unset($dirArr[count($dirArr)-1]);
+		$lBoxDirName		= end($dirArr);
+		$projectRootArr		= $dirArr;
+		unset($projectRootArr[count($projectRootArr)-1]);
+		$projectRootPath	= implode($slash, $projectRootArr);
+		$paths 		= array(
+		$projectRootPath . $slash . $lBoxDirName,
+		$projectRootPath . $slash . LBOX_DIRNAME_PROJECT,
+		$projectRootPath . $slash . LBOX_DIRNAME_PLUGINS,
+		);
+		$pathsIgnore = array(
+		$projectRootPath . $slash ."$lBoxDirName". $slash ."TAL",
+		$projectRootPath . $slash ."$lBoxDirName". $slash ."dev",
+		$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."dev",
+		$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."css",
+		$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."js",
+		$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."documents",
+		$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."img",
+		$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."filespace",
+		$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash .".cache",
+		$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash .".tal_compiled",
+		$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."wsw",
+		);
+		$pathsConfig = array(
+		$projectRootPath . $slash . "$lBoxDirName". $slash ."config",
+		$projectRootPath . $slash . LBOX_DIRNAME_PROJECT . $slash ."config",
+		);
+
+		/*$lime_output	= new lime_output();
+		$lime_output->info('looking for '. $className);*/
+		
+		LBoxLoader::getInstance($paths, $pathsIgnore)->debug = ($debug ? 'terminal' : false);
 		LBoxLoader::getInstance()->load($className);
 	}
 	catch (Exception $e) {
-		echo "<hr />";
-		echo "Exception code:  <font style='color:blue'>". $e->getCode() ."</font>";
-		echo "<br />";
-		echo "Exception message: <font style='color:blue'>". nl2br($e->getMessage()) ."</font>";
-		echo "<br />";
-		echo "Thrown by: '". $e->getFile() ."'";
-		echo "<br />";
-		echo "on line: '". $e->getLine() ."'.";
-		echo "<br />";
-		echo "<br />";
-		echo "Stack trace:";
-		echo "<br />";
-		echo nl2br($e->getTraceAsString());
-		echo "<hr />";
+		$lime	= new lime_output();
+		$lime->error($e->getMessage(), $e->getFile(), $e->getLine(), $e->getTrace());
 	}
 }
+spl_autoload_register('__autoload');
 
 // define URL parts
 $requestURI	= IIS ? $_SERVER['HTTP_X_REWRITE_URL'] : $_SERVER['REQUEST_URI'];
@@ -140,21 +163,6 @@ try {
 	require(LBOX_PATH_CHACHELITE . $slash . "Lite.php");
 }
 catch (Exception $e) {
-	/*echo "<hr />";
-	echo "Exception code:  <font style='color:blue'>". $e->getCode() ."</font>";
-	echo "<br />";
-	echo "Exception message: <font style='color:blue'>". nl2br($e->getMessage()) ."</font>";
-	echo "<br />";
-	echo "Thrown by: '". $e->getFile() ."'";
-	echo "<br />";
-	echo "on line: '". $e->getLine() ."'.";
-	echo "<br />";
-	echo "<br />";
-	echo "Stack trace:";
-	echo "<br />";
-	echo nl2br($e->getTraceAsString());
-	echo "<hr />";*/
-	
 	$lime	= new lime_output();
 	$lime->error($e->getMessage(), $e->getFile(), $e->getLine(), $e->getTrace());
 	
