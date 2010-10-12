@@ -47,6 +47,10 @@ function run_tests() {
 		return;
 	}
 	// run all loaded tests
+	if(count($tests) < 1) {
+		$lime_output->comment('no test found in '. $path);
+		return;
+	}
 	foreach($tests as $name => $path) {
 			//include $path;
 			$call	= "phpunit $path $coverage--colors";
