@@ -1,0 +1,10 @@
+#!/usr/bin/env php
+<?php
+/*file call params:
+var_dump($argv);die;*/
+
+define('TEST_TYPE', 'phpunit');
+
+require_once dirname(__FILE__) . '/unit/' . TEST_TYPE .'/loader.php';
+
+run_tests();

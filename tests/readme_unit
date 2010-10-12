@@ -1,0 +1,10 @@
+php run [testName]
+un
+
+usage:
+all tests secify like standard PHPUnit test classes in 'tests/unit/phpunit/tests'
+when we want to call all the tests we have to call 'run' with no argument
+when we have test class StackTest and we want to run it separated, we have to call 'run Stack'
+
+cover:
+for export cover stats in HTML and clover.xml only create 'cover' folder in 'tests/unit/phpunit/tests'

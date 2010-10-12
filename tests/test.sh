@@ -1,1 +1,0 @@
-php run.php
