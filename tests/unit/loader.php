@@ -7,9 +7,14 @@ foreach ($dirArr as $dir) {
 	$pathRoot	.= $dir;
 }
 $pathRoot = "/$pathRoot";
-require_once $pathRoot.'/lBox/lib/loader_phpunit.php';
 require_once($pathRoot .'/tests/lime/lime.php');
+require_once $pathRoot.'/lBox/lib/loader_phpunit.php';
 require_once('PHPUnit/Autoload.php');
+
+        $supplier	= new SupplierRecord();
+        $supplier	->name	= 'dodavatel s.r.o.';
+var_dump($supplier);die;
+        
 
 /**
  * runs all defined tests
