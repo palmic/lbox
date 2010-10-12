@@ -1,6 +1,14 @@
 <?php
-//require_once '../lBox/lib/loader_phpunit.php';
-require_once(dirname(__FILE__) .'/../../lime/lime.php');
+$dirArr		= explode("/", dirname(__FILE__));
+$pathRoot	= "";
+foreach ($dirArr as $dir) {
+	if ($dir == "tests") break;
+	$pathRoot	.= strlen($pathRoot) > 0 ? "/" : "";
+	$pathRoot	.= $dir;
+}
+$pathRoot = "/$pathRoot";
+require_once $pathRoot.'/lBox/lib/loader_phpunit.php';
+require_once($pathRoot .'/tests/lime/lime.php');
 require_once('PHPUnit/Autoload.php');
 
 /**
@@ -40,9 +48,12 @@ function run_tests() {
 		$call	= "phpunit $path $coverage--colors";
 		$lime_output->green_bar($testName);
 		//$lime_output->info($call);
-		system($call);
+		$out	= getCallReturn($call);
+		echo $out;
 		if (strlen($coverage) > 0) {
-			$lime_output->info("coverage results in $coveragePath");
+			if (!doesContainErrorNotification($out)) {
+				$lime_output->info("coverage results in $coveragePath");
+			}
 		}
 		return;
 	}
@@ -56,10 +67,13 @@ function run_tests() {
 			$call	= "phpunit $path $coverage--colors";
 			$lime_output->green_bar($name);
 			//$lime_output->info($call);
-			system($call);
+			$out	= getCallReturn($call);
+			echo $out;
 	}
 	if (strlen($coverage) > 0) {
-		$lime_output->info("coverage results in $coveragePath");
+		if (!doesContainErrorNotification($out)) {
+			$lime_output->info("coverage results in $coveragePath");
+		}
 	}
 	$dir->close();
 }
@@ -93,6 +107,32 @@ function is_test($filename) {
 	return false;
 }
 
+/**
+ * check if script exe argument can be test name
+ * @param string $param
+ * @return bool
+ */
 function can_param_be_test($param) {
 	return !preg_match('/(\-){2}/', $param);
+}
+
+/**
+ * call system terminal command and returns its returned value
+ * @param string $call
+ * @return string
+ */
+function getCallReturn($call) {
+	ob_start();
+	passthru($call);
+	$out	= ob_get_clean();
+	return $out;	
+}
+
+/**
+ * retuns true if given content looks like error message or does contain it
+ * @param string $content
+ * @return bool
+ */
+function doesContainErrorNotification($content) {
+	return (bool)preg_match('/error/', $content);
 }
