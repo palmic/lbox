@@ -5,7 +5,7 @@ require_once(LBOX_PATH_CORE_CLASSES . SLASH ."cache". SLASH ."class.LBoxCacheLoa
 
 /**
  * Na loadovani pozadovanych typu (tridy, rozhrani atd...)
-* @author Michal Palma <michal.palma@gmail.com>
+* @author Michal Palma <palmic at email dot cz>
 * @package LBox
 * @version 1.0
 
@@ -128,9 +128,15 @@ class LBoxLoader
 			if (array_key_exists($type, self::$typesPaths)) {
 				return;
 			}
+			if ($this->debug == 'terminal') {
+				$lime_output	= new lime_output();
+			}
 			// nalezeno v cachi
 			if ($value	= LBoxCacheLoader::getInstance()->$type) {
-				if ($this->debug) {
+				if ($this->debug == 'terminal') {
+					$lime_output->echoln("'$type' found in cache as '$value'", $parameters = array('fg' => 'magenta'));
+				}
+				else if ($this->debug) {
 					echo __CLASS__ ."(". __LINE__ ."):: <font style='color:fuchsia;'>'<b>$type</b>' found in cache as '<i>$value</i>'<br /></font>\n";
 				}
 				// zkontrolovat, ze se jedna o path v ramci projektu (opatreni, ze cache neni nakopirovana spolu s puvodnim projektem)
@@ -145,7 +151,10 @@ class LBoxLoader
 					}
 				}
 				else {
-					if ($this->debug) {
+					if ($this->debug == 'terminal') {
+						$lime_output->echoln("'$type' Was found in cache under other project. Returned: '$value' - RESETING cache", $parameters = array('bg' => 'cyan', 'fg' => 'white'));
+					}
+					else if ($this->debug) {
 						echo __CLASS__ ."(". __LINE__ ."):: <font style='color:#C0C0C0;'>'<b>$type</b>' Was found in cache under other project. Returned: '<i>$value</i>' - RESETING cache<br /></font>\n";
 					}
 					LBoxCacheLoader::getInstance()->reset();
@@ -153,7 +162,10 @@ class LBoxLoader
 			}
 			// nenalezeno v cachi
 			else {
-				if ($this->debug) {
+				if ($this->debug == 'terminal') {
+					$lime_output->echoln("'$type' NOT found in cache. Returned: '$value'", $parameters = array('bg' => 'grey', 'fg' => 'black'));
+				}
+				else if ($this->debug) {
 						echo __CLASS__ ."(". __LINE__ ."):: <font style='color:orange;'>'<b>$type</b>' NOT found in cache. Returned: '<i>$value</i>'<br /></font>\n";
 				}
 			}
@@ -240,7 +252,13 @@ class LBoxLoader
 		}
 
 		$dir 	= opendir($in);
-		if ($this->debug) {
+		if ($this->debug == 'terminal') {
+			$lime_output	= new lime_output();
+		}
+		if ($this->debug == 'terminal') {
+			$lime_output->echoln("searching for '$type' in '$in'", $parameters = array('fg' => 'blue'));
+		}
+		else if ($this->debug) {
 			echo __CLASS__ ."(". __LINE__ .") :: searching for '<b>$type</b>' in '<i>$in</i>'<br />\n";
 		}
 		while (false !== ($nameReaded = readdir($dir))) {
@@ -260,14 +278,20 @@ class LBoxLoader
 					case strlen($pattern) > 0:
 							if (preg_match("/". str_replace("<type>", $type, $pattern) ."/", $nameReaded)) {
 								$this->searchedPathsByPrefixedTypes["$prefix.$type"][] = "$in". SLASH;
-								if ($this->debug) {
+								if ($this->debug == 'terminal') {
+									$lime_output->echoln("'$type' found in '$in". SLASH ."$nameReaded'", $parameters = array('bg' => 'green', 'fg' => 'white'));
+								}
+								else if ($this->debug) {
 									echo __CLASS__ ."(". __LINE__ ."):: <font style='color:green;'>'<b>$type</b>' found in '<i>$in". SLASH ."$nameReaded</i>'<br /></font>\n";
 								}
 								$this->foundTypesInPaths[$type] = "$in". SLASH ."$nameReaded";
 								return "$in". SLASH ."$nameReaded";
 							}
 							$this->checkedFiles["$nameReaded"] = "$in". SLASH ."$nameReaded";
-							if ($this->debug) {
+							if ($this->debug == 'terminal') {
+								$lime_output->echoln("'$type' NOT found as '$in". SLASH ."$nameReaded'", $parameters = array('fg' => 'red'));
+							}
+							else if ($this->debug) {
 								echo __CLASS__ ."(". __LINE__ ."):: <font style='color:red;'>'<b>$type</b>' NOT found as '<i>$in". SLASH ."$nameReaded</i>'<br /></font>\n";
 							}
 						break;
@@ -277,14 +301,20 @@ class LBoxLoader
 							}
 							if ($nameReaded == $prefixCompare ."$type.$postfix") {
 								$this->searchedPathsByPrefixedTypes["$prefix.$type"][] = "$in". SLASH;
-								if ($this->debug) {
+								if ($this->debug == 'terminal') {
+									$lime_output->echoln("'$type' found in '$in". SLASH ."$nameReaded'", $parameters = array('bg' => 'green', 'fg' => 'white'));
+								}
+								else if ($this->debug) {
 									echo __CLASS__ ."(". __LINE__ ."):: <font style='color:green;'>'<b>$type</b>' found in '<i>$in". SLASH ."$nameReaded</i>'<br /></font>\n";
 								}
 								$this->foundTypesInPaths[$type] = "$in". SLASH ."$nameReaded";
 								return "$in". SLASH ."$nameReaded";
 							}
 							$this->checkedFiles["$nameReaded"] = "$in". SLASH ."$nameReaded";
-							if ($this->debug) {
+							if ($this->debug == 'terminal') {
+								$lime_output->echoln("'$type' NOT found as '$in". SLASH ."$nameReaded'", $parameters = array('fg' => 'red'));
+							}
+							else if ($this->debug) {
 								echo __CLASS__ ."(". __LINE__ ."):: <font style='color:red;'>'<b>$type</b>' NOT found as '<i>$in". SLASH ."$nameReaded</i>'<br /></font>\n";
 							}
 						break;
@@ -295,14 +325,20 @@ class LBoxLoader
 							}
 							if ($nameReaded == $prefixCompare ."$type.$postfix") {
 								$this->searchedPathsByPrefixedTypes["$prefixCheck.$type"][] = "$in". SLASH;
-								if ($this->debug) {
+								if ($this->debug == 'terminal') {
+									$lime_output->echoln("'$type' found in '$in". SLASH ."$nameReaded'", $parameters = array('bg' => 'grey', 'fg' => 'white'));
+								}
+								else if ($this->debug) {
 									echo __CLASS__ ."(". __LINE__ ."):: <font style='color:green;'>'<b>$type</b>' found in '<i>$in". SLASH ."$nameReaded</i>'<br /></font>\n";
 								}
 								$this->foundTypesInPaths[$type] = "$in". SLASH ."$nameReaded";
 								return "$in". SLASH ."$nameReaded";
 							}
 							$this->checkedFiles["$nameReaded"] = "$in". SLASH ."$nameReaded";
-							if ($this->debug) {
+							if ($this->debug == 'terminal') {
+								$lime_output->echoln("'$type' NOT found as '$in". SLASH ."$nameReaded'", $parameters = array('fg' => 'red'));
+							}
+							else if ($this->debug) {
 								echo __CLASS__ ."(". __LINE__ ."):: <font style='color:red;'>'<b>$type</b>' NOT found as '<i>$in". SLASH ."$nameReaded</i>'<br /></font>\n";
 							}
 						}
@@ -320,17 +356,26 @@ class LBoxLoader
 	 */
 	protected function getPathOfQuickly($type = "", $prefix = NULL) {
 		$postfix = $this->postfix;
+			if ($this->debug == 'terminal') {
+				$lime_output	= new lime_output();
+			}
 		if (is_string($prefix)) {
 			$fileNameSearch = "$prefix.$type.$postfix";
 			if (array_key_exists($fileNameSearch, $this->checkedFiles)) {
 				$filePath = $this->checkedFiles[$fileNameSearch];
-				if ($this->debug) {
+				if ($this->debug == 'terminal') {
+					$lime_output->echoln("$type' found QUICKLY in '$filePath", $parameters = array('bg' => 'green', 'fg' => 'white'));
+				}
+				else if ($this->debug) {
 					echo __CLASS__ ."(". __LINE__ ."):: <font style='color:green;'>'<b>$type</b>' found QUICKLY in '<i>$filePath</i>'<br /></font>\n";
 				}
 				return $filePath;
 			}
 			else {
-				if ($this->debug) {
+				if ($this->debug == 'terminal') {
+					$lime_output->echoln("'$type' NOT found QUICKLY", $parameters = array('bg' => 'red', 'fg' => 'white'));
+				}
+				else if ($this->debug) {
 					echo __CLASS__ ."(". __LINE__ ."):: <font style='color:red;'>'<b>$type</b>' NOT found QUICKLY<br /></font>\n";
 				}
 				return "";
@@ -341,13 +386,19 @@ class LBoxLoader
 				$fileNameSearch = "$prefix.$type.$postfix";
 				if (array_key_exists($fileNameSearch, $this->checkedFiles)) {
 					$filePath = $this->checkedFiles[$fileNameSearch];
-					if ($this->debug) {
+					if ($this->debug == 'terminal') {
+						$lime_output->echoln("'$type' found QUICKLY in '$filePath", $parameters = array('bg' => 'green', 'fg' => 'white'));
+					}
+					else if ($this->debug) {
 						echo __CLASS__ ."(". __LINE__ ."):: <font style='color:green;'>'<b>$type</b>' found QUICKLY in '<i>$filePath</i>'<br /></font>\n";
 					}
 					return $filePath;
 				}
 			}
-			if ($this->debug) {
+			if ($this->debug == 'terminal') {
+				$lime_output->echoln("'$type' NOT found QUICKLY", $parameters = array('bg' => 'red', 'fg' => 'white'));
+			}
+			else if ($this->debug) {
 				echo __CLASS__ ."(". __LINE__ ."):: <font style='color:red;'>'<b>$type</b>' NOT found QUICKLY<br /></font>\n";
 			}
 			return "";
