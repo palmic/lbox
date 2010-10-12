@@ -5,6 +5,6 @@ var_dump($argv);die;*/
 
 define('TEST_TYPE', 'phpunit');
 
-require_once dirname(__FILE__) . '/unit/' . TEST_TYPE .'/loader.php';
+require_once dirname(__FILE__) . '/unit/loader.php';
 
 run_tests();
