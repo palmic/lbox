@@ -8,11 +8,13 @@ require_once('PHPUnit/Autoload.php');
  * if tests directory contains coverage folder, it will generate coverage results there
  */
 function run_tests() {
+	global $argv;
 	// read test directory and run all tests
 	$path					= dirname(__FILE__) . '/tests';
 	$dir					= dir($path);
 	$lime_output	= new lime_output();
 	$coverage			= $coveragePath = '';
+	$tests				= array();
 	while (($entry = $dir->read()) !== false) {
 		if($entry == '.' || $entry == '..') continue;
 		if (is_dir("$path/$entry")) {
@@ -24,17 +26,51 @@ function run_tests() {
 			continue;
 		}
 		if (is_test($entry)) {
-			include "$path/$entry";
-			$call	= "phpunit $path/$entry $coverage--colors";
-			$lime_output->green_bar($entry);
-			//$lime_output->info($call);
-			system($call);
+			$tests[getTestNameByPath("$path/$entry")]	= "$path/$entry";
 		}
 	}
+	// run concrete test
+	if (($testName = $argv[1]) && can_param_be_test($testName)) {
+		$testName	.= 'Test';
+		if (!array_key_exists($testName, $tests)) {
+			$lime_output->error("cannot find test ". $argv[1] . ' in '. $path);
+			return;
+		}
+		$path	= $tests[$testName];
+		$call	= "phpunit $path $coverage--colors";
+		$lime_output->green_bar($testName);
+		//$lime_output->info($call);
+		system($call);
+		if (strlen($coverage) > 0) {
+			$lime_output->info("coverage results in $coveragePath");
+		}
+		return;
+	}
+	// run all loaded tests
+	foreach($tests as $name => $path) {
+			//include $path;
+			$call	= "phpunit $path $coverage--colors";
+			$lime_output->green_bar($name);
+			//$lime_output->info($call);
+			system($call);
+	}
 	if (strlen($coverage) > 0) {
-		$lime_output->info("You can find coverage results in $coveragePath");
+		$lime_output->info("coverage results in $coveragePath");
 	}
 	$dir->close();
+}
+
+/**
+ * retuns test class name by filepath
+ * @param string $path
+ * @return string
+ */
+function getTestNameByPath($path) {
+	$content	= fread(fopen($path, 'r'), filesize($path));
+	if (!preg_match('/class (\w+)/', $content, $match)) {
+		throw new Exception('Cannot find test class in '.$path, 1);
+	}
+	return $match[1];
 }
 
 /**
@@ -51,4 +87,8 @@ function is_test($filename) {
 		}
 	}
 	return false;
+}
+
+function can_param_be_test($param) {
+	return !preg_match('/(\-){2}/', $param);
 }
