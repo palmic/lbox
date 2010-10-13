@@ -77,12 +77,6 @@ class LBoxForm
 	protected $doNotReload	= false;
 
 	/**
-	 * if true, __toString() method will throw Exception higher or write out it into code
-	 * @var bool
-	 */
-	protected $forceThrow = false;
-
-	/**
 	 * cache metody getFilesData
 	 * @var array
 	 */
@@ -122,14 +116,11 @@ class LBoxForm
 				throw new LBoxExceptionForm("$name: ". LBoxExceptionForm::MSG_FORM_DUPLICATE_FORMNAME, LBoxExceptionForm::CODE_FORM_DUPLICATE_FORMNAME);
 			}
 			self::$forms[$name]	= $this;
-			if (array_key_exists("LBox", (array)$_SESSION)
-				&& array_key_exists("Forms", (array)$_SESSION["LBox"])
-				&& array_key_exists($this->getName(), (array)$_SESSION["LBox"]["Forms"])) {
-					if ($_SESSION["LBox"]["Forms"][$this->getName()]["succes"]) {
-						unset($_SESSION["LBox"]["Forms"][$this->getName()]["succes"]);
-						$this->sentSucces	= true;
-					}
-				}
+			if (array_key_exists("LBox", (array)$_SESSION))
+			if ($_SESSION["LBox"]["Forms"][$this->getName()]["succes"]) {
+				unset($_SESSION["LBox"]["Forms"][$this->getName()]["succes"]);
+				$this->sentSucces	= true;
+			}
 			// pridame form do indexace front cache manageru k aktualni URL
 			LBoxCacheManagerFront::getInstance()->addFormUsed($this);
 		}
@@ -458,9 +449,10 @@ class LBoxForm
 	}
 
 	/**
+	 * @param bool $forceThrow throw Exception higher or write out it into code
 	 * @return string
 	 */
-	public function __toString() {
+	public function __toString($forceThrow = false) {
 		try {
 			// pridat antispam, pokud je zapnut
 			if ($this->isAntiSpamSet()) {
@@ -472,7 +464,7 @@ class LBoxForm
 				$out	.= $this->getTAL()->execute();
 			}
 			catch (Exception $e) {
-				if ($this->forceThrow) {
+				if ($forceThrow) {
 					throw $e;
 				}
 				// var_dump($e);
@@ -502,21 +494,6 @@ class LBoxForm
 				$out 	= "<!--$out-->";
 			}
 			return $out;
-		}
-		catch (Exception $e) {
-			throw $e;
-		}
-	}
-
-	/**
-	 * __toString overloaded by forceThrow parameter
-	 * @param bool $forceThrow
-	 * @return string
-	 */
-	public function toString($forceThrow = false) {
-		try {
-			$this->forceThrow	= $forceThrow;
-			return $this->__toString();
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -578,7 +555,7 @@ class LBoxForm
 	/**
 	 * @throws LBoxExceptionForm
 	 */
-	protected function process() {
+	public function process() {
 		try {
 			if (!$this->wasSent()) return;
 			// zkontrolovat, jestli mame nastaven procesor
