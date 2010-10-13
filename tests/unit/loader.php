@@ -28,8 +28,6 @@ function run_tests() {
 		if (is_dir("$path/$entry")) {
 			if ($entry == 'coverage') {
 				$coveragePath	= $path .'/'. $entry;
-				$coverage 		= 	'--coverage-html '. $coveragePath . ' ';
-				$coverage			.=	' --coverage-clover '. $coveragePath . '/clover.xml ';
 			}
 			continue;
 		}
@@ -44,8 +42,14 @@ function run_tests() {
 			$lime_output->error("cannot find test ". $argv[1] . ' in '. $path);
 			return;
 		}
+		if ($coveragePath) {
+			$coveragePathConcrete	=	$coveragePath .'/'. $testName;
+			LBoxUtil::createDirByPath($coveragePathConcrete);
+			$coverage 		= 	'--coverage-html '. $coveragePathConcrete . ' ';
+			//$coverage			.=	' --coverage-clover '. $coveragePathConcrete . '/clover.xml ';
+		}
 		$path	= $tests[$testName];
-		$call	= "phpunit $path $coverage--colors";
+		$call	= "phpunit $coverage $path";
 		$lime_output->green_bar($testName);
 		//$lime_output->info($call);
 		$out	= getCallReturn($call);
@@ -64,21 +68,27 @@ function run_tests() {
 	}
 	$testsCountAtomic	= 0;
 	foreach($tests as $name => $path) {
-			$call	= "phpunit $path $coverage--colors";
-			//$lime_output->info($call);
-			$out				= getCallReturn($call);
-			$space			= '';
-			if (preg_match('/OK \((\d+) tests\, (\d+) assertions\)/', $out, $match)) {
-				$testsCountAtomic	+= $match[1];
-				$outPartName	= $name . ' ('.$match[1].' tests)';
-				for($i=0;$i<(68-strlen($outPartName));$i++){$space.=' ';}
-				$lime_output->green_bar($outPartName . $space .'OK ');
-			}
-			else {
-				for($i=0;$i<(64-strlen($name));$i++){$space.=' ';}
-				$lime_output->red_bar($name . $space .'FAILED ');
-				echo $out;
-			}
+		if ($coveragePath) {
+			$coveragePathConcrete	=	$coveragePath .'/'. $name;
+			LBoxUtil::createDirByPath($coveragePathConcrete);
+			$coverage 		= 	'--coverage-html '. $coveragePathConcrete . ' ';
+			//$coverage			.=	' --coverage-clover '. $coveragePathConcrete . '/clover.xml ';
+		}
+		$call	= "phpunit $coverage $path";
+		//$lime_output->info($call);
+		$out				= getCallReturn($call);
+		$space			= '';
+		if (preg_match('/OK \((\d+) tests\, (\d+) assertions\)/', $out, $match)) {
+			$testsCountAtomic	+= $match[1];
+			$outPartName	= $name . ' ('.$match[1].' tests)';
+			for($i=0;$i<(68-strlen($outPartName));$i++){$space.=' ';}
+			$lime_output->green_bar($outPartName . $space .'OK ');
+		}
+		else {
+			for($i=0;$i<(64-strlen($name));$i++){$space.=' ';}
+			$lime_output->red_bar($name . $space .'FAILED ');
+			echo $out;
+		}
 	}
 	$lime_output->echoln("$testsCountAtomic tests done", array('fg' => 'green'));
 	if (strlen($coverage) > 0) {
