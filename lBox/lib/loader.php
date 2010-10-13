@@ -1,4 +1,6 @@
 <?php
+// terminal
+define("CLI", false);
 // IIS / Apache
 define("IIS", (array_key_exists("INSTANCE_ID", $_SERVER)));
 // WIN / Unix
@@ -9,11 +11,6 @@ define("LBOX_DIRNAME_PROJECT", "project");
 define("LBOX_DIRNAME_PLUGINS", "plugins");
 
 $slash	= SLASH;
-
-/**
- * environment settings
- */
-@date_default_timezone_set(date_default_timezone_get());
 
 $dirArr 			= explode($slash, dirname(__FILE__));
 unset($dirArr[count($dirArr)-1]);

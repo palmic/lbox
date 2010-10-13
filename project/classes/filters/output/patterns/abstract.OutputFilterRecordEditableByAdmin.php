@@ -1,6 +1,6 @@
 <?
 /**
-* @author Michal Palma <michal.palma@gmail.com>
+* @author Michal Palma <palmic@email.cz>
 * @package LBox
 * @version 1.0
 * @since 2009-10-08
@@ -35,22 +35,19 @@ abstract class OutputFilterRecordEditableByAdmin extends OutputFilterRecord
 	 * cache var
 	 * @var LboxForm
 	 */
-	protected static $formsToEditByIDs = array();
+	protected $formToEdit;
 
 	/**
 	 * cache var
 	 * @var LboxForm
 	 */
-	protected static $formsDeleteByIDs = array();
+	protected $formDelete;
 
 	public function prepare($name = "", $value = NULL) {
 		try {
 			switch ($name) {
 				case "form_xt_to_edit":
 						return $this->getFormXTToEdit();
-					break;
-				case "form_xt_edit":
-						return LBoxMetaRecordsManager::getMetaRecord($this->instance);
 					break;
 				case "form_xt_delete":
 						return $this->getFormXTDelete();
@@ -71,31 +68,30 @@ abstract class OutputFilterRecordEditableByAdmin extends OutputFilterRecord
 	 */
 	protected function getFormXTToEdit() {
 		try {
+			if (!constant('CLI')) {
+				if (!LBoxXTProject::isLoggedAdmin()) {
+					return "";
+				}
+			}
+			if ($this->formToEdit instanceof LBoxForm) {
+				return $this->formToEdit;
+			}
 			if (strlen($this->propertyNameRefPageEdit) < 1) {
 				throw new LBoxExceptionOutputFilter(get_class($this)."::\$propertyNameRefPageEdit: ". LBoxExceptionOutputFilter::MSG_INSTANCE_VAR_STRING_NOTNULL, LBoxExceptionOutputFilter::CODE_BAD_INSTANCE_VAR);
-			}
-			if (!LBoxXTProject::isLoggedAdmin()) {
-				return "";
 			}
 			$instanceType						= get_class($this->instance);
 			$idColName							= eval("return $instanceType::\$idColName;");
 			$id									= $this->instance->getParamDirect(strlen($this->editURLFilterColname) > 0 ? $this->editURLFilterColname : $idColName);
-			$formId								= "record_xt_to_edit_$id";
-			if (array_key_exists($formId, self::$formsToEditByIDs)
-				&& self::$formsToEditByIDs[$formId] instanceof LBoxForm) {
-					return self::$formsToEditByIDs[$formId];
-			}
-
 			$controlID							= new LBoxFormControlFillHidden("id", "", $id);
 			$controlRefPageEdit					= new LBoxFormControlFillHidden("rpe", "", LBoxConfigManagerStructure::getInstance()->getPageById(LBoxConfigManagerProperties::getPropertyContentByName($this->propertyNameRefPageEdit))->id);
 			$controlPropertyNamePatternURLParam	= new LBoxFormControlFillHidden("pnpup", "", $this->propertyNamePatternURLParam);
-			$form				= new LBoxForm($formId, "post", "", "editovat");
+			$form				= new LBoxForm("record_xt_to_edit_$id", "post", "", "editovat");
 			$form				->setTemplateFileName("lbox_form_xt_btn_edit.html");
 			$form				->addControl($controlID);
 			$form				->addControl($controlRefPageEdit);
 			$form				->addControl($controlPropertyNamePatternURLParam);
 			$form				->addProcessor(new ProcessorRecordToEdit);
-			return self::$formsToEditByIDs[$formId] = $form;
+			return $this->formToEdit = $form;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -109,18 +105,17 @@ abstract class OutputFilterRecordEditableByAdmin extends OutputFilterRecord
 	 */
 	protected function getFormXTDelete() {
 		try {
-			if (!LBoxXTProject::isLoggedAdmin()) {
-				return "";
+			if (!constant('CLI')) {
+				if (!LBoxXTProject::isLoggedAdmin()) {
+					return "";
+				}
+			}
+			if ($this->formDelete instanceof LBoxForm) {
+				return $this->formDelete;
 			}
 			$instanceType	= get_class($this->instance);
 			$idColName		= eval("return $instanceType::\$idColName;");
 			$id				= $this->instance->getParamDirect($idColName);
-			$formId			= "record_xt_delete_$id";
-			if (array_key_exists($formId, self::$formsDeleteByIDs)
-				&& self::$formsDeleteByIDs[$formId] instanceof LBoxForm) {
-					return self::$formsDeleteByIDs[$formId];
-			}
-			
 			$controlID		= new LBoxFormControlFillHidden("id", "", $id);
 			foreach ($this->formDeleteValidators as $validatorDeleteID) {
 				$controlID->addValidator($validatorDeleteID);
@@ -129,13 +124,13 @@ abstract class OutputFilterRecordEditableByAdmin extends OutputFilterRecord
 				$controlID->setTemplateFileName($this->formDeleteTemplateControlID);
 			}
 			$controlType	= new LBoxFormControlFillHidden("type", "", $instanceType);
-			$form			= new LBoxForm($formId, "post", "", "delete");
+			$form			= new LBoxForm("record_xt_delete_$id", "post", "", "delete");
 			$form			->setTemplateFileName("lbox_form_xt_btn_delete.html");
 			$form			->addControl($controlID);
 			$form			->addControl($controlType);
 			$form			->addProcessor(new ProcessorRecordDelete);
 			$form			->item_name	= strlen($this->instance->name) > 0 ? $this->instance->name : $this->instance->$idColName;
-			return self::$formsDeleteByIDs[$formId] = $form;
+			return $this->formDelete = $form;
 		}
 		catch (Exception $e) {
 			throw $e;
