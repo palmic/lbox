@@ -62,12 +62,14 @@ function run_tests() {
 		$lime_output->comment('no test found in '. $path);
 		return;
 	}
+	$testsCountAtomic	= 0;
 	foreach($tests as $name => $path) {
 			$call	= "phpunit $path $coverage--colors";
 			//$lime_output->info($call);
-			$out		= getCallReturn($call);
-			$space	= '';
+			$out				= getCallReturn($call);
+			$space			= '';
 			if (preg_match('/OK \((\d+) tests\, (\d+) assertions\)/', $out, $match)) {
+				$testsCountAtomic	+= $match[1];
 				$outPartName	= $name . ' ('.$match[1].' tests)';
 				for($i=0;$i<(68-strlen($outPartName));$i++){$space.=' ';}
 				$lime_output->green_bar($outPartName . $space .'OK ');
@@ -78,6 +80,7 @@ function run_tests() {
 				echo $out;
 			}
 	}
+	$lime_output->echoln("$testsCountAtomic tests done", array('fg' => 'green'));
 	if (strlen($coverage) > 0) {
 		if (!doesContainErrorNotification($out)) {
 			$lime_output->info("coverage results in $coveragePath");
