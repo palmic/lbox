@@ -1,4 +1,5 @@
 <?php
+define("CLI", true);
 define("WIN", false);
 define("SLASH", '/');
 define("LBOX_DIRNAME_PROJECT", "project");
