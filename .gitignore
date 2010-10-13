@@ -16,4 +16,4 @@ project/documents/doc/html*
 project/.data/*
 
 tests/reports/*
-tests/*/coverage/*
+tests/unit/tests/coverage/*
