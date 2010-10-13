@@ -63,12 +63,20 @@ function run_tests() {
 		return;
 	}
 	foreach($tests as $name => $path) {
-			//include $path;
 			$call	= "phpunit $path $coverage--colors";
-			$lime_output->green_bar($name);
 			//$lime_output->info($call);
-			$out	= getCallReturn($call);
-			echo $out;
+			$out		= getCallReturn($call);
+			$space	= '';
+			if (preg_match('/OK \((\d+) tests\, (\d+) assertions\)/', $out, $match)) {
+				$outPartName	= $name . ' ('.$match[1].' tests)';
+				for($i=0;$i<(68-strlen($outPartName));$i++){$space.=' ';}
+				$lime_output->green_bar($outPartName . $space .'OK ');
+			}
+			else {
+				for($i=0;$i<(64-strlen($name));$i++){$space.=' ';}
+				$lime_output->red_bar($name . $space .'FAILED ');
+				echo $out;
+			}
 	}
 	if (strlen($coverage) > 0) {
 		if (!doesContainErrorNotification($out)) {
