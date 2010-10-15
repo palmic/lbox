@@ -71,7 +71,8 @@ function run_tests() {
 		$lime_output->comment('no test found in '. $path);
 		return;
 	}
-	$testsCountAtomic	= 0;
+	$assertionsCountAtomic	= 0;
+	$testsCountAtomic				= 0;
 	foreach($tests as $name => $path) {
 		if ($coveragePath) {
 			$coveragePathConcrete	=	$coveragePath .'/'. $name;
@@ -84,8 +85,9 @@ function run_tests() {
 		$out				= getCallReturn($call);
 		$space			= '';
 		if (preg_match('/OK \((\d+) tests\, (\d+) assertions\)/', $out, $match)) {
-			$testsCountAtomic	+= $match[1];
-			$outPartName	= $name . ' ('.$match[1].' tests)';
+			$assertionsCountAtomic	+= $match[2];
+			$testsCountAtomic				+= $match[1];
+			$outPartName	= $name . ' ('.$match[1].' tests, '.$match[2].' assertions)';
 			for($i=0;$i<(68-strlen($outPartName));$i++){$space.=' ';}
 			$lime_output->green_bar($outPartName . $space .'OK ');
 		}
@@ -95,7 +97,7 @@ function run_tests() {
 			echo $out;
 		}
 	}
-	$lime_output->echoln("$testsCountAtomic tests done", array('fg' => 'green'));
+	$lime_output->echoln("$testsCountAtomic tests, $assertionsCountAtomic assertions done", array('fg' => 'green'));
 	if (strlen($coverage) > 0) {
 		if (!doesContainErrorNotification($out)) {
 			$lime_output->info("coverage results in $coveragePath");
