@@ -50,9 +50,14 @@ function run_tests() {
 		}
 		$path	= $tests[$testName];
 		$call	= "phpunit $coverage $path";
-		$lime_output->green_bar($testName);
 		//$lime_output->info($call);
 		$out	= getCallReturn($call);
+		if (preg_match('/OK \((\d+) tests\, (\d+) assertions\)/', $out, $match)) {
+			$lime_output->green_bar($testName);
+		}
+		else {
+			$lime_output->red_bar($testName);
+		}
 		echo $out;
 		if (strlen($coverage) > 0) {
 			if (!doesContainErrorNotification($out)) {
