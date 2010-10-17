@@ -325,7 +325,7 @@ LBoxFirePHP::table($this->styles, basename(__FILE__) ."::". __LINE__.': ' . 'met
 			$nodeControlTemplate	= eval("return $type::XT_FORM_CTRL_TEMPLATE_FILENAME;");
 			$seq					= $this->seq;
 			$callerID				= $this->caller->id;
-			$formID					= "metanode-$callerID-$seq";
+			$formID					= "metanode-$callerID-$seq-$nodeType";
 			$ctrlType				= new LBoxFormControlFillHidden("type", "", $nodeType);
 				$ctrlType			->setTemplateFileName("metanode_hidden.html");
 			$ctrlSeq				= new LBoxFormControlFillHidden("seq", "", $seq);
