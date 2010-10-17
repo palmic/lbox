@@ -62,10 +62,9 @@ class LBoxMetanodeManager extends LBox
 				&& array_key_exists($seq, self::$cache[$callerType][$caller->config->id])) {
 				if (self::$cache[$callerType][$caller->config->id][$seq] instanceof LBoxMetanode) {
 					// check propability of second call for same metanode of another node type
-					if (!self::$cache[$callerType][$caller->config->id][$seq] instanceof $nodeClassName) {
-						throw new LBoxExceptionMetanodes($caller->config->id. ": ". LBoxExceptionMetanodes::MSG_NODE_ALREADY_EXISTS_ANOTHER_TYPE, LBoxExceptionMetanodes::CODE_NODE_ALREADY_EXISTS_ANOTHER_TYPE);
+					if (self::$cache[$callerType][$caller->config->id][$seq] instanceof $nodeClassName) {
+						return self::$cache[$callerType][$caller->config->id][$seq];
 					}
-					return self::$cache[$callerType][$caller->config->id][$seq];
 				}
 			}
 			return self::$cache[$callerType][$caller->config->id][$seq] = new $nodeClassName($seq, $caller, $lng);
