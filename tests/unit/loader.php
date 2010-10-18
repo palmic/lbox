@@ -52,7 +52,7 @@ function run_tests() {
 		$call	= "phpunit $coverage $path";
 		//$lime_output->info($call);
 		$out	= getCallReturn($call);
-		if (preg_match('/OK \((\d+) tests\, (\d+) assertions\)/', $out, $match)) {
+		if (preg_match('/OK \((\d+) test(s?)\, (\d+) assertion(s?)\)/', $out, $matchAll)) {
 			$lime_output->green_bar($testName);
 		}
 		else {
@@ -84,7 +84,14 @@ function run_tests() {
 		//$lime_output->info($call);
 		$out				= getCallReturn($call);
 		$space			= '';
-		if (preg_match('/OK \((\d+) tests\, (\d+) assertions\)/', $out, $match)) {
+		if (preg_match('/OK \((\d+) test(s?)\, (\d+) assertion(s?)\)/', $out, $matchAll)) {
+			$i = 1;
+			foreach ($matchAll as $k => $v) {
+				if (is_numeric($v)) {
+					$match[$i]	= $v;
+					$i++;
+				}
+			}
 			$assertionsCountAtomic	+= $match[2];
 			$testsCountAtomic				+= $match[1];
 			$outPartName	= $name . ' ('.$match[1].' tests, '.$match[2].' assertions)';
