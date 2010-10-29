@@ -22,9 +22,9 @@ try {
 	if (strlen($tmpPath = $_FILES['image']['tmp_name']) > 0) {
 		$imgName		= $_FILES["image"]["name"];
 		$userRecord		= LBoxXTProject::isLogged() ? LBoxXTProject::getUserXTRecord() : LBoxXTDBFree::getUserXTRecord();
-		$dirTarget		= LBoxConfigSystem::getInstance()->getParamByPath("metanodes/images/path") . SLASH . $userRecord->nick . SLASH . date("Ym");
+		$dirTarget		= LBoxUtil::fixPathSlashes(LBoxConfigSystem::getInstance()->getParamByPath("metanodes/images/path") . SLASH . $userRecord->nick . SLASH . date("Ym"));
 		$imgNameTarget	= date("YmdHis") .".". LBoxUtil::getExtByFilename($imgName);
-		$imageURL		= /*LBOX_REQUEST_URL_SCHEME ."://". LBOX_REQUEST_URL_HOST ."/". */str_replace(LBOX_PATH_PROJECT, "", "$dirTarget/$imgNameTarget");
+		$imageURL		= /*LBOX_REQUEST_URL_SCHEME ."://". LBOX_REQUEST_URL_HOST ."/". */str_replace('\\', '/', LBoxUtil::fixPathSlashes(str_replace(LBOX_PATH_PROJECT, "", "$dirTarget/$imgNameTarget")));
 		LBoxUtil::createDirByPath($dirTarget);
 		if (!move_uploaded_file($tmpPath, "$dirTarget". SLASH ."$imgNameTarget")) {
 			throw new LBoxExceptionFilesystem(LBoxExceptionFilesystem::MSG_FILE_UPLOAD_ERROR, LBoxExceptionFilesystem::CODE_FILE_UPLOAD_ERROR);
