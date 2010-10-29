@@ -20,7 +20,7 @@ class LBoxUtil
 												"gif",
 												"png",
 												);
-	
+
 	/**
 	 * @param string $to
 	 * @param string $subject
@@ -44,7 +44,7 @@ class LBoxUtil
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * Vraci ve spravnem tvaru URL string pozadovane stranky
 	 * @return string
@@ -85,12 +85,13 @@ class LBoxUtil
 	 */
 	public static function getURLByNameString($name = "") {
 		try {
-			$out 	= urldecode(strtolower(trim($name)));
+			$out = $name;
+			$out 	= urldecode(strtolower(trim($out)));
 
 			$vzor = array("@&(.*?);@"); $nahrazeni = array("-"); $text = preg_replace($vzor, $nahrazeni, $out);
-			$out 	= strtr($out, array("á" => "a", "č" => "c", "ď" => "d", "é" => "e", "ě" => "e", "í" => "i", "ň" => "n", "ó" => "o", "ř" => "r", "š" => "s", "ť" => "t", "ú" => "u", "ů" => "u", "ý" => "y", "ž" => "z",
+			$out 	= strtr($out, $matrix = array("á" => "a", "č" => "c", "ď" => "d", "é" => "e", "ě" => "e", "í" => "i", "ň" => "n", "ó" => "o", "ř" => "r", "š" => "s", "ť" => "t", "ú" => "u", "ů" => "u", "ý" => "y", "ž" => "z",
 			"." => "-", "," => "-", ";" => "-", ":" => "-", "&" => "and", "_" => "-", "@" => "", " " => "-"));
-			$out	= preg_replace("[^\w-]", "-", $out);
+			$out	= preg_replace('[^\w-'.implode('', array_keys($matrix)).']', "-", $out);
 			//$out	= ereg_replace("[^[:alnum:]]", "-", $out);
 			//$out	= ereg_replace("(-+)", "-", $out);
 			return 	$out;
@@ -99,7 +100,7 @@ class LBoxUtil
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * reverse k getURLByNameString()
 	 * @param string $url
@@ -113,14 +114,14 @@ class LBoxUtil
 			$out 	= urldecode($url);
 			$out	= preg_replace("/\-/", " ", $out);
 			$out	= ucfirst($out);
-			
+
 			return 	$out;
 		}
 		catch (Exception $e) {
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * @desc returns timestamp of given date
 	 * @param string date - ISO formated date or date-time
@@ -151,7 +152,7 @@ class LBoxUtil
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * zkontroluje, jestli URL nakonci nechybi lomitko a jestli ano, doplni jej
 	 * - pouziva se na frontu pri porovnavani URL stranek (nikoli pri zobrazovani odkazu - aby se dal definovat odkaz bez lomitka a tak se i zobrazil)
@@ -412,7 +413,7 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 	    											"aacdeeeinoorstuuuyzAACDEEEINOORSTUUUYZ");
 		}
 	}
-	
+
 	/**
 	 * vraci bool, jestli je file obrazek
 	 * @param string $filename (muze byt i path)
@@ -426,7 +427,7 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * vraci nazev filu bez pripony podle predaneho filename
 	 * @param string $filename (muze byt i path)
@@ -445,7 +446,7 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * vraci priponu filu podle predaneho filename
 	 * @param string $filename (muze byt i path)
@@ -463,7 +464,7 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 			throw $e;
 		}
 	}
-	
+
 	/**
 	* vrati URL s pridanim parametru
 	* @param array $params - parametry k pridani
@@ -682,7 +683,7 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * zkopiruje zdrojovy kod tridy do tridy nove, pokud uz neexistuje
 	 * @param string $sourceClassName
@@ -725,7 +726,7 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 			throw $e;
 		}
 	}
-	
+
 	/**
 	 * kopiruje soubory
 	 * @param string $sourceFilePath

@@ -35,7 +35,7 @@ var handleSuccessContentMetanode = function(o) {
 	var data_type			= data.Results.type;
 	var data_seq			= data.Results.seq;
 	var data_lng			= data.Results.lng;
-	var form				= document.getElementById('frm-metanode-'+data_caller_id+'-'+data_seq);
+	var form				= document.getElementById('frm-metanode-'+data_caller_id+'-'+data_seq+'-'+data_type);
 	var nodeInstances		= YAHOO.util.Selector.query('.metanode-'+data_caller_id+'-'+data_seq);
 	var nodeContent;
 
