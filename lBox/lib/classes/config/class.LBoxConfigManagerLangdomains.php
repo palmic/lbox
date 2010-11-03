@@ -84,6 +84,42 @@ class LBoxConfigManagerLangdomains extends LBoxConfigManager
 			throw $e;
 		}
 	}
+	
+	/**
+	 * @param string $domain
+	 * @return LBoxConfigItem
+	 * @throws LBoxExceptionConfig
+	 */
+	public function getNodeByDomain($domain = "") {
+		try {
+			if (strlen($domain) < 1) {
+				$domain	= LBOX_REQUEST_URL_HOST;
+			}
+			//$domain	= str_replace(".localhost", "", $domain);
+			$domain	= str_replace("www.", "", $domain);
+			return $this->getNodeByContent($domain);
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
+	}
+	
+	/**
+	 * @param string $content
+	 * @return LBoxConfigItem
+	 * @throws LBoxExceptionConfig
+	 */
+	public function getNodeByContent($content = "") {
+		try {
+			if (strlen($content) < 1) {
+				throw new LBoxExceptionProperty(LBoxExceptionProperty::MSG_PARAM_STRING_NOTNULL, LBoxExceptionProperty::CODE_BAD_PARAM);
+			}
+			return $this->findNodeByContent(trim($content), $this->getConfigInstance()->getRootIterator(), true);
+		}
+		catch(Exception $e) {
+			throw $e;
+		}
+	}
 
 	/**
 	 * vraci accepted jazyku prohlizece podle jeho nastaveni

@@ -113,6 +113,14 @@ function phptal_tales_lbox($src, $nothrow = false) {
 						}
 				}
 				break;
+			case "langdomain":
+				if (strlen($frontCalling = $srcArr[1]) < 1) {
+					if (!$nothrow) {
+						throw new LBoxExceptionFront(LBoxExceptionFront::MSG_TPL_FRONT_CALL_EMPTY ." Called like lbox:$src", LBoxExceptionFront::CODE_TPL_BAD_KEY);
+					}
+				}
+				return 'LBoxConfigManagerLangdomains::getInstance()->getNodeByDomain()->'. $frontCalling .'';
+				break;
 			case "request":
 				if (strlen($name = $srcArr[1]) < 1) {
 					if (!$nothrow) {
