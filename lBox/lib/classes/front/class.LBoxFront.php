@@ -206,10 +206,29 @@ LBoxFirePHP::warn("cache VYPNUTA");
 				}
 			}
 			// logged reload
+			$reloadParam	= strlen($pageCfg->reload)		> 0 ? trim($pageCfg->reload) 	: NULL;
+			$reload2FirstChildParam	= strlen($pageCfg->reload_to_firstchild)		> 0 ? trim($pageCfg->reload_to_firstchild) 	: NULL;
+			$reload2LastChildParam	= strlen($pageCfg->reload_to_lastchild)		> 0 ? trim($pageCfg->reload_to_lastchild) 	: NULL;
 			$reloadParamPartsLoggedDBFree	= strlen($pageCfg->xt_reload_logged_dbfree)		> 0 ? explode(":", (string)$pageCfg->xt_reload_logged_dbfree) 	: array();
 			$reloadParamPartsLogged			= strlen($pageCfg->xt_reload_logged)		 	> 0 ? explode(":", (string)$pageCfg->xt_reload_logged) 			: array();
 			$reloadParamPartsLoggedXT		= strlen($pageCfg->xt_reload_logged_xt) 		> 0 ? explode(":", (string)$pageCfg->xt_reload_logged_xt) 		: array();
 			$reloadParamPartsLoggedSuperXT	= strlen($pageCfg->xt_reload_logged_superxt) 	> 0 ? explode(":", (string)$pageCfg->xt_reload_logged_superxt) 	: array();
+			if ($reloadParam) {
+				self::reload(LBoxConfigManagerStructure::getInstance()->getPageById($reloadParam)->url);
+			}
+			if ($reload2FirstChildParam) {
+				if (self::getPage()->config->hasChildrenInMenu()) {
+					self::reload(self::getPage()->config->getChildNodesIterator()->current()->url);
+				}
+			}
+			if ($reload2LastChildParam) {
+				if (self::getPage()->config->hasChildrenInMenu()) {
+					foreach (self::getPage()->config->getChildNodesIterator() as $childItem) {
+						$child = $childItem;
+					}
+					self::reload($child->url);
+				}
+			}
 			if (count($reloadParamPartsLoggedSuperXT) > 0) {
 				if (LBoxXTProject::isLoggedSuperAdmin($reloadParamPartsLoggedSuperXT[0])) {
 					self::reloadLoggedSuperXT();
