@@ -1,4 +1,9 @@
 <?php
+// PHP 5.3 relevant
+if (function_exists('date_default_timezone_set')) {
+    date_default_timezone_set(@date_default_timezone_get());
+}
+
 // terminal
 define("CLI", false);
 // IIS / Apache
