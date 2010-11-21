@@ -65,6 +65,12 @@ class LBoxForm
 	protected $spamDefenseControl;
 
 	/**
+	* if true, __toString() method will throw Exception higher or write out it into code
+	* @var bool
+	*/
+	protected $forceThrow = false;
+
+	/**
 	 * sent succes flag - po odeslani formulare a reloadu stranky by tato promena by mela byt true
 	 * @var bool
 	 */
@@ -449,10 +455,9 @@ class LBoxForm
 	}
 
 	/**
-	 * @param bool $forceThrow throw Exception higher or write out it into code
 	 * @return string
 	 */
-	public function __toString($forceThrow = false) {
+	public function __toString() {
 		try {
 			// pridat antispam, pokud je zapnut
 			if ($this->isAntiSpamSet()) {
@@ -464,7 +469,7 @@ class LBoxForm
 				$out	.= $this->getTAL()->execute();
 			}
 			catch (Exception $e) {
-				if ($forceThrow) {
+				if ($this->forceThrow) {
 					throw $e;
 				}
 				// var_dump($e);
