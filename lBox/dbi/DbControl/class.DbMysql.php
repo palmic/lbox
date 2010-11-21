@@ -196,7 +196,7 @@ class DbMysql extends DbPlatform
     * getter for connection
     * @return valid connection resource
     */
-    protected function getConnection() {
+    public function getConnection() {
         try {
             $this->connect();
         }

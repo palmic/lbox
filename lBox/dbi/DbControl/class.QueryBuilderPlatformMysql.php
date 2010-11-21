@@ -420,13 +420,14 @@ class QueryBuilderPlatformMysql extends QueryBuilderPlatform
 	}
 
 	protected function escapeString($string = "") {
-		if (strlen($string) > 0 && strlen(mysql_real_escape_string($string)) < 1) {
+		$dbStateHandler = new DbStateHandler($this->task, "utf8");
+		if (strlen($string) > 0 && strlen(mysql_real_escape_string($string, $dbStateHandler->getDbPlatform()->getConnection())) < 1) {
 			if (ini_get("magic_quotes_gpc") != 1 && strtolower(ini_get("magic_quotes_gpc")) != "on") {
 				$string = mysql_escape_string($string);
 			}
 		}
 		else {
-			$string = mysql_real_escape_string($string);
+			$string = mysql_real_escape_string($string, $dbStateHandler->getDbPlatform()->getConnection());
 		}
 		return $string;
 	}
