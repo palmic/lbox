@@ -103,10 +103,10 @@ class LBoxFront extends LBox
 						if (count(self::getDataPost()) < 1) {
 							if (LBoxCacheManagerFront::getInstance()->doesCacheExists()) {
 								// send last modification header
+LBoxFirePHP::warn("cache loaded in ". LBoxTimer::getInstance()->getTimeOfLife() . "s");
 								header("Last-Modified: ".gmdate("D, d M Y H:i:s", LBoxCacheManagerFront::getInstance()->getLastCacheModificationTime())." GMT");
 								echo LBoxCacheManagerFront::getInstance()->getData();
 								LBoxCacheManagerFront::getInstance()->__destruct();
-LBoxFirePHP::warn("cache loaded in ". LBoxTimer::getInstance()->getTimeOfLife() . "s");
 								return;
 							}
 						}
