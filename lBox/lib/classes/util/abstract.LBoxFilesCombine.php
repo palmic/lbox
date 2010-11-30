@@ -58,6 +58,8 @@ abstract class LBoxFilesCombine
 			$aLastModifieds = array();
 			foreach ($files as $file) {
 				$file	= LBOX_PATH_PROJECT . $file;
+				$file   = str_ireplace('project/project/', 'project/', $file);
+				
 				if (!file_exists($file)) {
 					throw new LBoxExceptionFilesystem("$file: ". LBoxExceptionFilesystem::MSG_FILE_NOT_EXISTS, LBoxExceptionFilesystem::CODE_FILE_NOT_EXISTS);
 				}
