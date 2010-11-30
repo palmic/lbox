@@ -133,8 +133,8 @@ LBoxFirePHP::error("cache NOT stored because output suppose to contain only exce
 					LBoxCacheManagerFront::getInstance()->__destruct();
 				}
 				else {
-					echo self::getRequestContent();
 LBoxFirePHP::warn("cache VYPNUTA");
+					echo self::getRequestContent();
 				}
 			/*}
 			else {
