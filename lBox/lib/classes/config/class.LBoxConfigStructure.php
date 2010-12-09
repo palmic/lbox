@@ -241,9 +241,11 @@ class LBoxConfigStructure extends LBoxConfig
 			$url	= $parent->url ."/". $urlPart ."/";
 			$url	= preg_replace("/(\/+)/", "/", $url);
 			if ($parent->hasChildren()) {
+				$maxId = 0;
 				foreach ($parent->getChildNodesIterator() as $child) {
-					$id	= $child->id+1;
+					$maxId	= $child->id > $maxId ? $child->id : $maxId;
 				}
+				$id	= $maxId+1;
 			}
 			else {
 				$id	= (int)(((string)$parent->id) . "001");
