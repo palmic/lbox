@@ -668,6 +668,14 @@ LBoxFirePHP::warn("cache VYPNUTA");
 	}
 
 	/**
+	 * returns cookies data
+	 * @return array
+	 */
+	public static function getDataCookies() {
+		return $_COOKIE;
+	}
+
+	/**
 	 * returns currently displaying language key
 	 * @return string
 	 */
@@ -682,17 +690,27 @@ LBoxFirePHP::warn("cache VYPNUTA");
 				$host	= str_replace(".localhost", "", LBOX_REQUEST_URL_HOST);
 				$host	= str_replace("www.", "", $host);
 				if (strlen($lang = LBoxConfigManagerLangdomains::getInstance()->getLangByDomain($host)) > 0) {
-					return self::$displayLanguage = $lang;
+					self::$displayLanguage = $lang;
 				}
 				else {
-					return self::$displayLanguage = $defaultLang;
+					self::$displayLanguage = $defaultLang;
 				}
+                                if (LBoxConfigManagerFront::gpcn('langchoose') == 'cookie') {
+                                    $cookies = self::getDataCookies();
+                                    if (strlen($cookies['lbox']['front']['lng']) > 0) {
+                                        self::$displayLanguage = $cookies['lbox']['front']['lng'];
+                                    }
+                                    if (strlen($_SESSION['lbox']['front']['lng']) > 0) {
+                                        self::$displayLanguage = $_SESSION['lbox']['front']['lng'];
+                                    }
+                                }
 			}
 			catch(LBoxExceptionConfig $e) {
 				if ($e->getCode() == LBoxExceptionConfig::CODE_TYPE_NOT_FOUND) {
-					return self::$displayLanguage = $defaultLang;
+					self::$displayLanguage = $defaultLang;
 				}
 			}
+                        return self::$displayLanguage;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -700,11 +718,15 @@ LBoxFirePHP::warn("cache VYPNUTA");
 	}
 	
 	/**
-	 * display language setter - jen pro zvlastni pripady jako je moznost prohledavani konfiguraci nativne skrze jine jazyky nez je momentalne zobrazeny jazyk si front voli sam na zaklade request informaci!!!!
+	 * display language setter
+         * jen pro zvlastni pripady jako je moznost prohledavani konfiguraci nativne skrze jine jazyky nez je momentalne zobrazeny jazyk
+         * si front voli sam na zaklade request informaci!!!!
 	 * @param string $lng
 	 */
 	public static function setDisplayLanguage($lng	= "cs") {
 		try {
+                        self::setCookie('lbox[front][lng]', $lng, time()+365*86400);
+                        $_SESSION['lbox']['front']['lng'] = $lng;
 			self::$displayLanguage = $lng;
 		}
 		catch (Exception $e) {
