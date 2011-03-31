@@ -530,7 +530,7 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 			if (is_string($patterns)) {
 				$patterns	= array($patterns);
 			}
-			$url				= strlen($url) > 0 ? $url : LBOX_REQUEST_URL;
+			$url				= urldecode(strlen($url) > 0 ? $url : LBOX_REQUEST_URL);
 			$url				= str_replace("http//", "http://", strtolower($url));
 			$url				= str_replace("https//", "https://", strtolower($url));
 			$paramsNew			= array();
@@ -672,7 +672,7 @@ if (($path .SLASH. $entry) == "/windows/E/www/timesheets/project/.cache/abstract
 				throw new LBoxExceptionPage(LBoxExceptionPage::MSG_PARAM_STRING_NOTNULL, LBoxExceptionPage::CODE_BAD_PARAM);
 			}
 			$pattern	= LBoxConfigManagerProperties::getPropertyContentByName($propertyName);
-			$pattern	= str_ireplace("<url_param>", "([-\w]+)", $pattern);
+			$pattern	= str_ireplace("<url_param>", "([\w-_\.\/\\\ěščřžýáíéůúřťňĚďŠČŘŽÝÁÍÉŮÚŘŤĎŇ]+)", $pattern);
 			foreach (LBoxFront::getUrlParamsArray() as $param) {
 				if (preg_match("/$pattern/", $param, $matches)) {
 					return $matches[1];

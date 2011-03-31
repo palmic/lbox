@@ -558,7 +558,7 @@ LBoxFirePHP::warn("cache VYPNUTA");
 			$params	= explode("/", $paramsString);
 			foreach ($params as $param) {
 				if (strlen($param) < 1) continue;
-				$out[]	= $param;
+				$out[]	= urldecode($param);
 			}
 			return $out;
 		}

@@ -20,7 +20,7 @@ abstract class ProcessorFilterURLParam extends LBoxFormProcessor
 			}
 			$patternPCRES	= array();
 			foreach ($this->patternPropertyNames as $patternPropertyName) {
-				$patternPCRES[]	= "/". str_ireplace("<url_param>", "(\w+)", LBoxConfigManagerProperties::gpcn($patternPropertyName)) ."/";
+				$patternPCRES[]	= "/". str_ireplace("<url_param>", "([\w-_\.\/\\\ěščřžýáíéůúřťňĚďŠČŘŽÝÁÍÉŮÚŘŤĎŇ]+)", LBoxConfigManagerProperties::gpcn($patternPropertyName)) ."/";
 			}
 			$reloadParams	= array();
 			foreach ($this->form->getControls() as $control) {
