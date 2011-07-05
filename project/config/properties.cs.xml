@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <properties>
-  <property name="log_access">1</property>
+  <property name="log_access">0</property>
   <!-- prepinatelny atribut, ktery prepina logovani pristupu do databaze -->
   <property name="cache_front">0</property>
   <!-- prepinatec zapinajici cachovani front dat -->

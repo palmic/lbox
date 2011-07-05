@@ -1,5 +1,6 @@
 nbproject*
 .cache*
+.idea*
 *.log
 lBox/documents*
 project/.cache*
