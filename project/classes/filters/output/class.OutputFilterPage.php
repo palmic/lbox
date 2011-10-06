@@ -12,7 +12,7 @@ class OutputFilterPage extends LBoxOutputFilter
 	 * @var string
 	 */
 	protected $configParamNameWebTitle	= "web_title";
-	
+
 	/**
 	 * @var string
 	 */
@@ -28,7 +28,7 @@ class OutputFilterPage extends LBoxOutputFilter
 	 * @var string
 	 */
 	protected $articleHeading			= "";
-	
+
 	public function prepare($name = "", $value = NULL) {
 		switch ($name) {
 			case "title":
@@ -110,6 +110,9 @@ class OutputFilterPage extends LBoxOutputFilter
 			case "in_menu":
 					return $this->instance->is_accesible ? $value : false;
 				break;
+			case "bodyclass":
+					return LBoxFront::getDisplayLanguage();
+				break;
 			case "is_accesible":
 					if ($this->instance->superxt == 1) {
 						if (!LBoxXTProject::isLoggedSuperAdmin()) {
@@ -133,7 +136,7 @@ class OutputFilterPage extends LBoxOutputFilter
 					return $value;
 		}
 	}
-	
+
 	/**
 	 * Vraci CSS classu do menu
 	 * @return string
@@ -142,15 +145,15 @@ class OutputFilterPage extends LBoxOutputFilter
 	protected function getClassMenu() {
 		try {
 			$className	= "";
-			if ((!$this->instance->hasSiblingBefore())
-				|| ($this->instance->getSiblingBefore()->in_menu != $this->instance->in_menu)) {
-					if (strlen($className) > 0) $className .= " ";
-					$className .= "first";
+			if ($this->instance->isFirstInMenu()) {
+				if (strlen($className) > 0) $className .= " ";
+				$className .= "first";
 			}
-			if ((!$this->instance->hasSiblingAfter())
-				|| ($this->instance->getSiblingAfter()->in_menu != $this->instance->in_menu)) {
-					if (strlen($className) > 0) $className .= " ";
-					$className .= "last";
+			if ($this->instance->isLastInMenu()) {
+				if (strlen($className) > 0) {
+					$className .= " ";
+				}
+				$className .= "last";
 			}
 			return $className;
 		}

@@ -10,9 +10,7 @@ class LBoxConfigItemStructure extends LBoxConfigItemComponent
 {
 	protected $nodeName 			= "page";
 	protected $classNameIterator	= "LBoxIteratorStructure";
-	
-	protected $idAttributeName		= "id";
-	
+
 
 	/**
 	 * Vraci jestli jde o Home page
@@ -93,8 +91,19 @@ class LBoxConfigItemStructure extends LBoxConfigItemComponent
 	 */
 	public function isFirstInMenu() {
 		try {
-			return $this->hasSiblingBefore() ? 
-				$this->hasSiblingBefore()->in_menu === $this->__get("in_menu") : false;
+			$next	= $this->node->previousSibling;
+			$inMenu	= false;
+			while ($next && !$inMenu) {
+				while ($next && (!$next instanceof DOMElement)) {
+					$next	= $next->previousSibling;
+				}
+				if ($next && $next->getAttributeNode('in_menu') && $next->getAttributeNode('in_menu')->value == $this->__get("in_menu")) {
+					$inMenu = true;
+					break;
+				}
+				$next	= $next->previousSibling;
+			}
+			return !$inMenu;
 		}
 		catch (Exception $e) {
 			throw $e;
@@ -103,14 +112,26 @@ class LBoxConfigItemStructure extends LBoxConfigItemComponent
 
 	/**
 	 * Vraci jestli je posledni v menu
+	 * @param int $menu
 	 * @return bool
 	 */
 	public function isLastInMenu() {
 		try {
-			return $this->hasSiblingAfter() ? 
-				$this->getSiblingAfter()->in_menu === $this->__get("in_menu") : false;
+			$next	= $this->node->nextSibling;
+			$inMenu	= false;
+			while ($next && !$inMenu) {
+				while ($next && (!$next instanceof DOMElement)) {
+					$next	= $next->nextSibling;
+				}
+				if ($next && $next->getAttributeNode('in_menu') && $next->getAttributeNode('in_menu')->value == $this->__get("in_menu")) {
+					$inMenu = true;
+					break;
+				}
+				$next	= $next->nextSibling;
+			}
+			return !$inMenu;
 		}
-		catch (Exception $e) {
+		catch(Exception $e) {
 			throw $e;
 		}
 	}
